@@ -33,7 +33,8 @@ Think of it as having a team of penetration testers available 24/7 through Claud
 
 **Option A: Via Claude Code (Recommended)**
 ```bash
-/plugin install secskills
+/plugin marketplace add trilwu/secskills
+/plugin install trilwu/secskills
 /plugin enable secskills
 ```
 

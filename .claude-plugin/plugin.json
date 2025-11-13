@@ -1,0 +1,50 @@
+{
+  "name": "secskills",
+  "version": "1.0.0",
+  "description": "Comprehensive offensive security toolkit with 16 production-ready skills and 6 specialized subagents for penetration testing, red teaming, cloud security, mobile security, Web3 auditing, and reconnaissance. Covers 95%+ of modern security testing scenarios. Based on industry knowledge including HackTricks and more.",
+  "author": {
+    "name": "SecSkills Project",
+    "url": "https://github.com/bkpentestlab/secskills"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bkpentestlab/secskills"
+  },
+  "keywords": [
+    "security",
+    "penetration-testing",
+    "pentesting",
+    "red-team",
+    "offensive-security",
+    "hacktricks",
+    "cloud-security",
+    "mobile-security",
+    "web3",
+    "smart-contracts",
+    "active-directory",
+    "osint",
+    "reconnaissance"
+  ],
+  "license": "MIT",
+  "components": {
+    "skills": 16,
+    "agents": 6
+  },
+  "coverage": [
+    "Web Application Security",
+    "Active Directory Attacks",
+    "Linux/Windows Privilege Escalation",
+    "Network Service Enumeration",
+    "Container Security",
+    "Password Attacks",
+    "Reconnaissance & OSINT",
+    "File Transfer Techniques",
+    "API Security Testing",
+    "Mobile Pentesting (Android/iOS)",
+    "Cloud Security (AWS/Azure/GCP)",
+    "Wireless Attacks",
+    "Phishing & Social Engineering",
+    "Persistence Techniques",
+    "Web3 & Smart Contracts"
+  ]
+}
