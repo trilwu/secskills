@@ -53,6 +53,58 @@ competes with every other skill in the session. Write it in third person, lead
 with what the skill does, and include an explicit trigger clause ("Use when
 ...") naming concrete situations. Keep it under 1024 characters.
 
+## Two kinds of skill
+
+The collection has two tiers, and knowing which one you are writing decides
+how you write the description.
+
+**Domain skills** carry methodology and judgment for a whole area —
+`auditing-code-for-vulnerabilities`, `responding-to-incidents`,
+`testing-mobile-applications`. They trigger on broad, plain-language requests.
+There should be few of them, and their scopes must not overlap; that is what
+`When NOT to Use` is for.
+
+**Procedure skills** cover one specific target-and-toolchain combination that
+comes up rarely, needs an exact sequence, and is unrecoverable from general
+knowledge — `reversing-flutter-apps` (blutter), `reversing-unity-il2cpp`
+(Il2CppDumper), `reversing-react-native-apps` (hbctool). These are *supposed*
+to be narrow. A generic mobile skill cannot hold the blutter workflow without
+bloating for every reader who is not looking at a Flutter app, and a reader
+who *is* looking at one needs far more detail than a generic skill would ever
+carry.
+
+Procedure skills do not compete with domain skills for triggering, provided
+the description names the identifying evidence:
+
+```yaml
+# Good: names the artifacts, the tools, and the symptom
+description: Reverse engineer and intercept traffic from Flutter/Dart mobile
+  apps using blutter, reFlutter, and Frida. Use when an APK or IPA contains
+  libflutter.so, libapp.so, App.framework, or flutter_assets, when jadx shows
+  only a thin Dart wrapper, when Burp sees no traffic from an app that is
+  clearly online, or when the target is built with Flutter.
+
+# Bad: overlaps the domain skill and triggers on the wrong requests
+description: Advanced mobile reverse engineering techniques for modern apps.
+```
+
+Write the description around **file names, magic bytes, framework names, tool
+names, and the symptom that identifies the situation**. Those are what a user
+actually has in hand, and they make the skill unambiguous.
+
+Two rules keep the tiers working:
+
+1. **Every procedure skill is reachable from its domain skill.** Add the
+   identifying check and a routing table to the domain skill, so a user who
+   starts generic lands in the right place. An unreachable procedure skill is
+   dead weight.
+2. **A procedure skill hands back when it is done.** Recovering symbols is not
+   the assessment — say which skill continues the work.
+
+If you are unsure which tier you are writing: does it apply to most engagements
+in its area (domain), or is it the thing you only reach for when a specific
+artifact is present (procedure)?
+
 ## Required sections
 
 Every SKILL.md has:

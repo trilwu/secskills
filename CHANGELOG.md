@@ -3,6 +3,55 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - 2026-07-26
+
+Adds the procedure-skill tier: narrow, tool-and-artifact scoped skills for
+situations a domain skill cannot carry without bloating for everyone who is
+not in that situation.
+
+### Added
+
+- `reversing-flutter-apps` — Flutter/Dart reversing with blutter, plus the
+  two failure modes that waste the most time on Flutter targets: an empty dex
+  (logic is in `libapp.so`) and an empty proxy (Flutter ignores the system
+  proxy *and* the system CA store).
+- `reversing-react-native-apps` — plain vs Hermes bundle identification,
+  `hbctool`/`hermes-dec`/`hasmer` version compatibility, string-table
+  shortcuts, and bridge hooking.
+- `reversing-unity-il2cpp` — Mono vs IL2CPP identification, recombining
+  `global-metadata.dat` with `libil2cpp.so`, symbol import into IDA/Ghidra,
+  and dumping encrypted metadata from memory.
+- CONTRIBUTING now documents the two-tier model: how to tell a domain skill
+  from a procedure skill, and how to write a description that triggers on
+  artifacts and tools rather than competing with a domain skill.
+
+### Changed
+
+- `testing-mobile-applications` opens with a framework-identification check
+  and a routing table, so a generic mobile request reaches the right procedure
+  skill instead of concluding the app is obfuscated.
+- `analyzing-binaries` routes framework runtimes to the procedure skills.
+
+## [2.1.0] - 2026-07-26
+
+### Added
+
+- `secskills/ttp-index.json` — 139 ATT&CK techniques mapped to the skills that
+  cover them, with an explicit `_unmapped` block naming the framework used
+  instead where ATT&CK Enterprise does not apply.
+- `scripts/sync_attack.py` — generates the `## ATT&CK Coverage` section in each
+  mapped skill from the index; `--check` fails CI when a section drifts.
+- `mapping-attack-techniques` — router from a technique ID, tactic, APT group,
+  or intel report to the skill holding the procedure, with the purple-team
+  loop and three-state coverage reporting (tested / untested / no telemetry).
+
+### Changed
+
+- Eight skills had their `When to Use` section at the bottom of the file; it
+  now sits with `When NOT to Use` at the top.
+- Kernel and NFS privilege escalation moved to
+  `escalating-linux-privileges/references/kernel-and-nfs.md`.
+
 ## [2.0.0] - 2026-07-26
 
 The plugin was offensive-only. This release adds the defensive and code-level

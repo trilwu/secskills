@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 27 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 31 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -22,8 +22,13 @@ explicit scope, an explicit hand-off to the right sibling skill, and a
 **Rationalizations to Reject** section listing the plausible-sounding
 shortcuts that cause missed findings and bad calls.
 
-Skills load only when relevant, so the reference material costs nothing until
-it is needed.
+Skills come in two tiers. **Domain skills** carry methodology for a whole area
+and trigger on plain-language requests. **Procedure skills** cover one
+target-and-toolchain combination that is rare, exact, and unrecoverable from
+general knowledge — reversing a Flutter app with blutter, for instance. A
+generic mobile skill cannot hold that without bloating for everyone else, and
+the person who needs it needs far more than a generic skill would carry. Both
+load only when relevant, so neither costs anything until it applies.
 
 ## Skills
 
@@ -68,6 +73,29 @@ it is needed.
 | `establishing-persistence` | Post-exploitation persistence |
 | `transferring-files` | File transfer and exfiltration channels |
 | `performing-social-engineering` | Authorized phishing and pretexting |
+
+### Framework-specific reversing (procedure skills)
+
+Narrow by design — each triggers on the artifacts that identify the build, and
+hands back to the domain skill when the recovery work is done.
+
+| Skill | Triggers on |
+| --- | --- |
+| `reversing-flutter-apps` | `libapp.so`, `libflutter.so`, `flutter_assets/`, or a proxy that sees no traffic |
+| `reversing-react-native-apps` | `index.android.bundle`, `libhermes.so`, `main.jsbundle` |
+| `reversing-unity-il2cpp` | `global-metadata.dat`, `libil2cpp.so`, `Assembly-CSharp.dll` |
+
+### Navigation
+
+| Skill | Use it for |
+| --- | --- |
+| `mapping-attack-techniques` | Resolving an ATT&CK ID, tactic, or intel report to the skill that holds the procedure; purple-team loop and coverage reporting |
+
+Techniques are indexed in [`secskills/ttp-index.json`](secskills/ttp-index.json)
+(139 mapped), which generates the `## ATT&CK Coverage` section in each skill.
+CI fails if a section drifts from the index, and skills that use a different
+framework — ATLAS for AI, the Mobile matrix, CWE for code-level work — are
+declared as such rather than counted as coverage.
 
 ## Subagents
 
@@ -125,6 +153,16 @@ separates blocking from non-blocking with a "reviewed but clear" section.
 
 Tells you what to preserve before anyone touches the box, then works scope
 before containment — because partial containment warns the attacker.
+
+**Reverse a cross-platform mobile app**
+
+```
+"jadx shows nothing useful in this APK and Burp sees no traffic."
+```
+
+Checks the framework markers first, recognizes Flutter, and explains that both
+symptoms have the same cause — then routes to the blutter and reFlutter
+workflow rather than guessing at obfuscation.
 
 **Assess an AI feature**
 
