@@ -22,6 +22,8 @@ then read that carefully.
 
 - **Live malware with intent to detonate** — use `analyzing-malware`, which
   covers containment and safe detonation. Come back here for the disassembly.
+- **A raw shellcode blob with no headers** (position-independent payload,
+  stager, egg-hunter) — use `analyzing-shellcode`
 - **Source is available** — use `auditing-code-for-vulnerabilities`
 - **Android/iOS app assessment as a whole** — use `testing-mobile-applications`;
   use this skill for the native `.so`/Mach-O components inside it
@@ -237,9 +239,9 @@ current ATT&CK release before citing them in a report._
 
 **Defense Evasion** (TA0005)
 
-- [T1027](https://attack.mitre.org/techniques/T1027/) Obfuscated Files or Information — see also `analyzing-malware`
+- [T1027](https://attack.mitre.org/techniques/T1027/) Obfuscated Files or Information — see also `analyzing-malware`, `analyzing-shellcode`
 - [T1027.002](https://attack.mitre.org/techniques/T1027/002/) Software Packing — see also `analyzing-malware`
-- [T1140](https://attack.mitre.org/techniques/T1140/) Deobfuscate/Decode Files or Information — see also `analyzing-malware`
+- [T1140](https://attack.mitre.org/techniques/T1140/) Deobfuscate/Decode Files or Information — see also `analyzing-malware`, `analyzing-shellcode`
 - [T1497](https://attack.mitre.org/techniques/T1497/) Virtualization/Sandbox Evasion — see also `analyzing-malware`
 - [T1622](https://attack.mitre.org/techniques/T1622/) Debugger Evasion — see also `analyzing-malware`
 

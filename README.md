@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 64 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 68 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -136,8 +136,12 @@ identifies the situation, and hands back to the domain skill when done.
 | --- | --- |
 | `analyzing-memory-images` | A RAM capture to work with Volatility: injected code, in-memory creds |
 | `investigating-m365-entra` | A cloud-only compromise: UAL, sign-in logs, OAuth consent grants, mailbox rules |
+| `investigating-aws-incidents` | Exposed AWS keys, anomalous CloudTrail, a GuardDuty finding, IAM persistence |
+| `analyzing-network-traffic` | A `.pcap`/`.pcapng`: C2 beacons, DNS tunneling, JA3/TLS, exfil, file carving |
+| `analyzing-shellcode` | A raw position-independent blob: decoder stubs, PEB-walk/API-hash, stagers |
 | `analyzing-linux-persistence` | Finding how an attacker persisted on a Linux host across every init path |
 | `writing-sigma-rules` | Authoring a portable Sigma rule: field taxonomy, modifiers, backend conversion |
+| `writing-yara-rules` | Authoring a durable YARA rule for a file/memory artifact or malware family |
 
 ### Specialist procedure skills
 

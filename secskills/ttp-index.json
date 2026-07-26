@@ -38,7 +38,9 @@
     "testing-ics-ot-protocols": "ATT&CK for ICS matrix (T0### series) and IEC 62443 — the Enterprise IDs do not apply",
     "analyzing-firmware-images": "Procedure skill (firmware extraction + binwalk/FirmAE). Tool-and-artifact scoped, not a technique",
     "attacking-bluetooth-nfc": "Procedure skill (BLE/NFC RF + Proxmark3/gatttool). Radio-and-hardware scoped, not an Enterprise technique",
-    "auditing-mcp-servers": "MITRE ATLAS and the OWASP Top 10 for LLM / Agentic Applications — pre-attack review, not a technique"
+    "auditing-mcp-servers": "MITRE ATLAS and the OWASP Top 10 for LLM / Agentic Applications — pre-attack review, not a technique",
+    "writing-yara-rules": "Procedure skill (YARA authoring + yarGen/YARA-X). Detection-engineering craft, not a technique",
+    "investigating-aws-incidents": "Procedure skill (AWS CloudTrail/GuardDuty cloud-log DFIR). Investigation method, not a technique"
   },
   "tactics": {
     "TA0043": "Reconnaissance",
@@ -126,9 +128,9 @@
     { "id": "T1611", "name": "Escape to Host", "tactics": ["TA0004"], "skills": ["exploiting-containers", "escaping-hardened-containers"] },
 
     { "id": "T1055", "name": "Process Injection", "tactics": ["TA0004", "TA0005"], "skills": ["analyzing-malware", "escalating-windows-privileges"] },
-    { "id": "T1027", "name": "Obfuscated Files or Information", "tactics": ["TA0005"], "skills": ["analyzing-malware", "analyzing-binaries"] },
+    { "id": "T1027", "name": "Obfuscated Files or Information", "tactics": ["TA0005"], "skills": ["analyzing-malware", "analyzing-binaries", "analyzing-shellcode"] },
     { "id": "T1027.002", "name": "Software Packing", "tactics": ["TA0005"], "skills": ["analyzing-binaries", "analyzing-malware"] },
-    { "id": "T1140", "name": "Deobfuscate/Decode Files or Information", "tactics": ["TA0005"], "skills": ["analyzing-malware", "analyzing-binaries"] },
+    { "id": "T1140", "name": "Deobfuscate/Decode Files or Information", "tactics": ["TA0005"], "skills": ["analyzing-malware", "analyzing-binaries", "analyzing-shellcode"] },
     { "id": "T1070", "name": "Indicator Removal", "tactics": ["TA0005"], "skills": ["responding-to-incidents"] },
     { "id": "T1070.001", "name": "Clear Windows Event Logs", "tactics": ["TA0005"], "skills": ["responding-to-incidents", "hunting-threats"] },
     { "id": "T1070.006", "name": "Timestomp", "tactics": ["TA0005"], "skills": ["responding-to-incidents"] },
@@ -139,7 +141,7 @@
     { "id": "T1497", "name": "Virtualization/Sandbox Evasion", "tactics": ["TA0005"], "skills": ["analyzing-malware", "analyzing-binaries"] },
     { "id": "T1622", "name": "Debugger Evasion", "tactics": ["TA0005"], "skills": ["analyzing-binaries", "analyzing-malware"] },
     { "id": "T1036", "name": "Masquerading", "tactics": ["TA0005"], "skills": ["establishing-persistence", "hunting-threats"] },
-    { "id": "T1620", "name": "Reflective Code Loading", "tactics": ["TA0005"], "skills": ["analyzing-malware"] },
+    { "id": "T1620", "name": "Reflective Code Loading", "tactics": ["TA0005"], "skills": ["analyzing-malware", "analyzing-shellcode"] },
     { "id": "T1553", "name": "Subvert Trust Controls", "tactics": ["TA0005"], "skills": ["analyzing-malware", "auditing-supply-chain"] },
 
     { "id": "T1003", "name": "OS Credential Dumping", "tactics": ["TA0006"], "skills": ["attacking-active-directory", "cracking-passwords"] },
@@ -193,18 +195,18 @@
     { "id": "T1114", "name": "Email Collection", "tactics": ["TA0009"], "skills": ["responding-to-incidents"] },
     { "id": "T1056.001", "name": "Keylogging", "tactics": ["TA0009", "TA0006"], "skills": ["analyzing-malware"] },
 
-    { "id": "T1071", "name": "Application Layer Protocol", "tactics": ["TA0011"], "skills": ["analyzing-malware", "engineering-detections"] },
-    { "id": "T1071.004", "name": "DNS", "tactics": ["TA0011"], "skills": ["engineering-detections", "hunting-threats"] },
-    { "id": "T1573", "name": "Encrypted Channel", "tactics": ["TA0011"], "skills": ["analyzing-malware", "engineering-detections"] },
+    { "id": "T1071", "name": "Application Layer Protocol", "tactics": ["TA0011"], "skills": ["analyzing-malware", "engineering-detections", "analyzing-network-traffic"] },
+    { "id": "T1071.004", "name": "DNS", "tactics": ["TA0011"], "skills": ["engineering-detections", "hunting-threats", "analyzing-network-traffic"] },
+    { "id": "T1573", "name": "Encrypted Channel", "tactics": ["TA0011"], "skills": ["analyzing-malware", "engineering-detections", "analyzing-network-traffic"] },
     { "id": "T1090", "name": "Proxy", "tactics": ["TA0011"], "skills": ["transferring-files"] },
     { "id": "T1105", "name": "Ingress Tool Transfer", "tactics": ["TA0011"], "skills": ["transferring-files"] },
     { "id": "T1219", "name": "Remote Access Software", "tactics": ["TA0011"], "skills": ["hunting-threats"] },
-    { "id": "T1568", "name": "Dynamic Resolution", "tactics": ["TA0011"], "skills": ["analyzing-malware", "hunting-threats"] },
+    { "id": "T1568", "name": "Dynamic Resolution", "tactics": ["TA0011"], "skills": ["analyzing-malware", "hunting-threats", "analyzing-network-traffic"] },
     { "id": "T1572", "name": "Protocol Tunneling", "tactics": ["TA0011"], "skills": ["transferring-files", "hunting-threats"] },
-    { "id": "T1132", "name": "Data Encoding", "tactics": ["TA0011"], "skills": ["transferring-files", "analyzing-malware"] },
+    { "id": "T1132", "name": "Data Encoding", "tactics": ["TA0011"], "skills": ["transferring-files", "analyzing-malware", "analyzing-network-traffic"] },
 
     { "id": "T1041", "name": "Exfiltration Over C2 Channel", "tactics": ["TA0010"], "skills": ["transferring-files"] },
-    { "id": "T1048", "name": "Exfiltration Over Alternative Protocol", "tactics": ["TA0010"], "skills": ["transferring-files", "hunting-threats"] },
+    { "id": "T1048", "name": "Exfiltration Over Alternative Protocol", "tactics": ["TA0010"], "skills": ["transferring-files", "hunting-threats", "analyzing-network-traffic"] },
     { "id": "T1567", "name": "Exfiltration Over Web Service", "tactics": ["TA0010"], "skills": ["transferring-files", "hunting-threats"] },
     { "id": "T1030", "name": "Data Transfer Size Limits", "tactics": ["TA0010"], "skills": ["hunting-threats"] },
 

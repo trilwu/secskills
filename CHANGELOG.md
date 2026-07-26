@@ -3,6 +3,39 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.10.0] - 2026-07-26
+
+Defensive depth batch: cloud IR, network forensics, and detection/RE artifacts.
+
+### Added
+
+- `investigating-aws-incidents` — AWS cloud-log DFIR anchored on the compromised
+  principal: CloudTrail `userIdentity`/`sessionContext` triage, IAM-persistence
+  and IMDS-credential-theft signatures, GuardDuty finding triage, anti-forensics
+  (StopLogging/DeleteTrail) defeated by the Organizations trail, and
+  deactivate-not-delete containment. Parallels `investigating-m365-entra`.
+- `analyzing-network-traffic` — PCAP/network forensics: Zeek and Suricata over a
+  capture, `tshark` field extraction, beacon detection, DNS tunneling and DGA,
+  JA3/JA4 and TLS fingerprinting, HTTP/file carving, and exfil hunting.
+- `analyzing-shellcode` — raw position-independent code: emulation with
+  scdbg/speakeasy, disassembly at the right base, decoder-stub unrolling
+  (shikata_ga_nai), PEB-walk/API-hash resolution, and stage/family ID.
+- `writing-yara-rules` — detection authoring for files and memory: string/hex
+  modifiers, durable conditions, the PE/ELF/math modules, the
+  specificity-vs-durability tradeoff, and goodware-corpus FP testing. Parallels
+  `writing-sigma-rules`.
+
+### Changed
+
+- Routing added across `responding-to-incidents`, `analyzing-malware`,
+  `analyzing-binaries`, `engineering-detections`, `hunting-threats`, and
+  `writing-sigma-rules`.
+- ATT&CK index: `analyzing-shellcode` mapped to T1027/T1140/T1620;
+  `analyzing-network-traffic` mapped to T1071/T1071.004/T1573/T1568/T1132/T1048;
+  `writing-yara-rules` and `investigating-aws-incidents` declared `_unmapped`
+  (authoring/investigation methods, consistent with their siblings).
+- `evals/cases.jsonl` grew to 139 trigger-accuracy cases covering all 68 skills.
+
 ## [2.9.0] - 2026-07-26
 
 Procedure-skill batch: web authentication and federation depth.

@@ -23,6 +23,8 @@ Most rules fail the second test, and the cost is paid by whoever is on call.
 - **Searching for an unknown compromise right now** — use `hunting-threats`
 - **Working an active incident** — use `responding-to-incidents`
 - **Analyzing the sample the detection is for** — use `analyzing-malware`
+- **Authoring a file/memory signature** — use `writing-yara-rules`; a
+  log/SIEM rule — use `writing-sigma-rules`
 - **Preventive controls and hardening** — hardening is not detection; a rule
   is not a substitute for closing the path
 
@@ -267,9 +269,9 @@ current ATT&CK release before citing them in a report._
 
 **Command and Control** (TA0011)
 
-- [T1071](https://attack.mitre.org/techniques/T1071/) Application Layer Protocol — see also `analyzing-malware`
-- [T1071.004](https://attack.mitre.org/techniques/T1071/004/) DNS — see also `hunting-threats`
-- [T1573](https://attack.mitre.org/techniques/T1573/) Encrypted Channel — see also `analyzing-malware`
+- [T1071](https://attack.mitre.org/techniques/T1071/) Application Layer Protocol — see also `analyzing-malware`, `analyzing-network-traffic`
+- [T1071.004](https://attack.mitre.org/techniques/T1071/004/) DNS — see also `hunting-threats`, `analyzing-network-traffic`
+- [T1573](https://attack.mitre.org/techniques/T1573/) Encrypted Channel — see also `analyzing-malware`, `analyzing-network-traffic`
 
 Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
 
