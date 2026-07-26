@@ -31,6 +31,9 @@ Activate this skill when the user asks to:
 - **Web application layer specifically** — use `testing-web-applications`
 - **Cloud provider APIs and control plane** — use `exploiting-cloud-platforms`
 - **Passive OSINT before you touch the target** — use `performing-reconnaissance`
+- **ICS/OT protocols on the network** (Modbus/502, DNP3, S7comm/102, OPC UA,
+  BACnet) — use `testing-ics-ot-protocols`; scanning these the way you scan IT
+  services can crash a PLC, and the safety rules differ
 
 ## Core Methodologies
 

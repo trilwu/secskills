@@ -256,7 +256,7 @@ current ATT&CK release before citing them in a report._
 
 **Credential Access** (TA0006)
 
-- [T1552](https://attack.mitre.org/techniques/T1552/) Unsecured Credentials — see also `escalating-linux-privileges`, `exploiting-cloud-platforms`
+- [T1552](https://attack.mitre.org/techniques/T1552/) Unsecured Credentials — see also `escalating-linux-privileges`, `exploiting-cloud-platforms`, `abusing-ci-cd-oidc`
 
 Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
 

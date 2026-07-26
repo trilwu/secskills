@@ -3,6 +3,82 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.7.0] - 2026-07-26
+
+Procedure-skill batches 4-7: Active Directory/identity, cloud/container,
+DFIR/detection, and specialist depth. Fifteen new procedure skills, taking the
+collection to 59 skills. Each triggers on a specific artifact, tool, or symptom
+and hands back to its domain skill.
+
+### Added — Active Directory and identity depth
+
+- `abusing-adcs` — AD Certificate Services abuse across ESC1-ESC16, template
+  and CA misconfiguration, NTLM relay to web enrollment, certificate
+  persistence that survives password resets, and the strong-mapping
+  enforcement level that gates ESC9/ESC10/Certifried.
+- `attacking-kerberos-delegation` — unconstrained delegation with printer-bug
+  coercion, constrained delegation and the rewritable-service-class trick, and
+  RBCD via machine-account creation as the highest-frequency delegation attack.
+- `attacking-entra-id` — Entra ID recon, lockout-safe spraying, PRT and refresh
+  token theft, application/service-principal consent abuse, Conditional Access
+  bypass, cross-tenant guest pivoting, and hybrid-identity (PTA/sync) attacks.
+
+### Added — cloud and container depth
+
+- `attacking-eks-gke-aks` — the seam between cloud IAM and k8s RBAC: pod-to-cloud
+  IMDS on EKS (IMDSv1/v2 hop limit), GKE Workload Identity, AKS pod identity,
+  IRSA/OIDC trust abuse, and node-compromise paths.
+- `attacking-serverless` — the event as the input surface, execution-role abuse
+  as the real target, environment-variable credential theft, `/tmp` and layer
+  persistence, and function-URL/authorizer misconfiguration.
+- `abusing-ci-cd-oidc` — poisoned workflows, OIDC federation with over-broad
+  subject claims turning a repo write into cloud credentials, self-hosted runner
+  compromise, and secret exfiltration from pipeline runs.
+- `escaping-hardened-containers` — what remains when `--privileged` is absent:
+  single-capability escapes, seccomp-profile analysis, cgroup and filesystem
+  paths, runc CVEs (Leaky Vessels), and gVisor/Kata sandbox limits.
+
+### Added — DFIR and detection depth
+
+- `analyzing-memory-images` — Volatility 3 workflow for injected code, in-memory
+  credentials, dead-process network connections, and rootkit/DKOM detection that
+  disk forensics cannot see.
+- `investigating-m365-entra` — cloud-only DFIR where the only evidence is the
+  Unified Audit Log, sign-in logs, and OAuth grants — including which logs exist,
+  which need E5, and how long they last.
+- `analyzing-linux-persistence` — the systematic sweep across every init path
+  (systemd, cron, shell rc, SSH, kernel modules, LD_PRELOAD, package hooks, udev)
+  because the attacker needs only the one you miss.
+- `writing-sigma-rules` — Sigma field taxonomy, the selection/filter pattern,
+  modifiers, backend conversion with pySigma, and specificity without brittleness.
+
+### Added — specialist
+
+- `testing-ics-ot-protocols` — safety-first testing of Modbus, DNP3, S7comm,
+  OPC UA, and BACnet, where active scanning can crash a PLC and exploitation has
+  physical consequences.
+- `analyzing-firmware-images` — extraction with `binwalk`, filesystem carving,
+  cross-architecture disassembly and emulation, and the hardcoded-credentials /
+  CGI-command-injection / unsigned-update baseline.
+- `attacking-bluetooth-nfc` — BLE GATT enumeration and plaintext-characteristic
+  reads, MIFARE Classic (Crypto1) cloning, relay attacks, and RF sniffing.
+- `auditing-mcp-servers` — the MCP server as a privilege boundary where every
+  tool parameter is an indirect-injection surface, with tool-definition review,
+  per-tool authorization, and transport security.
+
+### Changed
+
+- `attacking-active-directory`, `exploiting-cloud-platforms`,
+  `exploiting-containers`, `responding-to-incidents`, `engineering-detections`,
+  `securing-ai-systems`, `analyzing-binaries`, `attacking-wireless-networks`,
+  and `enumerating-network-services` gained routing tables to the new depth
+  skills, so each is reachable from its domain skill.
+- ATT&CK index: seven of the new offensive skills map to Enterprise techniques
+  (added T1648 Serverless Execution; extended T1078.004, T1199, T1528, T1552,
+  T1552.005, T1558, T1610, T1611, T1649). The eight DFIR/detection/specialist
+  procedure skills are declared unmapped with the framework that fits (ICS
+  matrix, ATLAS, or "analysis method, not a technique").
+
 ## [2.6.0] - 2026-07-26
 
 Procedure-skill batch 3: web and API depth.

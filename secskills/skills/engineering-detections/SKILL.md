@@ -26,6 +26,16 @@ Most rules fail the second test, and the cost is paid by whoever is on call.
 - **Preventive controls and hardening** — hardening is not detection; a rule
   is not a substitute for closing the path
 
+## Route to a Depth Skill
+
+| Focus | Skill |
+| --- | --- |
+| Authoring a portable Sigma rule specifically — field taxonomy, modifiers, backend conversion, SigmaHQ standards | `writing-sigma-rules` |
+
+This skill covers the whole detection lifecycle across Sigma, YARA, and
+Suricata; reach for `writing-sigma-rules` when the task is the Sigma rule
+itself and its conversion to a target SIEM.
+
 ## Detect Behaviour, Not Artifacts
 
 Rank what you write by how expensive it is for the adversary to change:

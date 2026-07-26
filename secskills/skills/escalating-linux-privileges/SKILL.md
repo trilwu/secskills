@@ -527,7 +527,7 @@ current ATT&CK release before citing them in a report._
 **Credential Access** (TA0006)
 
 - [T1003.008](https://attack.mitre.org/techniques/T1003/008/) /etc/passwd and /etc/shadow — see also `cracking-passwords`
-- [T1552](https://attack.mitre.org/techniques/T1552/) Unsecured Credentials — see also `exploiting-cloud-platforms`, `auditing-supply-chain`
+- [T1552](https://attack.mitre.org/techniques/T1552/) Unsecured Credentials — see also `exploiting-cloud-platforms`, `auditing-supply-chain`, `abusing-ci-cd-oidc`
 
 **Discovery** (TA0007)
 

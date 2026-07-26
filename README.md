@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 44 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 59 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -108,6 +108,41 @@ identifies the situation, and hands back to the domain skill when done.
 | `reversing-unity-il2cpp` | `global-metadata.dat`, `libil2cpp.so`, `Assembly-CSharp.dll` |
 | `reversing-xamarin-maui` | `libmonodroid.so`, `assemblies.blob`, `libxamarin-app.so` |
 
+### Active Directory and identity procedure skills
+
+| Skill | Triggers on |
+| --- | --- |
+| `abusing-adcs` | A CA in the domain, `certipy find` flagging a template, ESC1-ESC16 |
+| `attacking-kerberos-delegation` | Unconstrained/constrained/RBCD delegation, `GenericWrite` over a computer |
+| `attacking-entra-id` | Entra ID / Azure AD as the target: tokens, PRTs, consent grants, hybrid sync |
+
+### Cloud and container procedure skills
+
+| Skill | Triggers on |
+| --- | --- |
+| `attacking-eks-gke-aks` | A managed Kubernetes cluster: pod-to-cloud IMDS, IRSA/Workload Identity, k8s RBAC |
+| `attacking-serverless` | Lambda / Azure Functions / Cloud Functions / Workers; event injection, execution-role abuse |
+| `abusing-ci-cd-oidc` | GitHub Actions / GitLab CI / Jenkins, OIDC federation with broad trust policies |
+| `escaping-hardened-containers` | Seccomp on, capabilities dropped, `--privileged` absent, obvious escapes blocked |
+
+### DFIR and detection procedure skills
+
+| Skill | Triggers on |
+| --- | --- |
+| `analyzing-memory-images` | A RAM capture to work with Volatility: injected code, in-memory creds |
+| `investigating-m365-entra` | A cloud-only compromise: UAL, sign-in logs, OAuth consent grants, mailbox rules |
+| `analyzing-linux-persistence` | Finding how an attacker persisted on a Linux host across every init path |
+| `writing-sigma-rules` | Authoring a portable Sigma rule: field taxonomy, modifiers, backend conversion |
+
+### Specialist procedure skills
+
+| Skill | Triggers on |
+| --- | --- |
+| `testing-ics-ot-protocols` | Modbus/502, DNP3, S7comm/102, OPC UA, BACnet on a SCADA/OT network |
+| `analyzing-firmware-images` | A firmware update file or dump: `binwalk`, filesystem carving, cross-arch emulation |
+| `attacking-bluetooth-nfc` | BLE GATT enumeration, NFC/MIFARE card cloning, RF sniffing |
+| `auditing-mcp-servers` | Reviewing an MCP server: tool-definition injection, per-tool authorization |
+
 ### Navigation
 
 | Skill | Use it for |
@@ -115,7 +150,7 @@ identifies the situation, and hands back to the domain skill when done.
 | `mapping-attack-techniques` | Resolving an ATT&CK ID, tactic, or intel report to the skill that holds the procedure; purple-team loop and coverage reporting |
 
 Techniques are indexed in [`secskills/ttp-index.json`](secskills/ttp-index.json)
-(139 mapped), which generates the `## ATT&CK Coverage` section in each skill.
+(141 mapped), which generates the `## ATT&CK Coverage` section in each skill.
 CI fails if a section drifts from the index, and skills that use a different
 framework — ATLAS for AI, the Mobile matrix, CWE for code-level work — are
 declared as such rather than counted as coverage.

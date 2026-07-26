@@ -17,7 +17,9 @@ description: Attack WiFi networks using WPA/WPA2 cracking, WPS exploitation, Evi
 
 - **Wired network attacks** — use `enumerating-network-services`
 - **Cracking the captured handshake** — use `cracking-passwords`
-- **Bluetooth, Zigbee, or SDR work beyond Wi-Fi** — outside this skill's scope
+- **Bluetooth (Classic/BLE) or NFC** — use `attacking-bluetooth-nfc` for GATT
+  enumeration, card cloning, and RF sniffing; this skill is Wi-Fi only
+- **Zigbee or general SDR work beyond Wi-Fi** — outside this skill's scope
 - **Post-access network exploitation** — move to `performing-reconnaissance`
   once you are on the network
 
