@@ -29,6 +29,12 @@ then read that carefully.
   specific and generic RE will not get there: `reversing-flutter-apps` for
   `libapp.so`/Dart snapshots, `reversing-unity-il2cpp` for `libil2cpp.so` plus
   `global-metadata.dat`, `reversing-react-native-apps` for Hermes bytecode
+- **A language runtime with its own symbol recovery** — `analyzing-go-binaries`
+  (`pclntab` survives stripping), `analyzing-rust-binaries` (panic strings leak
+  source paths), `analyzing-dotnet-assemblies` (IL decompiles to C#). Reaching
+  for generic RE on these wastes most of the effort
+- **A packed or protected executable** — use `unpacking-protected-binaries`
+  first; there is nothing to disassemble until it is dumped
 
 ## Triage First — Never Open a Disassembler Cold
 

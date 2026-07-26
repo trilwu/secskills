@@ -3,6 +3,32 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.5.0] - 2026-07-26
+
+Procedure-skill batch 2: binary and language-runtime depth.
+
+### Added
+
+- `analyzing-go-binaries` — `pclntab` survives `strip`, so "stripped" Go is
+  fully recoverable; plus `go version -m` as a free SBOM, the pre-1.17 stack
+  calling convention that makes decompilers produce nonsense, and struct tags
+  that hand you the wire protocol.
+- `analyzing-dotnet-assemblies` — identify the obfuscator before fighting it,
+  the seven obfuscation layers and their handling, and memory dumping as the
+  general escape hatch for packed managed code.
+- `analyzing-rust-binaries` — panic strings leak source paths and the crate
+  dependency list before a single instruction is read; monomorphization,
+  `Result`/`Option` returns, and vtable dispatch in the disassembler.
+- `unpacking-protected-binaries` — the dynamic unpacking loop, OEP location
+  signals, import repair as the step that actually fails, TLS callbacks
+  running before the entry point, and treating virtualized functions as black
+  boxes with observable I/O rather than a devirtualization project.
+
+### Changed
+
+- `analyzing-binaries` routes language runtimes and packed executables to the
+  new skills.
+
 ## [2.4.0] - 2026-07-26
 
 Procedure-skill batch 1: the mobile cluster is now complete.

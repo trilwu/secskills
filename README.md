@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 36 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 40 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -73,6 +73,15 @@ load only when relevant, so neither costs anything until it applies.
 | `establishing-persistence` | Post-exploitation persistence |
 | `transferring-files` | File transfer and exfiltration channels |
 | `performing-social-engineering` | Authorized phishing and pretexting |
+
+### Binary and runtime procedure skills
+
+| Skill | Triggers on |
+| --- | --- |
+| `analyzing-go-binaries` | `runtime.main`, `go:buildid`, a huge "stripped" binary |
+| `analyzing-rust-binaries` | `rustc version`, `core::panicking`, `_R`/`_ZN` symbols |
+| `analyzing-dotnet-assemblies` | Managed PE, mangled names, `Assembly.Load` loaders |
+| `unpacking-protected-binaries` | High entropy, three imports, `UPX0`/`.vmp0` sections |
 
 ### Mobile procedure skills
 
