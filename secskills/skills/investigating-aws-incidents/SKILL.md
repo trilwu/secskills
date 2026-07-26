@@ -93,7 +93,7 @@ aws cloudtrail get-event-selectors --trail-name <trail> # data events on?
 | `AssumedRole` | Temporary STS creds | Read `sessionContext.sessionIssuer` for the source role. |
 | `AWSService` | An AWS service acting | Usually benign, but check for spoofed-looking service calls. |
 | `Root` | Root account | Almost never legitimate for API calls. Treat as critical. |
-| `FederatedUser` / `WebIdentityUser` | SAML/OIDC federation | Trace back to the IdP session. |
+| `FederatedUser` / `WebIdentityUser` | `GetFederationToken` broker / OIDC web identity | Trace to the broker's IAM user, or the IdP session. |
 
 For `AssumedRole`, `sessionContext.sessionIssuer.arn` names the role and
 `sessionContext.attributes.mfaAuthenticated` tells you whether MFA was used.

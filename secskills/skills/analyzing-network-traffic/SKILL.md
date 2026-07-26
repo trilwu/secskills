@@ -71,8 +71,10 @@ tshark -r case.pcap -q -z io,phs   # protocol hierarchy — is the snaplen trunc
 - **Trim to a window** before shipping: `editcap -A "2026-07-26 00:00:00" -B
   "2026-07-26 06:00:00" case.pcap window.pcap`.
 - **Anonymize** before sharing externally: `tcprewrite`/`bittwiste` to rewrite
-  addresses, or `editcap -C <bytes>` to chop payload bytes off each packet. Record
-  what you changed so the recipient does not chase your rewrite as an artifact.
+  addresses, or `editcap -s <snaplen>` to truncate each packet to the first
+  `snaplen` bytes (keeping headers, dropping trailing payload); TraceWrangler
+  for deeper header/payload sanitization. Record what you changed so the
+  recipient does not chase your rewrite as an artifact.
 
 Hash the original and work on copies. `sha256sum case.pcap` goes in the case
 notes; the evidence file is read-only from here on.
@@ -222,7 +224,7 @@ they compute interval and size consistency across every pair so you are not
 eyeballing one at a time:
 
 ```bash
-rita import conn.log dns.log case && rita show-beacons case
+rita import --database case --logs ./ && rita view case beacon:'>=90'
 ```
 
 ## DNS Analysis

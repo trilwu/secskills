@@ -94,11 +94,11 @@ fdisk -l /mnt/ewf/ewf1
 
 # Loopback-mount a partition read-only. Offset = start_sector * 512.
 # 206848 * 512 = 105906176
-sudo mount -o ro,noexec,noload,loop,offset=105906176 \
+sudo mount -o ro,noexec,norecover,loop,offset=105906176 \
      /mnt/ewf/ewf1 /mnt/evidence
 ```
 
-`ro,noexec` prevents writes and accidental execution; `noload` stops the kernel
+`ro,noexec` prevents writes and accidental execution; `norecover` stops ntfs-3g
 replaying the NTFS journal (a write) on mount. For ext4 use `ro,noload`; the
 journal replay is the classic way an examiner silently modifies evidence.
 
