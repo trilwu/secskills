@@ -40,7 +40,7 @@ reason to skip the question.
 | --- | --- | --- | --- |
 | Azure Activity Log | Subscription control plane | 90 days unless exported | Every ARM write/action/delete: `roleAssignments`, `runCommand`, `listKeys`, deployments |
 | Resource / diagnostic logs | Per-resource data plane | None until enabled | Blob reads, Key Vault `SecretGet`, NSG flow -- only if a diagnostic setting ships them to a workspace |
-| Log Analytics workspace | Wherever logs are shipped | Workspace-configured | `AzureActivity`, `AzureDiagnostics`, `StorageBlobLogs`, `KeyVaultData` tables |
+| Log Analytics workspace | Wherever logs are shipped | Workspace-configured | `AzureActivity`, `AzureDiagnostics`, `StorageBlobLogs`, `AZKVAuditLogs` tables |
 | Entra sign-in / audit logs | Tenant identity plane | 30 days (export for more) | Who authenticated the SP/MI, from where, CA/MFA context, credential adds |
 | Microsoft Sentinel | Whatever it ingests | Per-table | Correlated hunting across all of the above, incidents, watchlists |
 
@@ -261,7 +261,7 @@ and IPs -- pivot on those even after the raw events have aged out.
   download URL for a full disk image.
 - **Key Vault secret dumps** -- `Microsoft.KeyVault/vaults/read` (`VaultGet`)
   to enumerate, then data-plane `SecretGet` reads (in `AzureDiagnostics` /
-  `KeyVaultData`, only if logging was enabled).
+  `AZKVAuditLogs`, only if logging was enabled).
 
 ```kusto
 // Control-plane data-theft indicators
