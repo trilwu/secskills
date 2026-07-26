@@ -87,10 +87,10 @@ Modifiers change how a string matches. Chain those that combine.
 | `wide` | Match UTF-16LE (two bytes per char) — most Windows strings |
 | `ascii` | Match single-byte form; pair with `wide` to match both |
 | `fullword` | Match only when bounded by non-alphanumeric bytes |
-| `xor` | Match all 255 single-byte XOR-encoded variants |
+| `xor` | Match all 256 single-byte XOR-encoded variants (keys 0x00-0xFF) |
 | `xor(0x01-0xff)` | XOR over a bounded key range |
 | `base64` / `base64wide` | Match the three base64-encoded alignments |
-| `private` | String never contributes to `them`/`for` counts unless named |
+| `private` | Match is never shown in output (`-s`/callback); still counts in `of them` |
 
 `xor` finds strings hidden behind a one-byte key without knowing the key;
 `base64` catches config values embedded in encoded blobs. Both cost scan time —
@@ -269,7 +269,7 @@ nearly every file and collapsing performance. Give every string at least one run
 of 4+ contiguous non-wildcard bytes. `yara -w` warns on slow strings and short
 atoms — treat those warnings as errors. Avoid unbounded and catastrophic regex
 (`.*`, nested quantifiers); prefer bounded classes and jumps. Profile with
-`yara --scan-list` or the `--print-stats` builds when a ruleset drags.
+`yara -S` (`--print-stats`, per-rule statistics) when a ruleset drags.
 
 ## Memory and Process Scanning
 
@@ -279,8 +279,8 @@ payload is unpacked, relocated, and has no on-disk header.
 
 ```bash
 yara -w rule.yar mem.dmp                # scan a memory dump / minidump
-yara -w -p 4242 rule.yar                # scan live process by PID (-p)
-yara -w -D rule.yar 4242                # -D dump matching memory blocks
+yara -w rule.yar 4242                   # scan a live process — the PID is the final argument
+yara -w -s rule.yar 4242                # -s prints which strings matched in the process, and where
 ```
 
 For memory rules, drop the file-magic anchor and the `filesize` bound (a process

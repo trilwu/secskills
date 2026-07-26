@@ -218,8 +218,8 @@ you flipped a single byte in? If not, no forgery skill is required.
   no key knowledge at all.
 
 ```bash
-# jwt_tool includes a check for the blank/zero-signature ECDSA bypass
-python3 jwt_tool.py <token> -X b
+# jwt_tool includes a check for the psychic/zero-signature ECDSA bypass
+python3 jwt_tool.py <token> -X p
 ```
 
 - **EdDSA / ES384 / PS256** — the same RS/HS confusion class applies whenever

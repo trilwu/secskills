@@ -93,7 +93,7 @@ aws cloudtrail get-event-selectors --trail-name <trail> # data events on?
 | `AssumedRole` | Temporary STS creds | Read `sessionContext.sessionIssuer` for the source role. |
 | `AWSService` | An AWS service acting | Usually benign, but check for spoofed-looking service calls. |
 | `Root` | Root account | Almost never legitimate for API calls. Treat as critical. |
-| `FederatedUser` / `WebIdentity` | SAML/OIDC federation | Trace back to the IdP session. |
+| `FederatedUser` / `WebIdentityUser` | SAML/OIDC federation | Trace back to the IdP session. |
 
 For `AssumedRole`, `sessionContext.sessionIssuer.arn` names the role and
 `sessionContext.attributes.mfaAuthenticated` tells you whether MFA was used.
@@ -147,7 +147,9 @@ intrusion:
 aws cloudtrail lookup-events \
   --lookup-attributes AttributeKey=EventName,AttributeValue=CreateAccessKey
 # Repeat for: CreateUser, AttachUserPolicy, PutUserPolicy, CreateLoginProfile,
-#             UpdateAssumeRolePolicy, CreateRole, PassRole, AssumeRole
+#             UpdateAssumeRolePolicy, CreateRole, AssumeRole
+# (iam:PassRole is a permission, not an event -- find it in requestParameters of
+#  RunInstances / CreateFunction, not via lookup-by-EventName)
 ```
 
 ## Persistence Hunting

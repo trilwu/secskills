@@ -59,7 +59,8 @@ The visible email is a rendering. You need the source with all headers.
 - **`.msg` → readable**: `msgconvert sample.msg` produces a `.eml` (RFC822).
 - **Inspect structure**: `emldump.py sample.eml` lists MIME parts and indices;
   `emldump.py -s 4 -d sample.eml` dumps part 4 (an attachment) without opening
-  it. For `.msg`, `oletools`' `msgconvert` or `python-oletools`'s `olefile`.
+  it. A `.msg` is an OLE compound file — `oledump.py` (DidierStevens) lists its
+  streams.
 - **View full headers**: read the top block of the raw file directly, or paste
   into Message Header Analyzer (MHA) / Google's `mha` / MXToolbox Header
   Analyzer for a parsed hop table.
@@ -293,8 +294,9 @@ Detection content for any of these: `engineering-detections`. Proactive search: 
 - `analyzing-network-traffic` — callback traffic from a detonated payload
 - `producing-threat-intelligence` — pivoting IOCs into tracked campaigns
 - `reporting-security-findings` — writing up the triage and verdict
-- `oletools` (olevba, oledump, oleid, rtfobj, msgconvert), `emldump.py`
-  (DidierStevens suite), and `exiftool` for message and attachment parsing
+- `oletools` (olevba, oleid, rtfobj), `oledump.py`/`emldump.py` (DidierStevens
+  suite), `msgconvert` (Email::Outlook::Message, Perl), and `exiftool` for
+  message and attachment parsing
 - Message Header Analyzer (MHA) and MXToolbox for parsing the Received chain
   and querying SPF/DKIM/DMARC records
 - urlscan.io and VirusTotal for URL/file detonation and reputation

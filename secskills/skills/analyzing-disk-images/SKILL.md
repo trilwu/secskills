@@ -39,7 +39,7 @@ image — work on a copy.
 ```bash
 # Acquire to E01 (EWF) with built-in compression and hashing — preferred format
 sudo ewfacquire -t /evidence/host01 -f encase6 -c deflate:fast \
-     -e "IR-2026-014" -E "1" -D "Dell OptiPlex sda" /dev/sda
+     -C "IR-2026-014" -E "1" -D "Dell OptiPlex sda" /dev/sda
 
 # Raw acquisition alternative — dd with error handling, hash inline
 sudo dd if=/dev/sda bs=4M conv=noerror,sync status=progress \
@@ -227,7 +227,7 @@ RECmd.exe --f "/mnt/evidence/Windows/System32/config/SYSTEM" --bn Services.reb
 rip.pl -r /mnt/evidence/Windows/System32/config/SOFTWARE -f software  # RegRipper
 
 # NTFS journals — extract by inode with icat, then parse
-#   $MFT (5), $LogFile (2), $UsnJrnl:$J
+#   $MFT (0), $LogFile (2), $UsnJrnl:$J
 icat -o 206848 /mnt/ewf/ewf1 0-128-1 > /evidence/\$MFT
 MFTECmd.exe -f "/evidence/\$MFT" --csv /evidence/ --csvf mft.csv
 ```
