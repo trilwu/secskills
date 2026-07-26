@@ -406,7 +406,8 @@ current ATT&CK release before citing them in a report._
 
 **Credential Access** (TA0006)
 
-- [T1528](https://attack.mitre.org/techniques/T1528/) Steal Application Access Token — see also `testing-apis`, `exploiting-cloud-platforms`
+- [T1528](https://attack.mitre.org/techniques/T1528/) Steal Application Access Token — see also `testing-apis`, `exploiting-cloud-platforms`, `attacking-oauth-oidc`
+- [T1606.002](https://attack.mitre.org/techniques/T1606/002/) SAML Tokens — see also `attacking-saml`
 
 Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
 

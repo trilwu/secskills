@@ -387,7 +387,7 @@ current ATT&CK release before citing them in a report._
 **Initial Access** (TA0001)
 
 - [T1133](https://attack.mitre.org/techniques/T1133/) External Remote Services _(also Persistence)_
-- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-web-applications`, `testing-apis`, `attacking-graphql`, `attacking-grpc-protobuf`, `exploiting-deserialization`, `exploiting-ssrf`
+- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-web-applications`, `testing-apis`, `attacking-graphql`, `attacking-grpc-protobuf`, `exploiting-deserialization`, `exploiting-ssrf`, `exploiting-xxe`
 
 **Execution** (TA0002)
 

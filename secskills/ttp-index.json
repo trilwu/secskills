@@ -73,7 +73,7 @@
     { "id": "T1588", "name": "Obtain Capabilities", "tactics": ["TA0042"], "skills": ["analyzing-malware"] },
     { "id": "T1608", "name": "Stage Capabilities", "tactics": ["TA0042"], "skills": ["performing-social-engineering", "transferring-files"] },
 
-    { "id": "T1190", "name": "Exploit Public-Facing Application", "tactics": ["TA0001"], "skills": ["testing-web-applications", "testing-apis", "enumerating-network-services", "attacking-graphql", "attacking-grpc-protobuf", "exploiting-deserialization", "exploiting-ssrf"] },
+    { "id": "T1190", "name": "Exploit Public-Facing Application", "tactics": ["TA0001"], "skills": ["testing-web-applications", "testing-apis", "enumerating-network-services", "attacking-graphql", "attacking-grpc-protobuf", "exploiting-deserialization", "exploiting-ssrf", "exploiting-xxe"] },
     { "id": "T1566", "name": "Phishing", "tactics": ["TA0001"], "skills": ["performing-social-engineering"] },
     { "id": "T1566.001", "name": "Spearphishing Attachment", "tactics": ["TA0001"], "skills": ["performing-social-engineering", "analyzing-malware"] },
     { "id": "T1566.002", "name": "Spearphishing Link", "tactics": ["TA0001"], "skills": ["performing-social-engineering"] },
@@ -159,9 +159,11 @@
     { "id": "T1555", "name": "Credentials from Password Stores", "tactics": ["TA0006"], "skills": ["escalating-windows-privileges"] },
     { "id": "T1040", "name": "Network Sniffing", "tactics": ["TA0006", "TA0007"], "skills": ["attacking-wireless-networks", "enumerating-network-services"] },
     { "id": "T1557", "name": "Adversary-in-the-Middle", "tactics": ["TA0006", "TA0009"], "skills": ["attacking-wireless-networks", "attacking-active-directory"] },
-    { "id": "T1528", "name": "Steal Application Access Token", "tactics": ["TA0006"], "skills": ["testing-apis", "exploiting-cloud-platforms", "attacking-entra-id"] },
+    { "id": "T1528", "name": "Steal Application Access Token", "tactics": ["TA0006"], "skills": ["testing-apis", "exploiting-cloud-platforms", "attacking-entra-id", "attacking-oauth-oidc"] },
     { "id": "T1539", "name": "Steal Web Session Cookie", "tactics": ["TA0006"], "skills": ["testing-web-applications"] },
     { "id": "T1649", "name": "Steal or Forge Authentication Certificates", "tactics": ["TA0006"], "skills": ["attacking-active-directory", "abusing-adcs"] },
+    { "id": "T1606", "name": "Forge Web Credentials", "tactics": ["TA0006"], "skills": ["attacking-jwt", "attacking-oauth-oidc"] },
+    { "id": "T1606.002", "name": "SAML Tokens", "tactics": ["TA0006"], "skills": ["attacking-saml", "attacking-entra-id"] },
 
     { "id": "T1087", "name": "Account Discovery", "tactics": ["TA0007"], "skills": ["attacking-active-directory", "exploiting-cloud-platforms"] },
     { "id": "T1046", "name": "Network Service Discovery", "tactics": ["TA0007"], "skills": ["enumerating-network-services"] },
