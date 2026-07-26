@@ -3,6 +3,24 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] - 2026-07-26
+
+### Removed
+
+- **The 10 custom subagents** (`code-auditor`, `dfir-analyst`, `malware-analyst`,
+  `detection-engineer`, `pentester`, `cloud-pentester`, `mobile-pentester`,
+  `recon-specialist`, `red-team-operator`, `web3-auditor`) and the `agents`
+  array in `plugin.json`. They largely mirrored the skill domains 1:1 and mostly
+  delegated methodology back to the skills; with the main loop able to invoke
+  skills directly and spawn subagents on demand, the static roster was redundant
+  surface. The knowledge lives in the 72 skills. This is a breaking change for
+  anyone invoking those agents by name, hence the major version bump.
+
+### Changed
+
+- `validate.py` no longer checks an `agents/` directory; README, CONTRIBUTING,
+  and both manifests drop the subagent references.
+
 ## [2.11.1] - 2026-07-26
 
 Source-grounding and adversarial fact-check pass over the 12 skills added in

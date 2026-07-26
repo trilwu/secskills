@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 72 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills for [Claude Code](https://claude.com/claude-code) — 72 skills covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -167,32 +167,6 @@ Techniques are indexed in [`secskills/ttp-index.json`](secskills/ttp-index.json)
 CI fails if a section drifts from the index, and skills that use a different
 framework — ATLAS for AI, the Mobile matrix, CWE for code-level work — are
 declared as such rather than counted as coverage.
-
-## Subagents
-
-Subagents run multi-step work in their own context. Claude selects them
-automatically, or you can name one.
-
-| Agent | Role |
-| --- | --- |
-| `code-auditor` | Finds exploitable bugs in source and diffs; verifies before reporting |
-| `dfir-analyst` | Answers "how far did they get" and "are they still here" |
-| `malware-analyst` | Triages and reverses samples; produces detection content |
-| `detection-engineer` | Writes and tunes detections; runs hypothesis-driven hunts |
-| `pentester` | Web, network, and Active Directory testing |
-| `cloud-pentester` | AWS, Azure, GCP assessment |
-| `mobile-pentester` | Android and iOS testing |
-| `recon-specialist` | OSINT and attack surface mapping |
-| `red-team-operator` | Post-exploitation and persistence |
-| `web3-auditor` | Smart contract auditing |
-
-```
-"Audit this repo for authorization bugs"            → code-auditor
-"Something's wrong with this server, here's the log" → dfir-analyst
-"What does this binary do?"                          → malware-analyst
-"Turn this intel report into detections"             → detection-engineer
-"Use the cloud-pentester on this AWS account"        → explicit invocation
-```
 
 ## Examples
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate SecSkills plugin structure, skill and agent frontmatter.
+"""Validate SecSkills plugin structure and skill frontmatter.
 
 Runs with no third-party dependencies so it works in any CI image.
 
@@ -19,7 +19,6 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 PLUGIN = REPO / "secskills"
 SKILLS = PLUGIN / "skills"
-AGENTS = PLUGIN / "agents"
 
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 MAX_NAME = 64
@@ -132,36 +131,7 @@ def check_skill(skill_dir: Path) -> None:
             error(f"{rel}/SKILL.md: references missing file '{ref}'")
 
 
-def check_agent(agent_md: Path) -> str | None:
-    rel = agent_md.relative_to(REPO)
-    fm = parse_frontmatter(agent_md)
-    if fm is None:
-        error(f"{rel}: missing or malformed YAML frontmatter")
-        return None
-
-    name = fm.get("name", "")
-    desc = fm.get("description", "")
-
-    if not name:
-        error(f"{rel}: frontmatter is missing 'name'")
-    elif not NAME_RE.match(name):
-        error(f"{rel}: name '{name}' must be lowercase kebab-case")
-    elif name != agent_md.stem:
-        error(f"{rel}: name '{name}' does not match filename '{agent_md.stem}'")
-
-    if not desc:
-        error(f"{rel}: frontmatter is missing 'description'")
-    elif len(desc) < MIN_DESC:
-        warn(f"{rel}: description is short ({len(desc)} chars)")
-
-    model = fm.get("model", "")
-    if model and model not in {"inherit", "opus", "sonnet", "haiku"}:
-        warn(f"{rel}: unexpected model '{model}'")
-
-    return name or None
-
-
-def check_manifests(skill_names: list[str], agent_names: list[str]) -> None:
+def check_manifests(skill_names: list[str]) -> None:
     plugin_json = REPO / ".claude-plugin" / "plugin.json"
     market_json = REPO / ".claude-plugin" / "marketplace.json"
 
@@ -174,16 +144,6 @@ def check_manifests(skill_names: list[str], agent_names: list[str]) -> None:
     for field in ("name", "version", "description"):
         if not plugin.get(field):
             error(f".claude-plugin/plugin.json: missing '{field}'")
-
-    for entry in plugin.get("agents", []):
-        path = PLUGIN / entry.lstrip("./")
-        if not path.is_file():
-            error(f".claude-plugin/plugin.json: agents entry '{entry}' does not exist")
-
-    listed = {Path(e).stem for e in plugin.get("agents", [])}
-    for name in agent_names:
-        if name not in listed:
-            error(f".claude-plugin/plugin.json: agent '{name}' exists on disk but is not listed")
 
     try:
         market = json.loads(market_json.read_text(encoding="utf-8"))
@@ -221,24 +181,18 @@ def main() -> int:
         check_skill(d)
         skill_names.append(d.name)
 
-    agent_names = []
-    for a in sorted(AGENTS.glob("*.md")):
-        name = check_agent(a)
-        if name:
-            agent_names.append(name)
-
     dupes = {n for n in skill_names if skill_names.count(n) > 1}
     if dupes:
         error(f"duplicate skill names: {', '.join(sorted(dupes))}")
 
-    check_manifests(skill_names, agent_names)
+    check_manifests(skill_names)
 
     for w in warnings:
         print(f"warning: {w}")
     for e in errors:
         print(f"error: {e}", file=sys.stderr)
 
-    print(f"\nChecked {len(skill_names)} skills and {len(agent_names)} agents: "
+    print(f"\nChecked {len(skill_names)} skills: "
           f"{len(errors)} error(s), {len(warnings)} warning(s)")
 
     if errors or (args.strict and warnings):

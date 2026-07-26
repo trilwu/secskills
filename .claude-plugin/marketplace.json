@@ -5,15 +5,15 @@
     "url": "https://github.com/trilwu"
   },
   "metadata": {
-    "description": "Marketplace for SecSkills - offensive and defensive security skills and subagents for Claude Code",
-    "version": "2.11.1"
+    "description": "Marketplace for SecSkills - offensive and defensive security skills for Claude Code",
+    "version": "3.0.0"
   },
   "plugins": [
     {
       "name": "secskills",
       "source": "./secskills",
-      "description": "72 security skills and 10 specialized subagents covering source code auditing, PR security review, reverse engineering, malware/shellcode and firmware analysis, memory and disk forensics, Windows endpoint DFIR, network/PCAP forensics, phishing-email analysis, AWS/Azure/M365-Entra incident investigation, detection engineering, Sigma and YARA authoring, threat hunting, threat intelligence, AI/LLM and MCP security, supply chain, cryptography review, penetration testing, red teaming, web auth (JWT, OAuth/OIDC, SAML, XXE), cloud, managed Kubernetes, serverless, CI/CD, Active Directory, Entra ID, mobile, Bluetooth/NFC, ICS/OT, and Web3.",
-      "version": "2.11.1",
+      "description": "72 security skills covering source code auditing, PR security review, reverse engineering, malware/shellcode and firmware analysis, memory and disk forensics, Windows endpoint DFIR, network/PCAP forensics, phishing-email analysis, AWS/Azure/M365-Entra incident investigation, detection engineering, Sigma and YARA authoring, threat hunting, threat intelligence, AI/LLM and MCP security, supply chain, cryptography review, penetration testing, red teaming, web auth (JWT, OAuth/OIDC, SAML, XXE), cloud, managed Kubernetes, serverless, CI/CD, Active Directory, Entra ID, mobile, Bluetooth/NFC, ICS/OT, and Web3.",
+      "version": "3.0.0",
       "category": "security",
       "keywords": [
         "security",
