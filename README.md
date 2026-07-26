@@ -261,10 +261,16 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the authoring standard. Before
 opening a PR:
 
 ```bash
-python3 scripts/validate.py --strict
+python3 scripts/validate.py --strict     # frontmatter, sections, manifests
+python3 scripts/sync_attack.py --check    # ATT&CK sections match the index
+python3 scripts/run_evals.py --check      # every skill has a trigger eval
 ```
 
-CI runs the same check. Contributions must serve authorized security work; no
+CI runs the same three checks. Every new skill must ship with at least one
+trigger-accuracy case in [`evals/cases.jsonl`](evals/README.md) — a realistic
+user request labelled with the skill that should activate, plus a `trap_for`
+case where it sits near an existing skill. This is how routing stays correct as
+the collection grows. Contributions must serve authorized security work; no
 working malware, implants, or evasion tooling.
 
 ## Legal
