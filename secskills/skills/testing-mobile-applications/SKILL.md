@@ -42,6 +42,12 @@ when misread: a Flutter app shows **no traffic at all** in your proxy (it
 ignores the system proxy and CA store), and a React Native or Unity app shows
 a **near-empty dex** with all the logic in `assets/`.
 
+If the proxy fails for any other reason — a TLS handshake alert, or an app
+that reports a network error with the proxy on — go to
+`bypassing-mobile-pinning` before assuming certificate pinning. On Android 7+
+the most common cause is that your CA is installed as a user certificate,
+which apps do not trust by default, and no pinning bypass fixes that.
+
 ## Android Pentesting
 
 ### APK Analysis Tools

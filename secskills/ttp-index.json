@@ -18,6 +18,7 @@
     "reviewing-cryptography": "Pre-attack. Use CWE-310 family",
     "reporting-security-findings": "Process skill, not a technique",
     "mapping-attack-techniques": "Router over this index; it points at other skills rather than covering techniques itself",
+    "bypassing-mobile-pinning": "Procedure skill (TLS interception + objection/Frida/SSL Kill Switch). Tool-and-artifact scoped, not a technique",
     "reversing-flutter-apps": "Procedure skill (Flutter/Dart + blutter). Tool-and-artifact scoped, not a technique",
     "reversing-react-native-apps": "Procedure skill (React Native/Hermes + hbctool). Tool-and-artifact scoped, not a technique",
     "reversing-unity-il2cpp": "Procedure skill (Unity IL2CPP + Il2CppDumper). Tool-and-artifact scoped, not a technique"

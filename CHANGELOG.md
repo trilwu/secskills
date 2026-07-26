@@ -3,6 +3,22 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] - 2026-07-26
+
+### Added
+
+- `bypassing-mobile-pinning` — diagnoses the six distinct causes of a failed
+  mobile TLS interception before reaching for a bypass, then hooks by stack
+  (OkHttp, Conscrypt, WebView, native BoringSSL, Xamarin, Unity, gRPC on
+  Android; NSURLSession, TrustKit, AFNetworking, Alamofire on iOS). Leads with
+  the case that is not pinning at all: Android 7+ does not trust user-installed
+  CAs, so an app with no pinning code still fails interception.
+
+### Changed
+
+- `testing-mobile-applications` routes proxy failures to the new skill before
+  the reader concludes the app pins.
+
 ## [2.2.0] - 2026-07-26
 
 Adds the procedure-skill tier: narrow, tool-and-artifact scoped skills for
