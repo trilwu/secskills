@@ -3,6 +3,31 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] - 2026-07-26
+
+Procedure-skill batch 1: the mobile cluster is now complete.
+
+### Added
+
+- `reversing-xamarin-maui` — the three Xamarin packaging generations
+  (plain DLLs, XALZ-compressed, AssemblyStore blob) and why Frida's Java
+  bridge cannot see Mono methods.
+- `bypassing-root-jailbreak-detection` — separates the four detection layers,
+  leads with environment hiding over hooking, treats Frida detection as its own
+  problem, and states plainly where hardware attestation cannot be hooked at
+  all — with the advice to request an exemption rather than lose days to a TEE.
+- `analyzing-ios-binaries` — FairPlay decryption as the gate everything else
+  depends on, Mach-O load commands, entitlements, Objective-C recovery, and the
+  realistic limits of static Swift analysis.
+- `testing-mobile-ipc` — exported components, content provider SQLi and
+  traversal, intent redirection, PendingIntent hijacking, App Links
+  verification, iOS URL schemes and App Groups.
+
+### Changed
+
+- `testing-mobile-applications` routes to all four, plus Xamarin in the
+  framework-identification table.
+
 ## [2.3.0] - 2026-07-26
 
 ### Added

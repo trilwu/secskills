@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 32 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 36 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -82,9 +82,13 @@ identifies the situation, and hands back to the domain skill when done.
 | Skill | Triggers on |
 | --- | --- |
 | `bypassing-mobile-pinning` | TLS handshake alert, empty proxy, "network error" with the proxy on |
+| `bypassing-root-jailbreak-detection` | App exits on a rooted device, or dies when Frida attaches |
+| `analyzing-ios-binaries` | IPA with `cryptid 1`, Mach-O, `class-dump` returning nothing |
+| `testing-mobile-ipc` | Exported components, deep links, URL schemes, content providers |
 | `reversing-flutter-apps` | `libapp.so`, `libflutter.so`, `flutter_assets/` |
 | `reversing-react-native-apps` | `index.android.bundle`, `libhermes.so`, `main.jsbundle` |
 | `reversing-unity-il2cpp` | `global-metadata.dat`, `libil2cpp.so`, `Assembly-CSharp.dll` |
+| `reversing-xamarin-maui` | `libmonodroid.so`, `assemblies.blob`, `libxamarin-app.so` |
 
 ### Navigation
 
