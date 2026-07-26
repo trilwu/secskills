@@ -3,6 +3,42 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.11.0] - 2026-07-26
+
+Host and SOC forensics batch: endpoint DFIR, disk imaging, email, and Azure IR.
+
+### Added
+
+- `investigating-windows-endpoints` — Windows host DFIR cross-referencing
+  independent artifacts into one timeline: execution evidence (Prefetch,
+  Amcache, Shimcache, SRUM, UserAssist), the event-log workhorses by ID
+  (Security/Sysmon/PowerShell/RDP/WMI), persistence and lateral-movement
+  traces, `$MFT`/USN/`$LogFile` file-system forensics, and super-timelining
+  with Chainsaw/Hayabusa/Plaso. Parallels `analyzing-linux-persistence`.
+- `analyzing-disk-images` — dead-disk forensics from a verified read-only
+  copy: acquisition/integrity, Sleuth Kit `fls`/`icat`/`tsk_recover`, Plaso
+  super-timelines, carving with `photorec`/`bulk_extractor`, and offline hive
+  mining. Parallels `analyzing-memory-images`.
+- `analyzing-phishing-emails` — email forensics that checks each claim against
+  unforgeable evidence: the Received chain, SPF/DKIM/DMARC alignment,
+  lookalike/BEC detection, SafeLinks/URLDefense and QR (quishing) unwrapping,
+  and attachment triage handed off to `analyzing-malware`.
+- `investigating-azure-incidents` — Azure resource/subscription IR anchored on
+  the calling identity: Activity Log KQL, role-assignment and service-principal
+  abuse, managed-identity/IMDS theft, Defender for Cloud triage, data-theft and
+  anti-forensics detection, cross-correlated to Entra. Completes the AWS / Azure
+  / M365-Entra cloud-IR trio.
+
+### Changed
+
+- Routing added across `analyzing-linux-persistence`, `analyzing-memory-images`,
+  `performing-social-engineering`, `investigating-m365-entra`, and
+  `investigating-aws-incidents`.
+- ATT&CK index: `analyzing-phishing-emails` mapped to T1566/T1566.001/T1566.002
+  and T1598; the three investigation/analysis skills declared `_unmapped`
+  consistent with their siblings.
+- `evals/cases.jsonl` grew to 147 trigger-accuracy cases covering all 72 skills.
+
 ## [2.10.0] - 2026-07-26
 
 Defensive depth batch: cloud IR, network forensics, and detection/RE artifacts.

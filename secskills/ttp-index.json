@@ -40,7 +40,10 @@
     "attacking-bluetooth-nfc": "Procedure skill (BLE/NFC RF + Proxmark3/gatttool). Radio-and-hardware scoped, not an Enterprise technique",
     "auditing-mcp-servers": "MITRE ATLAS and the OWASP Top 10 for LLM / Agentic Applications — pre-attack review, not a technique",
     "writing-yara-rules": "Procedure skill (YARA authoring + yarGen/YARA-X). Detection-engineering craft, not a technique",
-    "investigating-aws-incidents": "Procedure skill (AWS CloudTrail/GuardDuty cloud-log DFIR). Investigation method, not a technique"
+    "investigating-aws-incidents": "Procedure skill (AWS CloudTrail/GuardDuty cloud-log DFIR). Investigation method, not a technique",
+    "investigating-azure-incidents": "Procedure skill (Azure Activity Log/Defender for Cloud DFIR). Investigation method, not a technique",
+    "investigating-windows-endpoints": "Procedure skill (Windows host DFIR: EVTX/registry/prefetch/$MFT). Investigation method, not a technique",
+    "analyzing-disk-images": "Procedure skill (dead-disk forensics + Sleuth Kit/Plaso). Analysis method, not a technique"
   },
   "tactics": {
     "TA0043": "Reconnaissance",
@@ -68,7 +71,7 @@
     { "id": "T1593", "name": "Search Open Websites/Domains", "tactics": ["TA0043"], "skills": ["performing-reconnaissance"] },
     { "id": "T1594", "name": "Search Victim-Owned Websites", "tactics": ["TA0043"], "skills": ["performing-reconnaissance"] },
     { "id": "T1596", "name": "Search Open Technical Databases", "tactics": ["TA0043"], "skills": ["performing-reconnaissance"] },
-    { "id": "T1598", "name": "Phishing for Information", "tactics": ["TA0043"], "skills": ["performing-social-engineering"] },
+    { "id": "T1598", "name": "Phishing for Information", "tactics": ["TA0043"], "skills": ["performing-social-engineering", "analyzing-phishing-emails"] },
 
     { "id": "T1583", "name": "Acquire Infrastructure", "tactics": ["TA0042"], "skills": ["performing-social-engineering"] },
     { "id": "T1585", "name": "Establish Accounts", "tactics": ["TA0042"], "skills": ["performing-social-engineering"] },
@@ -76,9 +79,9 @@
     { "id": "T1608", "name": "Stage Capabilities", "tactics": ["TA0042"], "skills": ["performing-social-engineering", "transferring-files"] },
 
     { "id": "T1190", "name": "Exploit Public-Facing Application", "tactics": ["TA0001"], "skills": ["testing-web-applications", "testing-apis", "enumerating-network-services", "attacking-graphql", "attacking-grpc-protobuf", "exploiting-deserialization", "exploiting-ssrf", "exploiting-xxe"] },
-    { "id": "T1566", "name": "Phishing", "tactics": ["TA0001"], "skills": ["performing-social-engineering"] },
-    { "id": "T1566.001", "name": "Spearphishing Attachment", "tactics": ["TA0001"], "skills": ["performing-social-engineering", "analyzing-malware"] },
-    { "id": "T1566.002", "name": "Spearphishing Link", "tactics": ["TA0001"], "skills": ["performing-social-engineering"] },
+    { "id": "T1566", "name": "Phishing", "tactics": ["TA0001"], "skills": ["performing-social-engineering", "analyzing-phishing-emails"] },
+    { "id": "T1566.001", "name": "Spearphishing Attachment", "tactics": ["TA0001"], "skills": ["performing-social-engineering", "analyzing-malware", "analyzing-phishing-emails"] },
+    { "id": "T1566.002", "name": "Spearphishing Link", "tactics": ["TA0001"], "skills": ["performing-social-engineering", "analyzing-phishing-emails"] },
     { "id": "T1078", "name": "Valid Accounts", "tactics": ["TA0001", "TA0003", "TA0004", "TA0005"], "skills": ["cracking-passwords", "attacking-active-directory", "exploiting-cloud-platforms"] },
     { "id": "T1078.004", "name": "Cloud Accounts", "tactics": ["TA0001", "TA0003"], "skills": ["exploiting-cloud-platforms", "attacking-entra-id"] },
     { "id": "T1133", "name": "External Remote Services", "tactics": ["TA0001", "TA0003"], "skills": ["enumerating-network-services"] },

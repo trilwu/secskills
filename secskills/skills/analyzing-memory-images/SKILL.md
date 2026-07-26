@@ -22,6 +22,8 @@ image before it is lost, then asking the right questions in the right order.
 ## When NOT to Use
 
 - **Broader incident response methodology** — use `responding-to-incidents`
+- **You have an acquired disk image, not a RAM capture** — use `analyzing-disk-images`
+- **On-disk artifacts of a live/triage Windows host** — use `investigating-windows-endpoints`
 - **Analyzing a known malware sample on disk** — use `analyzing-malware`
 - **Writing detection rules from your memory findings** — use `engineering-detections`
 

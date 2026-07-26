@@ -17,8 +17,8 @@ description: Conduct phishing campaigns, credential harvesting, pretexting, and 
 
 - **Any campaign without written authorization and a defined scope** — stop
 - **Technical exploitation after a click** — use the relevant post-exploitation skill
-- **Analyzing a phishing email you received** — use `analyzing-malware` for
-  the attachment and `responding-to-incidents` for the wider response
+- **Analyzing a phishing email you received** — use `analyzing-phishing-emails`
+  (headers, links, attachments); `analyzing-malware` for a detonated payload
 
 ## Phishing Infrastructure
 
@@ -438,7 +438,7 @@ current ATT&CK release before citing them in a report._
 
 - [T1589](https://attack.mitre.org/techniques/T1589/) Gather Victim Identity Information — see also `performing-reconnaissance`
 - [T1591](https://attack.mitre.org/techniques/T1591/) Gather Victim Org Information — see also `performing-reconnaissance`
-- [T1598](https://attack.mitre.org/techniques/T1598/) Phishing for Information
+- [T1598](https://attack.mitre.org/techniques/T1598/) Phishing for Information — see also `analyzing-phishing-emails`
 
 **Resource Development** (TA0042)
 
@@ -449,9 +449,9 @@ current ATT&CK release before citing them in a report._
 **Initial Access** (TA0001)
 
 - [T1189](https://attack.mitre.org/techniques/T1189/) Drive-by Compromise
-- [T1566](https://attack.mitre.org/techniques/T1566/) Phishing
-- [T1566.001](https://attack.mitre.org/techniques/T1566/001/) Spearphishing Attachment — see also `analyzing-malware`
-- [T1566.002](https://attack.mitre.org/techniques/T1566/002/) Spearphishing Link
+- [T1566](https://attack.mitre.org/techniques/T1566/) Phishing — see also `analyzing-phishing-emails`
+- [T1566.001](https://attack.mitre.org/techniques/T1566/001/) Spearphishing Attachment — see also `analyzing-malware`, `analyzing-phishing-emails`
+- [T1566.002](https://attack.mitre.org/techniques/T1566/002/) Spearphishing Link — see also `analyzing-phishing-emails`
 
 **Execution** (TA0002)
 

@@ -24,7 +24,9 @@ exist, which ones are missing, and how long they last is half the investigation.
 
 - **Broader incident response methodology** -- use `responding-to-incidents`
 - **Offensive testing of Entra ID** -- use `attacking-entra-id`
-- **Cloud infrastructure beyond M365 (AWS, GCP, Azure IaaS)** -- use `exploiting-cloud-platforms`
+- **An Azure resource/subscription compromise** -- use `investigating-azure-incidents`
+- **An AWS compromise** -- use `investigating-aws-incidents`
+- **Other cloud infrastructure (GCP, offensive testing)** -- use `exploiting-cloud-platforms`
 - **Building detection rules from findings** -- use `engineering-detections`
 
 ## Log Landscape and Retention
