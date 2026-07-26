@@ -344,118 +344,11 @@ nmap -T2 -f target.com  # Slow scan, fragment packets
 nmap -D RND:10 target.com  # Decoy scan
 ```
 
-### 6. Cloud Asset Discovery
+### 6-8. Cloud Assets, Vulnerability Scanning, and Credential Gathering
 
-**AWS S3 Buckets:**
-```bash
-# Check for public buckets
-# Format: bucketname.s3.amazonaws.com
-curl -I https://company.s3.amazonaws.com
-
-# Bucket name wordlist
-# company-backup, company-data, company-dev, etc.
-
-# Tools
-# s3scanner
-python3 s3scanner.py buckets.txt
-
-# awscli
-aws s3 ls s3://bucketname --no-sign-request
-```
-
-**Azure Blobs:**
-```bash
-# Format: accountname.blob.core.windows.net
-curl -I https://company.blob.core.windows.net/container
-
-# MicroBurst (PowerShell)
-Invoke-EnumerateAzureBlobs -Base company
-```
-
-**Google Cloud Storage:**
-```bash
-# Format: storage.googleapis.com/bucketname
-curl -I https://storage.googleapis.com/company-bucket
-
-# GCPBucketBrute
-python3 gcpbucketbrute.py -k company
-```
-
-### 7. Vulnerability Scanning
-
-**Automated Scanners:**
-```bash
-# Nikto (web vulnerabilities)
-nikto -h https://target.com
-
-# Nuclei (template-based)
-nuclei -u https://target.com -t ~/nuclei-templates/
-
-# OpenVAS (comprehensive)
-# Use GUI or command line
-
-# Nessus (commercial)
-# Web-based scanner
-```
-
-**Specific Vulnerability Checks:**
-```bash
-# SSL/TLS
-nmap -p 443 --script ssl-* target.com
-testssl.sh https://target.com
-
-# SQL Injection
-sqlmap -u "https://target.com/page?id=1" --batch
-
-# XSS
-dalfox url https://target.com/search?q=test
-
-# SSRF
-# Manual testing or use Burp Suite
-
-# Directory traversal
-# Test: ../../../../etc/passwd
-```
-
-### 8. Credential Gathering
-
-**Default Credentials:**
-```bash
-# Check default credentials databases
-# - CIRT.net default passwords
-# - DefaultCreds-cheat-sheet
-# - SecLists default credentials
-
-# Common defaults
-admin:admin
-admin:password
-root:root
-admin:Admin123
-```
-
-**Public Repositories:**
-```bash
-# GitHub secrets scanning
-trufflehog https://github.com/company/repo
-
-# GitLeaks
-gitleaks detect --source /path/to/repo
-
-# GitHub dorks
-filename:.env "DB_PASSWORD"
-extension:pem private
-extension:sql mysql dump password
-```
-
-**Metadata Extraction:**
-```bash
-# exiftool
-exiftool document.pdf
-find . -name "*.pdf" -exec exiftool {} \;
-
-# FOCA (Windows)
-# Extract metadata from documents
-```
+Exhaustive command catalogs for cloud storage discovery (S3/Azure/GCS),
+automated and targeted vulnerability scanning, and credential gathering
+have moved to [references/cloud-vuln-credential-tooling.md](references/cloud-vuln-credential-tooling.md).
 
 ### 9. Attack Surface Mapping
 
@@ -536,8 +429,9 @@ mkdir -p target/{nmap,subdomains,web,creds,screenshots}
 # Respect robots.txt during testing phase
 ```
 
-## Reference Links
+## References
 
+- [Cloud, Vulnerability, and Credential Reconnaissance Tooling](references/cloud-vuln-credential-tooling.md) — extracted command catalogs
 - OWASP Testing Guide: https://owasp.org/www-project-web-security-testing-guide/
 - HackTricks Pentesting Methodology: https://book.hacktricks.xyz/generic-methodologies-and-resources/pentesting-methodology
 - SecLists: https://github.com/danielmiessler/SecLists

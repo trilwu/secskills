@@ -1,7 +1,7 @@
 {
   "name": "secskills",
-  "version": "2.7.0",
-  "description": "Security toolkit for Claude Code: 59 skills and 10 specialized subagents spanning offensive security (web, API, Active Directory, Entra ID, Kerberos delegation, AD CS, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, firmware, Web3) and defensive security (source code auditing, PR security review, reverse engineering, malware analysis, memory forensics, DFIR, M365/Entra investigation, detection engineering, Sigma authoring, threat hunting, AI/LLM and MCP security, supply chain, cryptography review, and findings reporting).",
+  "version": "2.8.0",
+  "description": "Security toolkit for Claude Code: 60 skills and 10 specialized subagents spanning offensive security (web, API, Active Directory, Entra ID, Kerberos delegation, AD CS, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, firmware, Web3) and defensive security (source code auditing, PR security review, reverse engineering, malware analysis, memory forensics, DFIR, M365/Entra investigation, detection engineering, Sigma authoring, threat hunting, threat intelligence, AI/LLM and MCP security, supply chain, cryptography review, and findings reporting).",
   "author": {
     "name": "trilwu",
     "url": "https://github.com/trilwu"
