@@ -42,14 +42,20 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-SKILLS = REPO / "secskills" / "skills"
+PLUGIN_DIRS = sorted(p for p in REPO.glob("secskills-*") if (p / "skills").is_dir())
 CASES = REPO / "evals" / "cases.jsonl"
 
 REQUIRED = ("id", "query", "expect_skill", "expected_behavior")
 
 
 def skill_names() -> set[str]:
-    return {d.name for d in SKILLS.iterdir() if d.is_dir() and (d / "SKILL.md").is_file()}
+    names: set[str] = set()
+    for pd in PLUGIN_DIRS:
+        names |= {
+            d.name for d in (pd / "skills").iterdir()
+            if d.is_dir() and (d / "SKILL.md").is_file()
+        }
+    return names
 
 
 def load_cases() -> list[dict]:

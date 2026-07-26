@@ -2,11 +2,31 @@
 
 **Security skills for [Claude Code](https://claude.com/claude-code) — 72 skills covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
+The collection ships as three plugins in one marketplace so you install only
+the side you work: **`secskills-offense`** (36 skills), **`secskills-defense`**
+(17 skills), and **`secskills-core`** (19 dual-use skills — reverse
+engineering, code/crypto review, AI security, ATT&CK mapping, reporting).
+Core is the shared foundation both sides reference; install it alongside
+either.
+
 ```bash
 /plugin marketplace add trilwu/secskills
-/plugin install secskills@secskills-marketplace
+
+# Red team / pentest
+/plugin install secskills-offense@secskills-marketplace
+/plugin install secskills-core@secskills-marketplace
+
+# Blue team / DFIR
+/plugin install secskills-defense@secskills-marketplace
+/plugin install secskills-core@secskills-marketplace
+
+# Or all three
 /reload-plugins
 ```
+
+Skills reference their siblings by name across plugins; a hand-off to a skill
+you did not install is just an inert mention, so nothing breaks — you simply
+get the skills you have.
 
 ---
 
@@ -162,8 +182,9 @@ identifies the situation, and hands back to the domain skill when done.
 | --- | --- |
 | `mapping-attack-techniques` | Resolving an ATT&CK ID, tactic, or intel report to the skill that holds the procedure; purple-team loop and coverage reporting |
 
-Techniques are indexed in [`secskills/ttp-index.json`](secskills/ttp-index.json)
-(143 mapped), which generates the `## ATT&CK Coverage` section in each skill.
+Techniques are indexed in [`secskills-core/ttp-index.json`](secskills-core/ttp-index.json)
+(143 mapped, spanning all three plugins), which generates the `## ATT&CK
+Coverage` section in each skill.
 CI fails if a section drifts from the index, and skills that use a different
 framework — ATLAS for AI, the Mobile matrix, CWE for code-level work — are
 declared as such rather than counted as coverage.

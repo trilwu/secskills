@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate the '## ATT&CK Coverage' section in each mapped SKILL.md.
 
-`secskills/ttp-index.json` is the single source of truth. This script renders
+`secskills-core/ttp-index.json` is the single source of truth. This script renders
 it into each skill between marker comments, so the coverage a skill claims
 cannot drift from the index the router skill reads.
 
@@ -21,9 +21,22 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-PLUGIN = REPO / "secskills"
-SKILLS = PLUGIN / "skills"
-INDEX = PLUGIN / "ttp-index.json"
+INDEX = REPO / "secskills-core" / "ttp-index.json"
+PLUGIN_DIRS = sorted(p for p in REPO.glob("secskills-*") if (p / "skills").is_dir())
+
+
+def skill_paths() -> dict[str, Path]:
+    """Map every skill name to its SKILL.md, across all plugin dirs."""
+    out: dict[str, Path] = {}
+    for pd in PLUGIN_DIRS:
+        for d in sorted((pd / "skills").iterdir()):
+            if d.is_dir() and (d / "SKILL.md").is_file():
+                out[d.name] = d / "SKILL.md"
+    return out
+
+
+# name -> SKILL.md path, spanning secskills-offense/defense/core.
+SKILLS = skill_paths()
 
 START = "<!-- attack:start -->"
 END = "<!-- attack:end -->"
@@ -68,7 +81,7 @@ def validate_index(index: dict) -> list[str]:
         if not row.get("skills"):
             problems.append(f"ttp-index.json: {tid} maps to no skill")
         for skill in row.get("skills", []):
-            if not (SKILLS / skill / "SKILL.md").is_file():
+            if skill not in SKILLS:
                 problems.append(f"ttp-index.json: {tid} maps to unknown skill '{skill}'")
 
         # A sub-technique should not appear without a home tactic its parent lacks.
@@ -80,7 +93,7 @@ def validate_index(index: dict) -> list[str]:
     for skill in index.get("_unmapped", {}):
         if skill.startswith("_") or skill == "note":
             continue
-        if not (SKILLS / skill / "SKILL.md").is_file():
+        if skill not in SKILLS:
             problems.append(f"ttp-index.json: _unmapped references unknown skill '{skill}'")
 
     return problems
@@ -112,7 +125,7 @@ def render(skill: str, rows: list[dict], index: dict) -> str:
         "",
         "## ATT&CK Coverage",
         "",
-        "_Generated from `secskills/ttp-index.json` — edit that file, then run",
+        "_Generated from `secskills-core/ttp-index.json` — edit that file, then run",
         "`python3 scripts/sync_attack.py --write`. Re-verify IDs against the",
         "current ATT&CK release before citing them in a report._",
         "",
@@ -185,7 +198,7 @@ def main() -> int:
     written = 0
 
     for skill, rows in sorted(grouped.items()):
-        path = SKILLS / skill / "SKILL.md"
+        path = SKILLS[skill]
         block = render(skill, rows, index)
         changed, new_text = apply(path, block)
         if not changed:
@@ -198,7 +211,7 @@ def main() -> int:
 
     # A skill must be either mapped or explicitly declared unmapped.
     unmapped = set(k for k in index.get("_unmapped", {}) if k != "note")
-    all_skills = {d.name for d in SKILLS.iterdir() if d.is_dir()}
+    all_skills = set(SKILLS)
     unaccounted = all_skills - set(grouped) - unmapped
     if unaccounted:
         for skill in sorted(unaccounted):
