@@ -26,6 +26,12 @@ description: Test web applications for security vulnerabilities including SQLi, 
   `exploiting-deserialization`
 - **GraphQL or gRPC endpoints** — use `attacking-graphql` or
   `attacking-grpc-protobuf`
+- **A JWT (`eyJ...`) in a header, cookie, or body** — use `attacking-jwt`
+- **An OAuth/OIDC or "Sign in with X" flow** (`/authorize`, `redirect_uri`,
+  `code=`) — use `attacking-oauth-oidc`
+- **SAML SSO** (`SAMLResponse`, `<saml:Assertion>`, `/saml/acs`) — use
+  `attacking-saml`
+- **An endpoint that parses XML, SVG, or Office files** — use `exploiting-xxe`
 
 ## SQL Injection
 
@@ -373,7 +379,7 @@ current ATT&CK release before citing them in a report._
 
 **Initial Access** (TA0001)
 
-- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-apis`, `enumerating-network-services`, `attacking-graphql`, `attacking-grpc-protobuf`, `exploiting-deserialization`, `exploiting-ssrf`
+- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-apis`, `enumerating-network-services`, `attacking-graphql`, `attacking-grpc-protobuf`, `exploiting-deserialization`, `exploiting-ssrf`, `exploiting-xxe`
 
 **Execution** (TA0002)
 

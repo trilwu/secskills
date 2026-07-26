@@ -3,6 +3,35 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.9.0] - 2026-07-26
+
+Procedure-skill batch: web authentication and federation depth.
+
+### Added
+
+- `attacking-jwt` — a JWT is a signature-verification decision the server makes
+  on attacker-supplied bytes: `alg:none`, RS256→HS256 key confusion (with all
+  three public-key acquisition routes), weak-secret cracking, `jku`/`x5u`/`kid`
+  header injection, embedded-`jwk` self-signing, and the ES256 psychic-signature
+  bug.
+- `attacking-oauth-oidc` — the flow is the attack surface: `redirect_uri`
+  validation bypasses, `state` CSRF, PKCE downgrade, code injection/replay,
+  scope and consent abuse, `id_token` validation flaws, and "Sign in with X"
+  account takeover.
+- `attacking-saml` — XML Signature Wrapping (XSW1–XSW8) with SAML Raider,
+  signature stripping, NameID comment injection, assertion replay, and Golden
+  SAML.
+- `exploiting-xxe` — in-band file read, `php://filter`, SSRF-to-metadata, blind
+  out-of-band exfiltration via external DTD, XInclude without a DOCTYPE, and
+  SVG/OOXML document XXE.
+
+### Changed
+
+- `testing-web-applications` and `testing-apis` route to all four.
+- ATT&CK index gained T1606 (Forge Web Credentials) and T1606.002 (SAML Tokens),
+  extended T1190 to `exploiting-xxe`, and T1528 to `attacking-oauth-oidc`.
+- `evals/cases.jsonl` grew to 131 trigger-accuracy cases covering all 64 skills.
+
 ## [2.8.0] - 2026-07-26
 
 Standards pass: aligns the collection with Anthropic's Agent Skills authoring

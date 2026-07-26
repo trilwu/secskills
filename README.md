@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 60 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 64 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -83,6 +83,10 @@ load only when relevant, so neither costs anything until it applies.
 | `exploiting-deserialization` | `rO0AB`, `AAEAAAD`, `O:`, `gAJ` in a cookie or parameter |
 | `attacking-graphql` | `/graphql`, a `query`/`mutation` body, `{data, errors}` envelope |
 | `attacking-grpc-protobuf` | HTTP/2 with `application/grpc`, opaque binary bodies |
+| `attacking-jwt` | A token starting `eyJ` in a header, cookie, or body |
+| `attacking-oauth-oidc` | `/authorize`, `redirect_uri`, `state=`, "Sign in with X", OIDC discovery |
+| `attacking-saml` | `SAMLResponse`, `<saml:Assertion>`, `/saml/acs`, IdP federation |
+| `exploiting-xxe` | An endpoint parsing XML, SOAP, SVG, or Office (OOXML) files |
 
 ### Binary and runtime procedure skills
 
@@ -151,7 +155,7 @@ identifies the situation, and hands back to the domain skill when done.
 | `mapping-attack-techniques` | Resolving an ATT&CK ID, tactic, or intel report to the skill that holds the procedure; purple-team loop and coverage reporting |
 
 Techniques are indexed in [`secskills/ttp-index.json`](secskills/ttp-index.json)
-(141 mapped), which generates the `## ATT&CK Coverage` section in each skill.
+(143 mapped), which generates the `## ATT&CK Coverage` section in each skill.
 CI fails if a section drifts from the index, and skills that use a different
 framework — ATLAS for AI, the Mobile matrix, CWE for code-level work — are
 declared as such rather than counted as coverage.
