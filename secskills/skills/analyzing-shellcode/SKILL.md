@@ -130,7 +130,7 @@ try to read the body statically — disassemble only the stub, then let it run.
 
 ```bash
 # scdbg dumps the decoded buffer and unpacks the second stage for x86 Windows
-scdbg -f sc.bin -s -1 /dev/stdout        # -s -1 runs to completion
+scdbg -f sc.bin -s -1                     # -s -1 lifts the step limit (default 2M)
 scdbg -f sc.bin -d                       # dump self-modified/decoded memory
 ```
 
@@ -178,8 +178,8 @@ scdbg -f sc.bin /findsc                  # brute-force the correct start offset
 scdbg -f sc.bin -foff 0x1a               # force entry at a known offset
 
 # speakeasy — emulate x86/x64 shellcode or a raw module
-speakeasy -t sc.bin -r -a x86            # -r raw shellcode, -a arch
-speakeasy -t sc.bin -r -a x64 -o report.json
+speakeasy -t sc.bin --raw --arch x86     # --raw shellcode, --arch x86|amd64
+speakeasy -t sc.bin --raw --arch amd64 -o report.json
 ```
 
 For custom logic or non-Windows targets, build a harness:

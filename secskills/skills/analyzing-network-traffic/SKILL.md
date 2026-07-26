@@ -71,7 +71,7 @@ tshark -r case.pcap -q -z io,phs   # protocol hierarchy — is the snaplen trunc
 - **Trim to a window** before shipping: `editcap -A "2026-07-26 00:00:00" -B
   "2026-07-26 06:00:00" case.pcap window.pcap`.
 - **Anonymize** before sharing externally: `tcprewrite`/`bittwiste` to rewrite
-  addresses, or `editcap` to strip payloads (`--seed` / `-C` scrubbing). Record
+  addresses, or `editcap -C <bytes>` to chop payload bytes off each packet. Record
   what you changed so the recipient does not chase your rewrite as an artifact.
 
 Hash the original and work on copies. `sha256sum case.pcap` goes in the case
@@ -136,8 +136,8 @@ move on any capture bigger than a few thousand packets.
 
 ```bash
 zeek -r case.pcap
-# Or with the community-id plugin for cross-tool pivoting:
-zeek -r case.pcap LogAscii::use_json=F Community::pluginload
+# Or add the community-id field for cross-tool pivoting:
+zeek -r case.pcap policy/protocols/conn/community-id-logging
 ls   # conn.log dns.log http.log ssl.log x509.log files.log notice.log weird.log ...
 ```
 
