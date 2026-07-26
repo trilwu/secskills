@@ -149,15 +149,16 @@ by a hash of their names. Recognizing this is often the whole analysis.
   system DLLs and look up the constants you see:
 
 ```bash
-# Reproduce ror13 (Metasploit) and match a target constant to an export name
+# Reproduce Metasploit block_api ror13 — the constant is hash(module)+hash(name)
 python3 - <<'PY'
-def ror13(s):
+def ror13(b):
     h=0
-    for c in (s+'\0').encode('ascii'):
+    for c in b:
         h=((h>>13)|(h<<19))&0xffffffff; h=(h+c)&0xffffffff
     return h
+mod=ror13("KERNEL32.DLL\0".encode('utf-16le'))   # module: UTF-16LE, uppercased
 for api in ("LoadLibraryA","GetProcAddress","WinExec","VirtualAlloc"):
-    print(hex(ror13(api)), api)
+    print(hex((ror13((api+"\0").encode('ascii'))+mod)&0xffffffff), api)
 PY
 ```
 
