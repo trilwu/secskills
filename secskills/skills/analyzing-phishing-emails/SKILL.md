@@ -103,8 +103,8 @@ trusting a summary.
 
 ```
 Authentication-Results: mx.recipient.com;
-  spf=pass (sender IP is 203.0.113.9) smtp.mailfrom=bounce.contoso.com;
-  dkim=pass header.d=contoso.com header.s=selector1;
+  spf=pass (sender IP is 185.220.101.5) smtp.mailfrom=bounce.sketchy-vps.ru;
+  dkim=pass header.d=sketchy-vps.ru header.s=selector1;
   dmarc=fail (p=reject sp=reject dis=none) header.from=contoso.com
 ```
 
