@@ -64,7 +64,7 @@
     { "id": "T1588", "name": "Obtain Capabilities", "tactics": ["TA0042"], "skills": ["analyzing-malware"] },
     { "id": "T1608", "name": "Stage Capabilities", "tactics": ["TA0042"], "skills": ["performing-social-engineering", "transferring-files"] },
 
-    { "id": "T1190", "name": "Exploit Public-Facing Application", "tactics": ["TA0001"], "skills": ["testing-web-applications", "testing-apis", "enumerating-network-services"] },
+    { "id": "T1190", "name": "Exploit Public-Facing Application", "tactics": ["TA0001"], "skills": ["testing-web-applications", "testing-apis", "enumerating-network-services", "attacking-graphql", "attacking-grpc-protobuf", "exploiting-deserialization", "exploiting-ssrf"] },
     { "id": "T1566", "name": "Phishing", "tactics": ["TA0001"], "skills": ["performing-social-engineering"] },
     { "id": "T1566.001", "name": "Spearphishing Attachment", "tactics": ["TA0001"], "skills": ["performing-social-engineering", "analyzing-malware"] },
     { "id": "T1566.002", "name": "Spearphishing Link", "tactics": ["TA0001"], "skills": ["performing-social-engineering"] },
@@ -145,6 +145,7 @@
     { "id": "T1558.003", "name": "Kerberoasting", "tactics": ["TA0006"], "skills": ["attacking-active-directory", "cracking-passwords"] },
     { "id": "T1558.004", "name": "AS-REP Roasting", "tactics": ["TA0006"], "skills": ["attacking-active-directory"] },
     { "id": "T1552", "name": "Unsecured Credentials", "tactics": ["TA0006"], "skills": ["escalating-linux-privileges", "exploiting-cloud-platforms", "auditing-supply-chain"] },
+    { "id": "T1552.005", "name": "Cloud Instance Metadata API", "tactics": ["TA0006"], "skills": ["exploiting-ssrf", "exploiting-cloud-platforms"] },
     { "id": "T1555", "name": "Credentials from Password Stores", "tactics": ["TA0006"], "skills": ["escalating-windows-privileges"] },
     { "id": "T1040", "name": "Network Sniffing", "tactics": ["TA0006", "TA0007"], "skills": ["attacking-wireless-networks", "enumerating-network-services"] },
     { "id": "T1557", "name": "Adversary-in-the-Middle", "tactics": ["TA0006", "TA0009"], "skills": ["attacking-wireless-networks", "attacking-active-directory"] },

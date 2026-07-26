@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 40 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 44 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -73,6 +73,15 @@ load only when relevant, so neither costs anything until it applies.
 | `establishing-persistence` | Post-exploitation persistence |
 | `transferring-files` | File transfer and exfiltration channels |
 | `performing-social-engineering` | Authorized phishing and pretexting |
+
+### Web and API procedure skills
+
+| Skill | Triggers on |
+| --- | --- |
+| `exploiting-ssrf` | Any feature that fetches a user-supplied URL; webhooks, importers, renderers |
+| `exploiting-deserialization` | `rO0AB`, `AAEAAAD`, `O:`, `gAJ` in a cookie or parameter |
+| `attacking-graphql` | `/graphql`, a `query`/`mutation` body, `{data, errors}` envelope |
+| `attacking-grpc-protobuf` | HTTP/2 with `application/grpc`, opaque binary bodies |
 
 ### Binary and runtime procedure skills
 
