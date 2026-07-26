@@ -35,12 +35,22 @@ unzip -l target.apk | rg 'libflutter|libapp\.so|index\.android\.bundle|libhermes
 | `libflutter.so`, `libapp.so`, `flutter_assets/` | Flutter / Dart | `reversing-flutter-apps` |
 | `index.android.bundle`, `libhermes.so`, `main.jsbundle` | React Native | `reversing-react-native-apps` |
 | `global-metadata.dat`, `libil2cpp.so`, `Assembly-CSharp.dll` | Unity | `reversing-unity-il2cpp` |
+| `libmonodroid.so`, `assemblies.blob`, `libxamarin-app.so` | Xamarin / .NET MAUI | `reversing-xamarin-maui` |
 | `classes*.dex` with real application packages | Native Android | continue here |
 
 Two framework symptoms are worth naming, because they waste the most time
 when misread: a Flutter app shows **no traffic at all** in your proxy (it
 ignores the system proxy and CA store), and a React Native or Unity app shows
 a **near-empty dex** with all the logic in `assets/`.
+
+Three more procedure skills split out of this one, because each needs far more
+detail than a general assessment can carry:
+
+| Situation | Skill |
+| --- | --- |
+| App exits on a rooted device, or dies when Frida attaches | `bypassing-root-jailbreak-detection` |
+| iOS binary work: FairPlay decryption, Mach-O, class-dump, entitlements | `analyzing-ios-binaries` |
+| Exported components, deep links, URL schemes, content providers | `testing-mobile-ipc` |
 
 If the proxy fails for any other reason — a TLS handshake alert, or an app
 that reports a network error with the proxy on — go to

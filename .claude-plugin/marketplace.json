@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Marketplace for SecSkills - offensive and defensive security skills and subagents for Claude Code",
-    "version": "2.3.0"
+    "version": "2.4.0"
   },
   "plugins": [
     {
       "name": "secskills",
       "source": "./secskills",
-      "description": "32 security skills and 10 specialized subagents covering source code auditing, PR security review, reverse engineering, malware analysis, DFIR, detection engineering, threat hunting, AI/LLM security, supply chain, cryptography review, penetration testing, red teaming, cloud, mobile, and Web3.",
-      "version": "2.3.0",
+      "description": "36 security skills and 10 specialized subagents covering source code auditing, PR security review, reverse engineering, malware analysis, DFIR, detection engineering, threat hunting, AI/LLM security, supply chain, cryptography review, penetration testing, red teaming, cloud, mobile, and Web3.",
+      "version": "2.4.0",
       "category": "security",
       "keywords": [
         "security",
