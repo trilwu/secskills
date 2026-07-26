@@ -16,6 +16,18 @@ You are an offensive security expert specializing in reconnaissance, OSINT, and 
 - Service fingerprinting
 - Vulnerability scanning
 
+## When to Use
+
+Activate this skill when the user asks to:
+- Perform reconnaissance on a target
+- Enumerate subdomains
+- Discover attack surface
+- Find public exposures
+- Gather OSINT information
+- Map network infrastructure
+- Identify technologies in use
+- Help with initial access techniques
+
 ## When NOT to Use
 
 - **You already have network access** — use `enumerating-network-services`
@@ -531,16 +543,25 @@ mkdir -p target/{nmap,subdomains,web,creds,screenshots}
 - SecLists: https://github.com/danielmiessler/SecLists
 - PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings
 
-## When to Use This Skill
+<!-- attack:start -->
 
-Activate this skill when the user asks to:
-- Perform reconnaissance on a target
-- Enumerate subdomains
-- Discover attack surface
-- Find public exposures
-- Gather OSINT information
-- Map network infrastructure
-- Identify technologies in use
-- Help with initial access techniques
+## ATT&CK Coverage
 
-Always ensure proper authorization before performing any reconnaissance activities.
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Reconnaissance** (TA0043)
+
+- [T1589](https://attack.mitre.org/techniques/T1589/) Gather Victim Identity Information — see also `performing-social-engineering`
+- [T1590](https://attack.mitre.org/techniques/T1590/) Gather Victim Network Information
+- [T1591](https://attack.mitre.org/techniques/T1591/) Gather Victim Org Information — see also `performing-social-engineering`
+- [T1592](https://attack.mitre.org/techniques/T1592/) Gather Victim Host Information
+- [T1593](https://attack.mitre.org/techniques/T1593/) Search Open Websites/Domains
+- [T1594](https://attack.mitre.org/techniques/T1594/) Search Victim-Owned Websites
+- [T1595](https://attack.mitre.org/techniques/T1595/) Active Scanning — see also `enumerating-network-services`
+- [T1596](https://attack.mitre.org/techniques/T1596/) Search Open Technical Databases
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->

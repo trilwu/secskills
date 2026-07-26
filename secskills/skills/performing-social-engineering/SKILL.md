@@ -426,6 +426,42 @@ Teach users to recognize:
 - Report findings responsibly
 - Delete data after engagement
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Reconnaissance** (TA0043)
+
+- [T1589](https://attack.mitre.org/techniques/T1589/) Gather Victim Identity Information — see also `performing-reconnaissance`
+- [T1591](https://attack.mitre.org/techniques/T1591/) Gather Victim Org Information — see also `performing-reconnaissance`
+- [T1598](https://attack.mitre.org/techniques/T1598/) Phishing for Information
+
+**Resource Development** (TA0042)
+
+- [T1583](https://attack.mitre.org/techniques/T1583/) Acquire Infrastructure
+- [T1585](https://attack.mitre.org/techniques/T1585/) Establish Accounts
+- [T1608](https://attack.mitre.org/techniques/T1608/) Stage Capabilities — see also `transferring-files`
+
+**Initial Access** (TA0001)
+
+- [T1189](https://attack.mitre.org/techniques/T1189/) Drive-by Compromise
+- [T1566](https://attack.mitre.org/techniques/T1566/) Phishing
+- [T1566.001](https://attack.mitre.org/techniques/T1566/001/) Spearphishing Attachment — see also `analyzing-malware`
+- [T1566.002](https://attack.mitre.org/techniques/T1566/002/) Spearphishing Link
+
+**Execution** (TA0002)
+
+- [T1203](https://attack.mitre.org/techniques/T1203/) Exploitation for Client Execution — see also `analyzing-malware`
+- [T1204](https://attack.mitre.org/techniques/T1204/) User Execution
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - https://book.hacktricks.xyz/generic-methodologies-and-resources/phishing-methodology

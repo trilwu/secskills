@@ -214,6 +214,26 @@ An RE report should let a reader act without repeating your work:
 - **Indicators** — network endpoints, file paths, mutexes, keys, constants
 - **Open questions** — what you did not resolve, and why
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Defense Evasion** (TA0005)
+
+- [T1027](https://attack.mitre.org/techniques/T1027/) Obfuscated Files or Information — see also `analyzing-malware`
+- [T1027.002](https://attack.mitre.org/techniques/T1027/002/) Software Packing — see also `analyzing-malware`
+- [T1140](https://attack.mitre.org/techniques/T1140/) Deobfuscate/Decode Files or Information — see also `analyzing-malware`
+- [T1497](https://attack.mitre.org/techniques/T1497/) Virtualization/Sandbox Evasion — see also `analyzing-malware`
+- [T1622](https://attack.mitre.org/techniques/T1622/) Debugger Evasion — see also `analyzing-malware`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - `analyzing-malware` — containment, detonation, and IOC extraction

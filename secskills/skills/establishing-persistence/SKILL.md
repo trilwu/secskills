@@ -519,6 +519,42 @@ find / -name ".*"
 - **SILENTTRINITY** - Modern C2 framework
 - **Covenant** - .NET C2 framework
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Execution** (TA0002)
+
+- [T1053](https://attack.mitre.org/techniques/T1053/) Scheduled Task/Job _(also Persistence, Privilege Escalation)_
+
+**Persistence** (TA0003)
+
+- [T1053.003](https://attack.mitre.org/techniques/T1053/003/) Cron — see also `escalating-linux-privileges`
+- [T1053.005](https://attack.mitre.org/techniques/T1053/005/) Scheduled Task
+- [T1098](https://attack.mitre.org/techniques/T1098/) Account Manipulation _(also Privilege Escalation)_ — see also `attacking-active-directory`
+- [T1136](https://attack.mitre.org/techniques/T1136/) Create Account — see also `attacking-active-directory`
+- [T1505.003](https://attack.mitre.org/techniques/T1505/003/) Web Shell — see also `testing-web-applications`
+- [T1543](https://attack.mitre.org/techniques/T1543/) Create or Modify System Process _(also Privilege Escalation)_
+- [T1543.002](https://attack.mitre.org/techniques/T1543/002/) Systemd Service — see also `escalating-linux-privileges`
+- [T1543.003](https://attack.mitre.org/techniques/T1543/003/) Windows Service — see also `escalating-windows-privileges`
+- [T1546](https://attack.mitre.org/techniques/T1546/) Event Triggered Execution _(also Privilege Escalation)_
+- [T1546.003](https://attack.mitre.org/techniques/T1546/003/) Windows Management Instrumentation Event Subscription — see also `hunting-threats`
+- [T1547](https://attack.mitre.org/techniques/T1547/) Boot or Logon Autostart Execution _(also Privilege Escalation)_
+- [T1547.001](https://attack.mitre.org/techniques/T1547/001/) Registry Run Keys / Startup Folder
+- [T1556](https://attack.mitre.org/techniques/T1556/) Modify Authentication Process _(also Credential Access)_ — see also `attacking-active-directory`
+
+**Defense Evasion** (TA0005)
+
+- [T1036](https://attack.mitre.org/techniques/T1036/) Masquerading — see also `hunting-threats`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - https://attack.mitre.org/tactics/TA0003/

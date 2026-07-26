@@ -358,6 +358,34 @@ paramspider -d target.com
 - File upload bypasses
 - Command injection in system utilities
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Initial Access** (TA0001)
+
+- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-apis`, `enumerating-network-services`
+
+**Execution** (TA0002)
+
+- [T1059](https://attack.mitre.org/techniques/T1059/) Command and Scripting Interpreter — see also `enumerating-network-services`
+
+**Persistence** (TA0003)
+
+- [T1505.003](https://attack.mitre.org/techniques/T1505/003/) Web Shell — see also `establishing-persistence`
+
+**Credential Access** (TA0006)
+
+- [T1539](https://attack.mitre.org/techniques/T1539/) Steal Web Session Cookie
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 See HackTricks for detailed techniques:

@@ -16,6 +16,18 @@ You are a Windows security expert specializing in privilege escalation technique
 - Scheduled task abuse
 - Windows credential dumping
 
+## When to Use
+
+Activate this skill when the user asks to:
+- Escalate privileges on Windows systems
+- Enumerate Windows privilege escalation vectors
+- Exploit Windows service misconfigurations
+- Perform token manipulation attacks
+- Bypass UAC
+- Dump Windows credentials
+- Analyze Windows security misconfigurations
+- Help with Windows penetration testing
+
 ## When NOT to Use
 
 - **Linux or macOS hosts** — use `escalating-linux-privileges`
@@ -484,16 +496,49 @@ Invoke-PrivescCheck -Extended
 - PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md
 - LOLBAS Project: https://lolbas-project.github.io/
 
-## When to Use This Skill
+<!-- attack:start -->
 
-Activate this skill when the user asks to:
-- Escalate privileges on Windows systems
-- Enumerate Windows privilege escalation vectors
-- Exploit Windows service misconfigurations
-- Perform token manipulation attacks
-- Bypass UAC
-- Dump Windows credentials
-- Analyze Windows security misconfigurations
-- Help with Windows penetration testing
+## ATT&CK Coverage
 
-Always ensure proper authorization before performing privilege escalation on any system.
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Execution** (TA0002)
+
+- [T1047](https://attack.mitre.org/techniques/T1047/) Windows Management Instrumentation — see also `attacking-active-directory`
+- [T1059.001](https://attack.mitre.org/techniques/T1059/001/) PowerShell — see also `analyzing-malware`
+- [T1569](https://attack.mitre.org/techniques/T1569/) System Services — see also `attacking-active-directory`
+
+**Persistence** (TA0003)
+
+- [T1543.003](https://attack.mitre.org/techniques/T1543/003/) Windows Service — see also `establishing-persistence`
+- [T1574](https://attack.mitre.org/techniques/T1574/) Hijack Execution Flow _(also Privilege Escalation, Defense Evasion)_
+
+**Privilege Escalation** (TA0004)
+
+- [T1055](https://attack.mitre.org/techniques/T1055/) Process Injection _(also Defense Evasion)_ — see also `analyzing-malware`
+- [T1068](https://attack.mitre.org/techniques/T1068/) Exploitation for Privilege Escalation — see also `escalating-linux-privileges`
+- [T1134](https://attack.mitre.org/techniques/T1134/) Access Token Manipulation _(also Defense Evasion)_
+- [T1548](https://attack.mitre.org/techniques/T1548/) Abuse Elevation Control Mechanism _(also Defense Evasion)_ — see also `escalating-linux-privileges`
+- [T1548.002](https://attack.mitre.org/techniques/T1548/002/) Bypass User Account Control
+- [T1574.001](https://attack.mitre.org/techniques/T1574/001/) DLL
+
+**Defense Evasion** (TA0005)
+
+- [T1218](https://attack.mitre.org/techniques/T1218/) System Binary Proxy Execution — see also `hunting-threats`
+
+**Credential Access** (TA0006)
+
+- [T1003.002](https://attack.mitre.org/techniques/T1003/002/) Security Account Manager — see also `cracking-passwords`
+- [T1555](https://attack.mitre.org/techniques/T1555/) Credentials from Password Stores
+
+**Discovery** (TA0007)
+
+- [T1082](https://attack.mitre.org/techniques/T1082/) System Information Discovery — see also `escalating-linux-privileges`
+- [T1083](https://attack.mitre.org/techniques/T1083/) File and Directory Discovery — see also `escalating-linux-privileges`
+- [T1518](https://attack.mitre.org/techniques/T1518/) Software Discovery
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->

@@ -16,6 +16,18 @@ You are an API security expert specializing in REST, GraphQL, and API pentesting
 - Mass assignment vulnerabilities
 - API documentation discovery
 
+## When to Use
+
+Activate this skill when the user asks to:
+- Test REST or GraphQL APIs
+- Find API vulnerabilities
+- Bypass API authentication/authorization
+- Discover API endpoints
+- Test API business logic
+- Perform API fuzzing
+- Analyze API documentation
+- Help with API penetration testing
+
 ## When NOT to Use
 
 - **Source code is available** — use `auditing-code-for-vulnerabilities`
@@ -560,16 +572,22 @@ for i in {1..100}; do curl https://api.target.com/endpoint; sleep 1; done
 - API Security Best Practices: https://github.com/OWASP/API-Security
 - PayloadsAllTheThings API: https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/API%20Key%20Leaks
 
-## When to Use This Skill
+<!-- attack:start -->
 
-Activate this skill when the user asks to:
-- Test REST or GraphQL APIs
-- Find API vulnerabilities
-- Bypass API authentication/authorization
-- Discover API endpoints
-- Test API business logic
-- Perform API fuzzing
-- Analyze API documentation
-- Help with API penetration testing
+## ATT&CK Coverage
 
-Always ensure proper authorization before testing any API.
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Initial Access** (TA0001)
+
+- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-web-applications`, `enumerating-network-services`
+
+**Credential Access** (TA0006)
+
+- [T1528](https://attack.mitre.org/techniques/T1528/) Steal Application Access Token — see also `exploiting-cloud-platforms`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->

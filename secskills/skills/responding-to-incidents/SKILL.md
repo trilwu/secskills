@@ -248,6 +248,42 @@ Postmortems are blameless: they analyze the control and process failures, not
 the person who clicked. A postmortem that names an individual as the cause
 produces silence in the next incident.
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Persistence** (TA0003)
+
+- [T1098.001](https://attack.mitre.org/techniques/T1098/001/) Additional Cloud Credentials — see also `exploiting-cloud-platforms`
+- [T1098.002](https://attack.mitre.org/techniques/T1098/002/) Additional Email Delegate Permissions
+
+**Defense Evasion** (TA0005)
+
+- [T1070](https://attack.mitre.org/techniques/T1070/) Indicator Removal
+- [T1070.001](https://attack.mitre.org/techniques/T1070/001/) Clear Windows Event Logs — see also `hunting-threats`
+- [T1070.006](https://attack.mitre.org/techniques/T1070/006/) Timestomp
+- [T1562](https://attack.mitre.org/techniques/T1562/) Impair Defenses — see also `hunting-threats`
+- [T1562.001](https://attack.mitre.org/techniques/T1562/001/) Disable or Modify Tools — see also `hunting-threats`
+
+**Collection** (TA0009)
+
+- [T1114](https://attack.mitre.org/techniques/T1114/) Email Collection
+
+**Impact** (TA0040)
+
+- [T1485](https://attack.mitre.org/techniques/T1485/) Data Destruction
+- [T1486](https://attack.mitre.org/techniques/T1486/) Data Encrypted for Impact — see also `analyzing-malware`
+- [T1489](https://attack.mitre.org/techniques/T1489/) Service Stop
+- [T1490](https://attack.mitre.org/techniques/T1490/) Inhibit System Recovery — see also `hunting-threats`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - `analyzing-malware` — sample analysis feeding scoping and IOCs

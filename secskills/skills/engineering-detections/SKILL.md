@@ -243,6 +243,28 @@ can be shared or upstreamed without leaking your environment.
 - *"No alerts means we're clean."* No alerts means no alerts. Validate with
   emulation.
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Credential Access** (TA0006)
+
+- [T1003.001](https://attack.mitre.org/techniques/T1003/001/) LSASS Memory — see also `attacking-active-directory`
+
+**Command and Control** (TA0011)
+
+- [T1071](https://attack.mitre.org/techniques/T1071/) Application Layer Protocol — see also `analyzing-malware`
+- [T1071.004](https://attack.mitre.org/techniques/T1071/004/) DNS — see also `hunting-threats`
+- [T1573](https://attack.mitre.org/techniques/T1573/) Encrypted Channel — see also `analyzing-malware`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - `hunting-threats` — hunts that mature into detections

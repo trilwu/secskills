@@ -195,6 +195,54 @@ Outputs:                <detection rule ID, telemetry gap ticket, baseline doc>
 Limitations:            <what this hunt could not have seen>
 ```
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Persistence** (TA0003)
+
+- [T1546.003](https://attack.mitre.org/techniques/T1546/003/) Windows Management Instrumentation Event Subscription — see also `establishing-persistence`
+
+**Defense Evasion** (TA0005)
+
+- [T1036](https://attack.mitre.org/techniques/T1036/) Masquerading — see also `establishing-persistence`
+- [T1070.001](https://attack.mitre.org/techniques/T1070/001/) Clear Windows Event Logs — see also `responding-to-incidents`
+- [T1218](https://attack.mitre.org/techniques/T1218/) System Binary Proxy Execution — see also `escalating-windows-privileges`
+- [T1218.011](https://attack.mitre.org/techniques/T1218/011/) Rundll32 — see also `analyzing-malware`
+- [T1562](https://attack.mitre.org/techniques/T1562/) Impair Defenses — see also `responding-to-incidents`
+- [T1562.001](https://attack.mitre.org/techniques/T1562/001/) Disable or Modify Tools — see also `responding-to-incidents`
+
+**Collection** (TA0009)
+
+- [T1074](https://attack.mitre.org/techniques/T1074/) Data Staged — see also `transferring-files`
+- [T1560](https://attack.mitre.org/techniques/T1560/) Archive Collected Data — see also `transferring-files`
+
+**Command and Control** (TA0011)
+
+- [T1071.004](https://attack.mitre.org/techniques/T1071/004/) DNS — see also `engineering-detections`
+- [T1219](https://attack.mitre.org/techniques/T1219/) Remote Access Software
+- [T1568](https://attack.mitre.org/techniques/T1568/) Dynamic Resolution — see also `analyzing-malware`
+- [T1572](https://attack.mitre.org/techniques/T1572/) Protocol Tunneling — see also `transferring-files`
+
+**Exfiltration** (TA0010)
+
+- [T1030](https://attack.mitre.org/techniques/T1030/) Data Transfer Size Limits
+- [T1048](https://attack.mitre.org/techniques/T1048/) Exfiltration Over Alternative Protocol — see also `transferring-files`
+- [T1567](https://attack.mitre.org/techniques/T1567/) Exfiltration Over Web Service — see also `transferring-files`
+
+**Impact** (TA0040)
+
+- [T1490](https://attack.mitre.org/techniques/T1490/) Inhibit System Recovery — see also `responding-to-incidents`
+- [T1496](https://attack.mitre.org/techniques/T1496/) Resource Hijacking — see also `exploiting-cloud-platforms`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - `engineering-detections` — converting a successful hunt into a tested rule
