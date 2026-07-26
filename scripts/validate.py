@@ -1,0 +1,250 @@
+#!/usr/bin/env python3
+"""Validate SecSkills plugin structure, skill and agent frontmatter.
+
+Runs with no third-party dependencies so it works in any CI image.
+
+    python3 scripts/validate.py [--strict]
+
+--strict promotes warnings to errors.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+PLUGIN = REPO / "secskills"
+SKILLS = PLUGIN / "skills"
+AGENTS = PLUGIN / "agents"
+
+NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+MAX_NAME = 64
+MAX_DESC = 1024
+MIN_DESC = 60
+MAX_SKILL_LINES = 600
+
+errors: list[str] = []
+warnings: list[str] = []
+
+
+def error(msg: str) -> None:
+    errors.append(msg)
+
+
+def warn(msg: str) -> None:
+    warnings.append(msg)
+
+
+def parse_frontmatter(path: Path) -> dict[str, str] | None:
+    """Minimal YAML frontmatter parser for the flat key: value shape we use.
+
+    Returns None when the file has no frontmatter block. List values are
+    joined with ", " so callers can treat everything as a string.
+    """
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        return None
+    end = text.find("\n---", 4)
+    if end == -1:
+        return None
+    block = text[4:end]
+
+    data: dict[str, str] = {}
+    key: str | None = None
+    for raw in block.splitlines():
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        if raw.startswith((" ", "\t", "-")):
+            # continuation: folded scalar or list item
+            if key:
+                item = raw.strip().lstrip("- ").strip()
+                data[key] = (data[key] + " " + item).strip() if data[key] else item
+            continue
+        if ":" not in raw:
+            continue
+        key, _, value = raw.partition(":")
+        key = key.strip()
+        data[key] = value.strip().strip("'\"")
+    return data
+
+
+def check_skill(skill_dir: Path) -> None:
+    rel = skill_dir.relative_to(REPO)
+    skill_md = skill_dir / "SKILL.md"
+    if not skill_md.is_file():
+        error(f"{rel}: missing SKILL.md")
+        return
+
+    fm = parse_frontmatter(skill_md)
+    if fm is None:
+        error(f"{rel}/SKILL.md: missing or malformed YAML frontmatter")
+        return
+
+    name = fm.get("name", "")
+    desc = fm.get("description", "")
+
+    if not name:
+        error(f"{rel}/SKILL.md: frontmatter is missing 'name'")
+    else:
+        if not NAME_RE.match(name):
+            error(f"{rel}/SKILL.md: name '{name}' must be lowercase kebab-case")
+        if len(name) > MAX_NAME:
+            error(f"{rel}/SKILL.md: name exceeds {MAX_NAME} characters")
+        if name != skill_dir.name:
+            error(
+                f"{rel}/SKILL.md: name '{name}' does not match directory "
+                f"'{skill_dir.name}' (keep them identical so the command is predictable)"
+            )
+
+    if not desc:
+        error(f"{rel}/SKILL.md: frontmatter is missing 'description'")
+    else:
+        if len(desc) < MIN_DESC:
+            warn(f"{rel}/SKILL.md: description is short ({len(desc)} chars); "
+                 "say what it does AND when to use it")
+        if len(desc) > MAX_DESC:
+            error(f"{rel}/SKILL.md: description exceeds {MAX_DESC} characters")
+        if re.match(r"^(I |This skill |Use this )", desc):
+            warn(f"{rel}/SKILL.md: write the description in third person "
+                 "('Audits ...', not 'This skill audits ...')")
+        if " when " not in desc.lower():
+            warn(f"{rel}/SKILL.md: description has no trigger clause; add "
+                 "'Use when ...' so Claude knows when to load it")
+
+    body = skill_md.read_text(encoding="utf-8")
+    lines = body.count("\n") + 1
+    if lines > MAX_SKILL_LINES:
+        warn(f"{rel}/SKILL.md: {lines} lines (>{MAX_SKILL_LINES}); "
+             "move detail into references/")
+
+    if "## When to Use" not in body:
+        warn(f"{rel}/SKILL.md: no '## When to Use' section")
+    if "## When NOT to Use" not in body:
+        warn(f"{rel}/SKILL.md: no '## When NOT to Use' section")
+
+    # Referenced local files must exist.
+    for ref in re.findall(r"`(references/[A-Za-z0-9._/-]+)`", body):
+        if not (skill_dir / ref).is_file():
+            error(f"{rel}/SKILL.md: references missing file '{ref}'")
+
+
+def check_agent(agent_md: Path) -> str | None:
+    rel = agent_md.relative_to(REPO)
+    fm = parse_frontmatter(agent_md)
+    if fm is None:
+        error(f"{rel}: missing or malformed YAML frontmatter")
+        return None
+
+    name = fm.get("name", "")
+    desc = fm.get("description", "")
+
+    if not name:
+        error(f"{rel}: frontmatter is missing 'name'")
+    elif not NAME_RE.match(name):
+        error(f"{rel}: name '{name}' must be lowercase kebab-case")
+    elif name != agent_md.stem:
+        error(f"{rel}: name '{name}' does not match filename '{agent_md.stem}'")
+
+    if not desc:
+        error(f"{rel}: frontmatter is missing 'description'")
+    elif len(desc) < MIN_DESC:
+        warn(f"{rel}: description is short ({len(desc)} chars)")
+
+    model = fm.get("model", "")
+    if model and model not in {"inherit", "opus", "sonnet", "haiku"}:
+        warn(f"{rel}: unexpected model '{model}'")
+
+    return name or None
+
+
+def check_manifests(skill_names: list[str], agent_names: list[str]) -> None:
+    plugin_json = REPO / ".claude-plugin" / "plugin.json"
+    market_json = REPO / ".claude-plugin" / "marketplace.json"
+
+    try:
+        plugin = json.loads(plugin_json.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        error(f".claude-plugin/plugin.json: {exc}")
+        return
+
+    for field in ("name", "version", "description"):
+        if not plugin.get(field):
+            error(f".claude-plugin/plugin.json: missing '{field}'")
+
+    for entry in plugin.get("agents", []):
+        path = PLUGIN / entry.lstrip("./")
+        if not path.is_file():
+            error(f".claude-plugin/plugin.json: agents entry '{entry}' does not exist")
+
+    listed = {Path(e).stem for e in plugin.get("agents", [])}
+    for name in agent_names:
+        if name not in listed:
+            error(f".claude-plugin/plugin.json: agent '{name}' exists on disk but is not listed")
+
+    try:
+        market = json.loads(market_json.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        error(f".claude-plugin/marketplace.json: {exc}")
+        return
+
+    for entry in market.get("plugins", []):
+        source = (REPO / entry.get("source", "").lstrip("./")).resolve()
+        if not source.is_dir():
+            error(f"marketplace.json: source '{entry.get('source')}' is not a directory")
+        if entry.get("name") == plugin.get("name") and entry.get("version") != plugin.get("version"):
+            error(
+                "marketplace.json and plugin.json disagree on version "
+                f"({entry.get('version')} vs {plugin.get('version')}); bump both together"
+            )
+
+    counted = f"{len(skill_names)} skill"
+    if counted not in plugin.get("description", "") and str(len(skill_names)) not in plugin.get("description", ""):
+        warn(f"plugin.json description does not mention the current skill count ({len(skill_names)})")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--strict", action="store_true", help="treat warnings as errors")
+    args = parser.parse_args()
+
+    if not SKILLS.is_dir():
+        print(f"error: {SKILLS} not found", file=sys.stderr)
+        return 2
+
+    skill_dirs = sorted(p for p in SKILLS.iterdir() if p.is_dir())
+    skill_names = []
+    for d in skill_dirs:
+        check_skill(d)
+        skill_names.append(d.name)
+
+    agent_names = []
+    for a in sorted(AGENTS.glob("*.md")):
+        name = check_agent(a)
+        if name:
+            agent_names.append(name)
+
+    dupes = {n for n in skill_names if skill_names.count(n) > 1}
+    if dupes:
+        error(f"duplicate skill names: {', '.join(sorted(dupes))}")
+
+    check_manifests(skill_names, agent_names)
+
+    for w in warnings:
+        print(f"warning: {w}")
+    for e in errors:
+        print(f"error: {e}", file=sys.stderr)
+
+    print(f"\nChecked {len(skill_names)} skills and {len(agent_names)} agents: "
+          f"{len(errors)} error(s), {len(warnings)} warning(s)")
+
+    if errors or (args.strict and warnings):
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

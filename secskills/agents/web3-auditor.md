@@ -8,7 +8,7 @@ tools:
   - Grep
   - Glob
   - WebFetch
-model: sonnet
+model: inherit
 ---
 
 # Web3 & Smart Contract Security Auditor
