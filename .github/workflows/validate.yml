@@ -29,3 +29,6 @@ jobs:
 
       - name: Check ATT&CK sections are in sync with the index
         run: python3 scripts/sync_attack.py --check
+
+      - name: Check evaluation set is well-formed and covers every skill
+        run: python3 scripts/run_evals.py --check
