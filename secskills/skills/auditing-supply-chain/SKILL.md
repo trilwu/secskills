@@ -236,6 +236,32 @@ production credentials live.
 - Provenance maturity: pinning, signing, attestation, verification-at-deploy
 - Prioritized remediation, separating "patch" from "architectural"
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Initial Access** (TA0001)
+
+- [T1195](https://attack.mitre.org/techniques/T1195/) Supply Chain Compromise
+- [T1195.001](https://attack.mitre.org/techniques/T1195/001/) Compromise Software Dependencies and Development Tools
+- [T1195.002](https://attack.mitre.org/techniques/T1195/002/) Compromise Software Supply Chain
+
+**Defense Evasion** (TA0005)
+
+- [T1553](https://attack.mitre.org/techniques/T1553/) Subvert Trust Controls — see also `analyzing-malware`
+
+**Credential Access** (TA0006)
+
+- [T1552](https://attack.mitre.org/techniques/T1552/) Unsecured Credentials — see also `escalating-linux-privileges`, `exploiting-cloud-platforms`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - `auditing-code-for-vulnerabilities` — first-party code review

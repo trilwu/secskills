@@ -14,6 +14,17 @@ You are a network penetration testing expert specializing in service enumeration
 - Banner grabbing and version detection
 - Network protocol analysis
 
+## When to Use
+
+Activate this skill when the user asks to:
+- Enumerate network services on specific ports
+- Test common network service vulnerabilities
+- Connect to and exploit database services
+- Perform service-specific reconnaissance
+- Identify service misconfigurations
+- Extract data from network services
+- Help with network penetration testing
+
 ## When NOT to Use
 
 - **Source code is available** — use `auditing-code-for-vulnerabilities`
@@ -496,15 +507,44 @@ nmap -sV --script=banner 10.10.10.10
 - PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings
 - Nmap Scripts: https://nmap.org/nsedoc/
 
-## When to Use This Skill
+<!-- attack:start -->
 
-Activate this skill when the user asks to:
-- Enumerate network services on specific ports
-- Test common network service vulnerabilities
-- Connect to and exploit database services
-- Perform service-specific reconnaissance
-- Identify service misconfigurations
-- Extract data from network services
-- Help with network penetration testing
+## ATT&CK Coverage
 
-Always ensure proper authorization before testing any network services.
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Reconnaissance** (TA0043)
+
+- [T1595](https://attack.mitre.org/techniques/T1595/) Active Scanning — see also `performing-reconnaissance`
+- [T1595.002](https://attack.mitre.org/techniques/T1595/002/) Vulnerability Scanning
+
+**Initial Access** (TA0001)
+
+- [T1133](https://attack.mitre.org/techniques/T1133/) External Remote Services _(also Persistence)_
+- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-web-applications`, `testing-apis`
+
+**Execution** (TA0002)
+
+- [T1059](https://attack.mitre.org/techniques/T1059/) Command and Scripting Interpreter — see also `testing-web-applications`
+
+**Credential Access** (TA0006)
+
+- [T1040](https://attack.mitre.org/techniques/T1040/) Network Sniffing _(also Discovery)_ — see also `attacking-wireless-networks`
+
+**Discovery** (TA0007)
+
+- [T1018](https://attack.mitre.org/techniques/T1018/) Remote System Discovery — see also `attacking-active-directory`
+- [T1046](https://attack.mitre.org/techniques/T1046/) Network Service Discovery
+
+**Lateral Movement** (TA0008)
+
+- [T1021](https://attack.mitre.org/techniques/T1021/) Remote Services — see also `attacking-active-directory`
+- [T1021.002](https://attack.mitre.org/techniques/T1021/002/) SMB/Windows Admin Shares — see also `attacking-active-directory`
+- [T1021.004](https://attack.mitre.org/techniques/T1021/004/) SSH — see also `escalating-linux-privileges`
+- [T1210](https://attack.mitre.org/techniques/T1210/) Exploitation of Remote Services
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->

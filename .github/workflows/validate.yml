@@ -26,3 +26,6 @@ jobs:
         run: |
           python3 -c "import json,sys; json.load(open('.claude-plugin/plugin.json'))"
           python3 -c "import json,sys; json.load(open('.claude-plugin/marketplace.json'))"
+
+      - name: Check ATT&CK sections are in sync with the index
+        run: python3 scripts/sync_attack.py --check

@@ -386,6 +386,23 @@ crackle -i hci0 -o pin.txt
   - WPS brute force attempts
 - Be aware of monitoring and physical security
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Credential Access** (TA0006)
+
+- [T1040](https://attack.mitre.org/techniques/T1040/) Network Sniffing _(also Discovery)_ — see also `enumerating-network-services`
+- [T1557](https://attack.mitre.org/techniques/T1557/) Adversary-in-the-Middle _(also Collection)_ — see also `attacking-active-directory`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - https://book.hacktricks.xyz/generic-methodologies-and-resources/pentesting-wifi

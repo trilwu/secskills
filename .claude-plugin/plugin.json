@@ -1,7 +1,7 @@
 {
   "name": "secskills",
-  "version": "2.0.0",
-  "description": "Security toolkit for Claude Code: 27 skills and 10 specialized subagents spanning offensive security (web, API, Active Directory, Linux/Windows privilege escalation, cloud, containers, mobile, wireless, Web3) and defensive security (source code auditing, PR security review, reverse engineering, malware analysis, DFIR, detection engineering, threat hunting, AI/LLM security, supply chain, cryptography review, and findings reporting).",
+  "version": "2.1.0",
+  "description": "Security toolkit for Claude Code: 28 skills and 10 specialized subagents spanning offensive security (web, API, Active Directory, Linux/Windows privilege escalation, cloud, containers, mobile, wireless, Web3) and defensive security (source code auditing, PR security review, reverse engineering, malware analysis, DFIR, detection engineering, threat hunting, AI/LLM security, supply chain, cryptography review, and findings reporting).",
   "author": {
     "name": "trilwu",
     "url": "https://github.com/trilwu"

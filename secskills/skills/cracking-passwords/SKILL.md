@@ -15,6 +15,18 @@ You are a password cracking and credential attack expert. Use this skill when th
 - Wordlist generation
 - Rule-based attacks
 
+## When to Use
+
+Activate this skill when the user asks to:
+- Crack password hashes
+- Identify unknown hash types
+- Perform password spraying
+- Generate wordlists
+- Optimize hashcat/john performance
+- Extract and crack credentials
+- Perform pass-the-hash attacks
+- Help with credential-based attacks
+
 ## When NOT to Use
 
 - **Online brute force against a live service** — that is testing, not cracking;
@@ -484,16 +496,32 @@ cat hashes.txt | awk -F: '{print $1":"$4}'
 - SecLists: https://github.com/danielmiessler/SecLists
 - HackTricks Password Attacks: https://book.hacktricks.xyz/generic-methodologies-and-resources/brute-force
 
-## When to Use This Skill
+<!-- attack:start -->
 
-Activate this skill when the user asks to:
-- Crack password hashes
-- Identify unknown hash types
-- Perform password spraying
-- Generate wordlists
-- Optimize hashcat/john performance
-- Extract and crack credentials
-- Perform pass-the-hash attacks
-- Help with credential-based attacks
+## ATT&CK Coverage
 
-Always ensure proper authorization before performing password attacks.
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Initial Access** (TA0001)
+
+- [T1078](https://attack.mitre.org/techniques/T1078/) Valid Accounts _(also Persistence, Privilege Escalation, Defense Evasion)_ — see also `attacking-active-directory`, `exploiting-cloud-platforms`
+
+**Credential Access** (TA0006)
+
+- [T1003](https://attack.mitre.org/techniques/T1003/) OS Credential Dumping — see also `attacking-active-directory`
+- [T1003.002](https://attack.mitre.org/techniques/T1003/002/) Security Account Manager — see also `escalating-windows-privileges`
+- [T1003.008](https://attack.mitre.org/techniques/T1003/008/) /etc/passwd and /etc/shadow — see also `escalating-linux-privileges`
+- [T1110](https://attack.mitre.org/techniques/T1110/) Brute Force
+- [T1110.002](https://attack.mitre.org/techniques/T1110/002/) Password Cracking
+- [T1110.003](https://attack.mitre.org/techniques/T1110/003/) Password Spraying — see also `attacking-active-directory`
+- [T1558.003](https://attack.mitre.org/techniques/T1558/003/) Kerberoasting — see also `attacking-active-directory`
+
+**Lateral Movement** (TA0008)
+
+- [T1550.002](https://attack.mitre.org/techniques/T1550/002/) Pass the Hash — see also `attacking-active-directory`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->

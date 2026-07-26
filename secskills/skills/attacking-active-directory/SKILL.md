@@ -342,6 +342,66 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=
 - **PowerView** - AD enumeration (PowerShell)
 - **evil-winrm** - WinRM access (Linux)
 
+<!-- attack:start -->
+
+## ATT&CK Coverage
+
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Initial Access** (TA0001)
+
+- [T1078](https://attack.mitre.org/techniques/T1078/) Valid Accounts _(also Persistence, Privilege Escalation, Defense Evasion)_ — see also `cracking-passwords`, `exploiting-cloud-platforms`
+
+**Execution** (TA0002)
+
+- [T1047](https://attack.mitre.org/techniques/T1047/) Windows Management Instrumentation — see also `escalating-windows-privileges`
+- [T1569](https://attack.mitre.org/techniques/T1569/) System Services — see also `escalating-windows-privileges`
+
+**Persistence** (TA0003)
+
+- [T1098](https://attack.mitre.org/techniques/T1098/) Account Manipulation _(also Privilege Escalation)_ — see also `establishing-persistence`
+- [T1136](https://attack.mitre.org/techniques/T1136/) Create Account — see also `establishing-persistence`
+- [T1556](https://attack.mitre.org/techniques/T1556/) Modify Authentication Process _(also Credential Access)_ — see also `establishing-persistence`
+
+**Privilege Escalation** (TA0004)
+
+- [T1484](https://attack.mitre.org/techniques/T1484/) Domain or Tenant Policy Modification _(also Defense Evasion)_
+
+**Credential Access** (TA0006)
+
+- [T1003](https://attack.mitre.org/techniques/T1003/) OS Credential Dumping — see also `cracking-passwords`
+- [T1003.001](https://attack.mitre.org/techniques/T1003/001/) LSASS Memory — see also `engineering-detections`
+- [T1003.003](https://attack.mitre.org/techniques/T1003/003/) NTDS
+- [T1003.006](https://attack.mitre.org/techniques/T1003/006/) DCSync
+- [T1110.003](https://attack.mitre.org/techniques/T1110/003/) Password Spraying — see also `cracking-passwords`
+- [T1557](https://attack.mitre.org/techniques/T1557/) Adversary-in-the-Middle _(also Collection)_ — see also `attacking-wireless-networks`
+- [T1558](https://attack.mitre.org/techniques/T1558/) Steal or Forge Kerberos Tickets
+- [T1558.003](https://attack.mitre.org/techniques/T1558/003/) Kerberoasting — see also `cracking-passwords`
+- [T1558.004](https://attack.mitre.org/techniques/T1558/004/) AS-REP Roasting
+- [T1649](https://attack.mitre.org/techniques/T1649/) Steal or Forge Authentication Certificates
+
+**Discovery** (TA0007)
+
+- [T1018](https://attack.mitre.org/techniques/T1018/) Remote System Discovery — see also `enumerating-network-services`
+- [T1069](https://attack.mitre.org/techniques/T1069/) Permission Groups Discovery — see also `exploiting-cloud-platforms`
+- [T1087](https://attack.mitre.org/techniques/T1087/) Account Discovery — see also `exploiting-cloud-platforms`
+
+**Lateral Movement** (TA0008)
+
+- [T1021](https://attack.mitre.org/techniques/T1021/) Remote Services — see also `enumerating-network-services`
+- [T1021.001](https://attack.mitre.org/techniques/T1021/001/) Remote Desktop Protocol
+- [T1021.002](https://attack.mitre.org/techniques/T1021/002/) SMB/Windows Admin Shares — see also `enumerating-network-services`
+- [T1021.006](https://attack.mitre.org/techniques/T1021/006/) Windows Remote Management
+- [T1550](https://attack.mitre.org/techniques/T1550/) Use Alternate Authentication Material _(also Defense Evasion)_
+- [T1550.002](https://attack.mitre.org/techniques/T1550/002/) Pass the Hash — see also `cracking-passwords`
+- [T1550.003](https://attack.mitre.org/techniques/T1550/003/) Pass the Ticket
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
+
 ## References
 
 - https://book.hacktricks.xyz/windows-hardening/active-directory-methodology

