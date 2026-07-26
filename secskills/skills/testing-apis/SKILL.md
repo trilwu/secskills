@@ -34,6 +34,12 @@ Activate this skill when the user asks to:
 - **Browser-rendered application surface** — use `testing-web-applications`
 - **Token and signature construction review** — use `reviewing-cryptography`
 - **LLM/agent tool APIs** — use `securing-ai-systems`
+- **GraphQL specifically** — use `attacking-graphql`; authorization moves to
+  resolvers and per-request rate limits break on batching
+- **gRPC / protobuf** — use `attacking-grpc-protobuf`; the schema must be
+  recovered before anything else works
+- **A parameter that makes the server fetch a URL** — use `exploiting-ssrf`
+- **A body or cookie holding a serialized object** — use `exploiting-deserialization`
 
 ## Core Methodologies
 
@@ -582,7 +588,7 @@ current ATT&CK release before citing them in a report._
 
 **Initial Access** (TA0001)
 
-- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-web-applications`, `enumerating-network-services`
+- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-web-applications`, `enumerating-network-services`, `attacking-graphql`, `attacking-grpc-protobuf`, `exploiting-deserialization`, `exploiting-ssrf`
 
 **Credential Access** (TA0006)
 

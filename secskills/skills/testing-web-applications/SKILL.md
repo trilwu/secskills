@@ -21,6 +21,11 @@ description: Test web applications for security vulnerabilities including SQLi, 
 - **Pure API/GraphQL surface** — use `testing-apis`
 - **Reviewing a pull request** — use `reviewing-code-changes`
 - **LLM-backed features** — use `securing-ai-systems`
+- **Server fetches a user-supplied URL** — use `exploiting-ssrf`
+- **Serialized objects in cookies or parameters** (`rO0AB`, `O:`, `gAJ`) — use
+  `exploiting-deserialization`
+- **GraphQL or gRPC endpoints** — use `attacking-graphql` or
+  `attacking-grpc-protobuf`
 
 ## SQL Injection
 
@@ -368,7 +373,7 @@ current ATT&CK release before citing them in a report._
 
 **Initial Access** (TA0001)
 
-- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-apis`, `enumerating-network-services`
+- [T1190](https://attack.mitre.org/techniques/T1190/) Exploit Public-Facing Application — see also `testing-apis`, `enumerating-network-services`, `attacking-graphql`, `attacking-grpc-protobuf`, `exploiting-deserialization`, `exploiting-ssrf`
 
 **Execution** (TA0002)
 

@@ -3,6 +3,36 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.6.0] - 2026-07-26
+
+Procedure-skill batch 3: web and API depth.
+
+### Added
+
+- `exploiting-ssrf` — cloud metadata across AWS IMDSv1/v2, Azure, and GCP with
+  a clear account of why IMDSv2 stops simple fetchers and not request proxies;
+  the full bypass ladder including DNS rebinding and the redirect gap that is
+  the default configuration of most HTTP libraries; blind confirmation and
+  renderers that hand back readable responses.
+- `exploiting-deserialization` — magic-byte identification across five
+  runtimes, `URLDNS` before gadget guessing, PHP Phar as the vector with no
+  visible `unserialize()`, .NET `TypeNameHandling`, and the queue/cache
+  locations where serialized data reaches higher-privilege consumers.
+- `attacking-graphql` — schema recovery when introspection is disabled,
+  per-field and traversal authorization as the main event, alias and array
+  batching defeating HTTP-layer rate limits, and proving DoS by gradient
+  rather than by outage.
+- `attacking-grpc-protobuf` — four schema-recovery routes, gRPC framing so a
+  raw payload can be decoded, per-method authorization since path-based
+  filtering does not apply, and metadata-as-identity bypasses.
+
+### Changed
+
+- `testing-apis` and `testing-web-applications` route to all four.
+- ATT&CK index gained T1552.005 (Cloud Instance Metadata API) and extended
+  T1190 to the four new skills — these map to the matrix, unlike the mobile
+  and binary procedure skills.
+
 ## [2.5.0] - 2026-07-26
 
 Procedure-skill batch 2: binary and language-runtime depth.
