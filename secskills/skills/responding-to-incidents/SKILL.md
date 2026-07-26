@@ -24,6 +24,17 @@ supporting detail. Answer those two in order and the response follows.
 - **Building the detections that would have caught it** — use `engineering-detections`
 - **Service outages with no security dimension** — this is a security IR skill
 
+## Route to a Depth Skill
+
+Specific evidence types have their own procedure skill. This skill sets scope
+and order; reach for these when a single artifact type becomes the focus.
+
+| Artifact / focus | Skill |
+| --- | --- |
+| A RAM capture to work through with Volatility (injected code, in-memory creds, dead-process connections) | `analyzing-memory-images` |
+| A Microsoft 365 / Entra ID compromise: no disk or memory, only cloud logs (UAL, sign-ins, OAuth grants) | `investigating-m365-entra` |
+| Finding how an attacker persisted on a Linux host — the systematic sweep across every init path | `analyzing-linux-persistence` |
+
 ## The Order That Matters
 
 ```

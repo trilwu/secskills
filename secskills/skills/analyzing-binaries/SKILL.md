@@ -35,6 +35,9 @@ then read that carefully.
   for generic RE on these wastes most of the effort
 - **A packed or protected executable** — use `unpacking-protected-binaries`
   first; there is nothing to disassemble until it is dumped
+- **A whole firmware image to extract before any RE** — use
+  `analyzing-firmware-images` for `binwalk`, filesystem carving, and
+  cross-architecture emulation; return here for an individual binary inside it
 
 ## Triage First — Never Open a Disassembler Cold
 

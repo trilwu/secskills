@@ -28,6 +28,15 @@ be evaluated with that in mind, and no amount of prompt engineering fixes it.
   or have authorization to test** — out of scope
 - **Model safety alignment research** — different discipline
 
+## Route to a Depth Skill
+
+| Focus | Skill |
+| --- | --- |
+| Auditing an MCP server specifically — tool-definition injection, per-tool authorization, transport security, resource exposure | `auditing-mcp-servers` |
+
+The MCP review here is one part of a wider AI threat model; reach for
+`auditing-mcp-servers` when the server implementation itself is the target.
+
 ## The Core Rule
 
 > **Treat every model output as untrusted user input, and every input the
