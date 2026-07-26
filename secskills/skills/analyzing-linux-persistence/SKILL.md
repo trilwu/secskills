@@ -23,6 +23,8 @@ userspace honor, in a sequence that catches the common before the exotic.
 - **Running a full incident response** -- use `responding-to-incidents`
 - **Establishing persistence offensively** -- use `establishing-persistence`
 - **Actively escalating privileges** -- use `escalating-linux-privileges`
+- **The host is Windows** -- use `investigating-windows-endpoints`
+- **You have an acquired disk image, not a live host** -- use `analyzing-disk-images`
 - **Analyzing a recovered malware sample** -- use `analyzing-malware`
 
 ## Systemd Units
