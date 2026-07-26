@@ -266,8 +266,9 @@ first; a match on an atom triggers full verification of the string. A string
 whose only fixed run is 1-2 bytes (an over-wildcarded hex pattern, a two-letter
 text string) yields a weak atom that matches constantly, forcing verification on
 nearly every file and collapsing performance. Give every string at least one run
-of 4+ contiguous non-wildcard bytes. `yara -w` warns on slow strings and short
-atoms — treat those warnings as errors. Avoid unbounded and catastrophic regex
+of 4+ contiguous non-wildcard bytes. YARA warns on slow strings and short atoms
+at compile time — drop `-w` (which suppresses them) and treat those warnings as
+errors. Avoid unbounded and catastrophic regex
 (`.*`, nested quantifiers); prefer bounded classes and jumps. Profile with
 `yara -S` (`--print-stats`, per-rule statistics) when a ruleset drags.
 

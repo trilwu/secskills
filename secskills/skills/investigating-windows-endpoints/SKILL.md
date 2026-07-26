@@ -162,7 +162,8 @@ richest source:
 
 **RDP / TerminalServices**:
 
-- Security **4778/4779** session connect/disconnect. **1149** in
+- Security **4778/4779** session reconnect/disconnect (RDP or Fast User
+  Switching, not a fresh logon -- that is 4624). **1149** in
   `TerminalServices-RemoteConnectionManager` (auth succeeded -- user + source
   IP). **21/22/25** in `TerminalServices-LocalSessionManager` (logon,
   shell start, reconnect).
