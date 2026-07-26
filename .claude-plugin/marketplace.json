@@ -5,20 +5,34 @@
     "url": "https://github.com/trilwu"
   },
   "metadata": {
-    "description": "Official marketplace for SecSkills - comprehensive offensive security toolkit for Claude Code",
-    "version": "1.0.0"
+    "description": "Marketplace for SecSkills - offensive and defensive security skills and subagents for Claude Code",
+    "version": "2.0.0"
   },
   "plugins": [
     {
       "name": "secskills",
       "source": "./secskills",
-      "description": "Comprehensive offensive security toolkit with 16 production-ready skills and 6 specialized AI subagents for penetration testing, red teaming, cloud security, mobile security, Web3 auditing, and reconnaissance.",
-      "version": "1.0.0",
+      "description": "27 security skills and 10 specialized subagents covering source code auditing, PR security review, reverse engineering, malware analysis, DFIR, detection engineering, threat hunting, AI/LLM security, supply chain, cryptography review, penetration testing, red teaming, cloud, mobile, and Web3.",
+      "version": "2.0.0",
+      "category": "security",
+      "keywords": [
+        "security",
+        "appsec",
+        "vulnerability-research",
+        "code-audit",
+        "penetration-testing",
+        "dfir",
+        "reverse-engineering",
+        "malware-analysis",
+        "detection-engineering",
+        "ai-security"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/trilwu/secskills",
       "author": {
         "name": "trilwu",
         "url": "https://github.com/trilwu"
       }
     }
   ]
-
 }
