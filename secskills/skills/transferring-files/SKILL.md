@@ -445,13 +445,13 @@ current ATT&CK release before citing them in a report._
 
 - [T1090](https://attack.mitre.org/techniques/T1090/) Proxy
 - [T1105](https://attack.mitre.org/techniques/T1105/) Ingress Tool Transfer
-- [T1132](https://attack.mitre.org/techniques/T1132/) Data Encoding — see also `analyzing-malware`
+- [T1132](https://attack.mitre.org/techniques/T1132/) Data Encoding — see also `analyzing-malware`, `analyzing-network-traffic`
 - [T1572](https://attack.mitre.org/techniques/T1572/) Protocol Tunneling — see also `hunting-threats`
 
 **Exfiltration** (TA0010)
 
 - [T1041](https://attack.mitre.org/techniques/T1041/) Exfiltration Over C2 Channel
-- [T1048](https://attack.mitre.org/techniques/T1048/) Exfiltration Over Alternative Protocol — see also `hunting-threats`
+- [T1048](https://attack.mitre.org/techniques/T1048/) Exfiltration Over Alternative Protocol — see also `hunting-threats`, `analyzing-network-traffic`
 - [T1567](https://attack.mitre.org/techniques/T1567/) Exfiltration Over Web Service — see also `hunting-threats`
 
 Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.

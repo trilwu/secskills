@@ -24,6 +24,8 @@ degrade into confirmation bias.
 - **Confirmed incident in progress** — use `responding-to-incidents`
 - **Writing the rule for what you found** — use `engineering-detections`
 - **Sample analysis** — use `analyzing-malware`
+- **A packet capture to work through** — use `analyzing-network-traffic`
+- **A confirmed AWS compromise to investigate** — use `investigating-aws-incidents`
 - **Pivoting on indicators, tracking an actor, or producing a finished intel
   product** — use `producing-threat-intelligence`; a hunt consumes intelligence,
   it does not produce it
@@ -226,15 +228,15 @@ current ATT&CK release before citing them in a report._
 
 **Command and Control** (TA0011)
 
-- [T1071.004](https://attack.mitre.org/techniques/T1071/004/) DNS — see also `engineering-detections`
+- [T1071.004](https://attack.mitre.org/techniques/T1071/004/) DNS — see also `engineering-detections`, `analyzing-network-traffic`
 - [T1219](https://attack.mitre.org/techniques/T1219/) Remote Access Software
-- [T1568](https://attack.mitre.org/techniques/T1568/) Dynamic Resolution — see also `analyzing-malware`
+- [T1568](https://attack.mitre.org/techniques/T1568/) Dynamic Resolution — see also `analyzing-malware`, `analyzing-network-traffic`
 - [T1572](https://attack.mitre.org/techniques/T1572/) Protocol Tunneling — see also `transferring-files`
 
 **Exfiltration** (TA0010)
 
 - [T1030](https://attack.mitre.org/techniques/T1030/) Data Transfer Size Limits
-- [T1048](https://attack.mitre.org/techniques/T1048/) Exfiltration Over Alternative Protocol — see also `transferring-files`
+- [T1048](https://attack.mitre.org/techniques/T1048/) Exfiltration Over Alternative Protocol — see also `transferring-files`, `analyzing-network-traffic`
 - [T1567](https://attack.mitre.org/techniques/T1567/) Exfiltration Over Web Service — see also `transferring-files`
 
 **Impact** (TA0040)

@@ -23,6 +23,7 @@ specificity without brittleness.
 ## When NOT to Use
 
 - **Broader detection engineering including YARA, Suricata, and the full detection lifecycle** -- use `engineering-detections`
+- **The signature belongs on files or memory, not log telemetry** -- use `writing-yara-rules`
 - **Hypothesis-driven threat hunting, not rule writing** -- use `hunting-threats`
 - **Active incident response, not rule development** -- use `responding-to-incidents`
 
