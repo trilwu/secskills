@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 59 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 60 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -54,6 +54,7 @@ load only when relevant, so neither costs anything until it applies.
 | `analyzing-binaries` | Reverse engineering: triage, disassembly, instrumentation, firmware |
 | `engineering-detections` | Sigma/YARA/Suricata authoring with real false-positive analysis |
 | `hunting-threats` | Hypothesis-driven hunting with stack counting and outlier analysis |
+| `producing-threat-intelligence` | Indicator pivoting, actor/campaign tracking, attribution discipline, finished intel products |
 | `reporting-security-findings` | Severity, proof of concept, report structure, disclosure |
 
 ### Offensive operations

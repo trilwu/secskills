@@ -24,6 +24,9 @@ degrade into confirmation bias.
 - **Confirmed incident in progress** — use `responding-to-incidents`
 - **Writing the rule for what you found** — use `engineering-detections`
 - **Sample analysis** — use `analyzing-malware`
+- **Pivoting on indicators, tracking an actor, or producing a finished intel
+  product** — use `producing-threat-intelligence`; a hunt consumes intelligence,
+  it does not produce it
 - **Offensive testing of defenses** — use the red team skills
 
 ## Hypothesis Before Query

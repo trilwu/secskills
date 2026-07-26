@@ -18,6 +18,7 @@
     "reviewing-cryptography": "Pre-attack. Use CWE-310 family",
     "reporting-security-findings": "Process skill, not a technique",
     "mapping-attack-techniques": "Router over this index; it points at other skills rather than covering techniques itself",
+    "producing-threat-intelligence": "CTI tradecraft; consumes and produces ATT&CK mappings via mapping-attack-techniques rather than covering techniques itself",
     "analyzing-go-binaries": "Procedure skill (Go pclntab recovery + GoReSym/redress). Tool-and-artifact scoped, not a technique",
     "analyzing-dotnet-assemblies": "Procedure skill (.NET IL + dnSpyEx/de4dot). Tool-and-artifact scoped, not a technique",
     "analyzing-rust-binaries": "Procedure skill (Rust demangling + rustfilt). Tool-and-artifact scoped, not a technique",

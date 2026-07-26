@@ -3,6 +3,32 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.8.0] - 2026-07-26
+
+Standards pass: aligns the collection with Anthropic's Agent Skills authoring
+guidance and adds the one content gap a survey of the field surfaced.
+
+### Added
+
+- `producing-threat-intelligence` — CTI tradecraft: the intelligence lifecycle
+  (and its two usual failures, skipping direction and skipping dissemination),
+  passive-first indicator pivoting, the Diamond Model and Pyramid of Pain,
+  attribution discipline (clustering vs naming, analytic confidence, ACH, bias
+  traps), STIX/MISP/OpenCTI/TLP, and producing a finished product with a BLUF
+  and a recommended action. Routed from `hunting-threats` and `analyzing-malware`.
+
+### Changed
+
+- Progressive disclosure: the 10 legacy skills that exceeded Anthropic's 500-line
+  SKILL.md guideline (`testing-apis`, `exploiting-cloud-platforms`,
+  `transferring-files`, `exploiting-web3-smart-contracts`,
+  `performing-reconnaissance`, `establishing-persistence`,
+  `escalating-windows-privileges`, `escalating-linux-privileges`,
+  `enumerating-network-services`, `cracking-passwords`) now move their deepest
+  command/payload catalogs into one-level-deep `references/` files, each with a
+  table of contents. All 60 skills are now under 500 lines; no content was lost.
+- `evals/cases.jsonl` grew to 123 trigger-accuracy cases covering all 60 skills.
+
 ## [2.7.0] - 2026-07-26
 
 Procedure-skill batches 4-7: Active Directory/identity, cloud/container,
