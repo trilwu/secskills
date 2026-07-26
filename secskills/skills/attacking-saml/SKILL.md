@@ -92,12 +92,14 @@ signed assertion is relocated and where the forged one is injected:
 - **XSW1 / XSW2** — wrap the whole `<Response>`; the signature references the
   original response while a forged response is processed. XSW2 uses a
   non-enveloping signature position.
-- **XSW3 / XSW4** — inject a forged assertion as a sibling of the signed
-  assertion (before or after it), same or overlapping IDs.
-- **XSW5 / XSW6** — copy the signature into the forged assertion; play games
+- **XSW3 / XSW4** — assertion-level. XSW3 makes the forged assertion a
+  *sibling* of the signed one; XSW4 *nests* the signed assertion inside the
+  forged one. Same or overlapping IDs.
+- **XSW5 / XSW6** — the copied assertion envelopes the signature; play games
   with the `ID` attribute so the reference still resolves.
-- **XSW7 / XSW8** — bury the original signed assertion inside an `<Extensions>`
-  or `<Object>` wrapper so it validates but is never consumed.
+- **XSW7 / XSW8** — hide in a loose-schema wrapper. XSW7 puts the *forged*
+  assertion in an `<Extensions>` element; XSW8 buries the *original* signed one
+  in an `<Object>` so it validates but is never consumed.
 
 ```
 # Attack in SAML Raider:
