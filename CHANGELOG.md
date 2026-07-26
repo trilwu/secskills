@@ -3,6 +3,50 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.11.1] - 2026-07-26
+
+Source-grounding and adversarial fact-check pass over the 12 skills added in
+2.9.0–2.11.0. Each was verified against primary sources (IETF RFCs, MITRE
+ATT&CK, official tool docs, AWS/Microsoft/Azure docs) by one agent, then
+re-checked by an independent adversarial reviewer instructed to assume an error
+remained. **31 factual corrections applied across 11 of the 12 skills; only
+`attacking-oauth-oidc` was clean under both passes.** No fabricated concepts or
+dangerously-wrong techniques were found — every fix was in a *specific* (a flag,
+an identifier, a field name, a variant label, or an internally-impossible
+example).
+
+### Fixed
+
+- `attacking-jwt` — psychic-signature flag `-X b`→`-X p`; RSA n-recovery uses
+  `jwt_forgery.py` (not two tokens to `-X k`); `jwx` RSA keygen `--keysize`;
+  tamper-and-sign needs `-I` (without it `-pc/-pv` are ignored, so `role=admin`
+  was never set).
+- `analyzing-shellcode` — ror13 harness computed function-name-only hash
+  (matches no real shellcode); now `ror13(module UTF-16LE upper) + ror13(func)`
+  reproducing the canonical `LoadLibraryA=0x0726774C`; `speakeasy --raw --arch`;
+  scdbg dump line.
+- `attacking-saml` — XSW4 is nesting not sibling; XSW7 wraps the copied
+  assertion in `<Extensions>`, only XSW8 buries the original in `<Object>`.
+- `writing-yara-rules` — xor 255→256 variants; `private`-string semantics;
+  process scan takes the PID as final arg (not `-p`); `-s`/`-S` flags; `-w`
+  suppresses (not emits) warnings.
+- `investigating-aws-incidents` — `WebIdentity`→`WebIdentityUser`; `FederatedUser`
+  is the `GetFederationToken` broker type, not SAML/OIDC; `PassRole` removed from
+  the event-lookup list (it is a permission).
+- `investigating-azure-incidents` — `KeyVaultData` is not a real table →
+  `AZKVAuditLogs`.
+- `analyzing-phishing-emails` — `Authentication-Results` example was impossible
+  under RFC 7489 (aligned SPF/DKIM pass forces `dmarc=pass`); tool
+  misattributions (`msgconvert`, `oledump.py`).
+- `analyzing-network-traffic` — invalid Zeek `Community::pluginload` →
+  `community-id-logging` script; RITA v5 CLI; `editcap -s` for payload trim.
+- `analyzing-disk-images` — `ewfacquire -C` case number; `$MFT` is inode 0;
+  NTFS mount `noload`→`norecover` (`noload` is ext-only).
+- `exploiting-xxe` — local-DTD reuse entity/path mismatch; Azure/GCP IMDS need
+  request headers a bare XXE GET cannot set (was a self-contradiction).
+- `investigating-windows-endpoints` — event 4778 is session *reconnect*, not
+  connect.
+
 ## [2.11.0] - 2026-07-26
 
 Host and SOC forensics batch: endpoint DFIR, disk imaging, email, and Azure IR.
