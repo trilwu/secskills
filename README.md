@@ -1,6 +1,6 @@
 # SecSkills
 
-**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 31 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
+**Security skills and subagents for [Claude Code](https://claude.com/claude-code) — 32 skills and 10 specialized subagents covering both halves of security work: finding and exploiting weaknesses, and finding and fixing them in code.**
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -74,14 +74,15 @@ load only when relevant, so neither costs anything until it applies.
 | `transferring-files` | File transfer and exfiltration channels |
 | `performing-social-engineering` | Authorized phishing and pretexting |
 
-### Framework-specific reversing (procedure skills)
+### Mobile procedure skills
 
-Narrow by design — each triggers on the artifacts that identify the build, and
-hands back to the domain skill when the recovery work is done.
+Narrow by design — each triggers on the artifacts or the symptom that
+identifies the situation, and hands back to the domain skill when done.
 
 | Skill | Triggers on |
 | --- | --- |
-| `reversing-flutter-apps` | `libapp.so`, `libflutter.so`, `flutter_assets/`, or a proxy that sees no traffic |
+| `bypassing-mobile-pinning` | TLS handshake alert, empty proxy, "network error" with the proxy on |
+| `reversing-flutter-apps` | `libapp.so`, `libflutter.so`, `flutter_assets/` |
 | `reversing-react-native-apps` | `index.android.bundle`, `libhermes.so`, `main.jsbundle` |
 | `reversing-unity-il2cpp` | `global-metadata.dat`, `libil2cpp.so`, `Assembly-CSharp.dll` |
 
