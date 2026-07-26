@@ -20,12 +20,30 @@ python3 scripts/validate.py --strict
 
 CI runs the same check. It verifies frontmatter, kebab-case naming,
 directory/name agreement, description quality, required sections, referenced
-files, agent manifest consistency, and manifest version agreement.
+files, per-plugin manifest consistency, and manifest/marketplace version
+agreement.
+
+## Repository layout
+
+Skills are split across three plugins in one marketplace; a skill lives in
+exactly one of them:
+
+```
+secskills-offense/    # exploitation and attacker tradecraft (36 skills)
+secskills-defense/    # DFIR, hunting, detection (17 skills)
+secskills-core/       # dual-use: RE, code/crypto review, AI, reporting,
+                      #   ATT&CK mapping (19 skills); ships ttp-index.json
+```
+
+Each plugin dir has its own `.claude-plugin/plugin.json`; `ttp-index.json`
+lives in `secskills-core/` and maps techniques to skills across all three.
+Cross-references between skills may point across plugins — that is expected
+and degrades gracefully when a reader has not installed the other plugin.
 
 ## Skill layout
 
 ```
-secskills/skills/<skill-name>/
+secskills-<offense|defense|core>/skills/<skill-name>/
 ├── SKILL.md              # required; keep under 600 lines
 ├── references/           # optional; detail loaded on demand
 └── scripts/              # optional; runnable helpers

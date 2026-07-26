@@ -3,6 +3,37 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.0] - 2026-07-26
+
+Split the single `secskills` plugin into three, so users install only the side
+they work.
+
+### Changed
+
+- **The collection is now three plugins in one marketplace:**
+  - `secskills-offense` (36 skills) — exploitation and attacker tradecraft.
+  - `secskills-defense` (17 skills) — DFIR, threat hunting, detection.
+  - `secskills-core` (19 skills) — dual-use: reverse engineering, source-code
+    and supply-chain auditing, cryptography and PR review, AI/LLM and MCP
+    security, ATT&CK mapping, and reporting. The shared foundation both sides
+    reference; ships `ttp-index.json`.
+- Skills moved into `secskills-offense/`, `secskills-defense/`, and
+  `secskills-core/`, each with its own `.claude-plugin/plugin.json`.
+- `ttp-index.json` moved to `secskills-core/`; the `mapping-attack-techniques`
+  skill and `sync_attack.py` reference the new path. The index still maps
+  techniques to skills across all three plugins as one unit.
+- `validate.py`, `sync_attack.py`, and `run_evals.py` discover skills across
+  every `secskills-*/skills/` dir, so the ATT&CK index, evals, and
+  cross-references keep working as a union. `validate.py` now checks each
+  plugin's manifest, its marketplace listing, and its own skill count.
+- Cross-plugin skill references degrade gracefully: a hand-off to a skill in a
+  plugin the user did not install is an inert mention, not a broken link.
+
+### Removed
+
+- The single `secskills` plugin and the root `.claude-plugin/plugin.json`.
+  **Breaking:** re-install as `secskills-offense`/`-defense`/`-core`.
+
 ## [3.0.0] - 2026-07-26
 
 ### Removed

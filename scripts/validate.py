@@ -17,8 +17,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-PLUGIN = REPO / "secskills"
-SKILLS = PLUGIN / "skills"
+PLUGIN_DIRS = sorted(p for p in REPO.glob("secskills-*") if (p / "skills").is_dir())
 
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 MAX_NAME = 64
@@ -131,39 +130,55 @@ def check_skill(skill_dir: Path) -> None:
             error(f"{rel}/SKILL.md: references missing file '{ref}'")
 
 
-def check_manifests(skill_names: list[str]) -> None:
-    plugin_json = REPO / ".claude-plugin" / "plugin.json"
+def check_manifests() -> None:
     market_json = REPO / ".claude-plugin" / "marketplace.json"
-
-    try:
-        plugin = json.loads(plugin_json.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        error(f".claude-plugin/plugin.json: {exc}")
-        return
-
-    for field in ("name", "version", "description"):
-        if not plugin.get(field):
-            error(f".claude-plugin/plugin.json: missing '{field}'")
-
     try:
         market = json.loads(market_json.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         error(f".claude-plugin/marketplace.json: {exc}")
         return
 
+    listed = {p.get("name"): p for p in market.get("plugins", [])}
+
     for entry in market.get("plugins", []):
         source = (REPO / entry.get("source", "").lstrip("./")).resolve()
         if not source.is_dir():
             error(f"marketplace.json: source '{entry.get('source')}' is not a directory")
-        if entry.get("name") == plugin.get("name") and entry.get("version") != plugin.get("version"):
+
+    # Each plugin dir must carry its own manifest, be listed in the marketplace
+    # at a matching version, and count its own skills in its description.
+    for pd in PLUGIN_DIRS:
+        plugin_json = pd / ".claude-plugin" / "plugin.json"
+        if not plugin_json.is_file():
+            error(f"{pd.name}: missing .claude-plugin/plugin.json")
+            continue
+        try:
+            plugin = json.loads(plugin_json.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            error(f"{pd.name}/.claude-plugin/plugin.json: {exc}")
+            continue
+
+        for field in ("name", "version", "description"):
+            if not plugin.get(field):
+                error(f"{pd.name}/plugin.json: missing '{field}'")
+
+        name = plugin.get("name")
+        entry = listed.get(name)
+        if entry is None:
+            error(f"{pd.name}/plugin.json: '{name}' is not listed in marketplace.json")
+        elif entry.get("version") != plugin.get("version"):
             error(
-                "marketplace.json and plugin.json disagree on version "
+                f"marketplace.json and {pd.name}/plugin.json disagree on version "
                 f"({entry.get('version')} vs {plugin.get('version')}); bump both together"
             )
 
-    counted = f"{len(skill_names)} skill"
-    if counted not in plugin.get("description", "") and str(len(skill_names)) not in plugin.get("description", ""):
-        warn(f"plugin.json description does not mention the current skill count ({len(skill_names)})")
+        count = sum(
+            1 for d in (pd / "skills").iterdir()
+            if d.is_dir() and (d / "SKILL.md").is_file()
+        )
+        desc = plugin.get("description", "")
+        if f"{count} " not in desc and str(count) not in desc:
+            warn(f"{pd.name}/plugin.json description does not mention its skill count ({count})")
 
 
 def main() -> int:
@@ -171,28 +186,28 @@ def main() -> int:
     parser.add_argument("--strict", action="store_true", help="treat warnings as errors")
     args = parser.parse_args()
 
-    if not SKILLS.is_dir():
-        print(f"error: {SKILLS} not found", file=sys.stderr)
+    if not PLUGIN_DIRS:
+        print("error: no secskills-* plugin dirs with a skills/ folder found", file=sys.stderr)
         return 2
 
-    skill_dirs = sorted(p for p in SKILLS.iterdir() if p.is_dir())
     skill_names = []
-    for d in skill_dirs:
-        check_skill(d)
-        skill_names.append(d.name)
+    for pd in PLUGIN_DIRS:
+        for d in sorted(p for p in (pd / "skills").iterdir() if p.is_dir()):
+            check_skill(d)
+            skill_names.append(d.name)
 
     dupes = {n for n in skill_names if skill_names.count(n) > 1}
     if dupes:
-        error(f"duplicate skill names: {', '.join(sorted(dupes))}")
+        error(f"duplicate skill names across plugins: {', '.join(sorted(dupes))}")
 
-    check_manifests(skill_names)
+    check_manifests()
 
     for w in warnings:
         print(f"warning: {w}")
     for e in errors:
         print(f"error: {e}", file=sys.stderr)
 
-    print(f"\nChecked {len(skill_names)} skills: "
+    print(f"\nChecked {len(skill_names)} skills across {len(PLUGIN_DIRS)} plugins: "
           f"{len(errors)} error(s), {len(warnings)} warning(s)")
 
     if errors or (args.strict and warnings):
