@@ -20,6 +20,28 @@ description: Pentest Android and iOS mobile applications including APK analysis,
 - **Analyzing a malicious app** — use `analyzing-malware`
 - **Source code is available** — use `auditing-code-for-vulnerabilities`
 
+## Check the Framework Before Anything Else
+
+`jadx` returning almost nothing does not mean the app is obfuscated — it
+usually means the logic is not in the dex at all. Run this first; it decides
+which skill you should be in.
+
+```bash
+unzip -l target.apk | rg 'libflutter|libapp\.so|index\.android\.bundle|libhermes|global-metadata|libil2cpp|Assembly-CSharp'
+```
+
+| Marker | Framework | Skill |
+| --- | --- | --- |
+| `libflutter.so`, `libapp.so`, `flutter_assets/` | Flutter / Dart | `reversing-flutter-apps` |
+| `index.android.bundle`, `libhermes.so`, `main.jsbundle` | React Native | `reversing-react-native-apps` |
+| `global-metadata.dat`, `libil2cpp.so`, `Assembly-CSharp.dll` | Unity | `reversing-unity-il2cpp` |
+| `classes*.dex` with real application packages | Native Android | continue here |
+
+Two framework symptoms are worth naming, because they waste the most time
+when misread: a Flutter app shows **no traffic at all** in your proxy (it
+ignores the system proxy and CA store), and a React Native or Unity app shows
+a **near-empty dex** with all the logic in `assets/`.
+
 ## Android Pentesting
 
 ### APK Analysis Tools

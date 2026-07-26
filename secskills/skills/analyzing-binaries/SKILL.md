@@ -25,6 +25,10 @@ then read that carefully.
 - **Source is available** — use `auditing-code-for-vulnerabilities`
 - **Android/iOS app assessment as a whole** — use `testing-mobile-applications`;
   use this skill for the native `.so`/Mach-O components inside it
+- **A framework runtime rather than a plain binary** — the toolchain is
+  specific and generic RE will not get there: `reversing-flutter-apps` for
+  `libapp.so`/Dart snapshots, `reversing-unity-il2cpp` for `libil2cpp.so` plus
+  `global-metadata.dat`, `reversing-react-native-apps` for Hermes bytecode
 
 ## Triage First — Never Open a Disassembler Cold
 
