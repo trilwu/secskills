@@ -145,18 +145,6 @@ Avoid reference chains: `SKILL.md` may point to `references/x.md`, but
 Name the sibling skill in backticks when handing off (`` `analyzing-binaries` ``).
 This is how the collection composes instead of overlapping.
 
-## Agents
-
-```
-secskills/agents/<agent-name>.md
-```
-
-The filename and frontmatter `name` must match, and the agent must be listed
-in `.claude-plugin/plugin.json`. Use `model: inherit` unless the agent has a
-specific reason to pin a model. Keep agents thin: they set the role, the
-operating rules, and the reporting format, then delegate methodology to the
-skills they reference.
-
 ## Versioning
 
 `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` must carry

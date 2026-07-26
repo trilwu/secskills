@@ -1,7 +1,7 @@
 {
   "name": "secskills",
-  "version": "2.11.1",
-  "description": "Security toolkit for Claude Code: 72 skills and 10 specialized subagents spanning offensive security (web, API, JWT, OAuth/OIDC, SAML, XXE, Active Directory, Entra ID, Kerberos delegation, AD CS, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, firmware, Web3, shellcode) and defensive security (source code auditing, PR security review, reverse engineering, malware analysis, memory and disk forensics, Windows endpoint DFIR, network/PCAP forensics, phishing-email analysis, AWS/Azure/M365-Entra incident investigation, detection engineering, Sigma and YARA authoring, threat hunting, threat intelligence, AI/LLM and MCP security, supply chain, cryptography review, and findings reporting).",
+  "version": "3.0.0",
+  "description": "Security toolkit for Claude Code: 72 skills spanning offensive security (web, API, JWT, OAuth/OIDC, SAML, XXE, Active Directory, Entra ID, Kerberos delegation, AD CS, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, firmware, Web3, shellcode) and defensive security (source code auditing, PR security review, reverse engineering, malware analysis, memory and disk forensics, Windows endpoint DFIR, network/PCAP forensics, phishing-email analysis, AWS/Azure/M365-Entra incident investigation, detection engineering, Sigma and YARA authoring, threat hunting, threat intelligence, AI/LLM and MCP security, supply chain, cryptography review, and findings reporting).",
   "author": {
     "name": "trilwu",
     "url": "https://github.com/trilwu"
@@ -27,17 +27,5 @@
     "supply-chain",
     "cloud-security",
     "ctf"
-  ],
-  "agents": [
-    "./agents/code-auditor.md",
-    "./agents/dfir-analyst.md",
-    "./agents/malware-analyst.md",
-    "./agents/detection-engineer.md",
-    "./agents/pentester.md",
-    "./agents/cloud-pentester.md",
-    "./agents/mobile-pentester.md",
-    "./agents/recon-specialist.md",
-    "./agents/red-team-operator.md",
-    "./agents/web3-auditor.md"
   ]
 }
