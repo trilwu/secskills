@@ -1,6 +1,7 @@
 ---
 name: auditing-mcp-servers
 description: Audit Model Context Protocol servers for injection surfaces, excessive tool scope, authorization gaps, resource over-exposure, and transport weaknesses across stdio, SSE, and Streamable HTTP deployments. Use when reviewing an MCP server implementation, assessing tool definitions for injection or description manipulation risk, auditing the trust boundary between an AI agent and MCP tools, or reviewing MCP server deployment for authentication and authorization controls.
+verified: 2026-07-27
 ---
 
 # Auditing MCP Servers

@@ -1,6 +1,7 @@
 ---
 name: securing-ai-systems
 description: Assess and harden LLM applications and agentic systems against prompt injection, tool misuse, excessive agency, memory poisoning, RAG data leakage, and model supply-chain risk, mapped to the OWASP Top 10 for LLM and Agentic Applications. Use when reviewing an AI feature, agent, MCP server, or RAG pipeline for security, or when threat modeling an autonomous system.
+verified: 2026-07-27
 ---
 
 # Securing AI Systems

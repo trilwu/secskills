@@ -1,6 +1,7 @@
 ---
 name: analyzing-rust-binaries
 description: Reverse engineer Rust binaries — demangling legacy and v0 symbol schemes, recognizing monomorphized generics, Result and Option control flow, trait object vtable dispatch, and panic-site strings that leak source paths and crate names. Use when a binary contains rustc version strings, core::panicking, or _ZN/_R mangled symbols, when a stripped binary is unexpectedly large, or when analyzing Rust malware or a Rust service.
+verified: 2026-07-27
 ---
 
 # Analyzing Rust Binaries

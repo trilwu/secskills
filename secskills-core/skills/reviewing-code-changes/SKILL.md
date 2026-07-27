@@ -1,6 +1,7 @@
 ---
 name: reviewing-code-changes
 description: Perform a security review of a diff, branch, or pull request — assessing what the change introduces, weakens, or exposes, with a triage-first workflow and false-positive discipline. Use when asked to security review a PR or branch, check a diff before merge or commit, or assess whether a change is safe to ship.
+verified: 2026-07-27
 ---
 
 # Reviewing Code Changes

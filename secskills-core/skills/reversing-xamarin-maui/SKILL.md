@@ -1,6 +1,7 @@
 ---
 name: reversing-xamarin-maui
 description: Reverse engineer Xamarin and .NET MAUI mobile apps by extracting assemblies.blob and XALZ-compressed DLLs with pyxamstore, then decompiling with dnSpy or ILSpy. Use when an APK contains libmonodroid.so, libmonosgen, assemblies.blob, assemblies/*.dll, or libxamarin-app.so, when an IPA contains Mono assemblies, or when jadx shows only Xamarin bootstrap classes.
+verified: 2026-07-27
 ---
 
 # Reversing Xamarin and .NET MAUI Apps
