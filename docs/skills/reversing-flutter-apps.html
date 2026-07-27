@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reversing-flutter-apps — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / reversing-flutter-apps</div>
+  <h1 class="sk">reversing-flutter-apps</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Reverse engineer and intercept traffic from Flutter/Dart mobile apps using blutter, reFlutter, and Frida. Use when an APK or IPA contains libflutter.so, libapp.so, App.framework, or flutter_assets, when jadx shows only a thin Dart wrapper, when Burp or mitmproxy sees no traffic from an app that is clearly online, or when the target is described as built with Flutter or Dart.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Flutter breaks both halves of the standard mobile workflow at once. Dart is AOT-compiled to a native snapshot, so there is no dex for jadx to decompile — and the Flutter engine ships its own BoringSSL with its own trust store, so it ignores the system proxy <em>and</em> the user CA store, and your interception proxy sees nothing. Neither failure is obvious from the symptoms, which is why people burn hours on this before recognizing what they are looking at.</p>
+<h2>When to Use</h2>
+<ul>
+<li><code>jadx</code> on the APK shows a near-empty <code>MainActivity</code> and little else</li>
+<li>The APK contains <code>lib/arm64-v8a/libflutter.so</code> and <code>libapp.so</code>, or</li>
+</ul>
+<p><code>assets/flutter_assets/</code></p>
+<ul>
+<li>An IPA contains <code>Frameworks/App.framework</code> and <code>Frameworks/Flutter.framework</code></li>
+<li>Burp, mitmproxy, or Charles shows zero traffic from an app that is plainly</li>
+</ul>
+<p>making network calls</p>
+<ul>
+<li>You need to recover Dart class and method names, or find the API layer, in a</li>
+</ul>
+<p>release build</p>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Ordinary Java/Kotlin Android apps</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
+<li><strong>React Native</strong> (<code>index.android.bundle</code>, Hermes) — use <a class="xref" href="reversing-react-native-apps.html"><code>reversing-react-native-apps</code></a></li>
+<li><strong>Unity</strong> (<code>global-metadata.dat</code>, <code>libil2cpp.so</code>) — use <a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a></li>
+<li><strong>The backend the app talks to</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a> once you can see traffic</li>
+<li><strong>Generic native <code>.so</code> reversing</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
+</ul>
+<h2>Identify the Build First</h2>
+<p>The build mode decides everything that follows. Check before installing tools.</p>
+<pre><code>unzip -l target.apk | rg 'libflutter|libapp|flutter_assets|kernel_blob'</code></pre>
+<div class="tw"><table><thead><tr><th>What you see</th><th>Build</th><th>What it means</th></tr></thead><tbody><tr><td><code>libapp.so</code> + <code>libflutter.so</code></td><td>AOT release</td><td>The normal case. Dart compiled to a native snapshot — this skill's main path</td></tr><tr><td><code>assets/flutter_assets/kernel_blob.bin</code></td><td>Debug / JIT</td><td>Far easier: Dart kernel bytecode, and the VM service may be reachable</td></tr><tr><td><code>App.framework/App</code> (iOS)</td><td>AOT release</td><td>Same as <code>libapp.so</code>; extract from the decrypted IPA</td></tr><tr><td>Only <code>arm64-v8a</code> present</td><td>—</td><td>Expected; blutter targets arm64. <code>armeabi-v7a</code> support is weaker</td></tr></tbody></table></div>
+<pre><code># Confirm the engine version — it gates which tools work
+strings lib/arm64-v8a/libflutter.so | rg -m5 'Flutter|Dart VM version|dart-sdk'</code></pre>
+<p>If <code>kernel_blob.bin</code> is present, stop and unpack that instead: debug builds retain far more, and the Dart VM service (if enabled) gives you live inspection. Release builds are the hard case, and the rest of this assumes one.</p>
+<h2>Recovering Dart Structure with blutter</h2>
+<p><a href="https://github.com/worawit/blutter">blutter</a> parses the Dart AOT snapshot and recovers class, method, and field names plus the object pool — the difference between an unreadable arm64 listing and a navigable app.</p>
+<pre><code># blutter needs BOTH libraries: libapp.so is the snapshot, libflutter.so
+# identifies the exact Dart version used to compile it
+unzip -j target.apk 'lib/arm64-v8a/*' -d ./libs
+python3 blutter.py ./libs ./out</code></pre>
+<p>Output you will actually use:</p>
+<div class="tw"><table><thead><tr><th>Artifact</th><th>Use</th></tr></thead><tbody><tr><td><code>pp.txt</code></td><td>Object pool dump — string constants, URLs, keys, endpoints. <strong>Read this first</strong></td></tr><tr><td><code>objs.txt</code></td><td>Recovered Dart objects and classes</td></tr><tr><td><code>asm/</code></td><td>Per-library disassembly with Dart symbols applied</td></tr><tr><td><code>ida_script/</code></td><td>Loads symbols into IDA; equivalents exist for Ghidra</td></tr><tr><td><code>blutter_frida.js</code></td><td>Generated Frida hooks against recovered Dart functions</td></tr></tbody></table></div>
+<p><strong>The failure you will hit is a Dart version mismatch.</strong> blutter compiles against a specific Dart SDK, and the snapshot format changes between versions. When it errors on parsing, the fix is to build blutter against the Dart SDK version that matches the app's engine, not to try a different snapshot. Read the version out of <code>libflutter.so</code> first, and expect the first run against a brand-new Flutter release to fail until blutter catches up.</p>
+<p><strong>Obfuscated builds</strong> (<code>flutter build --obfuscate --split-debug-info=...</code>) strip Dart names. blutter still recovers structure — call graph, object pool, string constants — but the names are gone. Pivot to <code>pp.txt</code>: URLs, endpoint paths, and error strings survive obfuscation and are usually enough to locate the API layer, which is what you wanted anyway.</p>
+<h2>Seeing the Traffic</h2>
+<p>Two separate problems, and both must be solved. Fixing only one leaves you with an empty proxy and no idea why.</p>
+<p><strong>Problem 1 — Flutter ignores the system proxy.</strong> Dart's HTTP client does not read Android/iOS proxy settings, so setting a Wi-Fi proxy does nothing. Force traffic at the network layer instead:</p>
+<pre><code># Redirect transparently on the device/emulator
+adb shell su -c 'iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to &lt;proxy-ip&gt;:8080'
+# or use a VPN-based tunnel (tun2socks / a VPN-mode proxy app)</code></pre>
+<p><strong>Problem 2 — Flutter has its own CA store.</strong> Installing your CA as a user certificate, or even as a system certificate, does not make Flutter trust it. Two working approaches:</p>
+<pre><code># A. reFlutter — patches the Flutter engine to trust your proxy and to
+#    reroute traffic. Repackage and re-sign afterwards.
+reflutter target.apk           # prompts for the proxy IP
+# outputs a patched APK; then:
+apksigner sign --ks debug.keystore release.RE.apk
+
+# B. Frida — hook the certificate check inside libflutter.so at runtime.
+#    ssl_verify_peer_cert is not exported, so scripts locate it by pattern
+#    scanning; the pattern is engine-version specific.
+frida -U -f com.target.app -l flutter-ssl-bypass.js</code></pre>
+<p>Prefer reFlutter when you can repackage (it also enables snapshot dumping and socket-level logging); prefer Frida when the app has integrity checks that a repackage would trip, or when you cannot re-sign. If both fail, the fallback is to hook the Dart HTTP client functions that blutter recovered — you lose protocol-level fidelity but still see requests and responses.</p>
+<h2>Working the App</h2>
+<p>Once you have symbols and traffic:</p>
+<ol>
+<li><strong>Start from <code>pp.txt</code>.</strong> Base URLs, endpoint paths, header names, and any</li>
+</ol>
+<p>embedded key material are in the object pool. This usually maps the API in minutes.</p>
+<ol>
+<li><strong>Hook recovered functions</strong> using <code>blutter_frida.js</code> as a starting point —</li>
+</ol>
+<p>dump arguments and return values around the request builder, the auth token handler, and any local crypto.</p>
+<ol>
+<li><strong>Check the platform channels.</strong> Flutter apps delegate to native code for</li>
+</ol>
+<p>biometrics, keystore, and payments; those are ordinary Java/Kotlin or Swift, so hand them to <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a>.</p>
+<ol>
+<li><strong>Then test the API properly</strong> with <a class="xref" href="testing-apis.html"><code>testing-apis</code></a>. Everything above was to</li>
+</ol>
+<p>get you to the request; the vulnerabilities are usually on the other end.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The proxy shows nothing, so the app must not use the network."</em> It uses</li>
+</ul>
+<p>the network. It is not using your proxy.</p>
+<ul>
+<li><em>"I installed the CA as a system cert, so TLS interception will work."</em></li>
+</ul>
+<p>Flutter does not consult the system store.</p>
+<ul>
+<li><em>"jadx showed nothing, so the app is heavily obfuscated."</em> There is nothing</li>
+</ul>
+<p>in the dex to see. The app is in <code>libapp.so</code>.</p>
+<ul>
+<li><em>"blutter failed, so this build can't be analyzed."</em> It almost always means</li>
+</ul>
+<p>a Dart version mismatch. Read the engine version and rebuild blutter against it.</p>
+<ul>
+<li><em>"It's obfuscated, so the strings are gone."</em> Names are gone; the object</li>
+</ul>
+<p>pool is not. Read <code>pp.txt</code>.</p>
+<ul>
+<li><em>"I'll just reverse the arm64 by hand."</em> Dart AOT output without symbols is</li>
+</ul>
+<p>extraordinarily slow to read. Recover symbols first — it is the whole job.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the wider mobile assessment and native channels</li>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — testing the backend once traffic is visible</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — deeper native work on the engine itself</li>
+<li>blutter, reFlutter, Frida/objection, jadx, apktool, apksigner</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

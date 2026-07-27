@@ -1,0 +1,215 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>recognizing-deception — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / recognizing-deception</div>
+  <h1 class="sk">recognizing-deception</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Recognize defensive deception during an engagement — honeypots, honeytokens and canary tokens, decoy AD accounts and shares, canary files, and deceptive cloud credentials — before interacting with them, and handle a suspected decoy without burning the engagement. Use when a target is unexpectedly easy, when credentials or a service appear in an implausible place, when a privileged account has no logon history, when a file or bucket looks like bait, or when deciding whether to use credentials of unknown provenance.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Every other skill in this collection assumes the environment is telling you the truth. Deception technology exists specifically to break that assumption, and it is the failure mode an automated or semi-automated tester is least equipped to catch.</p>
+<p>The distinction that matters: careful evidence-handling protects you against conclusions <em>you</em> invented. It does nothing against a false belief the environment deliberately planted. A honeypot presenting a convincingly vulnerable service produces real banners, real responses, and real artifacts. Every verification step you would normally run confirms it, because the evidence is genuine — it was manufactured to be.</p>
+<p>Assume competent defenders have planted something. Your job is to notice before you touch it, because <strong>most deception fires on first use, and first use cannot be undone.</strong></p>
+<h2>When to Use</h2>
+<ul>
+<li>Anything is markedly easier than the rest of the environment</li>
+<li>Credentials turn up somewhere convenient — a share, a wiki, a config, a</li>
+</ul>
+<p>pastebin-shaped file</p>
+<ul>
+<li>A privileged account exists with a SPN, a weak password, and no logon history</li>
+<li>A service answers with a vulnerable banner but behaves oddly under real use</li>
+<li>You are about to use credentials whose provenance you cannot state</li>
+<li>A file, bucket, or database is named to attract attention</li>
+</ul>
+<p>(<code>passwords.xlsx</code>, <code>backup-prod</code>, <code>domain_admins.txt</code>)</p>
+<ul>
+<li>Before authenticating with anything recovered from an unexpected location</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Evading detection generally</strong> — that is engagement OPSEC, not deception</li>
+</ul>
+<p>recognition; a canary is not something you evade, it is something you avoid triggering</p>
+<ul>
+<li><strong>Analysing an adversary's own decoys during an incident</strong> — use</li>
+</ul>
+<p><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> and <a class="xref" href="producing-threat-intelligence.html"><code>producing-threat-intelligence</code></a></p>
+<ul>
+<li><strong>Building a deception capability</strong> — this skill is about encountering</li>
+</ul>
+<p>deception, not deploying it</p>
+<ul>
+<li><strong>A finding that is merely surprising</strong> — real environments contain real</li>
+</ul>
+<p>misconfigurations; see the base-rate discussion below before crying honeypot</p>
+<h2>The Economics Are Against You</h2>
+<p>Deception is cheap to deploy and expensive to trip:</p>
+<div class="tw"><table><thead><tr><th></th><th>Attacker cost</th><th>Defender benefit</th></tr></thead><tbody><tr><td>Canary token in a document</td><td>One click to trigger</td><td>High-fidelity alert, near-zero false positives</td></tr><tr><td>Honeyuser in AD</td><td>One Kerberoast</td><td>Alert plus a cracked-password timeline</td></tr><tr><td>Decoy AWS key</td><td>One <code>sts get-caller-identity</code></td><td>Alert with your source IP and user agent</td></tr><tr><td>Honeypot service</td><td>One connection</td><td>Full interaction capture, your tooling fingerprinted</td></tr></tbody></table></div>
+<p>A canary alert is one of the very few signals a SOC treats as automatically true. There is no benign explanation to hide behind, and the alert carries your source address and often your tooling's fingerprint. Tripping one typically ends the covert phase of an engagement immediately.</p>
+<h2>Signals, By Type</h2>
+<h3>Honeytokens and canary tokens</h3>
+<p>The highest-frequency class, and the one that fires on <em>use</em> rather than on discovery. Common forms: AWS keys, Office documents with a callback, DNS tokens, URL tokens, cloned-website tokens, SQL Server rows, Windows directories, Kubeconfig files.</p>
+<p>Signals:</p>
+<ul>
+<li>Credentials in a location with no operational reason to hold them — a</li>
+</ul>
+<p>world-readable share, a wiki page, a <code>README</code>, a desktop file</p>
+<ul>
+<li>An AWS key that is syntactically valid but appears in isolation, with no</li>
+</ul>
+<p>surrounding infrastructure, tooling config, or commit history</p>
+<ul>
+<li>Documents that are plausible but inert — a spreadsheet with no formulas, a</li>
+</ul>
+<p><code>.docx</code> whose only interesting content is its filename</p>
+<ul>
+<li>Anything staged for discovery: correct name, convenient location, no</li>
+</ul>
+<p>supporting context</p>
+<p><strong>A canary AWS key alerts on the first API call, including <code>sts get-caller-identity</code>.</strong> There is no safe reconnaissance call. Treat key material of unknown provenance as live until you can explain how it got there.</p>
+<h3>Active Directory decoys</h3>
+<ul>
+<li>Privileged account, SPN set, weak password, <code>lastLogon</code> empty or ancient —</li>
+</ul>
+<p>a Kerberoastable account nobody has ever authenticated as is bait</p>
+<ul>
+<li>Accounts whose <code>whenCreated</code> clusters with other suspicious accounts</li>
+<li><code>Description</code> fields containing credentials — a classic real</li>
+</ul>
+<p>misconfiguration and a classic decoy, so provenance matters more than usual</p>
+<ul>
+<li>Shares with attractive names and no access history</li>
+<li>Objects that appear in enumeration but have no group membership, no manager,</li>
+</ul>
+<p>no ownership relationships — real accounts accrete relationships</p>
+<h3>Deceptive services</h3>
+<ul>
+<li>Banner advertises a version with a famous CVE, but behaviour under real</li>
+</ul>
+<p>interaction is inconsistent with that version</p>
+<ul>
+<li>Service is reachable from a segment that should not reach it</li>
+<li>Response timing is uniform in a way real applications are not</li>
+<li>The host runs an implausible service combination, or a service with no</li>
+</ul>
+<p>business function on that host</p>
+<ul>
+<li>Exploitation "succeeds" but the resulting shell has no history, no other</li>
+</ul>
+<p>users, no realistic filesystem, and suspiciously clean logs</p>
+<h3>Cloud decoys</h3>
+<ul>
+<li>S3 buckets, storage accounts, or secrets named to attract enumeration</li>
+<li>IAM users with permissive-looking policies and no CloudTrail history</li>
+<li>Resources tagged inconsistently with the rest of the account</li>
+</ul>
+<h2>Base Rates Cut Both Ways</h2>
+<p>Real environments are genuinely bad. Credentials really do sit in shares, service accounts really are Kerberoastable, and buckets really are public. If you label every finding a honeypot you will report nothing and miss the actual compromise path.</p>
+<p>The discriminator is <strong>supporting context, not attractiveness</strong>:</p>
+<ul>
+<li>A real misconfiguration has a <em>history</em> — commit history, access logs,</li>
+</ul>
+<p>logon history, related infrastructure, other users, adjacent mess.</p>
+<ul>
+<li>A decoy is <em>isolated</em>. It exists to be found and nothing else uses it.</li>
+</ul>
+<p>So the question is never "is this too good to be true?" It is: <strong>what else in this environment depends on this thing existing?</strong> If the answer is nothing, slow down.</p>
+<h2>What To Do With a Suspected Decoy</h2>
+<ol>
+<li><strong>Do not authenticate, connect, or call the API.</strong> Discovery is usually</li>
+</ol>
+<p>silent; use is not. This is the whole decision.</p>
+<ol>
+<li><strong>Record it</strong> — location, exact artifact, how you found it, why you suspect</li>
+</ol>
+<p>it. This is evidence for the report either way.</p>
+<ol>
+<li><strong>Keep enumerating elsewhere.</strong> A suspected decoy is a reason to route</li>
+</ol>
+<p>around, not to stop.</p>
+<ol>
+<li><strong>Raise it with the client contact</strong> rather than testing your hypothesis</li>
+</ol>
+<p>against production. Ask whether deception is deployed and in scope. Many engagements exclude it; some clients deploy it specifically to test the blue team's response to <em>you</em>.</p>
+<ol>
+<li><strong>If you already tripped it, say so immediately.</strong> A canary alert with a</li>
+</ol>
+<p>known, declared cause is an engagement note. The same alert investigated as a live intrusion burns the client's IR capacity and your credibility. Concealing it is the actual serious mistake.</p>
+<p>Deception in the environment is a <strong>positive finding</strong> worth reporting: it means the defenders invested in high-fidelity detection. Say so.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"It was in scope, so using it was fine."</em> Scope governs authorization, not</li>
+</ul>
+<p>wisdom. Tripping a canary inside scope still ends your covert phase and still consumes the client's incident response.</p>
+<ul>
+<li><em>"I only ran one harmless call to check."</em> For a canary token there is no</li>
+</ul>
+<p>harmless call. <code>sts get-caller-identity</code>, a single DNS lookup, opening the document — that is the trigger, in full.</p>
+<ul>
+<li><em>"The banner and the CVE matched, so it was real."</em> The evidence being</li>
+</ul>
+<p>genuine is exactly the design. Manufactured evidence verifies correctly.</p>
+<ul>
+<li><em>"Real environments are messy, so this is probably just a misconfiguration."</em></li>
+</ul>
+<p>Often true — which is why the test is supporting context, not plausibility. Isolated artifacts with no dependents are the tell.</p>
+<ul>
+<li><em>"It's just a lab-looking box, probably a decommissioned host."</em> Uniform</li>
+</ul>
+<p>timing, no user history, and a clean filesystem describe a honeypot as readily as a stale host, and you cannot distinguish them from outside.</p>
+<ul>
+<li><em>"I'll mention it in the report at the end."</em> A tripped canary is time-</li>
+</ul>
+<p>critical for the client's SOC. Delayed disclosure turns your engagement note into their multi-hour investigation.</p>
+<ul>
+<li><em>"Reporting that I tripped it makes me look bad."</em> Tripping deception is a</li>
+</ul>
+<p>normal engagement event. Hiding it and letting the SOC chase a phantom intrusion is a professional failure.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="maintaining-engagement-state.html"><code>maintaining-engagement-state</code></a> — recording provenance, which is what makes</li>
+</ul>
+<p>the "where did this credential come from?" question answerable</p>
+<ul>
+<li><a class="xref" href="performing-reconnaissance.html"><code>performing-reconnaissance</code></a> — where isolated artifacts usually surface first</li>
+<li><a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a> — Kerberoasting and share enumeration, the two</li>
+</ul>
+<p>operations most likely to meet an AD decoy</p>
+<ul>
+<li><a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a> — canary files and folders are commonly placed</li>
+</ul>
+<p>where persistence is written</p></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

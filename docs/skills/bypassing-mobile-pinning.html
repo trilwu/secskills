@@ -1,0 +1,185 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>bypassing-mobile-pinning — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / bypassing-mobile-pinning</div>
+  <h1 class="sk">bypassing-mobile-pinning</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Diagnose and defeat TLS interception failures in mobile apps — certificate pinning, Android Network Security Config, user-CA distrust, native BoringSSL pinning, and mutual TLS — using objection, Frida, SSL Kill Switch, and APK patching. Use when Burp, mitmproxy, or Charles shows a TLS handshake error, an empty proxy, or &quot;network error&quot; from a mobile app, or when a target is known to pin certificates.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Most time lost here is spent bypassing pinning that was never there. An empty proxy has at least six causes, and the fix for each is different — one of them is not pinning at all but Android's default distrust of user CAs, and another is that the app has its own TLS stack and never saw your proxy. Diagnose before you reach for a bypass script.</p>
+<p>Use only against apps you are authorized to test.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Burp/mitmproxy/Charles shows a TLS handshake failure from a mobile app</li>
+<li>The proxy shows nothing while the app clearly reaches the network</li>
+<li>The app reports "network error", "connection insecure", or similar with the</li>
+</ul>
+<p>proxy configured</p>
+<ul>
+<li>You know the target pins, and need the right hook for its stack</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Flutter targets</strong> — use <a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a>; Flutter's failure looks</li>
+</ul>
+<p>identical but the cause and fix are specific to its engine</p>
+<ul>
+<li><strong>The wider mobile assessment</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
+<li><strong>The backend once traffic is visible</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a></li>
+<li><strong>Reversing a native <code>.so</code> in depth</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
+</ul>
+<h2>Diagnose First</h2>
+<p>Run this before installing anything. The symptom tells you the cause.</p>
+<div class="tw"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Proxy sees the CONNECT, then TLS alert <code>unknown_ca</code> / <code>bad_certificate</code></td><td>Your CA is not trusted</td><td>Install as <strong>system</strong> CA, or patch Network Security Config</td></tr><tr><td>Proxy sees the CONNECT, then alert only for <em>some</em> domains</td><td>Real pinning, scoped to those hosts</td><td>Hook the pinning check</td></tr><tr><td>Proxy sees <strong>nothing at all</strong>, app works</td><td>App ignores the system proxy</td><td>Force traffic at the network layer (Flutter, gRPC, some SDKs)</td></tr><tr><td>Proxy sees the handshake, server rejects the client</td><td>Mutual TLS — the app presents a client certificate</td><td>Extract the client cert; this is not pinning</td></tr><tr><td>Works on emulator, fails on device (or vice versa)</td><td>Root/emulator detection, not TLS</td><td>Different problem — see the detection section</td></tr><tr><td>Fails only after login</td><td>Pinning applied to the API host only</td><td>Hook, then re-check</td></tr></tbody></table></div>
+<pre><code># What does the app actually declare?
+apktool d target.apk -o out
+cat out/res/xml/network_security_config.xml 2&gt;/dev/null
+rg -n 'networkSecurityConfig|usesCleartextTraffic' out/AndroidManifest.xml
+
+# Which TLS stack is in play?
+rg -l 'okhttp3|CertificatePinner|TrustKit|AFNetworking|Alamofire' out/ 2&gt;/dev/null | head
+unzip -l target.apk | rg 'libssl|libcrypto|libconscrypt|libflutter|libil2cpp|libmonodroid'</code></pre>
+<p><strong>Check Network Security Config before assuming pinning.</strong> Since Android 7, apps do not trust user-installed CAs by default. An app with no pinning code at all will still fail interception. Two fixes:</p>
+<pre><code># A. Install your CA as a SYSTEM certificate (no app modification — preferred)
+#    Emulator:
+emulator -avd &lt;name&gt; -writable-system
+adb root &amp;&amp; adb remount
+openssl x509 -inform PEM -subject_hash_old -in burp.pem | head -1   # → e.g. 9a5ba580
+cp burp.pem 9a5ba580.0 &amp;&amp; adb push 9a5ba580.0 /system/etc/security/cacerts/
+adb shell chmod 644 /system/etc/security/cacerts/9a5ba580.0
+#    Rooted device: use a Magisk module so the change survives reboot
+
+# B. Patch the config and repack (when you cannot get a system CA)
+#    Add to network_security_config.xml:
+#      &lt;base-config&gt;&lt;trust-anchors&gt;
+#        &lt;certificates src="system"/&gt;&lt;certificates src="user"/&gt;
+#      &lt;/trust-anchors&gt;&lt;/base-config&gt;
+apktool b out -o patched.apk &amp;&amp; apksigner sign --ks debug.keystore patched.apk</code></pre>
+<p>Option A is better: it modifies nothing in the app, so integrity checks, signature checks, and Play Integrity are unaffected. Reach for B only when you cannot get a system CA onto the device.</p>
+<h2>Android: Hook by Stack</h2>
+<p>Identify the stack, then hook it. A generic script that misses will look like "the bypass failed" when it simply targeted the wrong layer.</p>
+<pre><code># Start here — covers the common Java-layer stacks in one shot
+objection -g com.target.app explore
+# then: android sslpinning disable
+
+# Or a maintained universal script
+frida -U -f com.target.app -l android-ssl-bypass.js --no-pause</code></pre>
+<div class="tw"><table><thead><tr><th>Stack</th><th>Marker</th><th>Hook point</th></tr></thead><tbody><tr><td>OkHttp 3/4</td><td><code>okhttp3.CertificatePinner</code></td><td><code>CertificatePinner.check()</code> — return normally</td></tr><tr><td>HttpURLConnection</td><td><code>javax.net.ssl.*</code></td><td>Custom <code>X509TrustManager.checkServerTrusted()</code></td></tr><tr><td>Conscrypt</td><td><code>libconscrypt_jni.so</code></td><td><code>Platform.checkServerTrusted</code>, or the native layer</td></tr><tr><td>Apache HttpClient</td><td><code>org.apache.http</code></td><td><code>SSLSocketFactory</code> verifier</td></tr><tr><td>WebView</td><td><code>onReceivedSslError</code></td><td>Force <code>handler.proceed()</code></td></tr><tr><td><strong>Native / BoringSSL</strong></td><td><code>libssl.so</code>, custom <code>.so</code></td><td><code>SSL_CTX_set_custom_verify</code>, <code>ssl_verify_peer_cert</code></td></tr><tr><td>Xamarin</td><td><code>libmonodroid.so</code>, <code>libxamarin*</code></td><td>Mono-level <code>ServicePointManager</code> / <code>HttpClientHandler</code></td></tr><tr><td>Unity</td><td><code>libil2cpp.so</code></td><td><code>UnityWebRequest</code> cert handler, or BestHTTP's verifier</td></tr><tr><td>gRPC</td><td><code>libgrpc.so</code></td><td>Channel credentials; often also ignores the proxy</td></tr></tbody></table></div>
+<p><strong>Native pinning is where the universal scripts stop working.</strong> When <code>objection</code> reports success but traffic still fails, the check is in a <code>.so</code>. BoringSSL's verification entry points are not exported, so scripts locate them by pattern scanning — and the pattern is version-specific. Confirm what you are dealing with:</p>
+<pre><code># Is a native TLS stack even present?
+unzip -j target.apk 'lib/arm64-v8a/*' -d libs &amp;&amp; rg -l 'SSL_|BoringSSL|s2n' libs/
+# Trace the native calls to see which library terminates TLS
+frida-trace -U -f com.target.app -i 'SSL_*' -i '*verify*'</code></pre>
+<p>For Unity, Xamarin, and Flutter builds, recover symbols first — <a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a>, <a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a> — then hook the named function rather than pattern-scanning blind.</p>
+<h2>iOS</h2>
+<pre><code># Frida-based, covers NSURLSession and the common libraries
+objection -g com.target.app explore
+# then: ios sslpinning disable
+
+# Jailbroken device, no Frida
+# SSL Kill Switch 3 — system-wide, survives app updates</code></pre>
+<div class="tw"><table><thead><tr><th>Library</th><th>Hook point</th></tr></thead><tbody><tr><td>NSURLSession (default)</td><td><code>URLSession:didReceiveChallenge:</code> → <code>.useCredential</code> with the server trust</td></tr><tr><td>TrustKit</td><td><code>TSKPinningValidator</code> result</td></tr><tr><td>AFNetworking</td><td><code>AFSecurityPolicy.evaluateServerTrust:</code></td></tr><tr><td>Alamofire</td><td><code>ServerTrustManager</code> / <code>ServerTrustEvaluating</code></td></tr><tr><td>Native/BoringSSL</td><td>Same as Android — hook the verify callback</td></tr></tbody></table></div>
+<p>Non-jailbroken devices: repackage the IPA with the Frida gadget (<code>objection patchipa</code>), re-sign, and sideload. Expect this to trip integrity or attestation checks in hardened apps.</p>
+<h2>When It Still Fails</h2>
+<p>Work through these in order rather than trying more bypass scripts.</p>
+<ol>
+<li><strong>The app never used your proxy.</strong> Some stacks ignore system proxy settings</li>
+</ol>
+<p>entirely. Force traffic: transparent redirect with <code>iptables</code>, or a VPN/tun-based proxy. ``<code>bash adb shell su -c 'iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to &amp;lt;proxy&amp;gt;:8080' </code>``</p>
+<ol>
+<li><strong>Certificate Transparency enforcement.</strong> Some SDKs require SCTs; your CA</li>
+</ol>
+<p>has none. Look for CT libraries and hook the CT verifier specifically.</p>
+<ol>
+<li><strong>Mutual TLS.</strong> The server demands a client certificate. Extract the <code>.p12</code></li>
+</ol>
+<p>or keystore from the app bundle, recover its password (often in code or <code>strings</code>), and load it into your proxy's client-certificate settings. This is a separate mechanism from pinning and no pinning bypass will touch it.</p>
+<ol>
+<li><strong>Root/jailbreak or Frida detection.</strong> The app detects instrumentation and</li>
+</ol>
+<p>fails closed, which looks like a TLS problem. Check for a <code>frida</code> string scan, port 27042 probing, <code>/proc/self/maps</code> inspection, or Play Integrity. Bypass the detection first, then retry the pinning bypass.</p>
+<ol>
+<li><strong>The traffic is not HTTP.</strong> WebSockets, gRPC, MQTT, or a custom protocol</li>
+</ol>
+<p>over TLS. Your HTTP proxy will not show it — capture at the socket layer or with a protocol-aware proxy.</p>
+<ol>
+<li><strong>Pinning applied only to specific hosts.</strong> Analytics flows fine while the</li>
+</ol>
+<p>API fails. Confirm by comparing which hosts appear in the proxy.</p>
+<h2>Verify You Actually Won</h2>
+<p>A bypass is confirmed when you can see and <em>modify</em> a request end to end — not when the app merely stops erroring.</p>
+<pre><code>1. Proxy shows the API host, not just analytics and CDN traffic
+2. Request and response bodies are readable
+3. A modified request produces a different server response
+4. Authenticated flows still work through the proxy</code></pre>
+<p>If only step 1 passes, you may be seeing a fallback path while the real API traffic goes elsewhere.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The bypass failed, the app must use strong pinning."</em> Six causes, one of</li>
+</ul>
+<p>which is pinning. Diagnose from the symptom table.</p>
+<ul>
+<li><em>"I installed the CA, so TLS should work."</em> As a <em>user</em> certificate, on</li>
+</ul>
+<p>Android 7+, for an app that does not opt in — it will not.</p>
+<ul>
+<li><em>"objection said pinning disabled."</em> It disabled the Java-layer checks it</li>
+</ul>
+<p>knows. Native pinning is untouched.</p>
+<ul>
+<li><em>"No traffic in the proxy means the app is offline."</em> It means the app is not</li>
+</ul>
+<p>using your proxy.</p>
+<ul>
+<li><em>"I'll just patch the APK."</em> Repacking breaks signatures and trips integrity</li>
+</ul>
+<p>checks. Prefer a system CA and runtime hooks; patch as a last resort.</p>
+<ul>
+<li><em>"Pinning bypassed, assessment done."</em> Bypassing pinning is setup, not a</li>
+</ul>
+<p>finding. Pinning is a defense-in-depth control, and its absence is a low severity note — the findings are in the API behind it.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the wider assessment this unblocks</li>
+<li><a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a> — Flutter's separate TLS stack and proxy behaviour</li>
+<li><a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a>, <a class="xref" href="reversing-react-native-apps.html"><code>reversing-react-native-apps</code></a> — symbol recovery</li>
+</ul>
+<p>before hooking framework-specific stacks</p>
+<ul>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — where the actual findings are, once you can see the traffic</li>
+<li>objection, Frida, SSL Kill Switch 3, apktool, apksigner, Magisk</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

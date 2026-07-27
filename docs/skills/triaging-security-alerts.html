@@ -1,0 +1,170 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>triaging-security-alerts — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / triaging-security-alerts</div>
+  <h1 class="sk">triaging-security-alerts</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Work a security alert queue to a defensible disposition — separating true positives from false positives and benign true positives, reasoning about base rates before escalating, ordering enrichment by cheapest discriminator, time-boxing, and documenting negative results so a closed alert is evidence rather than a guess. Use when triaging SOC or EDR alerts, deciding whether an alert warrants incident response, working through an alert backlog, or determining why a detection keeps firing.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Triage is the highest-volume work in security and the least written about. The output is a <strong>disposition you can defend later</strong> — most often to someone asking why an alert that preceded a breach was closed.</p>
+<p>Three properties make it hard. The overwhelming majority of alerts are not incidents, so the prior is against you on every single one. The cost of the two error types is wildly asymmetric — a wrongly escalated alert wastes hours, a wrongly closed one costs the breach. And the queue keeps arriving, so unbounded care on one alert is care stolen from the next.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Working an alert queue from a SIEM, EDR, or cloud security tool</li>
+<li>Deciding whether an alert becomes an incident</li>
+<li>Reworking a backlog, or a specific alert that keeps recurring</li>
+<li>Reviewing another analyst's disposition</li>
+<li>Determining whether a noisy detection should be tuned or removed</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>The alert is already confirmed malicious</strong> — stop triaging and use</li>
+</ul>
+<p><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>; triage ends where response begins</p>
+<ul>
+<li><strong>Searching for compromise with no alert to start from</strong> — use</li>
+</ul>
+<p><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>; a hunt is hypothesis-driven, triage is queue-driven</p>
+<ul>
+<li><strong>Rewriting the rule</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> or <a class="xref" href="writing-sigma-rules.html"><code>writing-sigma-rules</code></a>;</li>
+</ul>
+<p>feed your triage findings to it rather than tuning in place mid-queue</p>
+<ul>
+<li><strong>Analysing the sample an alert pointed at</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><strong>Investigating a specific compromised host in depth</strong> — use</li>
+</ul>
+<p><a class="xref" href="investigating-windows-endpoints.html"><code>investigating-windows-endpoints</code></a> or the relevant cloud investigation skill</p>
+<h2>Three Dispositions, Not Two</h2>
+<p>The common failure is a binary true/false frame. There are three, and conflating the last two destroys your detection programme:</p>
+<div class="tw"><table><thead><tr><th>Disposition</th><th>Meaning</th><th>Correct action</th></tr></thead><tbody><tr><td><strong>True positive</strong></td><td>Detection fired correctly, activity was malicious</td><td>Escalate to incident response</td></tr><tr><td><strong>Benign true positive</strong></td><td>Detection fired correctly, activity was authorized</td><td>Close, and record the authorizing context. <strong>Do not</strong> tune the rule away</td></tr><tr><td><strong>False positive</strong></td><td>Detection logic was wrong — it did not match what it claims to match</td><td>Close, and send it to detection engineering as a logic defect</td></tr></tbody></table></div>
+<p>An admin legitimately dumping LSASS for a memory test is a <em>benign true positive</em>: the rule worked perfectly. Filing it as a false positive leads someone to weaken a rule that is functioning exactly as designed. Over a year that is how a detection programme quietly dies.</p>
+<h2>Base Rates Decide More Than Evidence Does</h2>
+<p>Most triage errors are not evidence-reading errors. They are prior-probability errors.</p>
+<p>Take a detection that is 99% accurate, firing across 10,000 hosts where 1 is actually compromised. It produces roughly 100 false alerts and 1 true one. <strong>A positive alert is about 1% likely to be a real compromise</strong> — even at 99% accuracy. This is why "the tool flagged it" carries almost no weight on its own, and why an analyst who escalates on tool severity alone will be wrong almost every time.</p>
+<p>The practical consequences:</p>
+<ul>
+<li><strong>Severity is a property of the rule, not of the alert.</strong> It was assigned by</li>
+</ul>
+<p>whoever wrote the detection, before your environment existed.</p>
+<ul>
+<li><strong>Ask what else would produce this signal.</strong> If routine administration,</li>
+</ul>
+<p>backup software, or a vulnerability scanner explains it, that explanation is far more likely than compromise before you have contrary evidence.</p>
+<ul>
+<li><strong>Corroboration beats confidence.</strong> Two weak independent signals pointing the</li>
+</ul>
+<p>same way move the posterior much further than one strong signal, because their benign explanations rarely coincide.</p>
+<ul>
+<li><strong>Rare things are rare — but rarity is not innocence.</strong> The point is to make</li>
+</ul>
+<p>the prior explicit so evidence has to actually overcome it, not to explain every alert away.</p>
+<h2>Order Enrichment by Cheapest Discriminator</h2>
+<p>Work the question that most cheaply splits benign from malicious. Do not run a fixed enrichment checklist.</p>
+<ol>
+<li><strong>What is this asset and who uses it?</strong> A domain controller and a</li>
+</ol>
+<p>developer's laptop generate different priors for identical activity.</p>
+<ol>
+<li>**Is this normal for <em>this</em> host or user?** Frequency and history first. An</li>
+</ol>
+<p>action that ran daily for eight months is a baseline, not an event.</p>
+<ol>
+<li><strong>Was it authorized?</strong> Change tickets, maintenance windows, deployment</li>
+</ol>
+<p>pipelines. Most benign true positives resolve here.</p>
+<ol>
+<li><strong>What is the parent and the chain?</strong> Provenance discriminates far better</li>
+</ol>
+<p>than the artifact itself. <code>powershell.exe</code> is meaningless; spawned by <code>winword.exe</code> is not.</p>
+<ol>
+<li><strong>Only then, external reputation.</strong> Hash and IOC lookups are the <em>last</em></li>
+</ol>
+<p>cheap step, not the first. A clean reputation proves nothing about targeted activity, and a dirty one still needs the local context above.</p>
+<p>Stop as soon as one of these settles it. Running every step on every alert is how the queue wins.</p>
+<h2>Time-Boxing and Escalation</h2>
+<p>Set a bound before you start — commonly 15 minutes for a routine alert. When it expires, you must choose, and the choice is <strong>not</strong> "keep digging":</p>
+<ul>
+<li>Enough to close → close with the evidence recorded.</li>
+<li>Enough to escalate → escalate.</li>
+<li><strong>Neither → escalate anyway.</strong> An alert that resists a full time-box is</li>
+</ul>
+<p>itself a signal. Ambiguity is not a reason to keep it in your queue; it is a reason to give it more resources than you have.</p>
+<p>Escalate immediately, without finishing triage, on any of: confirmed execution on a crown-jewel asset, credential access on a domain controller or identity provider, evidence of lateral movement, security tooling being disabled, or anything touching backup infrastructure. These are too expensive to be wrong about slowly.</p>
+<h2>A Closed Alert Must Be Evidence</h2>
+<p>Record what you checked, what you found, and what would change your mind. A disposition with no reasoning is unreviewable, and the alert that preceded a breach is always reviewed.</p>
+<p>The dangerous phrasing is <em>"no evidence of compromise found"</em> where the honest statement is <em>"the telemetry that would show compromise is not collected."</em> The first closes the question; the second is a finding about a visibility gap and belongs to <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>.</p>
+<p>Every disposition also carries information back to detection engineering: false positives are logic defects, repeated benign true positives are missing authorized-context filters, and a rule producing only noise for months should be measured and removed rather than endured.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The tool rated it critical, so it is serious."</em> Severity was set by the</li>
+</ul>
+<p>rule author against a generic environment. Your base rate is local.</p>
+<ul>
+<li><em>"It has fired a hundred times before and always been nothing."</em> Prior</li>
+</ul>
+<p>benignity is evidence, not proof — and an attacker who knows the rule is ignored will use exactly that technique. Check <em>this</em> instance's specifics.</p>
+<ul>
+<li><em>"The user said it was them."</em> Confirms someone used the account, not that</li>
+</ul>
+<p>the account was not also used by someone else. Compromised users answer the phone. Corroborate against telemetry.</p>
+<ul>
+<li><em>"It stopped on its own, so it resolved."</em> Activity ceasing is equally</li>
+</ul>
+<p>consistent with the operator finishing, moving on, or going quiet. Nothing self-resolves in security.</p>
+<ul>
+<li><em>"I could not find anything, so it is a false positive."</em> Absence of evidence</li>
+</ul>
+<p>in telemetry you did not check, or that is not collected, is not a false positive. Say which you mean.</p>
+<ul>
+<li><em>"It is a known false positive."</em> Then it should have been tuned or filtered.</li>
+</ul>
+<p>If it is still firing, either the tuning is missing or it is actually a benign true positive being mislabelled — both are actions, not dispositions.</p>
+<ul>
+<li><em>"I will keep digging until I am certain."</em> Certainty is not on the menu, and</li>
+</ul>
+<p>the queue is still arriving. Time-box, then escalate on ambiguity.</p>
+<ul>
+<li><em>"Escalating something benign makes me look careless."</em> Escalating ambiguity</li>
+</ul>
+<p>is the system working. Closing ambiguity silently is the failure the post- incident review will find.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — where a true positive goes next</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — where false positives and tuning gaps go back to</li>
+<li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — the hypothesis-driven counterpart to queue-driven triage</li>
+<li><a class="xref" href="investigating-windows-endpoints.html"><code>investigating-windows-endpoints</code></a> — deep host analysis once triage escalates</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

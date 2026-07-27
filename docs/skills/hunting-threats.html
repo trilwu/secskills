@@ -1,0 +1,220 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hunting-threats — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / hunting-threats</div>
+  <h1 class="sk">hunting-threats</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Run hypothesis-driven threat hunts across endpoint, network, cloud, and identity telemetry using stack counting, outlier analysis, and ATT&amp;CK-based hypotheses, with SIEM query patterns for Splunk, KQL, and Elastic. Use when proactively searching for undetected compromise, validating an intel report against your environment, or converting a hunch into a repeatable hunt.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Hunting starts from an assumption of failure: the controls are deployed, no alert has fired, and the adversary may still be present. The output is not usually a compromise — it is a detection, a telemetry gap, or a documented negative result. Hunts that only count as successful when they find something degrade into confirmation bias.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Proactively searching for compromise that detection missed</li>
+<li>Testing a specific hypothesis about attacker behaviour in your environment</li>
+<li>Operationalizing a threat intel report against your telemetry</li>
+<li>Validating that a control or detection actually works in production</li>
+<li>Baselining an environment to enable future outlier analysis</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Working an alert queue rather than a hypothesis</strong> — use</li>
+</ul>
+<p><a class="xref" href="triaging-security-alerts.html"><code>triaging-security-alerts</code></a>; a hunt starts from a question, triage from a queue</p>
+<ul>
+<li><strong>Confirmed incident in progress</strong> — use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><strong>Writing the rule for what you found</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
+<li><strong>Sample analysis</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><strong>A packet capture to work through</strong> — use <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></li>
+<li><strong>A confirmed AWS compromise to investigate</strong> — use <a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a></li>
+<li>**Pivoting on indicators, tracking an actor, or producing a finished intel</li>
+</ul>
+<p>product** — use <a class="xref" href="producing-threat-intelligence.html"><code>producing-threat-intelligence</code></a>; a hunt consumes intelligence, it does not produce it</p>
+<ul>
+<li><strong>Offensive testing of defenses</strong> — use the red team skills</li>
+</ul>
+<h2>Hypothesis Before Query</h2>
+<p>An unstructured search through logs is browsing, not hunting. Every hunt gets a written hypothesis in this shape:</p>
+<blockquote><strong>Hypothesis:</strong> An adversary with [access level] is using [technique] to [objective], which would produce [observable] in [data source], which is distinguishable from normal because [discriminator].  <strong>If true, I expect to see:</strong> ... <strong>If false, I expect:</strong> ... <strong>Telemetry required:</strong> ... (verified present: yes/no)</blockquote>
+<p>If you cannot name the discriminator — what makes the malicious instance look different from the thousands of benign ones — the hunt is not ready. Go find the discriminator first; that research is the hunt.</p>
+<p>Hypotheses come from: recent intel on actors targeting your sector, ATT&amp;CK techniques with no detection coverage, crown-jewel assets and the paths to them, anomalies noticed during other work, and post-incident "what else would this actor have done."</p>
+<h2>Hunting Techniques</h2>
+<h3>Stack counting (frequency analysis)</h3>
+<p>The workhorse. Aggregate a field, sort ascending, investigate the rare values. Malicious activity is usually rare; commodity noise is common.</p>
+<pre><code>-- Splunk: rarest parent-child process pairs
+index=sysmon EventCode=1
+| stats count dc(host) as hosts by ParentImage, Image
+| where count &lt; 10 AND hosts &lt; 3
+| sort count</code></pre>
+<pre><code>// KQL: rarely-seen signed binaries making external connections
+DeviceNetworkEvents
+| where RemoteIPType == "Public"
+| summarize Count=count(), Hosts=dcount(DeviceName) by InitiatingProcessFolderPath
+| where Hosts &lt;= 2 and Count &lt; 20
+| order by Count asc</code></pre>
+<p>Stack the right field. Stacking <code>Image</code> finds unusual binaries; stacking <code>ParentImage, Image</code> finds unusual <em>relationships</em>, which is where living-off the-land abuse shows up (<code>winword.exe</code> → <code>powershell.exe</code>).</p>
+<h3>Outlier analysis</h3>
+<p>Same shape, different axis: what is normal <em>for this entity</em>?</p>
+<ul>
+<li>A service account that has never used interactive logon, now doing so</li>
+<li>A workstation talking to an internal subnet it has never touched</li>
+<li>A user authenticating outside their historical hours and geography</li>
+<li>A host whose process-count baseline shifted after a specific date</li>
+</ul>
+<pre><code>-- Elastic ES|QL: first-seen external destinations per host
+FROM logs-network-*
+| WHERE destination.ip NOT IN CIDR("10.0.0.0/8","172.16.0.0/12","192.168.0.0/16")
+| STATS first_seen = MIN(@timestamp), n = COUNT(*) BY host.name, destination.domain
+| WHERE first_seen &gt; NOW() - 7 days AND n &gt; 20</code></pre>
+<h3>Grouping and clustering</h3>
+<p>Cluster on a shared attribute to surface campaigns: same JA3/JA4 across unrelated hosts, same rare user agent, same certificate serial, same working hours, same directory of execution.</p>
+<h3>Intel-driven hunting</h3>
+<p>Take a report, extract the TTPs rather than the IOCs, and hunt those. The report's hashes and IPs are dead; its described behaviour is not.</p>
+<pre><code>Report says:  "uses schtasks to create a task running a DLL via rundll32"
+Bad hunt:     search for the report's hash
+Good hunt:    every scheduled task created in the last 90 days whose action
+              references rundll32, stacked by task name and DLL path</code></pre>
+<h2>High-Yield Hunting Grounds</h2>
+<div class="tw"><table><thead><tr><th>Hypothesis area</th><th>What to look for</th></tr></thead><tbody><tr><td>Execution via LOLBins</td><td><code>rundll32</code>, <code>regsvr32</code>, <code>mshta</code>, <code>certutil</code>, <code>bitsadmin</code>, <code>msiexec</code> with network or unusual arguments; <code>curl</code>/<code>wget</code> piping to a shell on Linux</td></tr><tr><td>Persistence</td><td>Scheduled tasks/cron/systemd units created recently; WMI event subscriptions (rare and almost always malicious); run keys; new services; <code>authorized_keys</code> modifications</td></tr><tr><td>Credential access</td><td>LSASS handle opens, <code>ntds.dit</code> copies, shadow-copy creation, Kerberos RC4 requests (4769 with encryption type 0x17), DCSync replication rights use</td></tr><tr><td>Lateral movement</td><td>Admin share writes followed by service creation, WinRM/WMI from non-admin hosts, SSH from workstations to servers, RDP chains</td></tr><tr><td>C2</td><td>Beacon timing regularity, long-lived connections, DNS with high entropy or high subdomain cardinality, TLS with rare JA3/JA4</td></tr><tr><td>Exfiltration</td><td>Outbound volume outliers per host, archive creation followed by upload, cloud storage domains from servers, DNS TXT volume</td></tr><tr><td>Identity/cloud</td><td>New OAuth grants and consented apps, service principal credential additions, mail forwarding rules, role assignments outside change windows, <code>StopLogging</code>/trail deletion</td></tr><tr><td>Defense evasion</td><td>Event log clears (1102/104), Sysmon or EDR service stops, AMSI/ETW patch indicators, timestomping (<code>$SI</code> vs <code>$FN</code> mismatch)</td></tr></tbody></table></div>
+<h2>The Hunt Loop</h2>
+<pre><code>1. Hypothesis   (written, with a discriminator)
+2. Scope        (data sources, time window, host population — decided up front)
+3. Verify       (does the telemetry exist and cover the population?)
+4. Query        (broad, then narrow — expect several iterations)
+5. Investigate  (every candidate resolved to benign-explained or escalated)
+6. Conclude     (found / not found / could-not-determine)
+7. Convert      (detection rule, telemetry gap ticket, or documented baseline)
+8. Document     (so the next person can re-run it, not re-derive it)</code></pre>
+<p><strong>Every hunt produces an artifact, including hunts that find nothing.</strong> A negative result is a finding when it is documented with its scope and limitations: "no evidence of X across 4,200 endpoints over 90 days; note that 620 hosts lack the required telemetry." That sentence is worth more than an undocumented clean bill of health.</p>
+<h2>Scoping and Time Windows</h2>
+<ul>
+<li>Match the window to dwell-time reality, not convenience. If you look back</li>
+</ul>
+<p>7 days for an actor with a 60-day median dwell time, a clean result is meaningless.</p>
+<ul>
+<li>Confirm retention before you commit: a 90-day hunt over 30-day retention</li>
+</ul>
+<p>silently becomes a 30-day hunt.</p>
+<ul>
+<li>Record which host populations are <em>not</em> covered by the telemetry you used.</li>
+</ul>
+<p>This is where the next intrusion will live.</p>
+<h2>When a Hunt Hits</h2>
+<p>Stop hunting and switch modes. Preserve first: pull the memory and triage package before anyone touches the host. Then hand to <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> with the query, the raw results, and the timestamp of your first look — the response team needs to know what you touched and when, so your own activity does not contaminate the timeline.</p>
+<p>Do not "just check one more thing" on a live suspect host. Interactive commands on a compromised box change evidence and can alert the operator.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"Nothing found, so we're clean."</em> You searched one hypothesis over one data</li>
+</ul>
+<p>set for one window. Write down all three.</p>
+<ul>
+<li><em>"Too much data to hunt."</em> That is what stacking is for. Aggregate first;</li>
+</ul>
+<p>you are looking for the rare, not reading the common.</p>
+<ul>
+<li><em>"The EDR would have alerted."</em> The premise of hunting is that it did not.</li>
+<li><em>"That's just noise."</em> Characterize the noise. "Just noise" is where implants</li>
+</ul>
+<p>hide, and an uncharacterized benign cluster is an unexamined hypothesis.</p>
+<ul>
+<li><em>"I'll remember what I searched."</em> You will not, and neither will your</li>
+</ul>
+<p>successor. Undocumented hunts get repeated instead of extended.</p>
+<ul>
+<li><em>"Let me just log into the suspicious host and look."</em> You are now part of</li>
+</ul>
+<p>the timeline, and possibly a tripwire.</p>
+<ul>
+<li><em>"We hunt when we have time."</em> Ad-hoc hunting produces ad-hoc coverage.</li>
+</ul>
+<p>Schedule hunts against a prioritized technique backlog.</p>
+<h2>Deliverable</h2>
+<pre><code># Hunt: &lt;name&gt;          Date: &lt;UTC&gt;   Analyst: &lt;name&gt;
+Hypothesis:             &lt;as written above&gt;
+ATT&amp;CK:                 T####.###
+Scope:                  &lt;data sources, host population, time window&gt;
+Telemetry verified:     &lt;present / partial — name the gaps&gt;
+Queries:                &lt;verbatim, so this is reproducible&gt;
+Results:                &lt;candidates found, how each was resolved&gt;
+Conclusion:             found / not found / could-not-determine
+Outputs:                &lt;detection rule ID, telemetry gap ticket, baseline doc&gt;
+Limitations:            &lt;what this hunt could not have seen&gt;</code></pre>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Persistence</strong> (TA0003)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1546/003/">T1546.003</a> Windows Management Instrumentation Event Subscription — see also <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+</ul>
+<p><strong>Defense Evasion</strong> (TA0005)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1036/">T1036</a> Masquerading — see also <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1070/001/">T1070.001</a> Clear Windows Event Logs — see also <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1218/">T1218</a> System Binary Proxy Execution — see also <a class="xref" href="escalating-windows-privileges.html"><code>escalating-windows-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1218/011/">T1218.011</a> Rundll32 — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1562/">T1562</a> Impair Defenses — see also <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1562/001/">T1562.001</a> Disable or Modify Tools — see also <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+</ul>
+<p><strong>Collection</strong> (TA0009)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1074/">T1074</a> Data Staged — see also <a class="xref" href="transferring-files.html"><code>transferring-files</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1560/">T1560</a> Archive Collected Data — see also <a class="xref" href="transferring-files.html"><code>transferring-files</code></a></li>
+</ul>
+<p><strong>Command and Control</strong> (TA0011)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1071/004/">T1071.004</a> DNS — see also <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>, <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1219/">T1219</a> Remote Access Software</li>
+<li><a href="https://attack.mitre.org/techniques/T1568/">T1568</a> Dynamic Resolution — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>, <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1572/">T1572</a> Protocol Tunneling — see also <a class="xref" href="transferring-files.html"><code>transferring-files</code></a></li>
+</ul>
+<p><strong>Exfiltration</strong> (TA0010)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1030/">T1030</a> Data Transfer Size Limits</li>
+<li><a href="https://attack.mitre.org/techniques/T1048/">T1048</a> Exfiltration Over Alternative Protocol — see also <a class="xref" href="transferring-files.html"><code>transferring-files</code></a>, <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1567/">T1567</a> Exfiltration Over Web Service — see also <a class="xref" href="transferring-files.html"><code>transferring-files</code></a></li>
+</ul>
+<p><strong>Impact</strong> (TA0040)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1490/">T1490</a> Inhibit System Recovery — see also <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1496/">T1496</a> Resource Hijacking — see also <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <code>hunting-threats</code>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — converting a successful hunt into a tested rule</li>
+<li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — the handoff when a hunt confirms compromise</li>
+<li>MITRE ATT&amp;CK for hypothesis generation; PEAK and TaHiTI hunting frameworks</li>
+<li>Sysmon, Zeek, osquery, Velociraptor, and cloud audit logs as core telemetry</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

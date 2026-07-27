@@ -1,0 +1,301 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>analyzing-firmware-images — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / analyzing-firmware-images</div>
+  <h1 class="sk">analyzing-firmware-images</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Extract, analyze, and assess firmware images from embedded devices, IoT hardware, routers, and similar targets — filesystem extraction, hardcoded credential discovery, binary analysis across architectures, web interface review, network service enumeration, emulation, and cryptographic assessment. Use when analyzing a firmware update file, reviewing IoT device security, hunting for hardcoded secrets in device firmware, or assessing the attack surface of an embedded system.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Firmware is a frozen Linux (or RTOS) image, and its security froze with it. Hardcoded credentials, command injection in CGI scripts, unsigned update packages, and debug interfaces left enabled are not edge cases -- they are the baseline. The work is extraction, orientation, and then asking the same questions you would ask of any system, with the knowledge that nobody has patched this one since it shipped.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Extracting and analyzing a firmware update file (.bin, .img, .chk, .trx)</li>
+<li>Reviewing IoT device security posture from a firmware image</li>
+<li>Looking for hardcoded credentials, keys, or secrets in device firmware</li>
+<li>Assessing the attack surface of an embedded device or router</li>
+<li>Evaluating update mechanisms and signature verification</li>
+<li>Analyzing a bare-metal or RTOS image from a microcontroller</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Standard x86/x64 binary reverse engineering</strong> -- use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
+<li><strong>Malware sample analysis</strong> -- use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><strong>Source code is available</strong> -- use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
+</ul>
+<h2>Firmware Acquisition</h2>
+<p>Before analysis comes acquisition. The method determines what you get.</p>
+<div class="tw"><table><thead><tr><th>Method</th><th>What you get</th><th>Notes</th></tr></thead><tbody><tr><td>Vendor download</td><td>Update package, often compressed or encrypted</td><td>Check support portals, FTP servers, and FCC filings</td></tr><tr><td>OTA sniffing</td><td>Update payload in transit</td><td>mitmproxy or tcpdump on the device's update channel; many devices use plain HTTP</td></tr><tr><td>UART/serial console</td><td>Shell access, bootloader interaction</td><td>Three wires (TX, RX, GND); identify with a multimeter or logic analyzer</td></tr><tr><td>JTAG/SWD</td><td>Full memory read, debug access</td><td>Requires pin identification; JTAGulator, OpenOCD</td></tr><tr><td>Chip-off</td><td>Raw flash contents (NAND/NOR)</td><td>Desolder the flash chip; read with a programmer (CH341A, FlashcatUSB); last resort</td></tr><tr><td>Bootloader extraction</td><td>Dump via U-Boot <code>md</code> or <code>sf read</code> commands</td><td>If the bootloader shell is accessible over UART</td></tr></tbody></table></div>
+<p>For OTA interception, configure the device to proxy through mitmproxy. Many devices ignore proxy settings -- ARP spoofing or a transparent bridge may be required. If the update is over HTTPS, check whether the device validates certificates at all; a surprising number do not.</p>
+<h2>Initial Analysis</h2>
+<p>Start with format identification and entropy analysis before extracting.</p>
+<pre><code>file firmware.bin
+binwalk firmware.bin              # identify embedded filesystems and compression
+binwalk -E firmware.bin           # entropy analysis -- high entropy = compressed or encrypted
+hexdump -C firmware.bin | head -64   # header bytes reveal container format
+strings -n 10 firmware.bin | head -100  # quick orientation</code></pre>
+<p><strong>What the entropy plot tells you:</strong></p>
+<ul>
+<li><strong>Flat high entropy (close to 1.0) across the entire image</strong> -- encrypted</li>
+</ul>
+<p>or compressed as a unit. You need the decryption key or decompression method before you can proceed.</p>
+<ul>
+<li><strong>Regions of high entropy separated by low-entropy headers</strong> -- compressed</li>
+</ul>
+<p>filesystem partitions with metadata between them. Normal; extract the partitions.</p>
+<ul>
+<li><strong>Low entropy throughout</strong> -- uncompressed filesystem or raw flash. Direct</li>
+</ul>
+<p>extraction should work.</p>
+<p>Common container formats:</p>
+<div class="tw"><table><thead><tr><th>Header magic</th><th>Format</th></tr></thead><tbody><tr><td><code>hsqs</code> / <code>sqsh</code></td><td>SquashFS</td></tr><tr><td><code>UBI#</code></td><td>UBI/UBIFS</td></tr><tr><td><code>0x1985</code></td><td>JFFS2</td></tr><tr><td><code>0x28cd3d45</code></td><td>cramfs</td></tr><tr><td><code>HDR0</code></td><td>TRX (Broadcom routers)</td></tr><tr><td><code>\x27\x05\x19\x56</code></td><td>uImage (U-Boot)</td></tr></tbody></table></div>
+<h2>Extraction</h2>
+<p>Use the right tool for the filesystem. Generic extraction misses metadata and permissions.</p>
+<pre><code># General recursive extraction -- good starting point
+binwalk -Me firmware.bin
+
+# SquashFS -- the most common embedded filesystem
+unsquashfs -d rootfs squashfs-root.img
+# Non-standard SquashFS (vendor-modified): use sasquatch
+sasquatch -d rootfs squashfs-root.img
+
+# JFFS2
+jefferson firmware.jffs2 -d rootfs
+
+# UBI/UBIFS
+ubireader_extract_images firmware.ubi
+ubireader_extract_files firmware.ubi
+
+# cramfs
+cramfsck -x rootfs cramfs.img
+
+# Raw NAND dumps may need OOB data stripped first
+nandextract firmware.nand</code></pre>
+<p>If binwalk finds nothing and entropy is high, the image is likely encrypted. Look for a bootloader or earlier firmware version that contains the decryption routine. Some vendors ship the decryption key in the bootloader or in a companion partition.</p>
+<h2>Filesystem Analysis</h2>
+<p>Once extracted, treat the rootfs as a Linux system you are auditing for the first time.</p>
+<h3>Credentials and Secrets</h3>
+<pre><code># Password files
+cat rootfs/etc/passwd
+cat rootfs/etc/shadow
+# Hardcoded credentials -- these are endemic
+rg -rn 'password|passwd|admin|root|default' rootfs/etc/ --include='*.conf'
+rg -rn 'BEGIN (RSA|EC|OPENSSH|DSA) PRIVATE KEY' rootfs/
+rg -rn 'api[_-]?key|secret[_-]?key|token' -i rootfs/
+
+# Certificates and keys
+find rootfs -name '*.pem' -o -name '*.key' -o -name '*.crt' -o -name '*.p12'
+# WiFi and VPN credentials
+find rootfs -name 'wpa_supplicant*' -o -name '*.ovpn' -o -name 'ipsec.*'</code></pre>
+<p>Default credentials in <code>/etc/shadow</code> are the single most common firmware finding. Check whether root has a password hash and whether it is crackable -- it usually is. See <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a> for hash handling.</p>
+<h3>Configuration and Services</h3>
+<pre><code># Startup scripts reveal what runs and how
+ls rootfs/etc/init.d/ rootfs/etc/rc.d/
+cat rootfs/etc/inittab
+# Systemd units if present
+find rootfs -name '*.service' -path '*/systemd/*'
+
+# Installed packages and versions
+cat rootfs/etc/opkg/status 2&gt;/dev/null    # OpenWrt-based
+ls rootfs/usr/lib/ipkg/info/ 2&gt;/dev/null  # older ipkg
+
+# Network configuration
+cat rootfs/etc/network/interfaces 2&gt;/dev/null
+rg -rn 'iptables|ip6tables|nftables' rootfs/etc/</code></pre>
+<h3>Web Interface</h3>
+<p>The web interface is where the exploitable bugs live. Embedded web servers are typically BusyBox httpd, lighttpd, uhttpd, or GoAhead, serving CGI scripts written in shell, Lua, or C.</p>
+<pre><code># Find the web root
+find rootfs -name 'httpd*' -o -name 'lighttpd*' -o -name 'uhttpd*'
+ls rootfs/www/ rootfs/usr/www/ rootfs/usr/share/www/ 2&gt;/dev/null
+
+# CGI scripts -- these are the attack surface
+find rootfs -name '*.cgi' -o -name '*.sh' -path '*/cgi-bin/*'
+find rootfs -name '*.lua' -path '*/luci/*' -o -name '*.lua' -path '*/www/*'
+
+# Command injection patterns in CGI
+rg -rn 'system\(|popen\(|exec\(|os\.execute|io\.popen|\`.*\$' rootfs/www/
+rg -rn '\$QUERY_STRING|\$REQUEST_URI|\$HTTP_' rootfs/www/</code></pre>
+<p><strong>Command injection through CGI parameters is endemic in embedded web interfaces.</strong> The pattern is a CGI script that takes user input from a query parameter and passes it to a shell command without sanitization. Review every CGI script for this pattern -- <code>system()</code>, <code>popen()</code>, backtick execution, <code>os.execute()</code>, and <code>io.popen()</code> with any user-controlled input.</p>
+<p>Also check for:</p>
+<ul>
+<li>Authentication bypass (pages accessible without login)</li>
+<li>Cross-site scripting in diagnostic pages (ping, traceroute, DNS lookup)</li>
+<li>Path traversal in file-serving handlers</li>
+<li>Hardcoded session tokens or predictable session generation</li>
+</ul>
+<h2>Binary Analysis</h2>
+<p>Firmware binaries target non-x86 architectures. Identify the architecture before disassembly.</p>
+<pre><code># Identify architecture from ELF headers
+file rootfs/usr/sbin/*
+readelf -h rootfs/usr/sbin/httpd    # Machine field: ARM, MIPS, PowerPC
+
+# Common architectures in firmware
+# ARM (little-endian)  -- modern IoT, cameras, some routers
+# MIPS (big-endian)    -- routers (Broadcom, Atheros, MediaTek)
+# MIPS (little-endian) -- some Realtek-based devices
+# PowerPC              -- older enterprise networking gear</code></pre>
+<h3>Cross-Architecture Disassembly</h3>
+<p>Ghidra handles all common firmware architectures natively. Load the binary, select the correct processor and endianness, and auto-analyze.</p>
+<pre><code># Ghidra headless analysis
+analyzeHeadless /proj FirmwareProj -import rootfs/usr/sbin/httpd \
+  -processor ARM:LE:32:v7 -postScript DecompileAll.java
+
+# radare2 with architecture specification
+r2 -a arm -b 32 rootfs/usr/sbin/httpd
+# For MIPS big-endian:
+r2 -a mips -b 32 -e cfg.bigendian=true rootfs/usr/bin/target</code></pre>
+<p>Focus disassembly on:</p>
+<ul>
+<li>The web server and CGI handler binaries</li>
+<li>Custom daemons (anything not from BusyBox or standard packages)</li>
+<li>Shared libraries that implement device-specific functionality</li>
+<li>Binaries that run as root and accept network input</li>
+</ul>
+<h3>Emulation with QEMU</h3>
+<pre><code># User-mode emulation for individual binaries
+qemu-arm -L rootfs/ rootfs/usr/sbin/httpd
+qemu-mipsel -L rootfs/ rootfs/usr/bin/target
+# Use -strace to trace syscalls
+qemu-arm -strace -L rootfs/ rootfs/usr/sbin/httpd
+
+# If the binary needs specific /dev nodes or /proc, use chroot
+sudo chroot rootfs/ /usr/sbin/httpd
+# Or mount necessary filesystems
+sudo mount -t proc proc rootfs/proc
+sudo mount -t sysfs sysfs rootfs/sys</code></pre>
+<h2>Network Services</h2>
+<p>Enumerate what the device exposes on the network by reading init scripts and binary configurations rather than by scanning a live device.</p>
+<pre><code># Services started at boot
+rg -rn 'start\(\)|start_service' rootfs/etc/init.d/
+# Listening ports from configuration
+rg -rn 'listen|bind|port' rootfs/etc/ --include='*.conf'
+
+# Common embedded services to look for
+find rootfs -name 'telnetd' -o -name 'dropbear' -o -name 'sshd'
+find rootfs -name 'upnpd' -o -name 'miniupnpd' -o -name 'minissdpd'
+find rootfs -name 'mosquitto*' -o -name 'mqtt*'
+find rootfs -name 'snmpd' -o -name 'snmp.conf'</code></pre>
+<p><strong>Common findings:</strong></p>
+<ul>
+<li>Telnet enabled with default or no credentials</li>
+<li>UPnP/SSDP exposing internal service descriptions to the WAN</li>
+<li>MQTT brokers with no authentication</li>
+<li>SNMP with default community strings (<code>public</code>, <code>private</code>)</li>
+<li>Custom management protocols on non-standard ports with no authentication</li>
+<li>TR-069 (CWMP) interfaces exposed beyond the ISP management VLAN</li>
+<li>Debug ports (GDB server, serial-over-network) left active in production</li>
+</ul>
+<h2>Full-System Emulation</h2>
+<p>When individual binary emulation is insufficient, emulate the entire firmware.</p>
+<pre><code># FirmAE -- automated full-system emulation
+sudo python3 firmae.py -r &lt;brand&gt; firmware.bin
+
+# EMBA -- comprehensive firmware analysis framework
+sudo ./emba -f firmware.bin -l ./logs
+
+# firmwalker -- static analysis without emulation
+./firmwalker.sh rootfs/</code></pre>
+<p>FirmAE and EMBA handle the hard parts: inferring the correct QEMU machine type, setting up the network, and patching <code>/dev/</code> nodes. If they fail, manual QEMU system emulation requires building the correct device tree and kernel for the target platform.</p>
+<p>Once a full system is running, test it as you would any networked service: scan with nmap, test the web interface, fuzz the custom protocols. The difference is that you have the filesystem and can read the code while you test.</p>
+<h2>Cryptographic Analysis</h2>
+<p>Firmware images routinely contain cryptographic material and implement custom cryptographic schemes.</p>
+<pre><code># Find encryption keys and certificates
+find rootfs -name '*.pem' -o -name '*.der' -o -name '*.key' -o -name '*.pub'
+rg -rn 'AES|DES|RSA|SHA256|MD5|encrypt|decrypt' rootfs/usr/lib/ --include='*.so'
+
+# Check update signature verification
+# Look for signature checks in the update handler
+rg -rn 'verify|signature|sign|openssl|gpg' rootfs/usr/sbin/ rootfs/etc/init.d/</code></pre>
+<p><strong>What to look for:</strong></p>
+<ul>
+<li><strong>Unsigned firmware updates</strong> -- if the update mechanism does not verify a</li>
+</ul>
+<p>cryptographic signature, an attacker with network position can push arbitrary firmware. This is critical.</p>
+<ul>
+<li><strong>Symmetric-only update signing</strong> -- a shared key embedded in the firmware</li>
+</ul>
+<p>itself means anyone with the firmware can sign updates. Extract the key and demonstrate.</p>
+<ul>
+<li><strong>Hardcoded TLS certificates and private keys</strong> -- every device ships with</li>
+</ul>
+<p>the same key pair. Extract and demonstrate that one device's key decrypts another device's traffic.</p>
+<ul>
+<li><strong>Weak or custom encryption</strong> -- XOR "encryption" of configuration files,</li>
+</ul>
+<p>hardcoded keys for "encrypting" passwords, custom obfuscation routines that are not encryption at all.</p>
+<ul>
+<li><strong>Entropy sources</strong> -- embedded devices often have poor entropy at boot.</li>
+</ul>
+<p>Check whether <code>/dev/urandom</code> is seeded properly, whether the RNG is initialized before key generation, and whether the device has a hardware RNG that is actually used.</p>
+<p>See <a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a> for detailed cryptographic review methodology.</p>
+<h2>Defensive Review Checklist</h2>
+<p>After completing the analysis, evaluate against these controls. The absence of any item is a finding.</p>
+<div class="tw"><table><thead><tr><th>Control</th><th>Check</th><th>Common failure</th></tr></thead><tbody><tr><td>Signed updates</td><td>Is the update package cryptographically signed with an asymmetric key? Is the signature verified before flashing?</td><td>No signature at all, or symmetric-only</td></tr><tr><td>Secure boot</td><td>Does the bootloader verify the kernel and rootfs integrity?</td><td>U-Boot with no signature verification</td></tr><tr><td>No default credentials</td><td>Does the device force a password change on first use?</td><td>root:root, admin:admin, or blank passwords</td></tr><tr><td>Minimal services</td><td>Are only necessary services enabled?</td><td>Telnet, UPnP, SNMP enabled by default</td></tr><tr><td>Debug interfaces</td><td>Are UART, JTAG, and SSH disabled or locked in production?</td><td>UART shell with root access, no authentication</td></tr><tr><td>Encrypted storage</td><td>Are credentials and keys stored encrypted at rest?</td><td>Plaintext passwords in config files</td></tr><tr><td>TLS everywhere</td><td>Do all network services use TLS with valid certificates?</td><td>Plain HTTP for web management, plain MQTT</td></tr><tr><td>Input validation</td><td>Do CGI and API handlers validate and sanitize input?</td><td>Direct shell injection through web parameters</td></tr><tr><td>Least privilege</td><td>Do services run as non-root where possible?</td><td>Everything runs as root</td></tr><tr><td>Logging and audit</td><td>Are security events logged?</td><td>No logging, or logs only in volatile memory</td></tr></tbody></table></div>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"It's on an isolated network."</em> Embedded devices get exposed -- through</li>
+</ul>
+<p>UPnP, through misconfigured firewalls, through the cloud management portal that phones home. Assume reachability.</p>
+<ul>
+<li><em>"The firmware is encrypted, so we can't analyze it."</em> The decryption key</li>
+</ul>
+<p>is in the bootloader or in a previous unencrypted version. Encryption without secure boot is obfuscation, not protection.</p>
+<ul>
+<li><em>"It's just a consumer device."</em> Consumer devices form botnets. The same</li>
+</ul>
+<p>vulnerability classes apply.</p>
+<ul>
+<li><em>"We can't patch it, so why report it?"</em> Document it so the risk is</li>
+</ul>
+<p>understood and compensating controls can be applied.</p>
+<ul>
+<li><em>"The vendor says it's secure."</em> Vendor attestation is not evidence. The</li>
+</ul>
+<p>filesystem is evidence.</p>
+<ul>
+<li><em>"It's a custom RTOS, not Linux, so standard tools won't work."</em> The</li>
+</ul>
+<p>architecture-level tools (Ghidra, QEMU, binwalk entropy) work on any binary. Adapt the methodology, do not skip the analysis.</p>
+<ul>
+<li><em>"Nobody would bother attacking this device."</em> Mirai scanned the entire</li>
+</ul>
+<p>IPv4 space for default credentials. The bar for "bother" is a single script.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> -- disassembly and reverse engineering methodology</li>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> -- source-level review when code is available</li>
+<li><a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a> -- service discovery and assessment</li>
+<li><a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a> -- cryptographic implementation review</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

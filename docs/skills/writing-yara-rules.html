@@ -1,0 +1,309 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>writing-yara-rules — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / writing-yara-rules</div>
+  <h1 class="sk">writing-yara-rules</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
+  </div>
+  <p class="sdesc">Author durable YARA detection rules — meta/strings/condition anatomy, string types and modifiers, structural conditions with file magic and offsets, the PE/ELF/math/hash modules, specificity-vs-durability tuning, atom-aware performance, memory and process scanning, and YARA-X. Use when writing a YARA rule, creating a signature for a malware family or a file/memory artifact, turning IOCs or a captured sample into a detection, or hunting for a family across a corpus with Retrohunt or an on-host scanner.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>A good YARA rule matches the malware's <em>nature</em> — its code, its structure, its unavoidable constants — not its <em>costume</em>, which is a filename or a mutable string that changes on the next build. Match the nature and the rule survives recompilation and catches the whole family; match the costume and you catch one sample once. The entire craft is choosing strings and a condition that are both specific enough to avoid false positives and durable enough to generalize.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Writing a YARA rule to detect a malware family, tool, or capability</li>
+<li>Creating a signature for a file or in-memory artifact from a known sample</li>
+<li>Turning IOCs or a captured specimen into a portable, testable detection</li>
+<li>Hunting for a family across a corpus (VirusTotal Retrohunt, LOKI/THOR, on-host scan)</li>
+<li>Clustering related samples by shared code, constants, or structure</li>
+<li>Reviewing or tuning an existing rule for false positives and scan performance</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>The detection belongs in log or SIEM telemetry, not on files or memory</strong> —</li>
+</ul>
+<p>use <a class="xref" href="writing-sigma-rules.html"><code>writing-sigma-rules</code></a></p>
+<ul>
+<li>**Choosing what to detect and where it should live, the strategy above rule</li>
+</ul>
+<p>syntax** — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></p>
+<ul>
+<li><strong>You do not yet understand the sample well enough to pick durable anchors</strong> —</li>
+</ul>
+<p>use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> first</p>
+<ul>
+<li><strong>Running the hunt rather than authoring the signature</strong> — use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+<li><strong>Packaging IOCs, attribution, and a finished report</strong> — use</li>
+</ul>
+<p><a class="xref" href="producing-threat-intelligence.html"><code>producing-threat-intelligence</code></a></p>
+<h2>Rule Anatomy</h2>
+<p>Three sections: <code>meta</code> (documentation, never matched on), <code>strings</code> (the patterns), <code>condition</code> (the boolean that decides a hit).</p>
+<pre><code>import "pe"
+
+rule Family_Loader_v1
+{
+    meta:
+        author      = "analyst"
+        date        = "2026-07-26"
+        description = "ExampleLoader stage-1, config-decode stub + family constants"
+        hash        = "a1b2c3...&lt;sha256 of the analyzed sample&gt;"
+        reference   = "https://internal/case/1234"
+        version     = "1"
+        tlp         = "amber"
+    strings:
+        $decode = { 8A 04 0? 32 0? 88 0? 4? 3B ?? 72 }
+        $marker = "cfg::begin" ascii
+        $mutex  = "Global\\ExL-%08x" ascii
+    condition:
+        uint16(0) == 0x5A4D and filesize &lt; 2MB and 2 of them
+}</code></pre>
+<p><strong>Meta fields that matter.</strong> <code>author</code> and <code>date</code> for provenance; <code>hash</code> records the exact sample the rule was derived from so a future analyst can re-verify; <code>reference</code> links the case or report that justifies it; <code>description</code> states what and why. Meta is free-form text — YARA never evaluates it — so treat it as the rule's changelog. Add <code>version</code>/<code>tlp</code>/<code>score</code> fields your tooling consumes.</p>
+<h2>Strings and Modifiers</h2>
+<p><strong>Text strings</strong> are the default. <strong>Hex strings</strong> match raw bytes and support wildcards and jumps. <strong>Regex</strong> is written between slashes.</p>
+<pre><code>strings:
+    $text  = "Mozilla/5.0 (Custom-UA)" ascii wide
+    // Hex: ?? = any byte, 0? = any low nibble, [4-6] = 4 to 6 arbitrary bytes
+    $hex   = { 55 8B EC 83 EC ?? 53 56 57 [4-6] E8 ?? ?? ?? ?? }
+    $re    = /\/gate\/[a-f0-9]{16}\.php/ nocase</code></pre>
+<p>Modifiers change how a string matches. Chain those that combine.</p>
+<div class="tw"><table><thead><tr><th>Modifier</th><th>Effect</th></tr></thead><tbody><tr><td><code>nocase</code></td><td>Case-insensitive text/regex match</td></tr><tr><td><code>wide</code></td><td>Match UTF-16LE (two bytes per char) — most Windows strings</td></tr><tr><td><code>ascii</code></td><td>Match single-byte form; pair with <code>wide</code> to match both</td></tr><tr><td><code>fullword</code></td><td>Match only when bounded by non-alphanumeric bytes</td></tr><tr><td><code>xor</code></td><td>Match all 256 single-byte XOR-encoded variants (keys 0x00-0xFF)</td></tr><tr><td><code>xor(0x01-0xff)</code></td><td>XOR over a bounded key range</td></tr><tr><td><code>base64</code> / <code>base64wide</code></td><td>Match the three base64-encoded alignments</td></tr><tr><td><code>private</code></td><td>Match is never shown in output (<code>-s</code>/callback); still counts in <code>of them</code></td></tr></tbody></table></div>
+<p><code>xor</code> finds strings hidden behind a one-byte key without knowing the key; <code>base64</code> catches config values embedded in encoded blobs. Both cost scan time — use them when you have evidence the encoding is present, not by default.</p>
+<h2>Building Durable Conditions</h2>
+<p>The condition is where specificity lives. Beyond <code>all of them</code> / <code>N of them</code>:</p>
+<pre><code>condition:
+    // Anchor on file type before touching strings — cheap and decisive
+    uint16(0) == 0x5A4D and              // MZ (PE)
+    uint32(0) == 0x464C457F and          // 0x7F 'E' 'L' 'F' (ELF)
+
+    // Offset constraints
+    $magic at 0 and                      // string must sit at offset 0
+    $tag in (0..1024) and                // within the first 1 KB
+    #beacon &gt;= 3 and                     // the $beacon string appears 3+ times
+
+    // Bound the search — a 40-byte dropper is not a 50 MB installer
+    filesize &lt; 500KB and
+
+    // Quorum across a candidate set, resilient to any one string changing
+    3 of ($cfg*) and
+
+    // for..of: k of a set, with a per-match predicate
+    for any i in (1..#url) : ( @url[i] &lt; 0x2000 )</code></pre>
+<p><code>#string</code> is the match count, <code>@string[i]</code> the offset of the i-th match, <code>!string[i]</code> its length. <code>for..of</code> expresses "any/all/N of these strings, each satisfying a condition" — the tool for rules like "an RWX marker within 100 bytes of a known stub." Anchoring on <code>uint*</code> magic first lets the engine skip non-matching files before scanning strings, which is both correctness and speed.</p>
+<h2>Specificity vs. Durability</h2>
+<p>Every rule sits on a line between too-broad (false positives) and too-narrow (catches one build). Aim for a <strong>cluster of family-specific constants plus one structural anchor.</strong></p>
+<p>Bad — a single common string, matches half of goodware:</p>
+<pre><code>rule Bad_TooBroad {
+    strings:
+        $ = "GetProcAddress"
+    condition:
+        $
+}</code></pre>
+<p>Bad — a filename, the definition of a costume; the family renames it per campaign:</p>
+<pre><code>rule Bad_Filename {
+    strings:
+        $ = "svch0st_updater.exe" nocase
+    condition:
+        $
+}</code></pre>
+<p>Good — several constants the author cannot casually change, gated by file type and size, requiring a quorum so one mutated string does not break the rule:</p>
+<pre><code>rule Good_FamilyCluster {
+    meta:
+        description = "ExampleRAT: config key schedule + mutex fmt + UA"
+    strings:
+        $keysched = { 66 0F 6F 05 ?? ?? ?? ?? 66 0F EF C8 66 0F 7F 4? }
+        $mutexfmt = "ExR-{%04x-%04x}" ascii
+        $ua       = "X-ExR-Build:" ascii wide
+        $err      = "cfg decrypt failed @stage%d" ascii
+    condition:
+        uint16(0) == 0x5A4D and filesize &lt; 3MB and 3 of them
+}</code></pre>
+<p>The good rule generalizes because its anchors are things the malware <em>needs</em> — its own key schedule, its own mutex format, its own diagnostic strings — not things an operator flips between deployments.</p>
+<h2>Using the Modules</h2>
+<p>Modules expose parsed structure. <code>import</code> at the top of the file.</p>
+<p><strong>PE</strong> — the highest-value module for Windows samples:</p>
+<pre><code>import "pe"
+rule PE_Structural {
+    condition:
+        pe.is_pe and
+        pe.imphash() == "d2a6...&lt;import hash&gt;" and       // API import fingerprint
+        pe.number_of_sections == 5 and
+        pe.imports("wininet.dll", "InternetOpenA") and
+        pe.exports("PluginInit") and
+        for any s in pe.sections : ( s.name == ".xdata" and s.raw_data_size == 0 ) and
+        pe.rich_signature.length &gt; 0 and                 // Rich header (compiler fingerprint)
+        pe.timestamp &gt; 1577836800
+}</code></pre>
+<p><code>imphash</code> clusters samples built from the same import table; the Rich header fingerprints the build toolchain and is hard to forge; <code>pe.imports</code>/<code>pe.exports</code> anchor on capability rather than incidental bytes.</p>
+<p><strong>ELF</strong> mirrors PE for Linux (<code>elf.number_of_sections</code>, <code>elf.type</code>, <code>elf.symtab</code>). <strong>math</strong> scores regions — flag packed or encrypted blobs:</p>
+<pre><code>import "math"
+rule Packed_HighEntropy {
+    condition:
+        uint16(0) == 0x5A4D and
+        math.entropy(0x1000, filesize - 0x1000) &gt;= 7.2 and   // near-random tail
+        math.mean(0, filesize) &gt; 100
+}</code></pre>
+<p><strong>hash</strong> computes digests inside the condition — useful to pin a specific embedded resource, not the whole file (a whole-file hash needs no YARA):</p>
+<pre><code>import "hash"
+rule EmbeddedResource {
+    condition:
+        hash.sha256(0x400, 0x200) == "e3b0c4...&lt;digest of the fixed config blob&gt;"
+}</code></pre>
+<h2>Targeting Position-Independent Things</h2>
+<p>Anchor on what moves with the code, not with the campaign. In rough order of durability: crypto constants (S-boxes, MD5/SHA init values, custom key schedules) → the family's own mutex/pipe/registry name templates → config markers and delimiters → C2 URI templates (<code>/gate/</code>, <code>/panel/upload.php</code>) → unique error and debug strings the developer left in → stack strings once you have deobfuscated them with <code>floss</code>. A filename, a compile timestamp, a campaign C2 IP, and a single common Win32 API name are <em>not</em> durable — they are the costume.</p>
+<h2>Killing False Positives</h2>
+<p>A rule is not done when it hits the sample; it is done when it does not hit goodware. Three levers, applied together:</p>
+<ul>
+<li><strong>Quorum</strong> — require <code>N of M</code> strings, never a lone common one. Any single</li>
+</ul>
+<p>string can appear in benign software; three family constants together will not.</p>
+<ul>
+<li><strong>File-type anchor</strong> — lead the condition with <code>uint16(0) == 0x5A4D</code> or the</li>
+</ul>
+<p>ELF magic so the rule never even scans an unrelated file type.</p>
+<ul>
+<li><strong>Size bound</strong> — <code>filesize &amp;lt; N</code>. A 20 KB loader is not a 200 MB game client;</li>
+</ul>
+<p>the bound removes whole categories of coincidental matches for free.</p>
+<h2>Testing and Validation</h2>
+<p>Validation is not optional. An untested rule is a future false-positive storm.</p>
+<pre><code>yara -w rule.yar sample                 # -w suppresses warnings; does it fire?
+yara -s -w rule.yar sample              # -s prints which strings matched, and where
+yara -w -r rule.yar ./samples/family/   # -r recurse: must hit every known-true sample
+yara -w -r rule.yar ./corpus/goodware/  # must produce ZERO hits — the load-bearing step
+yara -C rules.yarc ...                  # compile once, scan many with the compiled form</code></pre>
+<p><strong>Atoms and why 4+ byte anchors matter.</strong> YARA scans by extracting short fixed-byte substrings — <em>atoms</em> — from each string and searching for those first; a match on an atom triggers full verification of the string. A string whose only fixed run is 1-2 bytes (an over-wildcarded hex pattern, a two-letter text string) yields a weak atom that matches constantly, forcing verification on nearly every file and collapsing performance. Give every string at least one run of 4+ contiguous non-wildcard bytes. YARA warns on slow strings and short atoms at compile time — drop <code>-w</code> (which suppresses them) and treat those warnings as errors. Avoid unbounded and catastrophic regex (<code>.*</code>, nested quantifiers); prefer bounded classes and jumps. Profile with <code>yara -S</code> (<code>--print-stats</code>, per-rule statistics) when a ruleset drags.</p>
+<h2>Memory and Process Scanning</h2>
+<p>File rules and memory rules are not interchangeable. A rule anchored on <code>uint16(0) == 0x5A4D</code> and PE sections will not fire on a process where the payload is unpacked, relocated, and has no on-disk header.</p>
+<pre><code>yara -w rule.yar mem.dmp                # scan a memory dump / minidump
+yara -w rule.yar 4242                   # scan a live process — the PID is the final argument
+yara -w -s rule.yar 4242                # -s prints which strings matched in the process, and where</code></pre>
+<p>For memory rules, drop the file-magic anchor and the <code>filesize</code> bound (a process has no meaningful filesize); anchor instead on the <em>decoded</em> strings and code that only exist after unpacking — the plaintext config, the C2 template, the stack strings assembled at runtime. Keep file-scan and memory-scan rules separate, or gate the file-only conditions so the same rule can serve both.</p>
+<h2>YARA-X: the Modern Engine</h2>
+<p>YARA-X is the Rust rewrite and the direction of travel: faster, safer, better diagnostics, and largely source-compatible. Author new rules to run under both where practical. Differences to know:</p>
+<ul>
+<li>CLI is <code>yr</code> (e.g. <code>yr scan rule.yar sample</code>, <code>yr compile</code>, <code>yr fmt</code> to format).</li>
+<li>Stricter parsing rejects some ambiguous legacy rules; the negative-index and a</li>
+</ul>
+<p>few deprecated constructs are gone; <code>include</code> and module semantics tightened.</p>
+<ul>
+<li>Improved regex engine and clearer performance warnings; <code>yr fmt</code> and a</li>
+</ul>
+<p>language server ship in-box.</p>
+<ul>
+<li>Some third-party modules from classic YARA are not all ported — check before</li>
+</ul>
+<p>relying on an exotic module.</p>
+<p>Test the same rule under both engines when your deployment fleet is mixed (LOKI/THOR and older scanners run classic YARA; newer pipelines run YARA-X).</p>
+<h2>Organizing and Sharing Rules</h2>
+<ul>
+<li><strong>Rule sets</strong> — one file per family or campaign, <code>include "base.yar"</code> to share</li>
+</ul>
+<p>helpers; compile a directory into a single <code>.yarc</code> for distribution.</p>
+<ul>
+<li><strong>Private rules</strong> — <code>private rule</code> never reports on its own; reference it from</li>
+</ul>
+<p>public rules as a reusable predicate (a shared "is a Windows PE" gate, a shared packer detector). Keeps conditions DRY and readable.</p>
+<ul>
+<li><strong>Tags</strong> — <code>rule Foo : loader family_x { ... }</code>; filter at scan time with</li>
+</ul>
+<p><code>yara --tag loader</code>. Tag by role and family so hunts can select subsets.</p>
+<ul>
+<li><strong>External variables</strong> — <code>yara -d ext=value</code> (or <code>-x module=path</code>); reference</li>
+</ul>
+<p><code>ext</code> in conditions to make one rule behave differently per environment (e.g. a filename/filepath passed by the scanning host).</p>
+<ul>
+<li><strong>Metadata discipline</strong> — consistent <code>author</code>/<code>date</code>/<code>reference</code>/<code>hash</code>/score</li>
+</ul>
+<p>fields let downstream tooling (THOR, VT, your CI) sort, score, and attribute.</p>
+<pre><code>private rule is_pe {
+    condition: uint16(0) == 0x5A4D and filesize &lt; 10MB
+}
+
+rule Family_X_Loader : loader family_x {
+    meta:
+        author = "analyst"
+        score  = 75
+    strings:
+        $a = "ExL-%08x" ascii
+        $b = { 8A 04 0? 32 0? 88 0? 4? 3B ?? 72 }
+    condition:
+        is_pe and all of them
+}</code></pre>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"I hashed the sample, that's a rule."</em> A hash matches exactly one file and</li>
+</ul>
+<p>nothing else. The next build has a different hash. That is an IOC, not a detection.</p>
+<ul>
+<li><em>"It matched the sample, ship it."</em> A rule untested against a goodware corpus</li>
+</ul>
+<p>is an unexploded false-positive storm. Scanning the sample proves nothing about what else it hits.</p>
+<ul>
+<li><em>"One good string is enough."</em> One string is one mutation away from useless,</li>
+</ul>
+<p>and common strings appear everywhere. Require a quorum of family constants.</p>
+<ul>
+<li><em>"I'll wildcard the whole function to be safe."</em> Over-wildcarded hex leaves no</li>
+</ul>
+<p>4-byte atom, so the rule matches on a weak anchor and destroys scan performance. Keep real byte runs.</p>
+<ul>
+<li><em>"The filename is distinctive, use it."</em> Filenames are the costume — renamed</li>
+</ul>
+<p>per campaign at zero cost to the operator. Anchor on code and structure.</p>
+<ul>
+<li><em>"It works on the file, so it works in memory."</em> File-magic and section</li>
+</ul>
+<p>anchors do not exist in an unpacked process image. Memory needs its own rule.</p>
+<ul>
+<li><em>"Broad now, tune later."</em> Every noisy hit in production burns analyst trust</li>
+</ul>
+<p>and buries real matches. Tune before you deploy, not after.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="writing-sigma-rules.html"><code>writing-sigma-rules</code></a> — the same craft for log and SIEM telemetry</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — choosing what to detect and where it belongs</li>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — understanding the sample that a durable rule is built from</li>
+<li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — running the hunt these signatures drive</li>
+<li><a class="xref" href="producing-threat-intelligence.html"><code>producing-threat-intelligence</code></a> — packaging IOCs, attribution, and reporting</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — writing up what the detection found</li>
+<li>YARA (VirusTotal) and YARA-X — the engines and their documentation</li>
+<li>yarGen — auto-generate candidate rules and strings from samples (a starting</li>
+</ul>
+<p>point, never a finished rule)</p>
+<ul>
+<li>yara-validator / <code>yr fmt</code> — lint and normalize rules in CI</li>
+<li>LOKI and THOR (Nextron) — IOC and YARA scanners for on-host hunting</li>
+<li>VirusTotal Retrohunt — run a rule across VT's corpus to find related samples</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

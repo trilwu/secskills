@@ -1,0 +1,171 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>analyzing-go-binaries — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / analyzing-go-binaries</div>
+  <h1 class="sk">analyzing-go-binaries</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Reverse engineer Go binaries by recovering function names and types from pclntab and moduledata using GoReSym, redress, and IDA/Ghidra Go plugins, and by reading Go&#x27;s non-standard calling convention, interface dispatch, and string layout. Use when a binary contains Go runtime strings, when strings show runtime.main or go:buildid, when a stripped binary is unexpectedly large, or when analyzing Go malware or a Go-based service.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Go binaries look hostile — statically linked, tens of megabytes, no imports you recognize, and "stripped" in a way that makes tools show thousands of <code>sub_</code> functions. They are not. Go ships its own symbol table for runtime reflection and panic traces, and <code>strip</code> does not remove it. Recover it and the binary becomes one of the easiest targets there is.</p>
+<h2>When to Use</h2>
+<ul>
+<li><code>strings</code> shows <code>runtime.main</code>, <code>go:buildid</code>, <code>go.buildinfo</code>, or</li>
+</ul>
+<p><code>runtime.gopanic</code></p>
+<ul>
+<li>A "stripped" binary is 5–50 MB with almost no dynamic imports</li>
+<li>The disassembler shows thousands of unnamed functions and unreadable strings</li>
+<li>Analyzing Go malware, a Go CLI tool, or a compiled Go service</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Rust binaries</strong> — use <a class="xref" href="analyzing-rust-binaries.html"><code>analyzing-rust-binaries</code></a>; the symbol recovery is</li>
+</ul>
+<p>entirely different</p>
+<ul>
+<li><strong>.NET assemblies</strong> — use <a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a></li>
+<li><strong>Suspected malware, before containment</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for the</li>
+</ul>
+<p>environment, then come back here</p>
+<ul>
+<li><strong>General native RE</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
+</ul>
+<h2>Confirm It Is Go, and Which Version</h2>
+<pre><code>strings -n 6 target | rg -m5 'go1\.[0-9]+|go:buildid|runtime\.main|GOROOT'
+go version target                     # works on unstripped and many stripped builds
+go version -m target                  # module list and build settings — free SBOM</code></pre>
+<p><code>go version -m</code> is the highest-value first command. It prints the module dependency graph with versions, which gives you the third-party libraries in use before you disassemble anything — often answering the question outright (which HTTP library, which crypto, which C2 framework).</p>
+<p>The Go version matters because <code>pclntab</code> layout changed at 1.2, 1.16, 1.18, and 1.20. Tooling that fails is usually version mismatch, not a hardened binary.</p>
+<h2>Recover Symbols</h2>
+<pre><code># GoReSym — extracts pclntab, moduledata, types, and build info
+GoReSym -t -d -p target &gt; syms.json
+#   -t  user type metadata
+#   -d  include standard library
+#   -p  paths
+
+# redress — Go-aware analysis, works well when GoReSym struggles
+redress info target
+redress symbols target
+redress types target
+
+# Load into the disassembler
+#   IDA:    AlphaGolang, golang_loader_assist, or the GoReSym IDA script
+#   Ghidra: GolangAnalyzerExtension, or gotools
+#   Binja:  the Golang loader plugin</code></pre>
+<p>After applying symbols, functions carry their real names — <code>main.processRequest</code>, <code>crypto/tls.(*Conn).Handshake</code>, <code>github.com/vendor/pkg.Function</code>. <strong>Filter to <code>main.*</code> and to third-party module paths.</strong> Everything under <code>runtime.</code>, <code>internal/</code>, and the standard library is stock and is 90%+ of the function count.</p>
+<pre><code>jq -r '.UserFunctions[].FunctionName' syms.json | rg -v '^(runtime|internal|reflect|sync)\.' | head -40</code></pre>
+<h2>Reading Go Code in a Disassembler</h2>
+<p>Four things make Go listings confusing until you know them:</p>
+<p><strong>Strings have no terminator.</strong> Go strings are a pointer plus a length, so <code>strings</code> output runs adjacent literals together and the disassembler shows a pointer load followed by a length constant. Look for the pair — the constant next to the pointer is the length, and that is how you slice the correct substring out of the blob.</p>
+<p><strong>Calling convention.</strong> Before Go 1.17 all arguments and return values went on the stack, not in registers. From 1.17 a register ABI applies on amd64/arm64. A decompiler configured for the C convention will show wrong arguments; Go-aware plugins fix this, and it is the main reason decompiler output looks nonsensical.</p>
+<p><strong>Interface dispatch.</strong> Calls through an interface go via an <code>itab</code> — a table holding the concrete type and its method pointers. To resolve a call target, find the <code>itab</code> being loaded, then read the concrete type. Type recovery tools name these, which turns an indirect call into a readable one.</p>
+<p><strong>Goroutines and defers.</strong> <code>go f()</code> compiles to <code>runtime.newproc</code> with <code>f</code> as an argument, so concurrent logic does not appear as a direct call. <code>defer</code> becomes <code>runtime.deferproc</code>/<code>deferreturn</code>, which scatters cleanup code away from where it was written. When following control flow, check <code>newproc</code> call sites for work you would otherwise miss entirely.</p>
+<h2>Type Recovery</h2>
+<p>Go embeds full type descriptors for reflection. That means struct field names and layouts are recoverable — including the JSON tags that map straight to a wire protocol.</p>
+<pre><code>redress types target | rg -A10 'type main\.'
+# Struct tags like `json:"api_key"` recover the exact protocol field names</code></pre>
+<p>This is the fastest route to a Go service's API surface or a Go implant's C2 message format: recover the request and response structs, and you have the protocol without reading a single instruction.</p>
+<h2>Go-Specific Security Review</h2>
+<p>If the job is finding bugs rather than understanding behaviour, the Go-specific classes worth targeting:</p>
+<ul>
+<li><strong>Ignored errors.</strong> <code>_ =</code> on a function returning an error, especially</li>
+</ul>
+<p>around auth, crypto, and file operations.</p>
+<ul>
+<li><strong><code>math/rand</code> for security values.</strong> Token, session ID, or nonce generation</li>
+</ul>
+<p>using the non-crypto RNG.</p>
+<ul>
+<li><strong><code>InsecureSkipVerify: true</code></strong> in a <code>tls.Config</code>.</li>
+<li><strong><code>fmt.Sprintf</code> building SQL, shell commands, or URLs.</strong></li>
+<li><strong>Data races</strong> on shared maps and structs — often the source of</li>
+</ul>
+<p>authorization bugs under load.</p>
+<ul>
+<li><strong><code>os/exec</code> with a shell</strong>, or with an argument built from input.</li>
+</ul>
+<p>With source available, use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> and <code>govulncheck</code>; the above is for when you only have the binary.</p>
+<h2>Go Malware Notes</h2>
+<p>Go is common in cross-platform implants, and it leaves useful artifacts:</p>
+<ul>
+<li><strong>Module list from <code>go version -m</code></strong> identifies the frameworks used —</li>
+</ul>
+<p>networking libraries, crypto, and sometimes the C2 project itself.</p>
+<ul>
+<li><strong>Build paths</strong> in the symbol table leak developer usernames, project names,</li>
+</ul>
+<p>and directory structures.</p>
+<ul>
+<li><strong><code>main.</code> package function names</strong> frequently survive because stripping does</li>
+</ul>
+<p>not remove <code>pclntab</code>, giving you a capability list for free.</p>
+<ul>
+<li>Some samples strip <code>pclntab</code> deliberately or use tools that mangle</li>
+</ul>
+<p><code>moduledata</code>. When GoReSym and redress both fail on a sample that is otherwise clearly Go, treat that as an evasion indicator worth reporting — and fall back to scanning for the type descriptors directly.</p>
+<p>Hand IOC and detection output to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> and <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"It's stripped, so there are no symbols."</em> <code>strip</code> does not remove</li>
+</ul>
+<p><code>pclntab</code>. Run GoReSym before concluding anything.</p>
+<ul>
+<li><em>"The decompiler output is garbage."</em> It is using the wrong calling</li>
+</ul>
+<p>convention. Apply a Go-aware plugin.</p>
+<ul>
+<li><em>"Thousands of functions, this will take weeks."</em> Almost all are runtime and</li>
+</ul>
+<p>stdlib. Filter to <code>main.*</code> and vendored modules.</p>
+<ul>
+<li><em>"The strings are all mashed together."</em> Go strings are pointer+length.</li>
+</ul>
+<p>Slice by the length constant.</p>
+<ul>
+<li><em>"The tool failed, this binary is protected."</em> Check the Go version against</li>
+</ul>
+<p>the tool's supported <code>pclntab</code> versions first.</p>
+<ul>
+<li><em>"I need to trace every goroutine."</em> Find <code>runtime.newproc</code> call sites and</li>
+</ul>
+<p>read the function passed to them.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — general triage and dynamic analysis around this</li>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment and IOC extraction for Go samples</li>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the Go bug-class checklist when source exists</li>
+<li>GoReSym, redress, AlphaGolang, GolangAnalyzerExtension, <code>go version -m</code></li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

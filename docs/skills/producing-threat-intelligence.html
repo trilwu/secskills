@@ -1,0 +1,262 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>producing-threat-intelligence — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / producing-threat-intelligence</div>
+  <h1 class="sk">producing-threat-intelligence</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Produce cyber threat intelligence by pivoting on indicators to find related infrastructure, tracking actors and campaigns, enriching and contextualizing IOCs, applying attribution discipline and analytic confidence, and packaging finished intel products tied to a consumer&#x27;s decision. Covers the intelligence lifecycle, the Diamond Model and Pyramid of Pain, STIX/MISP/OpenCTI storage, TLP sharing, and passive enrichment via passive DNS, crt.sh, Shodan, Censys, GreyNoise, and VirusTotal. Use when pivoting from a domain, IP, hash, or certificate to related infrastructure, tracking a threat actor or campaign, enriching raw indicators, writing a finished intel report, assessing an external report&#x27;s relevance to your org, or building a threat model of adversaries that matter to you.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Intelligence is not a pile of indicators — it is analysis that reduces a decision-maker's uncertainty. An IOC with no context, no confidence, and no recommended action is data, not intelligence. Attribution is a claim you must be able to defend from evidence, not a guess dressed in a threat-actor name. The test of a finished product is simple: did someone decide something differently because of it?</p>
+<h2>When to Use</h2>
+<ul>
+<li>Pivoting from a domain, IP, hash, TLS certificate, or registrant to related</li>
+</ul>
+<p>infrastructure</p>
+<ul>
+<li>Tracking a threat actor or campaign over time</li>
+<li>Enriching and contextualizing raw indicators into usable intelligence</li>
+<li>Producing a finished intelligence product for a defined consumer</li>
+<li>Assessing whether an external vendor or government report is relevant to</li>
+</ul>
+<p>your organization</p>
+<ul>
+<li>Building and curating a threat model of the adversaries that actually</li>
+</ul>
+<p>matter to you</p>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Searching your OWN telemetry for the activity</strong> — use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+<li><strong>Reversing a specific sample</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><strong>Resolving an ATT&amp;CK technique ID to a skill</strong> — use</li>
+</ul>
+<p><a class="xref" href="mapping-attack-techniques.html"><code>mapping-attack-techniques</code></a></p>
+<ul>
+<li><strong>An active, confirmed incident</strong> — use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><strong>Turning intel into deployed detection rules</strong> — use</li>
+</ul>
+<p><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></p>
+<h2>The Intelligence Lifecycle</h2>
+<p>Every product moves through the same loop. Naming the stages is not bureaucracy — it is where you catch the two failures that make CTI worthless.</p>
+<pre><code>1. Direction     — whose decision, which question (a PIR)
+2. Collection    — gather against the requirement, not everything reachable
+3. Processing     — normalize, deduplicate, translate, enrich
+4. Analysis      — assess, weigh hypotheses, assign confidence
+5. Dissemination — deliver in a form the consumer can act on
+6. Feedback      — did it help; refine the next requirement</code></pre>
+<p>The two failures that account for most wasted CTI effort are at the ends of the loop, not the middle:</p>
+<ul>
+<li><strong>Skipping direction</strong> produces intelligence nobody asked for. Without a</li>
+</ul>
+<p>Priority Intelligence Requirement (PIR) naming the consumer and the decision, you collect what is easy and report what is interesting, and it lands on no one's desk. Start from the question, not the feed.</p>
+<ul>
+<li><strong>Skipping dissemination</strong> produces analysis that never reaches a decision.</li>
+</ul>
+<p>A brilliant assessment sitting in a wiki nobody reads changed nothing. The product is not done when it is written; it is done when it is in front of the person who acts on it, in the form and at the time they need it.</p>
+<p>Write the PIR before collecting. Examples: "Which ransomware crews target our sector and what is their initial-access tradecraft?" "Is the actor in last week's incident likely to return?" "Does this vendor report describe a threat to us?" Each names a consumer and a decision.</p>
+<h2>Indicator Pivoting</h2>
+<p>Pivoting expands one observable into an infrastructure picture. The discipline is to stay <strong>passive first</strong> — every pivot below reads third-party data or historical records, none of it touches the adversary's live infrastructure.</p>
+<div class="tw"><table><thead><tr><th>Start from</th><th>Pivot via</th><th>Finds</th></tr></thead><tbody><tr><td>Domain / IP</td><td>Passive DNS (PDNS)</td><td>Historical resolutions, sibling domains on an IP, IPs a domain used</td></tr><tr><td>Domain</td><td>WHOIS / registration history</td><td>Registrant email, registrar, creation date, name-server reuse</td></tr><tr><td>Domain / IP</td><td>Certificate transparency (crt.sh)</td><td>Other hostnames on the same cert, SAN reuse, issuance timeline</td></tr><tr><td>IP / service</td><td>TLS fingerprints — JARM (server), JA3/JA3S (client/server handshake)</td><td>Hosts running the same C2 or framework default TLS stack</td></tr><tr><td>Web service</td><td>Favicon hash (Shodan <code>http.favicon.hash</code>, Censys)</td><td>Other servers serving the identical panel or login page</td></tr><tr><td>IP / host</td><td>Shodan / Censys banners</td><td>Open ports, product versions, response bodies, self-signed cert CNs</td></tr></tbody></table></div>
+<p>A worked pivot chain: a phishing domain resolves (PDNS) to an IP; crt.sh shows the cert's SANs cover four more lookalike domains; the IP's JARM matches a known Cobalt Strike default; Shodan's favicon hash for the panel returns nine more IPs serving the same interface. One indicator became a cluster of ten, none of which required contacting the adversary.</p>
+<pre><code># Certificate transparency — all certs/SANs seen for a domain
+curl -s "https://crt.sh/?q=%25.example.com&amp;output=json" | jq -r '.[].name_value' | sort -u
+
+# Shodan: everything serving an identical favicon
+shodan search "http.favicon.hash:-247388890"
+
+# Censys: hosts presenting a given JARM fingerprint.
+# Censys Platform (CenQL) prefixes every parsed field with its dataset:
+censys search "host.services.jarm.fingerprint: &lt;jarm_hash&gt;"
+# Legacy Search used the unprefixed form below. It is deprecated as of
+# September 2026, so treat any older query you find as needing conversion:
+#   services.jarm.fingerprint: &lt;jarm_hash&gt;</code></pre>
+<p><strong>Do not tip off the adversary.</strong> Do not curl the live C2, resolve its domain from a network attributable to you, submit the still-active sample to a public multi-scanner, or scan the infrastructure directly — each of those tells the operator you are watching and invites rotation or a burn of your visibility. Prefer passive datasets. If active interaction is genuinely required, route it through infrastructure that is not attributable to you and make it a deliberate, logged decision.</p>
+<h2>Frameworks for Prioritizing What to Track</h2>
+<h3>Diamond Model</h3>
+<p>Every intrusion event has four connected features: <strong>adversary</strong>, <strong>capability</strong> (malware, tooling, exploits), <strong>infrastructure</strong> (C2, staging, redirectors), and <strong>victim</strong>. Any feature leads to another — a capability points to the adversary who wields it; infrastructure points to other victims. Pivoting is literally traversing the edges of the diamond. Record findings against these four vertices so a partial picture composes with the next one.</p>
+<h3>Pyramid of Pain</h3>
+<p>Not all indicators cost the adversary the same to change. The higher you track, the more it hurts them and the longer your intelligence survives.</p>
+<pre><code>TTPs             ← hardest to change — track these
+Tools
+Network/Host artifacts
+Domain names
+IP addresses
+Hash values      ← trivial to change — useful now, dead tomorrow</code></pre>
+<p>Hashes and IPs are cheap for the adversary to rotate, so intelligence built on them decays in days. Tooling and TTPs force real redevelopment. Prioritize collection and tracking toward the top of the pyramid; treat the bottom as perishable and time-stamp it accordingly.</p>
+<h2>Attribution Discipline</h2>
+<p>Attribution is the most abused word in CTI. Keep two operations strictly separate:</p>
+<ul>
+<li><strong>Clustering</strong> groups activity by shared observables (infrastructure</li>
+</ul>
+<p>patterns, tooling, TTPs, tradecraft, timing). It is defensible from evidence and it is what you should do most of the time.</p>
+<ul>
+<li><strong>Naming</strong> asserts that a cluster IS a known actor. It inherits that actor's</li>
+</ul>
+<p>history, motivation, and geopolitical baggage — and it is frequently wrong.</p>
+<p>Use temporary, non-committal labels for clusters you have not confirmed: UNC-style uncategorized designators, or your own internal <code>CLUSTER-####</code>. Only promote a cluster to a named actor when the evidence supports it, and state what evidence. "Same TTPs" is weak grounds: shared tooling, shared exploit kits, and public tradecraft mean two operators can look identical.</p>
+<p><strong>Analytic confidence</strong> is a separate axis from the claim. State it explicitly:</p>
+<ul>
+<li><strong>High</strong> — consistent, corroborated evidence from multiple independent</li>
+</ul>
+<p>sources; few plausible alternatives.</p>
+<ul>
+<li><strong>Moderate</strong> — credible evidence, but gaps or single-source dependence</li>
+</ul>
+<p>leave room for alternatives.</p>
+<ul>
+<li><strong>Low</strong> — fragmentary or uncorroborated; the assessment is a working</li>
+</ul>
+<p>hypothesis.</p>
+<p>Confidence is not the same as how strongly you feel it. It is a function of the evidence and the number of surviving alternative explanations.</p>
+<p><strong>Analysis of Competing Hypotheses (ACH):</strong> when attribution or intent is contested, enumerate the plausible hypotheses first, then list the evidence, and score each item by how well it is <em>consistent</em> with each hypothesis. The goal is to find evidence that <em>disconfirms</em> — the hypothesis left standing after you try to break it is stronger than the one you set out to prove.</p>
+<p><strong>Cognitive-bias traps</strong> to name and resist:</p>
+<ul>
+<li><strong>Mirror-imaging</strong> — assuming the adversary reasons, prioritizes, and</li>
+</ul>
+<p>operates the way you would.</p>
+<ul>
+<li><strong>Confirmation bias</strong> — collecting and weighting evidence that supports the</li>
+</ul>
+<p>answer you already reached, discounting what contradicts it.</p>
+<ul>
+<li><strong>Anchoring</strong> — locking onto the first attribution offered (often a vendor's)</li>
+</ul>
+<p>and adjusting insufficiently as new evidence arrives.</p>
+<h2>Structured Storage and Standards</h2>
+<p>Free-text notes do not compose, correlate, or feed automation. Store intelligence in a structured model from the start.</p>
+<ul>
+<li><strong>STIX 2.1</strong> — the interchange grammar. Objects (SDOs) include</li>
+</ul>
+<p><code>indicator</code>, <code>malware</code>, <code>threat-actor</code>, <code>campaign</code>, <code>intrusion-set</code>, <code>infrastructure</code>, <code>identity</code>, and <code>attack-pattern</code>; relationships (SROs) like <code>uses</code>, <code>targets</code>, <code>indicates</code>, <code>attributed-to</code> connect them. A STIX <code>indicator</code> carries a pattern, valid-from/until, and confidence — context the bare IOC lacks.</p>
+<ul>
+<li><strong>MISP</strong> — event-centric sharing platform. <strong>Events</strong> hold <strong>attributes</strong></li>
+</ul>
+<p>(the indicators) with types, categories, and per-attribute IDS flags; <strong>galaxies</strong> attach actor, tooling, and ATT&amp;CK context; correlation across events surfaces overlap between your data and partners'.</p>
+<ul>
+<li><strong>OpenCTI</strong> — a knowledge graph that ingests STIX, links objects across</li>
+</ul>
+<p>reports, and lets you query relationships (which campaigns use this malware, which infrastructure this actor reuses) rather than re-deriving them.</p>
+<ul>
+<li><strong>TLP</strong> — the sharing classifier. Tag every product: <strong>TLP:RED</strong> (named</li>
+</ul>
+<p>recipients only), <strong>TLP:AMBER</strong> / <strong>TLP:AMBER+STRICT</strong> (their org, or their org only), <strong>TLP:GREEN</strong> (community), <strong>TLP:CLEAR</strong> (no restriction). The tag travels with the data; downgrading it is the sharer's call, never the recipient's.</p>
+<h2>Enrichment Sources</h2>
+<p>Enrichment converts a bare observable into something with context and confidence. Match the source to the question.</p>
+<div class="tw"><table><thead><tr><th>Source</th><th>Answers</th></tr></thead><tbody><tr><td>VirusTotal</td><td>Detections, relationships (contacted domains, dropped files, siblings), first/last seen, community context</td></tr><tr><td>Passive DNS (Farsight/DNSDB, SecurityTrails, Circl)</td><td>Resolution history, co-hosted domains, infrastructure reuse over time</td></tr><tr><td>Shodan / Censys</td><td>Exposed services, banners, certs, JARM, favicon hashes — the internet-facing view without touching the target directly</td></tr><tr><td>GreyNoise</td><td>Whether an IP is mass-scanning the whole internet (background noise) versus activity aimed at you</td></tr><tr><td>URLScan</td><td>What a URL actually serves — page content, redirects, resources, screenshot — without you browsing it</td></tr></tbody></table></div>
+<p><strong>GreyNoise earns its place by subtraction.</strong> Most flagged IPs are internet background radiation — opportunistic scanners hitting everyone. GreyNoise tells you whether an indicator is that noise or something targeted, so you stop burning analyst hours enriching a Shodan crawler and focus on what is aimed at your organization.</p>
+<h2>Producing the Finished Product</h2>
+<p>The report is the product; everything upstream is inventory. Structure it for a decision-maker, not for an analyst admiring the work.</p>
+<ul>
+<li><strong>BLUF (bottom line up front)</strong> — the assessment and its "so what" in the</li>
+</ul>
+<p>first two sentences. If the reader stops after the first paragraph, they should still have the answer.</p>
+<ul>
+<li><strong>Confidence and sourcing</strong> — state analytic confidence on each key</li>
+</ul>
+<p>judgment, and separate what you observed from what you assess. Attribute claims to their evidence; distinguish single-source from corroborated.</p>
+<ul>
+<li><strong>So what / recommended action</strong> — tie the analysis to the consumer's</li>
+</ul>
+<p>decision. What should they do, block, hunt for, or prioritize, and why now? An assessment with no recommended action leaves the reader to reinvent the implication, and most will not.</p>
+<p>Write to the audience: an executive needs the risk and the decision; a SOC lead needs the detections and the pivots. The same underlying intelligence becomes two different products.</p>
+<h2>CTI in the Defensive Loop</h2>
+<p>Threat intelligence is not a terminal deliverable — it is the fuel for the rest of the defensive program, and it consumes their output in return.</p>
+<ul>
+<li>It <strong>feeds detection</strong>: TTPs and tooling become deployed rules via</li>
+</ul>
+<p><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Hand over behaviors and tiered indicators, not a raw feed.</p>
+<ul>
+<li>It <strong>feeds hunting</strong>: an intel report's described behavior (not its dead</li>
+</ul>
+<p>IOCs) becomes a hypothesis in <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> run against your telemetry.</p>
+<ul>
+<li>It <strong>consumes ATT&amp;CK mappings</strong>: resolve techniques through</li>
+</ul>
+<p><a class="xref" href="mapping-attack-techniques.html"><code>mapping-attack-techniques</code></a> so your products speak the same taxonomy as detection and hunting, and coverage gaps become visible.</p>
+<p>Intelligence that does not flow into detection, hunting, or a decision is a research hobby, not a capability.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"More indicators is better intelligence."</em> No. Unprioritized IOCs are</li>
+</ul>
+<p>noise that buries the few that matter. Volume is not value; a ranked handful with context beats a feed of ten thousand.</p>
+<ul>
+<li><em>"It's the same actor — the TTPs match."</em> TTP overlap is shared tooling as</li>
+</ul>
+<p>often as shared operator. Public kits and leaked frameworks make unrelated crews look identical. Cluster on the evidence; do not name.</p>
+<ul>
+<li><em>"The vendor report attributes it, so it's confirmed."</em> A vendor's</li>
+</ul>
+<p>attribution is one source with its own biases and incentives. Read their evidence, weigh it, and assign your own confidence — do not inherit theirs.</p>
+<ul>
+<li><em>"We should scan the C2 to learn more."</em> You just told the operator you are</li>
+</ul>
+<p>watching, and they rotate. Passive datasets first; active interaction only from non-attributable infrastructure as a deliberate decision.</p>
+<ul>
+<li><em>"High confidence — it feels right."</em> Confidence must be defensible from</li>
+</ul>
+<p>evidence and the count of surviving alternatives, not from conviction. If you cannot show the evidence, it is not high confidence.</p>
+<ul>
+<li><em>"We produced the report, the job's done."</em> Undisseminated intelligence</li>
+</ul>
+<p>changed no decision. The lifecycle does not end at analysis; it ends when the consumer has acted — or told you why they did not.</p>
+<ul>
+<li><em>"This report is about someone else's sector, so it's irrelevant."</em> Relevance</li>
+</ul>
+<p>is a judgment you make against your own threat model, not an assumption. The TTPs may transfer even when the target does not.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — running intel-derived hypotheses against your own</li>
+</ul>
+<p>telemetry</p>
+<ul>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — sample-derived config, capability, and IOCs that feed</li>
+</ul>
+<p>intel</p>
+<ul>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — converting tracked TTPs into deployed rules</li>
+<li><a class="xref" href="mapping-attack-techniques.html"><code>mapping-attack-techniques</code></a> — resolving and standardizing ATT&amp;CK references</li>
+<li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — the consumer and source during an active event</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — structure and language for the finished</li>
+</ul>
+<p>written product</p>
+<ul>
+<li>MISP, OpenCTI — structured storage, correlation, and sharing platforms</li>
+<li>STIX 2.1 — the object and relationship model for interchange</li>
+<li>crt.sh — certificate transparency search for infrastructure pivoting</li>
+<li>Shodan, Censys — internet-wide service, banner, JARM, and favicon search</li>
+<li>GreyNoise — separating internet background noise from targeted activity</li>
+<li>VirusTotal — detection, relationship, and enrichment context</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

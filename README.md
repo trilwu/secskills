@@ -370,9 +370,10 @@ opening a PR:
 python3 scripts/validate.py --strict     # frontmatter, sections, manifests, verified count
 python3 scripts/sync_attack.py --check   # ATT&CK sections match the index
 python3 scripts/run_evals.py --check     # every skill has a trigger eval
+python3 scripts/build_site.py --check    # the docs/ site is in sync
 ```
 
-CI runs the same three checks. Every new skill ships with at least one
+CI runs the same checks. Every new skill ships with at least one
 trigger-accuracy case in [`evals/cases.jsonl`](evals/README.md) — a realistic
 request labelled with the skill that should activate, plus a `trap_for` case
 where it sits near an existing skill, so routing stays correct as the collection
@@ -391,6 +392,14 @@ Not for unauthorized access, illegal activity, or violating terms of service.
 You are responsible for obtaining authorization and complying with applicable
 law. Provided as-is, without warranty; the authors accept no liability for
 misuse.
+
+## Website
+
+A browsable site — role-based prompts, a searchable catalog, and a page per
+skill with its full methodology — is generated from this repo into
+[`docs/`](docs/) by `scripts/build_site.py` (stdlib only, no drift: CI fails if
+it is stale). Serve it with GitHub Pages → Settings → Pages → Source: `main`
+/ `docs`.
 
 ## License
 

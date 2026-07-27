@@ -1,0 +1,187 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>bypassing-root-jailbreak-detection — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / bypassing-root-jailbreak-detection</div>
+  <h1 class="sk">bypassing-root-jailbreak-detection</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Defeat root, jailbreak, emulator, debugger, and Frida detection in mobile apps using Magisk DenyList, Zygisk modules, objection, and targeted Frida hooks, and understand where hardware-backed attestation like Play Integrity cannot be hooked. Use when an app exits, shows &quot;device not secure&quot;, or silently fails on a rooted device or emulator, or when Frida attaches and the app immediately dies.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Detection is almost never one check. It is a dozen cheap checks scattered across the app, plus — increasingly — one hardware-backed attestation that no hook can touch. Hooking checks one at a time is whack-a-mole; the work is finding the layer the app actually depends on.</p>
+<p>Use only against apps you are authorized to test.</p>
+<h2>When to Use</h2>
+<ul>
+<li>The app exits on launch, shows "rooted device detected", or degrades silently</li>
+<li>The app works on a stock device but not on your test device or emulator</li>
+<li>Frida attaches and the process dies immediately, or <code>frida-ps</code> shows nothing</li>
+<li><code>objection</code> fails to explore, or hooks stop firing after a few seconds</li>
+<li>You need a stable instrumentation environment before any other testing</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>TLS interception failures</strong> — use <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a>; a proxy error</li>
+</ul>
+<p>is a different problem, though detection can masquerade as one</p>
+<ul>
+<li><strong>The wider assessment</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
+<li><strong>Framework-specific reversing</strong> — use the relevant <code>reversing-*</code> skill</li>
+<li><strong>Defeating DRM or licensing to pirate an app</strong> — out of scope</li>
+</ul>
+<h2>Identify the Layer First</h2>
+<p>Detection lives at four layers, and each needs a different response. Working out which one is firing saves the most time.</p>
+<div class="tw"><table><thead><tr><th>Layer</th><th>Signals</th><th>Response</th></tr></thead><tbody><tr><td><strong>Java/managed checks</strong></td><td><code>RootBeer</code>, <code>File.exists("/system/xbin/su")</code>, package queries for Magisk</td><td>Hook at the Java layer (objection, Frida)</td></tr><tr><td><strong>Native checks in <code>.so</code></strong></td><td><code>stat</code>/<code>access</code>/<code>fopen</code> on <code>su</code>, <code>/proc/self/maps</code> scans</td><td>Hook libc, or patch the <code>.so</code></td></tr><tr><td><strong>Instrumentation detection</strong></td><td>Dies only when Frida is attached; port 27042 probes; thread-name scans</td><td>Hide the agent, not the root</td></tr><tr><td><strong>Hardware attestation</strong></td><td>Play Integrity, SafetyNet, DeviceCheck, App Attest</td><td>Cannot be hooked — see below</td></tr></tbody></table></div>
+<pre><code># What does the app reference? Decompile and look before hooking.
+apktool d target.apk -o out
+rg -n 'RootBeer|isRooted|su\b|magisk|superuser|test-keys|/system/xbin|busybox|xposed|frida' -i out/smali* out/res 2&gt;/dev/null | head -30
+rg -n 'SafetyNet|PlayIntegrity|IntegrityManager|attest|DeviceCheck' -i out/ | head
+
+# Native side
+unzip -j target.apk 'lib/arm64-v8a/*' -d libs
+rg -a -o 'su|/system/bin/su|magisk|frida|gum-js-loop|gmain' libs/*.so | sort -u | head -20</code></pre>
+<p>The strings you find in the native libraries tell you what the app looks for, which is far more efficient than hooking blind and waiting for it to die.</p>
+<h2>Android</h2>
+<p><strong>Start with environment hiding, not hooking.</strong> A well-hidden root defeats most detection without a single hook, and it does not break when the app updates.</p>
+<pre><code># Magisk: DenyList the target so the root is invisible to it
+#   Settings → Zygisk ON, Enforce DenyList ON, select the target package
+# Shamiko (Zygisk module) hides more thoroughly than DenyList alone
+# Play Integrity Fix (PIF) module for the attestation layer — see limits below
+
+# Verify what the app can see
+adb shell "pm list packages | grep -i magisk"     # should return nothing to the app</code></pre>
+<p>Then hook what remains:</p>
+<pre><code>objection -g com.target.app explore
+# then: android root disable
+
+frida -U -f com.target.app -l anti-root-bypass.js --no-pause</code></pre>
+<p>Common Java hook points, in the order they usually appear:</p>
+<pre><code>// File existence checks — the single most common family
+Java.use('java.io.File').exists.implementation = function () {
+  const p = this.getAbsolutePath();
+  if (/su$|magisk|superuser|busybox|xposed/i.test(p)) return false;
+  return this.exists();
+};
+
+// Runtime.exec("su") and ProcessBuilder
+// Build.TAGS containing "test-keys"
+// PackageManager.getPackageInfo for known root packages
+// System properties: ro.debuggable, ro.secure, ro.build.selinux</code></pre>
+<p><strong>Native checks need native hooks.</strong> When Java hooks are in place and the app still exits, the check is in a <code>.so</code>:</p>
+<pre><code># See which syscall is finding the evidence
+frida-trace -U -f com.target.app -i 'stat*' -i 'access' -i 'fopen' -i 'open'
+# then edit the generated handlers to lie about the paths it probes</code></pre>
+<h2>Frida Detection Is a Separate Problem</h2>
+<p>If the app runs fine rooted but dies the moment you attach, you are fighting instrumentation detection, and hiding root will not help.</p>
+<div class="tw"><table><thead><tr><th>Check</th><th>Counter</th></tr></thead><tbody><tr><td>TCP 27042 open, or the D-Bus handshake response</td><td>Run <code>frida-server</code> on a random port, or use Gadget instead of Server</td></tr><tr><td><code>/proc/self/maps</code> contains <code>frida-agent</code>, <code>gum</code></td><td>Rename the agent; use a patched build</td></tr><tr><td>Thread names <code>gmain</code>, <code>gum-js-loop</code>, <code>pool-frida</code></td><td>Patched Frida builds rename these</td></tr><tr><td><code>/proc/self/task/*/stat</code> scanning</td><td>Same</td></tr><tr><td>Named pipes and <code>re.frida.server</code> strings</td><td>Patched build</td></tr><tr><td>Periodic re-check after launch</td><td>Attach <em>after</em> the check window, or hook the timer</td></tr></tbody></table></div>
+<p>The practical answer is a patched Frida (community builds exist specifically for this) plus Gadget injection rather than a listening server. If detection still wins, fall back to static analysis plus targeted APK patching — you lose interactivity but keep progress.</p>
+<h2>iOS</h2>
+<pre><code>objection -g com.target.app explore
+# then: ios jailbreak disable
+
+# Tweak-based, system-wide: Liberty Lite, A-Bypass, Shadow (rootless jailbreaks)</code></pre>
+<p>What iOS apps check, and what to hide:</p>
+<ul>
+<li>Existence of <code>/Applications/Cydia.app</code>, <code>/bin/bash</code>, <code>/usr/sbin/sshd</code>,</li>
+</ul>
+<p><code>/etc/apt</code>, <code>/private/var/lib/apt</code></p>
+<ul>
+<li>Writability outside the sandbox (<code>fopen("/private/jailbreak.txt", "w")</code>)</li>
+<li><code>fork()</code> succeeding, which it should not in a sandboxed app</li>
+<li><code>dyld</code> image list containing MobileSubstrate / substitute</li>
+<li>URL scheme <code>cydia://</code> being openable</li>
+<li><code>NSFileManager</code> checks, which are easier to hook than raw <code>stat</code></li>
+</ul>
+<p>Hook <code>stat</code>, <code>access</code>, <code>fopen</code>, <code>getenv("DYLD_INSERT_LIBRARIES")</code>, and <code>_dyld_get_image_name</code> for the native layer; hook <code>NSFileManager</code> methods for the Objective-C layer. On non-jailbroken devices, repackage with the Frida gadget (<code>objection patchipa</code>) — and expect that to trip attestation.</p>
+<h2>What You Cannot Hook</h2>
+<p><strong>Hardware-backed attestation is the hard boundary.</strong> Play Integrity's <code>MEETS_STRONG_INTEGRITY</code>, key attestation via the TEE/StrongBox, and Apple's App Attest are signed by hardware keys and verified on the vendor's servers. A client-side hook can change what the app <em>reads</em>, but it cannot forge a signature the server validates.</p>
+<p>What this means in practice:</p>
+<ul>
+<li>Magisk plus a Play Integrity Fix module can often reach <code>BASIC</code> and</li>
+</ul>
+<p><code>DEVICE</code> integrity. <code>STRONG</code> requires an unmodified bootloader.</p>
+<ul>
+<li>If the app fails closed on strong integrity, the honest options are a</li>
+</ul>
+<p>non-rooted device with a repackaged app (which itself fails signature checks), a device with a stock ROM plus network-layer testing only, or agreeing an attestation exemption with the client for the test window.</p>
+<ul>
+<li><strong>Ask for the exemption.</strong> A test build with attestation disabled is a normal</li>
+</ul>
+<p>engagement request and is far cheaper than days spent losing to a TEE.</p>
+<p>Say this in the report rather than quietly reducing scope: "dynamic instrumentation was not possible against production builds due to hardware attestation; testing covered X and not Y" is a finding about your coverage, and hiding it is worse than the limitation.</p>
+<h2>Detection Quality Is Itself a Finding</h2>
+<p>While bypassing, record how good the detection was — clients ask, and it belongs in the report:</p>
+<ul>
+<li>Does it fail closed (exit) or fail open (log and continue)?</li>
+<li>Is the check result sent to the server, or trusted locally? Local-only checks</li>
+</ul>
+<p>are advisory at best.</p>
+<ul>
+<li>Is it one central function (trivially hooked) or distributed and re-checked?</li>
+<li>Is hardware attestation used, or only filesystem heuristics?</li>
+</ul>
+<p>An app whose entire root defense is <code>File.exists("/system/xbin/su")</code> deserves a low-severity note; one that uses server-verified attestation deserves credit.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"objection's bypass didn't work, the detection is too strong."</em> It covers</li>
+</ul>
+<p>the common Java checks. Look at the native layer next.</p>
+<ul>
+<li><em>"I hid root, so it should work."</em> If it dies only under Frida, you are</li>
+</ul>
+<p>fighting instrumentation detection, not root detection.</p>
+<ul>
+<li><em>"Play Integrity can be bypassed with Frida."</em> Not the hardware-backed</li>
+</ul>
+<p>verdicts. Hooks change what the app reads, not what the TEE signs.</p>
+<ul>
+<li><em>"I'll patch every check I find."</em> Distributed checks re-run. Find the</li>
+</ul>
+<p>central decision point, or hide the environment instead.</p>
+<ul>
+<li><em>"Root detection is a vulnerability."</em> It is a control, and a weak one. Its</li>
+</ul>
+<p>absence is a low-severity note, not a headline finding.</p>
+<ul>
+<li><em>"I couldn't instrument it, so there's nothing to report."</em> Report the</li>
+</ul>
+<p>coverage limitation explicitly.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the assessment this unblocks</li>
+<li><a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> — the other reason a mobile app "just fails"</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — patching native detection routines</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — how to state a coverage limitation honestly</li>
+<li>Magisk + Zygisk, Shamiko, objection, Frida (and patched builds), Liberty Lite, Shadow</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

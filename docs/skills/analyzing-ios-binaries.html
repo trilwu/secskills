@@ -1,0 +1,183 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>analyzing-ios-binaries — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / analyzing-ios-binaries</div>
+  <h1 class="sk">analyzing-ios-binaries</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Analyze iOS applications at the binary level — decrypting FairPlay-protected IPAs with frida-ios-dump or bagbak, inspecting Mach-O load commands, recovering Objective-C headers with class-dump, and reading Swift metadata. Use when working with an IPA or .app bundle, when a downloaded App Store binary shows cryptid=1, when class-dump returns nothing, or when analyzing iOS frameworks and app extensions.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>App Store binaries are encrypted at rest and decrypted by the kernel at load time, so every static tool fails on a downloaded IPA until you dump the decrypted image from memory. That single step gates everything else, and it is the reason most iOS analysis stalls before it starts.</p>
+<h2>When to Use</h2>
+<ul>
+<li>You have an IPA or <code>.app</code> bundle and need to read the binary</li>
+<li><code>class-dump</code> returns nothing or garbage</li>
+<li><code>otool</code> shows <code>cryptid 1</code></li>
+<li>You need to enumerate Objective-C classes, Swift types, or exported symbols</li>
+<li>Analyzing embedded frameworks, app extensions, or dynamic libraries</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Android targets</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> or the relevant</li>
+</ul>
+<p><code>reversing-*</code> skill</p>
+<ul>
+<li><strong>The wider iOS assessment</strong> (storage, keychain, IPC) — use</li>
+</ul>
+<p><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></p>
+<ul>
+<li><strong>TLS interception</strong> — use <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a></li>
+<li><strong>Jailbreak detection blocking your tooling</strong> — use</li>
+</ul>
+<p><a class="xref" href="bypassing-root-jailbreak-detection.html"><code>bypassing-root-jailbreak-detection</code></a> first</p>
+<ul>
+<li><strong>Cross-platform frameworks</strong> — Flutter, Unity, and Xamarin have their own</li>
+</ul>
+<p>skills; use them for the managed layer and this one for the native shell</p>
+<h2>Check Encryption First</h2>
+<pre><code>otool -l TargetApp | grep -A5 LC_ENCRYPTION_INFO
+# cryptid 1  → FairPlay-encrypted, decrypt before anything else
+# cryptid 0  → already decrypted (dev build, or you already dumped it)</code></pre>
+<p>Everything downstream is meaningless on an encrypted binary. <code>class-dump</code> returning nothing is almost always this, not obfuscation.</p>
+<pre><code># Decrypt on a jailbroken device by dumping the loaded image
+frida-ios-dump -l                 # list installed apps
+frida-ios-dump com.target.app     # produces a decrypted IPA
+bagbak com.target.app             # alternative, handles extensions/frameworks well
+
+# Rootless jailbreaks and TrollStore installs work with the same tools
+# Older devices: Clutch, flexdecrypt</code></pre>
+<p>Dump <strong>frameworks and extensions too</strong>, not just the main binary. <code>PlugIns/</code> (share sheets, widgets, keyboards) and <code>Frameworks/</code> carry their own encrypted Mach-Os, and app extensions frequently hold the interesting entitlements and a weaker security posture than the main app.</p>
+<h2>Mach-O Structure and Protections</h2>
+<pre><code>file TargetApp                       # thin or fat/universal
+lipo -info TargetApp                 # architectures present
+lipo -thin arm64 TargetApp -o app64  # extract one before analysis
+
+otool -hv app64                      # header flags: PIE
+otool -l app64 | rg 'LC_LOAD_DYLIB|LC_RPATH|LC_CODE_SIGNATURE|LC_ENCRYPTION'
+otool -Iv app64 | head               # indirect symbols
+nm -m app64 | rg -v ' U ' | head     # defined symbols
+
+# Protections at a glance
+otool -hv app64 | rg PIE             # ASLR
+otool -Iv app64 | rg stack_chk       # stack canaries
+otool -Iv app64 | rg objc_release    # ARC in use</code></pre>
+<p>Extract the entitlements — they define what the app is allowed to do and often reveal the interesting attack surface:</p>
+<pre><code>codesign -d --entitlements :- TargetApp.app
+# Look for: keychain-access-groups, App Groups, associated-domains,
+# get-task-allow (debuggable!), custom URL scheme claims</code></pre>
+<p><code>get-task-allow</code> set to true on a production build means the app is debuggable and is a finding on its own.</p>
+<h2>Objective-C</h2>
+<p>Objective-C keeps its full class metadata in the binary, so recovery is excellent — method names, selectors, class hierarchy, ivars.</p>
+<pre><code>class-dump -H app64 -o ./headers        # classic
+class-dump-dyld                          # for dyld shared cache resident classes
+dsdump --objc --color app64              # modern alternative, handles Swift too
+
+# Then read the type map
+rg -l 'Manager|Service|API|Auth|Crypto|Keychain|Payment' ./headers | head -20</code></pre>
+<p>In a disassembler, Objective-C calls go through <code>objc_msgSend</code>, so the callee is a selector string in a register rather than a direct branch. Both IDA and Ghidra have plugins that resolve this; without them the call graph is largely useless.</p>
+<h2>Swift</h2>
+<p>Swift is harder. Names are mangled, and method dispatch is often static or through witness tables rather than <code>objc_msgSend</code>.</p>
+<pre><code># Demangle what you find
+nm app64 | swift demangle
+xcrun swift-demangle '$s10TargetApp11AuthManagerC5loginyyF'
+
+# Swift type metadata lives in dedicated sections
+otool -l app64 | rg '__swift5_types|__swift5_proto|__swift5_reflstr'
+dsdump --swift app64</code></pre>
+<p>Practical approach for Swift-heavy apps: <code>@objc</code> and <code>@objcMembers</code> members still appear in the Objective-C metadata, so class-dump gives you a partial map. For the rest, work from string references and the reflection sections rather than trying to recover a full class list. Runtime enumeration with Frida is usually faster than static recovery:</p>
+<pre><code>frida -U -f com.target.app -l enumerate-swift-classes.js</code></pre>
+<h2>Runtime Analysis</h2>
+<pre><code># Enumerate everything the runtime knows
+objection -g com.target.app explore
+#   ios hooking list classes
+#   ios hooking search methods &lt;keyword&gt;
+#   ios hooking watch method "-[AuthManager login:]" --dump-args --dump-return
+
+# Direct Frida for anything objection does not cover
+frida -U -f com.target.app -l hooks.js</code></pre>
+<p>Runtime beats static on iOS more often than on other platforms: the Objective-C runtime is introspectable, so listing classes and watching methods gets you to the logic faster than reading a disassembly of <code>objc_msgSend</code> dispatch.</p>
+<h2>What to Look For</h2>
+<ul>
+<li><strong>Entitlements over-provisioned</strong> — App Groups shared with less-trusted</li>
+</ul>
+<p>extensions, keychain groups shared too widely, <code>get-task-allow</code> in production</p>
+<ul>
+<li><strong>Hardcoded secrets</strong> in <code>__cstring</code> and in the plist files inside the bundle</li>
+<li><strong>Weak keychain accessibility</strong> — items stored with</li>
+</ul>
+<p><code>kSecAttrAccessibleAlways</code> rather than a <code>ThisDeviceOnly</code> class</p>
+<ul>
+<li><strong>Custom crypto</strong> in the binary rather than CryptoKit/CommonCrypto</li>
+<li><strong>Debug and logging code</strong> left in release builds</li>
+<li><strong>Insecure <code>WKWebView</code> configuration</strong> — <code>allowFileAccessFromFileURLs</code>,</li>
+</ul>
+<p>loading remote content into a JS-bridged view</p>
+<ul>
+<li><strong>Third-party SDKs</strong> with their own network stacks and their own pinning</li>
+</ul>
+<p>behaviour; enumerate <code>Frameworks/</code> and check each</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"class-dump returned nothing, the app is obfuscated."</em> Check <code>cryptid</code></li>
+</ul>
+<p>first. It is almost always encryption.</p>
+<ul>
+<li><em>"I dumped the main binary, that's the app."</em> Extensions and frameworks are</li>
+</ul>
+<p>separate Mach-Os with separate entitlements, and are frequently weaker.</p>
+<ul>
+<li><em>"It's Swift, so nothing is recoverable."</em> Reflection sections, <code>@objc</code></li>
+</ul>
+<p>members, and string references recover a great deal. Enumerate at runtime.</p>
+<ul>
+<li><em>"Static analysis is enough."</em> On iOS the runtime is introspectable; skipping</li>
+</ul>
+<p>it costs more than it saves.</p>
+<ul>
+<li><em>"The binary has PIE and canaries, so it's hardened."</em> Those are compiler</li>
+</ul>
+<p>defaults, not evidence of a security review.</p>
+<ul>
+<li><em>"I can't jailbreak, so I can't analyze."</em> You can still read the bundle,</li>
+</ul>
+<p>plists, entitlements, and assets, and repackage with a Frida gadget for sideloading. Say what the constraint cost you in the report.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — storage, keychain, IPC, and the wider iOS test</li>
+<li><a class="xref" href="bypassing-root-jailbreak-detection.html"><code>bypassing-root-jailbreak-detection</code></a> — when detection blocks your tooling</li>
+<li><a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> — TLS interception on iOS stacks</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — deeper native RE of the same Mach-O</li>
+<li>frida-ios-dump, bagbak, class-dump, dsdump, objection, Hopper/IDA/Ghidra</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

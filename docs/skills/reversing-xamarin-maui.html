@@ -1,0 +1,169 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reversing-xamarin-maui — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / reversing-xamarin-maui</div>
+  <h1 class="sk">reversing-xamarin-maui</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Reverse engineer Xamarin and .NET MAUI mobile apps by extracting assemblies.blob and XALZ-compressed DLLs with pyxamstore, then decompiling with dnSpy or ILSpy. Use when an APK contains libmonodroid.so, libmonosgen, assemblies.blob, assemblies/*.dll, or libxamarin-app.so, when an IPA contains Mono assemblies, or when jadx shows only Xamarin bootstrap classes.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Xamarin apps hide a complete .NET application inside an Android package. Once you extract and decompress the assemblies you get near-source-quality C#, which makes this one of the highest-return reversing jobs — but only if you get past the container format, which changed twice and defeats naive unzipping.</p>
+<h2>When to Use</h2>
+<ul>
+<li>The APK contains <code>lib/*/libmonodroid.so</code>, <code>libmonosgen-2.0.so</code>, or</li>
+</ul>
+<p><code>libxamarin-app.so</code></p>
+<ul>
+<li>The APK contains <code>assemblies/assemblies.blob</code> or <code>assemblies/*.dll</code></li>
+<li><code>jadx</code> shows only <code>mono.MonoPackageManager</code> and Xamarin bootstrap classes</li>
+<li>An IPA contains <code>.dll</code> files or a <code>Frameworks/Mono*</code> layout</li>
+<li>The target is described as Xamarin, Xamarin.Forms, or .NET MAUI</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Unity</strong> (<code>global-metadata.dat</code>, <code>libil2cpp.so</code>) — use <a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a>;</li>
+</ul>
+<p>Unity is also .NET but uses a completely different packaging</p>
+<ul>
+<li><strong>Flutter or React Native</strong> — use <a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a> or</li>
+</ul>
+<p><a class="xref" href="reversing-react-native-apps.html"><code>reversing-react-native-apps</code></a></p>
+<ul>
+<li><strong>TLS interception problems</strong> — use <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a></li>
+<li><strong>The wider assessment</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
+</ul>
+<h2>Identify the Packaging Generation</h2>
+<p>Three formats shipped over the product's life, and the extraction differs.</p>
+<pre><code>unzip -l target.apk | rg 'assemblies|libmonodroid|libxamarin|libmonosgen'</code></pre>
+<div class="tw"><table><thead><tr><th>What you see</th><th>Generation</th><th>Extraction</th></tr></thead><tbody><tr><td><code>assemblies/*.dll</code>, readable PE headers (<code>MZ</code>)</td><td>Classic, uncompressed</td><td>Unzip and decompile directly</td></tr><tr><td><code>assemblies/*.dll</code> starting with <code>XALZ</code></td><td>Classic, LZ4-compressed</td><td>Decompress the XALZ wrapper first</td></tr><tr><td><code>assemblies/assemblies.blob</code> + <code>.manifest</code></td><td>AssemblyStore</td><td><code>pyxamstore</code> to unpack</td></tr><tr><td><code>lib/*/libxamarin-app.so</code> with no <code>assemblies/</code></td><td>.NET 6+ / MAUI, assemblies in the ELF</td><td>Extract from the shared library</td></tr><tr><td>No managed assemblies anywhere</td><td>NativeAOT</td><td>Not .NET reversing — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></td></tr></tbody></table></div>
+<pre><code># Which one is it? Check the first four bytes of an assembly
+unzip -p target.apk 'assemblies/Mono.Android.dll' 2&gt;/dev/null | xxd | head -1
+# 4d5a...  → MZ, a plain .NET PE, decompile now
+# 58414c5a → "XALZ", LZ4-compressed, decompress first</code></pre>
+<h2>Extraction</h2>
+<pre><code># AssemblyStore (assemblies.blob)
+pyxamstore unpack -d ./out target.apk
+# produces the individual .dll files under ./out
+
+# XALZ-compressed individual DLLs
+# The header is: magic "XALZ" | descriptor index | uncompressed size | LZ4 block
+python3 -c "
+import lz4.block, struct, sys
+d = open(sys.argv[1],'rb').read()
+assert d[:4] == b'XALZ'
+size = struct.unpack('&lt;I', d[8:12])[0]
+open(sys.argv[2],'wb').write(lz4.block.decompress(d[12:], uncompressed_size=size))
+" Mono.Android.dll Mono.Android.decompressed.dll
+
+# MAUI / .NET 6+ assemblies embedded in libxamarin-app.so
+# They are stored as sections; carve by MZ header or use pyxamstore's newer modes
+unzip -j target.apk 'lib/arm64-v8a/*' -d libs &amp;&amp; binwalk -Me libs/libxamarin-app.so</code></pre>
+<p>Once you have plain <code>.dll</code> files it is ordinary .NET work:</p>
+<pre><code>ilspycmd ./out/YourApp.dll -o ./decompiled     # or dnSpy / dnSpyEx / dotPeek
+rg -n 'https?://|ApiKey|ConnectionString|Bearer|password' ./decompiled | head -40</code></pre>
+<p><strong>Start with the app's own assembly</strong>, not the framework ones. It is usually named after the product; <code>Mono.Android.dll</code>, <code>System.*</code>, and <code>Xamarin.*</code> are stock and waste your time.</p>
+<h2>Runtime Hooking</h2>
+<p>Frida's Java bridge does not see Mono methods — the app's logic is not in the JVM. You need Mono-aware instrumentation.</p>
+<pre><code># Enumerate the Mono runtime and its loaded assemblies
+frida -U -f com.target.app -l frida-mono-api.js
+# Fridax targets Xamarin specifically; also useful:
+#   mono_get_root_domain, mono_assembly_foreach, mono_class_get_methods,
+#   mono_compile_method  → resolve a managed method to a native address, then
+#   Interceptor.attach at that address</code></pre>
+<p>The practical route: decompile first, find the exact class and method you want, then resolve it through the Mono API and attach. Blind hooking of Mono is far slower than reading the C# you already recovered.</p>
+<p><strong>Certificate validation in Xamarin lives in managed code</strong>, which is why generic Android pinning bypasses miss it entirely:</p>
+<pre><code>// The two hook targets, both in the managed layer
+ServicePointManager.ServerCertificateValidationCallback
+HttpClientHandler.ServerCertificateCustomValidationCallback</code></pre>
+<p>Force these to return <code>true</code> via Mono hooking, or patch the assembly and repack. See <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> for the surrounding diagnosis.</p>
+<h2>Where the Findings Are</h2>
+<p>Xamarin apps concentrate risk in ways that are easy to spot once decompiled:</p>
+<ul>
+<li><strong>Hardcoded secrets in C#.</strong> Developers treat compiled assemblies as opaque;</li>
+</ul>
+<p>API keys, connection strings, and storage credentials ship in plain IL.</p>
+<ul>
+<li><strong>Full backend logic in the client.</strong> Shared code between the mobile app and</li>
+</ul>
+<p>the server-side project is a Xamarin idiom, so the client often contains the authoritative business rules — and sometimes the server's own models and validation, which tells you exactly how to shape a malicious request.</p>
+<ul>
+<li><strong>Custom <code>ServerCertificateValidationCallback</code> returning <code>true</code>.</strong> Common in</li>
+</ul>
+<p>development builds that shipped.</p>
+<ul>
+<li><strong>Insecure local storage.</strong> <code>Xamarin.Essentials.SecureStorage</code> is usually</li>
+</ul>
+<p>fine; <code>Preferences</code> and raw file writes are not.</p>
+<ul>
+<li><strong>Embedded SQLite</strong> with credentials or full offline datasets.</li>
+</ul>
+<h2>Patching and Repacking</h2>
+<pre><code># Edit IL directly in dnSpy, save the assembly, then rebuild the container
+pyxamstore pack -d ./out          # rebuild assemblies.blob
+apktool b target -o patched.apk &amp;&amp; apksigner sign --ks debug.keystore patched.apk</code></pre>
+<p>Repacking must reproduce the original container format exactly — an uncompressed DLL where the loader expects XALZ, or a mis-sized blob, fails at startup with an unhelpful native crash. Prefer runtime hooking when you only need to observe.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"jadx found nothing, so it's obfuscated."</em> There is nothing in the dex. The</li>
+</ul>
+<p>app is in <code>assemblies/</code>.</p>
+<ul>
+<li><em>"Unzipping gave me DLLs but dnSpy rejects them."</em> They are XALZ-compressed.</li>
+</ul>
+<p>Check the first four bytes.</p>
+<ul>
+<li><em>"Frida's Java hooks aren't working."</em> The methods are Mono, not JVM. Use the</li>
+</ul>
+<p>Mono API.</p>
+<ul>
+<li><em>"It's compiled to a DLL, so the key is safe."</em> IL decompiles to readable C#.</li>
+</ul>
+<p>Treat every assembly constant as public.</p>
+<ul>
+<li><em>"The pinning bypass ran and traffic still fails."</em> Xamarin validates in</li>
+</ul>
+<p>managed code; the Java-layer bypass never touched it.</p>
+<ul>
+<li><em>"There are hundreds of assemblies."</em> Most are stock framework. Read the one</li>
+</ul>
+<p>named after the product.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the wider assessment and platform storage</li>
+<li><a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> — diagnosing the interception failure around this</li>
+<li><a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a> — the other .NET-based mobile framework</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — NativeAOT builds with no managed assemblies</li>
+<li>pyxamstore, dnSpy/dnSpyEx, ILSpy, Fridax, frida-mono-api</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

@@ -1,0 +1,340 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>analyzing-linux-persistence — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / analyzing-linux-persistence</div>
+  <h1 class="sk">analyzing-linux-persistence</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Systematically identify and analyze persistence mechanisms on Linux systems during DFIR investigations -- sweep systemd units, cron jobs, shell initialization, SSH config, kernel modules, LD_PRELOAD, package manager hooks, udev rules, container entrypoints, and XDG autostart entries. Use when investigating a compromised Linux host, performing forensic analysis of a Linux disk image, looking for backdoors or unauthorized access mechanisms, or determining how an attacker maintained access.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Linux persistence mechanisms are spread across dozens of locations that no single tool checks comprehensively. The attacker needs only one you miss. The work is a systematic sweep of every initialization path the kernel and userspace honor, in a sequence that catches the common before the exotic.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Investigating a compromised Linux host to find how the attacker kept access</li>
+<li>Forensic analysis of a Linux disk image or live system</li>
+<li>Looking for backdoors, unauthorized services, or rogue scheduled tasks</li>
+<li>Determining the full scope of attacker modifications during IR</li>
+<li>Validating that eradication removed every persistence mechanism</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Running a full incident response</strong> -- use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><strong>Establishing persistence offensively</strong> -- use <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+<li><strong>Actively escalating privileges</strong> -- use <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><strong>The host is Windows</strong> -- use <a class="xref" href="investigating-windows-endpoints.html"><code>investigating-windows-endpoints</code></a></li>
+<li><strong>You have an acquired disk image, not a live host</strong> -- use <a class="xref" href="analyzing-disk-images.html"><code>analyzing-disk-images</code></a></li>
+<li><strong>Analyzing a recovered malware sample</strong> -- use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+</ul>
+<h2>Systemd Units</h2>
+<p>Systemd is the most common persistence vector on modern Linux. Check every search path, not just <code>/etc/systemd/system</code>.</p>
+<p><strong>Search paths (evaluated in priority order):</strong></p>
+<pre><code>/etc/systemd/system/          # admin-installed, highest priority
+/run/systemd/system/          # runtime units, survive until reboot
+/usr/lib/systemd/system/      # package-installed defaults
+/usr/local/lib/systemd/system/
+~/.config/systemd/user/       # per-user units (no root needed)</code></pre>
+<p><strong>Enumeration:</strong></p>
+<pre><code># All enabled units -- compare against a known-good baseline
+systemctl list-unit-files --state=enabled --type=service
+systemctl list-unit-files --state=enabled --type=timer
+
+# Recently modified service files
+find /etc/systemd /run/systemd /usr/lib/systemd ~/.config/systemd \
+  -name '*.service' -o -name '*.timer' -o -name '*.socket' \
+  2&gt;/dev/null | xargs ls -lt | head -30
+
+# Show the full contents of a suspect unit
+systemctl cat suspicious.service
+
+# Check for drop-in overrides that modify legitimate units
+find /etc/systemd/system/*.d /run/systemd/system/*.d \
+  -name '*.conf' 2&gt;/dev/null
+
+# Masked units -- attacker may mask a security service
+systemctl list-unit-files --state=masked
+
+# Systemd generators -- scripts that dynamically create units at boot.
+# Four directories, in ascending precedence. Checking only the first two
+# misses generators dropped in the others.
+ls -la /etc/systemd/system-generators/
+ls -la /run/systemd/system-generators/         # tmpfs: runtime-injected
+ls -la /usr/local/lib/systemd/system-generators/
+ls -la /usr/lib/systemd/system-generators/</code></pre>
+<p>A generator under <code>/run</code> does not survive reboot, so it is not persistence in the strict sense — but it is a live execution primitive, and its absence from a post-reboot image does not mean it was never there. Note it on a running host before you collect.</p>
+<p><strong>What to look for:</strong> <code>ExecStart</code> pointing to <code>/tmp</code>, <code>/dev/shm</code>, or writable paths. <code>Restart=always</code> units. Timers with unusual schedules. Drop-ins that change <code>ExecStart</code> on legitimate services. Generators not from any package.</p>
+<h2>Cron and At Jobs</h2>
+<pre><code># System crontab
+cat /etc/crontab
+
+# System cron directories
+ls -la /etc/cron.d/
+ls -la /etc/cron.daily/ /etc/cron.hourly/ /etc/cron.weekly/ /etc/cron.monthly/
+
+# Per-user crontabs -- enumerate every user
+for user in $(cut -d: -f1 /etc/passwd); do
+  echo "=== $user ==="; crontab -l -u "$user" 2&gt;/dev/null
+done
+
+# Anacron
+cat /etc/anacrontab
+
+# At queue -- one-shot scheduled commands
+atq
+for job in $(atq | awk '{print $1}'); do at -c "$job"; done
+
+# Systemd timers (modern cron replacement)
+systemctl list-timers --all
+
+# Recently modified cron files
+find /etc/cron* /var/spool/cron -type f -newer /etc/hostname 2&gt;/dev/null</code></pre>
+<p><strong>What to look for:</strong> Entries appended to existing files. Jobs running as root from unusual paths. Cron scripts with modification times not matching package install dates. One-shot <code>at</code> jobs that download and execute.</p>
+<h2>Shell Initialization Files</h2>
+<pre><code># System-wide
+cat /etc/profile
+ls -la /etc/profile.d/
+cat /etc/bash.bashrc          # Debian/Ubuntu
+cat /etc/bashrc               # RHEL/CentOS
+cat /etc/environment
+ls -la /etc/environment.d/
+
+# Per-user -- check every user with a login shell
+for home in $(awk -F: '$7 !~ /(nologin|false)/ {print $6}' /etc/passwd); do
+  echo "=== $home ==="
+  for f in .bashrc .bash_profile .bash_login .profile .zshrc .zprofile \
+           .zlogin .zshenv .config/fish/config.fish; do
+    [ -f "$home/$f" ] &amp;&amp; echo "--- $f ---" &amp;&amp; tail -5 "$home/$f"
+  done
+done
+
+# Check for sourced external files
+grep -rn 'source \|^\. ' /etc/profile.d/ /root/.bashrc /root/.profile 2&gt;/dev/null</code></pre>
+<p><strong>What to look for:</strong> Lines appended to rc files that launch background processes or modify PATH. Sourced files in unusual locations. Environment variables setting <code>LD_PRELOAD</code>, <code>LD_LIBRARY_PATH</code>, or prepending attacker directories to <code>PATH</code>.</p>
+<h2>SSH Persistence</h2>
+<pre><code># Authorized keys -- check every user
+find / -name authorized_keys -o -name authorized_keys2 2&gt;/dev/null | \
+  while read f; do echo "=== $f ==="; cat "$f"; done
+
+# Look for command= and from= restrictions (or lack thereof)
+grep -n 'command=\|from=\|environment=\|no-pty\|permitopen' \
+  /root/.ssh/authorized_keys /home/*/.ssh/authorized_keys 2&gt;/dev/null
+
+# SSH daemon configuration
+sshd -T 2&gt;/dev/null | grep -iE 'permit|auth|allow|forcecommand|match'
+diff /etc/ssh/sshd_config /etc/ssh/sshd_config.dpkg-dist 2&gt;/dev/null
+
+# Config drop-ins
+ls -la /etc/ssh/sshd_config.d/ 2&gt;/dev/null
+
+# PAM configuration for SSH
+cat /etc/pam.d/sshd
+# Look for added auth sufficient lines or custom PAM modules
+# PAM module locations are distro-specific. Debian/Ubuntu use a multiarch
+# path, so the RHEL-style list alone returns nothing there -- and an empty
+# result reads as "no rogue module" when you simply looked in the wrong place.
+find /lib/security/ /lib64/security/ /usr/lib/security/ /usr/lib64/security/ \
+     /lib/*-linux-gnu/security/ /usr/lib/*-linux-gnu/security/ \
+  -name 'pam_*.so' 2&gt;/dev/null | \
+  xargs -I{} sh -c 'rpm -qf {} 2&gt;/dev/null || dpkg -S {} 2&gt;/dev/null || echo "UNOWNED: {}"'
+
+# SSH agent hijacking -- check for forwarded agent sockets
+find /tmp -name 'agent.*' -type s 2&gt;/dev/null
+grep -r SSH_AUTH_SOCK /proc/*/environ 2&gt;/dev/null | tr '\0' '\n'
+
+# SSH certificates
+ls -la /etc/ssh/ssh_host_*cert* 2&gt;/dev/null
+cat /etc/ssh/sshd_config | grep -i trustedusercakeys</code></pre>
+<p><strong>What to look for:</strong> Keys added to root or service accounts. <code>command=</code> entries executing reverse shells or tunnels. <code>PermitRootLogin yes</code> or <code>PasswordAuthentication yes</code> against policy. Custom PAM modules not from any package. <code>ForceCommand</code> or <code>Match</code> blocks proxying access.</p>
+<h2>Kernel-Level Persistence</h2>
+<pre><code># Loaded kernel modules
+lsmod
+# Details on each module -- look for unsigned or out-of-tree modules
+for mod in $(lsmod | awk 'NR&gt;1{print $1}'); do
+  modinfo "$mod" 2&gt;/dev/null | grep -E 'filename|description|author|sig'
+done
+
+# Modules configured to load at boot
+cat /etc/modules
+ls -la /etc/modules-load.d/
+cat /etc/modprobe.d/*
+
+# DKMS-built modules (may rebuild on kernel update)
+dkms status 2&gt;/dev/null
+
+# eBPF programs -- increasingly used for rootkits
+bpftool prog list 2&gt;/dev/null
+bpftool map list 2&gt;/dev/null
+
+# Check for modifications to the kernel command line
+cat /proc/cmdline</code></pre>
+<p><strong>What to look for:</strong> Modules not from any installed package or loaded from writable directories. eBPF programs attached to kprobes or tracepoints. DKMS modules that survive kernel upgrades. <code>init=</code> in the kernel command line pointing to unexpected binaries.</p>
+<h2>Package Manager Hooks</h2>
+<pre><code># APT hooks (Debian/Ubuntu)
+ls -la /etc/apt/apt.conf.d/
+grep -r 'Pre-Invoke\|Post-Invoke\|DPkg::Pre-Install\|DPkg::Post-Install' \
+  /etc/apt/apt.conf.d/ 2&gt;/dev/null
+
+# dpkg triggers and post-install scripts
+ls -la /var/lib/dpkg/info/*.postinst
+# Check recently modified postinst scripts
+find /var/lib/dpkg/info/ -name '*.postinst' -newer /var/log/dpkg.log \
+  2&gt;/dev/null
+
+# YUM/DNF plugins (RHEL/CentOS/Fedora)
+ls -la /etc/yum/pluginconf.d/ /etc/dnf/plugins/ 2&gt;/dev/null
+ls -la /usr/lib/yum-plugins/ /usr/lib/python*/site-packages/dnf-plugins/ \
+  2&gt;/dev/null
+
+# RPM scriptlets
+rpm -qa --scripts 2&gt;/dev/null | grep -B2 -A5 'postinstall\|preinstall'
+
+# Pacman hooks (Arch)
+ls -la /etc/pacman.d/hooks/ /usr/share/libalpm/hooks/ 2&gt;/dev/null</code></pre>
+<p><strong>What to look for:</strong> Hooks executing binaries outside the package manager's control. Post-install scripts modified after installation. Plugins not corresponding to any installed package.</p>
+<h2>LD_PRELOAD and Library Injection</h2>
+<pre><code>cat /etc/ld.so.preload
+grep -r LD_PRELOAD /etc/environment /etc/profile.d/ /etc/ld.so.conf.d/ \
+  /etc/systemd/system/*.service 2&gt;/dev/null
+
+# Find libraries not owned by any package
+ldconfig -p | awk '{print $NF}' | sort -u | \
+  xargs -I{} sh -c 'dpkg -S "{}" 2&gt;/dev/null || rpm -qf "{}" 2&gt;/dev/null || echo "UNOWNED: {}"' | \
+  grep UNOWNED
+
+# Verify shared library integrity against package records
+for lib in $(ldd /usr/sbin/sshd | awk '/=&gt;/{print $3}'); do
+  dpkg -V $(dpkg -S "$lib" 2&gt;/dev/null | cut -d: -f1) 2&gt;/dev/null || \
+  rpm -V $(rpm -qf "$lib" 2&gt;/dev/null) 2&gt;/dev/null
+done</code></pre>
+<p><strong>What to look for:</strong> Any entry in <code>/etc/ld.so.preload</code> (almost never legitimate). <code>LD_PRELOAD</code> in environment files or systemd <code>Environment=</code> directives. Libraries not owned by any package or with checksums differing from package manager records.</p>
+<h2>Udev Rules and D-Bus Activation</h2>
+<pre><code># Udev rules -- trigger on hardware events
+ls -la /etc/udev/rules.d/
+ls -la /usr/lib/udev/rules.d/
+grep -r 'RUN+=' /etc/udev/rules.d/ /run/udev/rules.d/ /usr/lib/udev/rules.d/ 2&gt;/dev/null
+
+# D-Bus system services
+ls -la /etc/dbus-1/system.d/ /usr/share/dbus-1/system-services/ 2&gt;/dev/null
+# Look for services that auto-activate unexpected binaries
+grep -r 'Exec=' /usr/share/dbus-1/system-services/ 2&gt;/dev/null</code></pre>
+<p><strong>What to look for:</strong> Udev rules with <code>RUN+=</code> that execute scripts on device events (USB insertion is a common trigger). D-Bus service files that activate binaries from unusual paths.</p>
+<h2>Container-Specific Persistence</h2>
+<pre><code># Docker -- compare entrypoints against original images
+docker inspect --format='{{.Config.Entrypoint}} {{.Config.Cmd}}' \
+  $(docker ps -aq) 2&gt;/dev/null
+docker diff $(docker ps -q) 2&gt;/dev/null
+docker images --digests 2&gt;/dev/null
+cat /etc/docker/daemon.json 2&gt;/dev/null
+
+# Kubernetes -- mutating webhooks and unexpected sidecars
+kubectl get mutatingwebhookconfigurations -o yaml 2&gt;/dev/null
+kubectl get pods --all-namespaces -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}: {range .spec.containers[*]}{.name} {end}{"\n"}{end}' 2&gt;/dev/null</code></pre>
+<p><strong>What to look for:</strong> Containers whose entrypoint differs from the original image. <code>docker diff</code> showing added executables. Mutating webhooks injecting sidecars. Images with no registry digest (locally built or tampered).</p>
+<h2>XDG Autostart and Desktop Entries</h2>
+<pre><code># System-wide autostart
+ls -la /etc/xdg/autostart/
+
+# Per-user autostart
+find /home/*/.config/autostart/ /root/.config/autostart/ \
+  -name '*.desktop' 2&gt;/dev/null
+
+# Check Exec= lines in desktop files
+grep -r 'Exec=' /etc/xdg/autostart/ /home/*/.config/autostart/ 2&gt;/dev/null</code></pre>
+<p><strong>What to look for:</strong> Desktop entries that execute scripts from writable locations. Autostart entries added for service accounts that should never have a desktop session.</p>
+<h2>Comprehensive Sweep and Forensic Artifacts</h2>
+<pre><code># Timestamp-sorted inventory across all persistence paths
+{
+  find /etc/systemd/system /run/systemd/system -type f 2&gt;/dev/null
+  find /etc/cron* /var/spool/cron -type f 2&gt;/dev/null
+  find /etc/profile.d/ -type f 2&gt;/dev/null
+  find / -name authorized_keys 2&gt;/dev/null
+  echo /etc/ld.so.preload
+  find /etc/udev/rules.d/ /etc/xdg/autostart/ /etc/apt/apt.conf.d/ \
+    -type f 2&gt;/dev/null
+} | xargs ls -lt --time-style=full-iso 2&gt;/dev/null | head -60
+
+# Files modified in the last 30 days across persistence paths
+find /etc/systemd /etc/cron* /var/spool/cron /etc/profile.d \
+  /etc/ssh /etc/pam.d /etc/modules-load.d /etc/udev/rules.d \
+  /etc/xdg/autostart -type f -mtime -30 2&gt;/dev/null | sort
+
+# Files not owned by any package
+# Debian/Ubuntu:
+find /etc/systemd/system /etc/cron.d /etc/profile.d \
+  -type f 2&gt;/dev/null | xargs dpkg -S 2&gt;&amp;1 | grep 'not found'
+# RHEL/CentOS:
+find /etc/systemd/system /etc/cron.d /etc/profile.d \
+  -type f 2&gt;/dev/null | xargs rpm -qf 2&gt;&amp;1 | grep 'not owned'
+
+# Process tree and network listeners
+ps auxwwf
+ss -tlnp</code></pre>
+<p>Collect these logs for timeline correlation: <code>/var/log/auth.log</code> (or <code>/var/log/secure</code>), <code>/var/log/syslog</code> (or <code>journalctl</code> export), <code>/var/log/apt/history.log</code> (or <code>/var/log/yum.log</code>), <code>/var/log/cron</code>, <code>/etc/passwd</code>, <code>/etc/shadow</code>, <code>/etc/group</code>. Build a filesystem timeline with <code>fls</code> or <code>find -printf</code> for MAC times.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"We checked cron and systemd, that covers it."</em> Those are two of more than</li>
+</ul>
+<p>a dozen persistence paths. The sweep is not complete until every section above is checked.</p>
+<ul>
+<li><em>"The file timestamps look old, so it is legitimate."</em> Timestamps are</li>
+</ul>
+<p>trivially modified with <code>touch</code>. Correlate with package manager records and log entries, not just <code>mtime</code>.</p>
+<ul>
+<li>*"The attacker only had user-level access, so we only need to check</li>
+</ul>
+<p>user-writable locations."* User-level persistence includes systemd user units, crontabs, rc files, authorized_keys, XDG autostart, and LD_PRELOAD via environment files.</p>
+<ul>
+<li><em>"We ran an AV scan and it found nothing."</em> AV detects known malware, not</li>
+</ul>
+<p>persistence mechanisms that use legitimate system features. A cron job running <code>curl | bash</code> will not trigger a signature.</p>
+<ul>
+<li><em>"The system was rebuilt, so persistence does not matter."</em> Without knowing</li>
+</ul>
+<p>how they persisted, you cannot confirm the rebuild closed the path.</p>
+<ul>
+<li><em>"We only need to check the locations that our EDR monitors."</em> EDR coverage</li>
+</ul>
+<p>varies by product and configuration. The sweep is tool-independent.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> -- broader IR methodology that this analysis feeds</li>
+<li><a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a> -- offensive perspective on the same mechanisms</li>
+<li><a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a> -- privilege escalation vectors that often</li>
+</ul>
+<p>pair with persistence</p>
+<ul>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- building detection rules for the mechanisms found</li>
+<li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> -- proactive searching for persistence across a fleet</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

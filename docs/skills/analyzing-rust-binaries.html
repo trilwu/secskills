@@ -1,0 +1,167 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>analyzing-rust-binaries — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / analyzing-rust-binaries</div>
+  <h1 class="sk">analyzing-rust-binaries</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Reverse engineer Rust binaries — demangling legacy and v0 symbol schemes, recognizing monomorphized generics, Result and Option control flow, trait object vtable dispatch, and panic-site strings that leak source paths and crate names. Use when a binary contains rustc version strings, core::panicking, or _ZN/_R mangled symbols, when a stripped binary is unexpectedly large, or when analyzing Rust malware or a Rust service.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Rust binaries are large, statically linked, and full of inlined generic code — but they leak more than most people expect. Panic sites embed the source file path and line, symbols carry crate and module structure, and the standard library's formatting machinery is instantly recognizable. The job is knowing which parts are yours and which are the 90% that is <code>core</code>, <code>alloc</code>, and vendored crates.</p>
+<h2>When to Use</h2>
+<ul>
+<li><code>strings</code> shows <code>rustc version</code>, <code>core::panicking</code>, <code>/rustc/&amp;lt;hash&amp;gt;/library/</code></li>
+<li>Symbols begin with <code>_ZN...17h&amp;lt;hex&amp;gt;E</code> (legacy) or <code>_R</code> (v0 mangling)</li>
+<li>A stripped binary is 3–30 MB with minimal dynamic imports</li>
+<li>Analyzing Rust malware, a Rust CLI, or a compiled Rust service</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Go binaries</strong> — use <a class="xref" href="analyzing-go-binaries.html"><code>analyzing-go-binaries</code></a>; symbol recovery differs entirely</li>
+<li><strong>.NET or Unity</strong> — use the matching skill</li>
+<li><strong>Suspected malware, before containment</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> first</li>
+<li><strong>Source is available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>, which has</li>
+</ul>
+<p>the Rust <code>unsafe</code> checklist</p>
+<h2>Confirm and Fingerprint</h2>
+<pre><code>strings -n 8 target | rg -m8 'rustc version|/rustc/[0-9a-f]{40}|core::panicking|cargo/registry'</code></pre>
+<p>Two artifacts do most of the work before you disassemble anything:</p>
+<p><strong>Panic strings leak the source tree.</strong> Rust embeds the file path and line number of every <code>panic!</code>, <code>unwrap()</code>, and bounds check. That gives you the crate layout, the developer's directory structure, and often the project name.</p>
+<pre><code>strings -n 10 target | rg 'src/[a-z_/]+\.rs' | sort -u | head -40
+# → src/main.rs, src/crypto/aes.rs, /home/dev/projects/implant/src/c2.rs</code></pre>
+<p><strong>Registry paths name the dependencies.</strong> Vendored crates compiled in leave their <code>~/.cargo/registry/src/.../&amp;lt;crate&amp;gt;-&amp;lt;version&amp;gt;/</code> paths in panic sites, which is effectively a dependency list.</p>
+<pre><code>strings target | rg -o 'cargo/registry/src/[^/]+/([a-z0-9_-]+-[0-9.]+)' -r '$1' | sort -u</code></pre>
+<p>That combination — module layout plus dependency list — usually tells you what the binary does before a single instruction is read.</p>
+<h2>Demangle</h2>
+<p>Rust has two mangling schemes, and tools must handle both.</p>
+<pre><code># Legacy: _ZN4core3fmt5Write9write_fmt17h&lt;16 hex&gt;E
+nm -C target | head -30
+rustfilt &lt; symbols.txt
+
+# v0 (RFC 2603): starts with _R, encodes generics and paths properly
+rustfilt      # handles both
+# Ghidra 11+ and IDA 8+ have v0 demanglers; enable Rust demangling in the
+# analyzer options rather than reading raw symbols</code></pre>
+<pre><code># Filter to your target's code. Everything under core::, alloc::, std::, and
+# a registry crate name is stock.
+nm -C target 2&gt;/dev/null | rg -v '^.* (core|alloc|std|hashbrown|serde|tokio)::' | head -40</code></pre>
+<p>When symbols are fully stripped, fall back to the panic strings: each one is adjacent to the function that contains it, so cross-referencing a panic message with a known source path names the surrounding function.</p>
+<h2>Reading Rust in a Disassembler</h2>
+<p>Five patterns account for most of the confusion:</p>
+<p><strong>Monomorphization.</strong> A generic function is compiled once per concrete type, so <code>Vec&amp;lt;u8&amp;gt;::push</code> and <code>Vec&amp;lt;String&amp;gt;::push</code> are separate functions with similar bodies. Expect duplicates, and do not assume two near-identical functions are copy-paste.</p>
+<p><strong><code>Result</code> and <code>Option</code> returns.</strong> These are enums returned by value, often in two registers — a discriminant and a payload. A function returning <code>Result&amp;lt;T, E&amp;gt;</code> looks like it returns a struct; the branch immediately after the call testing the first register is the error check. Recognizing this makes error paths readable, and error paths are where the bugs are.</p>
+<p><strong>Bounds checks everywhere.</strong> Every slice index emits a comparison and a conditional branch to a panic site. These clutter the listing; learn to skip them. Their <em>absence</em> is informative — it means <code>unsafe</code> or <code>get_unchecked</code>.</p>
+<p><strong>Trait object dispatch.</strong> <code>dyn Trait</code> calls go through a vtable: a pointer pair (data, vtable), then an indirect call at a fixed vtable offset. Recover the vtable to recover the concrete type, the same way you would for C++.</p>
+<p><strong>String handling.</strong> Rust <code>String</code> and <code>&amp;amp;str</code> are pointer+length with no terminator, exactly like Go. Adjacent literals run together in <code>strings</code> output; find the length constant next to the pointer load.</p>
+<h2>Finding the Interesting Code</h2>
+<pre><code># Panic paths point at your code; use them as anchors
+strings -t x target | rg 'src/' | head -30      # offsets included
+# Cross-reference an offset in the disassembler to land in the owning function
+
+# Crypto and network crates are recognizable by their panic paths
+strings target | rg -i 'ring-|rustls|openssl|aes-gcm|chacha20|reqwest|hyper|tokio'</code></pre>
+<p>For a service or implant, the fastest route is: identify the async runtime (<code>tokio</code> is near-universal), find the request handler or the C2 loop by its panic paths, then read outward.</p>
+<h2>Rust-Specific Security Review</h2>
+<p>If you are hunting bugs rather than behaviour:</p>
+<ul>
+<li><strong><code>unsafe</code> blocks</strong> are where memory-safety bugs live. In a binary, look for</li>
+</ul>
+<p>the absence of bounds checks around indexing, and for <code>from_raw_parts</code> / <code>transmute</code> call sites if symbols survive.</p>
+<ul>
+<li><strong>Integer overflow</strong> is checked in debug builds and wraps silently in</li>
+</ul>
+<p>release. A release binary's arithmetic has no overflow traps.</p>
+<ul>
+<li><strong><code>unwrap()</code> / <code>expect()</code> on attacker-controlled input</strong> is a remote panic —</li>
+</ul>
+<p>a denial of service, and a real finding for a network service.</p>
+<ul>
+<li><strong>FFI boundaries.</strong> <code>extern "C"</code> functions taking pointers are where Rust's</li>
+</ul>
+<p>guarantees stop.</p>
+<ul>
+<li><strong>Deserialization</strong> with <code>serde</code> into types whose invariants the constructor</li>
+</ul>
+<p>enforces but <code>Deserialize</code> does not.</p>
+<p>With source, use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> and <code>cargo geiger</code>.</p>
+<h2>Rust Malware Notes</h2>
+<p>Rust is increasingly used for ransomware and loaders, largely for cross-compilation and analyst friction. What still helps you:</p>
+<ul>
+<li><strong>Panic paths leak the developer's build environment</strong> — usernames, project</li>
+</ul>
+<p>names, and directory structures, which are attribution-relevant.</p>
+<ul>
+<li><strong>The dependency list from registry paths</strong> identifies the networking and</li>
+</ul>
+<p>crypto crates, which narrows the C2 protocol and the encryption scheme before you read the code.</p>
+<ul>
+<li><strong><code>rustc</code> version</strong> in the binary dates the build.</li>
+<li>Samples that strip aggressively still emit bounds-check panic sites unless</li>
+</ul>
+<p>compiled with <code>panic=abort</code> and heavy <code>strip</code>; when even those are gone, note it as a deliberate anti-analysis measure.</p>
+<p>Hand containment and IOC work to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"It's stripped, nothing to recover."</em> Panic strings survive stripping and</li>
+</ul>
+<p>name the source files.</p>
+<ul>
+<li><em>"Thousands of functions."</em> Most are <code>core</code>/<code>alloc</code>/vendored crates. Filter</li>
+</ul>
+<p>by demangled path.</p>
+<ul>
+<li><em>"These two functions are identical, it's copy-paste."</em> It is</li>
+</ul>
+<p>monomorphization of one generic.</p>
+<ul>
+<li><em>"The decompiler shows a struct return I don't understand."</em> It is</li>
+</ul>
+<p><code>Result</code>/<code>Option</code>. The discriminant test after the call is the error branch.</p>
+<ul>
+<li><em>"Rust is memory-safe, so there are no memory bugs."</em> <code>unsafe</code> and FFI exist,</li>
+</ul>
+<p>and logic bugs are unaffected by the borrow checker.</p>
+<ul>
+<li><em>"The strings are corrupted."</em> Rust strings are pointer+length, not</li>
+</ul>
+<p>null-terminated.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — general triage, dynamic analysis, anti-analysis</li>
+<li><a class="xref" href="analyzing-go-binaries.html"><code>analyzing-go-binaries</code></a> — the other statically-linked-and-large case</li>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment and IOCs for Rust samples</li>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the Rust <code>unsafe</code> checklist with source</li>
+<li>rustfilt, Ghidra/IDA Rust demanglers, <code>cargo-geiger</code>, Binary Ninja</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

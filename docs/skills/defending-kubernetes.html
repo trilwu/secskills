@@ -1,0 +1,160 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>defending-kubernetes — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / defending-kubernetes</div>
+  <h1 class="sk">defending-kubernetes</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Harden and monitor a Kubernetes cluster against the attacks that actually happen — RBAC least privilege and escalation paths, Pod Security Admission enforcement, network policy default-deny, secrets and service-account token exposure, control-plane and kubelet exposure, and audit-log-based detection. Use when reviewing a cluster&#x27;s security posture, responding to a suspected cluster compromise, deciding what to enforce and detect, or translating an attack path from attacking-eks-gke-aks into a defense.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Kubernetes is insecure in useful defaults, not in exotic bugs. The attacks that land are RBAC that grants more than intended, pods that run privileged because nothing stops them, a flat pod network, and mounted service-account tokens with cluster-wide reach. Defense is mostly closing those, in priority order, and being able to see when someone tries.</p>
+<p>This is the counterpart to <a class="xref" href="attacking-eks-gke-aks.html"><code>attacking-eks-gke-aks</code></a> and <a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a>: read those to know what the attacker does; use this to know what to enforce and what to watch.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Reviewing a cluster's security posture or an admission/RBAC configuration</li>
+<li>Responding to a suspected cluster compromise (post-triage)</li>
+<li>Deciding what to enforce (Pod Security, network policy) and what to detect</li>
+<li>Translating an offensive cluster finding into a concrete control</li>
+<li>Hardening the control plane, kubelet, or etcd exposure</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Attacking the cluster</strong> — use <a class="xref" href="attacking-eks-gke-aks.html"><code>attacking-eks-gke-aks</code></a></li>
+<li><strong>Container escape and runtime internals specifically</strong> — use</li>
+</ul>
+<p><a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a> / <a class="xref" href="escaping-hardened-containers.html"><code>escaping-hardened-containers</code></a> for the technique; return here for the control</p>
+<ul>
+<li><strong>The cloud IAM plane around the cluster</strong> (IRSA, workload identity, node</li>
+</ul>
+<p>role) — that is <code>investigating-*-incidents</code> / <a class="xref" href="hardening-cloud-posture.html"><code>hardening-cloud-posture</code></a>; a GKE/EKS/AKS incident usually needs both planes</p>
+<ul>
+<li><strong>Whether an alert is an incident</strong> — use <a class="xref" href="triaging-security-alerts.html"><code>triaging-security-alerts</code></a></li>
+</ul>
+<h2>Enforce in Priority Order</h2>
+<p>Order matters — these are ranked by how often the gap is the actual entry path.</p>
+<h3>1. RBAC least privilege</h3>
+<p>The most common real weakness. Look for the bindings that are escalation primitives regardless of how innocent they look:</p>
+<pre><code># Who can create pods anywhere? (→ mount any secret, run as any SA)
+kubectl auth can-i create pods --all-namespaces --as=system:serviceaccount:ns:sa
+
+# Subjects bound to cluster-admin
+kubectl get clusterrolebindings -o json | \
+  jq '.items[] | select(.roleRef.name=="cluster-admin") | .subjects'</code></pre>
+<p>The dangerous verbs are not just <code>*</code>. <code>create pods</code> lets a subject run a pod as any service account in the namespace and mount any secret — effectively namespace-admin. <code>escalate</code> and <code>bind</code> on roles let a subject grant themselves more than they hold. <code>create</code> on <code>pods/exec</code>, and access to <code>secrets</code>, <code>serviceaccounts/token</code>, and <code>nodes/proxy</code> are each escalation paths. Enumerate what subjects <em>can do</em>, not what their role is named.</p>
+<h3>2. Pod Security Admission</h3>
+<p>PodSecurityPolicy was removed in Kubernetes <strong>1.25</strong>; the built-in replacement is <strong>Pod Security Admission</strong>, which enforces the three Pod Security Standards levels — <code>privileged</code>, <code>baseline</code>, <code>restricted</code> — per namespace via labels:</p>
+<pre><code># Namespace label: enforce the restricted profile, and warn/audit on violations
+pod-security.kubernetes.io/enforce: restricted
+pod-security.kubernetes.io/warn: restricted
+pod-security.kubernetes.io/audit: restricted</code></pre>
+<p><code>restricted</code> blocks the pod configurations that make escape and privilege escalation easy: privileged containers, host namespaces (<code>hostPID</code>, <code>hostNetwork</code>, <code>hostIPC</code>), host-path mounts, running as root, added capabilities. A cluster with no enforced profile is one <code>securityContext.privileged: true</code> away from a node takeover. If you need policy beyond the three levels (image provenance, registry allow-lists), that is an external admission controller (Kyverno, OPA Gatekeeper) — note it, do not pretend PSA covers it.</p>
+<h3>3. Network policy default-deny</h3>
+<p>By default every pod can reach every other pod. A default-deny ingress policy per namespace, with explicit allows, is what stops a single compromised pod from becoming lateral movement. Confirm the CNI actually enforces NetworkPolicy — some configurations accept the objects and enforce nothing, which is worse than none because it looks covered.</p>
+<h3>4. Service-account tokens and secrets</h3>
+<ul>
+<li><code>automountServiceAccountToken: false</code> on pods that do not call the API.</li>
+</ul>
+<p>A mounted token plus a permissive RBAC binding is the standard in-cluster pivot.</p>
+<ul>
+<li>Kubernetes Secrets are base64, not encrypted, in etcd unless</li>
+</ul>
+<p>encryption-at-rest is configured. Confirm it is.</p>
+<ul>
+<li>Look for tokens and cloud credentials passed as env vars — they leak into</li>
+</ul>
+<p>logs and crash dumps.</p>
+<h3>5. Control-plane and kubelet exposure</h3>
+<ul>
+<li>The API server should not be internet-facing without authn/authz and,</li>
+</ul>
+<p>ideally, network restriction. Anonymous auth must be off.</p>
+<ul>
+<li>The kubelet read-only port (10255) and the authenticated port (10250) must</li>
+</ul>
+<p>not be reachable from workloads; <code>nodes/proxy</code> RBAC and an exposed 10250 are a direct route to command execution on nodes.</p>
+<ul>
+<li>etcd must require mutual TLS — etcd access is game-over, it holds every</li>
+</ul>
+<p>secret.</p>
+<h2>Detection: Turn on the Audit Log</h2>
+<p>Most clusters run with no meaningful audit policy, so there is nothing to investigate after the fact. A cluster without an audit policy configured is the Kubernetes version of GCP Data Access logging being off — the activity is simply not recorded.</p>
+<p>High-value audit signals:</p>
+<ul>
+<li><code>exec</code>, <code>attach</code>, and <code>port-forward</code> into pods — interactive access</li>
+<li>Secret <code>get</code>/<code>list</code> at scale, especially cluster-wide</li>
+<li><code>create</code>/<code>update</code> on <code>clusterrolebindings</code> and <code>rolebindings</code></li>
+<li>Pods created with <code>privileged</code>, host namespaces, or host-path mounts</li>
+<li>Anonymous or <code>system:unauthenticated</code> requests that succeed</li>
+<li>Service-account token creation via the <code>TokenRequest</code> API</li>
+</ul>
+<p>On managed clusters the audit log ships to the cloud logging plane (GKE → Cloud Audit Logs, EKS → CloudWatch, AKS → Azure Monitor), which is where the investigation joins up with the <code>investigating-*-incidents</code> skills.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The role isn't named admin, so it's fine."</em> Names are irrelevant.</li>
+</ul>
+<p><code>create pods</code> or <code>secrets get</code> in a namespace is namespace-admin in effect. Enumerate capabilities, not titles.</p>
+<ul>
+<li><em>"We enforce Pod Security, so containers are contained."</em> Only if the profile</li>
+</ul>
+<p>is <code>restricted</code> and actually enforced, not merely <code>warn</code>. A <code>baseline</code> or audit-only label stops almost none of the escape paths.</p>
+<ul>
+<li><em>"NetworkPolicies are defined, so the network is segmented."</em> Only if the CNI</li>
+</ul>
+<p>enforces them. Verify enforcement, not the presence of the objects.</p>
+<ul>
+<li><em>"Secrets are in etcd, so they're protected."</em> They are base64 unless</li>
+</ul>
+<p>encryption-at-rest is on. Anyone who can read etcd or <code>get secrets</code> has them.</p>
+<ul>
+<li><em>"It's a managed cluster, the provider secures it."</em> The provider secures the</li>
+</ul>
+<p>control plane it runs; RBAC, Pod Security, network policy, and workload identity are yours. Shared responsibility does not include your bindings.</p>
+<ul>
+<li><em>"No alerts fired."</em> Check whether an audit policy exists at all before</li>
+</ul>
+<p>reading silence as safety.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="attacking-eks-gke-aks.html"><code>attacking-eks-gke-aks</code></a> — the attack paths these controls close</li>
+<li><a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a>, <a class="xref" href="escaping-hardened-containers.html"><code>escaping-hardened-containers</code></a> — the escape</li>
+</ul>
+<p>techniques Pod Security aims to prevent</p>
+<ul>
+<li><a class="xref" href="hardening-cloud-posture.html"><code>hardening-cloud-posture</code></a> — the cloud IAM plane around the cluster</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — turning the audit signals above into rules</li>
+<li><a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a> / <a class="xref" href="investigating-gcp-incidents.html"><code>investigating-gcp-incidents</code></a> — where a</li>
+</ul>
+<p>managed-cluster audit trail leads</p></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

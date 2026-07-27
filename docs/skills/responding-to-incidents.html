@@ -1,0 +1,285 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>responding-to-incidents — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / responding-to-incidents</div>
+  <h1 class="sk">responding-to-incidents</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Run digital forensics and incident response — triage, evidence acquisition with chain of custody, host and cloud artifact analysis, timeline reconstruction, scoping, containment, eradication, and postmortem. Use during a suspected compromise, when analyzing a disk or memory image, reconstructing an attacker timeline, or answering how far an intrusion spread.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Two questions drive every incident: <strong>how far did they get</strong>, and <strong>are they still here</strong>. Everything else — the malware, the CVE, the root cause — is supporting detail. Answer those two in order and the response follows.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Suspected or confirmed compromise of a host, account, or cloud tenant</li>
+<li>Forensic analysis of a disk image, memory capture, or log set</li>
+<li>Reconstructing what an attacker did and when</li>
+<li>Scoping blast radius and deciding containment</li>
+<li>Writing a postmortem or a regulator/customer-facing incident narrative</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Deep analysis of a recovered sample</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><strong>Proactive searching with no known incident</strong> — use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+<li><strong>Deciding whether an alert is even an incident yet</strong> — use</li>
+</ul>
+<p><a class="xref" href="triaging-security-alerts.html"><code>triaging-security-alerts</code></a>; response begins once triage confirms a true positive</p>
+<ul>
+<li><strong>Building the detections that would have caught it</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
+<li><strong>The incident is in AWS</strong> (exposed keys, CloudTrail/GuardDuty) — use</li>
+</ul>
+<p><a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a>; in Microsoft 365 / Entra — use <a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a></p>
+<ul>
+<li><strong>You have a packet capture to work through</strong> — use <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></li>
+<li><strong>Service outages with no security dimension</strong> — this is a security IR skill</li>
+</ul>
+<h2>Route to a Depth Skill</h2>
+<p>Specific evidence types have their own procedure skill. This skill sets scope and order; reach for these when a single artifact type becomes the focus.</p>
+<div class="tw"><table><thead><tr><th>Artifact / focus</th><th>Skill</th></tr></thead><tbody><tr><td>A RAM capture to work through with Volatility (injected code, in-memory creds, dead-process connections)</td><td><a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a></td></tr><tr><td>A Microsoft 365 / Entra ID compromise: no disk or memory, only cloud logs (UAL, sign-ins, OAuth grants)</td><td><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a></td></tr><tr><td>Finding how an attacker persisted on a Linux host — the systematic sweep across every init path</td><td><a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a></td></tr></tbody></table></div>
+<h2>The Order That Matters</h2>
+<pre><code>Preparation → Detection &amp; Analysis → Containment → Eradication → Recovery → Lessons Learned
+                      ↑__________________|
+                    (re-scope after every new finding)</code></pre>
+<p>Two rules that are violated constantly and cost the most:</p>
+<p><strong>Preserve before you remediate.</strong> Rebooting, reimaging, or "just cleaning it up" destroys memory, running process state, and unflushed logs. Once gone, you cannot answer the scoping question, and you will be guessing about whether you got them out.</p>
+<p><strong>Do not contain half of it.</strong> Partial containment tells the attacker you have noticed and gives them time to re-establish access from the parts you missed. Scope first, then contain everything at once — unless there is active, ongoing damage, in which case stop the damage and accept the trade.</p>
+<h2>Evidence Acquisition</h2>
+<p><strong>Order of volatility</strong> (RFC 3227 §2.1) — collect top to bottom:</p>
+<pre><code>registers, cache
+routing table, arp cache, process table, kernel statistics, memory
+temporary file systems            ← tmpfs, /dev/shm: staging lives here
+disk
+remote logging and monitoring data relevant to the system
+physical configuration, network topology
+archival media</code></pre>
+<p>Note that the RFC places memory, the process table, and network state in the <strong>same</strong> tier rather than ordering them against each other. Modern practice refines that: capture memory <em>first</em>, because the commands you would run to enumerate processes and sockets execute on the box and perturb the memory you have not captured yet. Do not skip the temporary filesystems tier — <code>/dev/shm</code> and tmpfs are ordinary staging locations and they do not survive the reboot that someone will inevitably suggest.</p>
+<pre><code># Memory first, always, on a live suspect host
+# Linux
+sudo ./avml mem.lime                 # or LiME
+# Windows
+DumpIt.exe /OUTPUT mem.raw           # or winpmem
+# macOS — do NOT reach for osxpmem. Rekall is archived, its last release was
+# 2017 and Intel-only, and its kext-based approach is blocked by SIP and
+# kext restrictions on Big Sur and later, and on all Apple Silicon. Full-RAM
+# capture on a modern Mac realistically needs commercial tooling with the
+# required Apple entitlements (e.g. Volexity Surge Collect). If none is
+# available, do not stall the response: take process-scoped dumps and a
+# comprehensive live-triage collection instead, and record in the incident
+# log that full physical memory was not obtainable and why.
+
+# Volatile state before you touch the disk
+ps auxwwf; ss -tunap; lsof -n; last -Faiw; w
+netstat -anob                        # Windows
+Get-NetTCPConnection | Where State -eq Established
+
+# Disk: image, do not analyze in place
+sudo dd if=/dev/sda bs=4M conv=noerror,sync status=progress | tee image.dd | sha256sum
+sudo ewfacquire /dev/sda             # E01 with built-in hashing, preferred
+# Mount read-only, always via a write blocker or loop with `ro`
+sudo mount -o ro,noexec,noload,loop image.dd /mnt/evidence</code></pre>
+<p><strong>Chain of custody is not paperwork you add later.</strong> Record at collection time:</p>
+<pre><code>Evidence ID | Source host/serial | Collected by | UTC timestamp | Method/tool+version
+SHA-256 at acquisition | SHA-256 at each transfer | Custodian at each handoff | Storage location</code></pre>
+<p>Hash immediately, verify after every copy, and never work on the original. If the incident may become litigation or a regulatory matter, involve legal before collection, not after.</p>
+<h2>Triage Collection</h2>
+<p>For most incidents, a full disk image per host is too slow. Use targeted collection at scale, then image only the hosts that matter.</p>
+<pre><code># Windows: KAPE with the SANS triage target set
+kape.exe --tsource C: --target !SANS_Triage --tdest E:\out --vhdx host01
+
+# Linux/macOS: UAC or a scripted collection
+./uac -p full /evidence/host01
+
+# Cloud/EDR: pull the equivalent via API
+# - EDR raw telemetry for the window ±7 days
+# - Snapshot the volume before terminating any instance
+aws ec2 create-snapshot --volume-id vol-xxx --description "IR-&lt;case&gt; preserve"</code></pre>
+<h2>Artifact Analysis by Question</h2>
+<p>Go to the artifact that answers your question rather than processing everything.</p>
+<div class="tw"><table><thead><tr><th>Question</th><th>Windows</th><th>Linux</th><th>macOS</th></tr></thead><tbody><tr><td>What executed?</td><td>Prefetch, Amcache, ShimCache, SRUM, Sysmon E1</td><td><code>auditd</code>, shell history, <code>/var/log/*</code>, systemd journal</td><td>ExecPolicy DB, <code>/var/db/</code>, unified log</td></tr><tr><td>Persistence?</td><td>Run keys, Services, Scheduled Tasks, WMI subs, startup folder</td><td>cron, systemd units, <code>.bashrc</code>, <code>ld.so.preload</code>, init</td><td>LaunchAgents/Daemons, login items, profiles</td></tr><tr><td>Lateral movement?</td><td>4624 type 3/10, 4648, 4672, RDP logs, SMB shares</td><td><code>auth.log</code>, <code>wtmp</code>, <code>.ssh/authorized_keys</code>, known_hosts</td><td>Same as Linux plus ARD logs</td></tr><tr><td>Credential access?</td><td>LSASS handles (Sysmon E10), 4688 with <code>procdump</code></td><td><code>/etc/shadow</code> reads, <code>ptrace</code>, memory of <code>sshd</code></td><td>Keychain access logs</td></tr><tr><td>Data staged/exfiltrated?</td><td>Recycle bin, <code>$MFT</code> timestamps, archive creation, USN journal</td><td><code>find -newermt</code>, large tmp files, <code>tar</code>/<code>zip</code> in history</td><td>Same</td></tr><tr><td>Files accessed?</td><td><code>$MFT</code>, <code>$UsnJrnl</code>, LNK, JumpLists, shellbags</td><td>atime (if enabled), <code>auditd</code></td><td>FSEvents</td></tr><tr><td>Browser/download?</td><td>History DBs, <code>Zone.Identifier</code> ADS</td><td>Browser profile DBs</td><td>Quarantine DB (<code>LSQuarantine</code>)</td></tr></tbody></table></div>
+<pre><code># Memory analysis — where "are they still here" usually gets answered
+vol -f mem.raw windows.pstree
+vol -f mem.raw windows.malfind          # injected RWX regions
+vol -f mem.raw windows.netscan
+vol -f mem.raw windows.cmdline
+vol -f mem.raw linux.bash               # recovered shell history
+
+# Filesystem timeline
+fls -r -m / image.dd &gt; body.txt &amp;&amp; mactime -b body.txt -d &gt; timeline.csv
+log2timeline.py --storage-file plaso.db image.dd &amp;&amp; psort.py -o dynamic plaso.db &gt; super.csv</code></pre>
+<h2>Cloud and Identity Incidents</h2>
+<p>Most modern intrusions run through identity, not malware. Do not stop at the host.</p>
+<pre><code># AWS
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,AttributeValue=&lt;user&gt;
+# Look for: CreateAccessKey, AttachUserPolicy, AssumeRole chains, ConsoleLogin
+# without MFA, GetSecretValue, CreateTrail/StopLogging (anti-forensics)
+
+# Azure / Entra ID
+# SigninLogs: impossible travel, legacy auth, unfamiliar device
+# AuditLogs: "Add service principal credentials", "Consent to application",
+#            "Update conditional access policy", role assignments
+
+# Google Workspace / GCP
+# Admin audit: OAuth token grants, mail forwarding rules, delegation changes</code></pre>
+<p>Attacker-created OAuth applications, service principal credentials, and mail forwarding rules are the most-missed persistence in cloud incidents. Enumerate them explicitly during eradication.</p>
+<h2>Timeline Reconstruction</h2>
+<p>The timeline is the deliverable that everything else supports.</p>
+<ul>
+<li><strong>UTC everywhere.</strong> Normalize on ingest and record the source timezone.</li>
+<li><strong>Cite the source artifact for every row.</strong> An uncited timeline cannot be</li>
+</ul>
+<p>defended or re-derived.</p>
+<ul>
+<li><strong>Separate observed from inferred.</strong> "Process created (Sysmon E1)" is</li>
+</ul>
+<p>observed; "attacker pivoted here" is inference. Mark them differently.</p>
+<ul>
+<li><strong>Beware timestomping.</strong> <code>$MFT</code> <code>$STANDARD_INFORMATION</code> is trivially forged;</li>
+</ul>
+<p><code>$FILE_NAME</code> is not. Disagreement between them is itself a finding.</p>
+<ul>
+<li><strong>Establish the earliest evidence of compromise, then look earlier.</strong> The</li>
+</ul>
+<p>first thing you find is almost never the first thing that happened.</p>
+<pre><code>UTC Timestamp        | Host    | Event                                  | Source            | O/I
+2026-07-12 03:14:02  | WEB01   | POST /upload.aspx 200, 1.2MB, IP x.x.x.x| IIS log           | O
+2026-07-12 03:14:40  | WEB01   | w3wp.exe → cmd.exe → whoami            | Sysmon E1         | O
+2026-07-12 03:15:05  | WEB01   | Initial access via upload vuln          | correlation       | I</code></pre>
+<h2>Scoping</h2>
+<p>Do not contain until you have answered these, or you will contain the wrong subset:</p>
+<ol>
+<li><strong>Patient zero</strong> — first host/account, and initial access vector</li>
+<li><strong>Every credential the attacker could have obtained</strong> — anything cached,</li>
+</ol>
+<p>typed, stored, or reachable from a compromised host is burned</p>
+<ol>
+<li><strong>Every host those credentials touched</strong> — pivot through auth logs, not</li>
+</ol>
+<p>just EDR alerts</p>
+<ol>
+<li><strong>Persistence inventory</strong> — per host and per identity, listed explicitly</li>
+<li><strong>Data exposure</strong> — what was accessible, what was accessed, what left</li>
+</ol>
+<p>Scoping expands. When a new host appears, restart step 2 for it.</p>
+<h2>Containment and Eradication</h2>
+<pre><code># Contain without destroying evidence
+# - Network-isolate via EDR rather than powering off (preserves memory)
+# - Revoke sessions and tokens, not just passwords: OAuth grants, refresh
+#   tokens, Kerberos TGTs, API keys, SSH keys
+# - Disable rather than delete accounts, so the artifacts survive
+
+# Eradication checklist, per compromised identity
+#   password reset, MFA re-enrollment, session/token revocation, key rotation
+# For AD-wide compromise: krbtgt reset twice, ~10h apart</code></pre>
+<p>Reimage rather than clean when the attacker had SYSTEM/root. You cannot prove removal of an implant on a host you do not fully understand, and the cost of being wrong is the whole investigation repeating.</p>
+<p><strong>Recovery gates</strong> — do not restore until: initial access vector is closed, all identified persistence is removed, credentials are rotated, and detection exists for the observed TTPs. Monitor restored systems at elevated sensitivity for at least a full business cycle.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"Let's reimage it now and investigate later."</em> Reimaging is the end of the</li>
+</ul>
+<p>investigation for that host.</p>
+<ul>
+<li><em>"Only one host alerted, so only one host is affected."</em> Alerts show</li>
+</ul>
+<p>detection coverage, not attacker footprint.</p>
+<ul>
+<li><em>"We reset the password, the account is safe."</em> Refresh tokens, app</li>
+</ul>
+<p>passwords, and existing sessions survive a password reset.</p>
+<ul>
+<li><em>"The EDR would have caught it."</em> It did not catch the part you are looking</li>
+</ul>
+<p>at now. Assume gaps and corroborate with independent artifact sources.</p>
+<ul>
+<li><em>"AV cleaned it."</em> AV removes a file. It does not remove persistence,</li>
+</ul>
+<p>credentials, or a second implant.</p>
+<ul>
+<li><em>"The logs only go back 7 days, so we can't know."</em> Say that as a scoping</li>
+</ul>
+<p>limitation in the report. Do not let it become an implicit "nothing happened before day 7."</p>
+<ul>
+<li><em>"Let's not write it down until we're sure."</em> Contemporaneous notes are the</li>
+</ul>
+<p>evidence. Record uncertainty explicitly instead of delaying.</p>
+<h2>Deliverable</h2>
+<ul>
+<li><strong>Executive summary</strong> — what happened, impact, current status, in plain language</li>
+<li><strong>Timeline</strong> — UTC, sourced, observed vs inferred</li>
+<li><strong>Scope</strong> — hosts, accounts, and data, with the basis for each inclusion and</li>
+</ul>
+<p>exclusion</p>
+<ul>
+<li><strong>Root cause</strong> — the initial access vector and the control that failed</li>
+<li><strong>Actions taken</strong> — containment, eradication, recovery, with timestamps</li>
+<li><strong>Evidence register</strong> — items, hashes, custody</li>
+<li><strong>Gaps</strong> — what could not be determined and why (log retention, no EDR, etc.)</li>
+<li><strong>Recommendations</strong> — prioritized, each tied to a specific failure in the narrative</li>
+</ul>
+<p>Postmortems are blameless: they analyze the control and process failures, not the person who clicked. A postmortem that names an individual as the cause produces silence in the next incident.</p>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Persistence</strong> (TA0003)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1098/001/">T1098.001</a> Additional Cloud Credentials — see also <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1098/002/">T1098.002</a> Additional Email Delegate Permissions</li>
+</ul>
+<p><strong>Defense Evasion</strong> (TA0005)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1070/">T1070</a> Indicator Removal</li>
+<li><a href="https://attack.mitre.org/techniques/T1070/001/">T1070.001</a> Clear Windows Event Logs — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1070/006/">T1070.006</a> Timestomp</li>
+<li><a href="https://attack.mitre.org/techniques/T1562/">T1562</a> Impair Defenses — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1562/001/">T1562.001</a> Disable or Modify Tools — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+</ul>
+<p><strong>Collection</strong> (TA0009)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1114/">T1114</a> Email Collection</li>
+</ul>
+<p><strong>Impact</strong> (TA0040)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1485/">T1485</a> Data Destruction</li>
+<li><a href="https://attack.mitre.org/techniques/T1486/">T1486</a> Data Encrypted for Impact — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1489/">T1489</a> Service Stop</li>
+<li><a href="https://attack.mitre.org/techniques/T1490/">T1490</a> Inhibit System Recovery — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <code>responding-to-incidents</code>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — sample analysis feeding scoping and IOCs</li>
+<li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — proactive search using the TTPs found here</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — closing the detection gap this incident exposed</li>
+<li>NIST SP 800-61r3 (incident handling), SP 800-86 (forensic techniques), RFC 3227</li>
+<li>Volatility 3, Plaso/log2timeline, KAPE, Velociraptor, TheHive as core tooling</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

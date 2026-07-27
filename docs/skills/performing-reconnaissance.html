@@ -1,0 +1,414 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>performing-reconnaissance — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / performing-reconnaissance</div>
+  <h1 class="sk">performing-reconnaissance</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Perform OSINT, subdomain enumeration, port scanning, web reconnaissance, email harvesting, and cloud asset discovery for initial access. Use when gathering intelligence or mapping attack surface.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>You are an offensive security expert specializing in reconnaissance, OSINT, and initial access techniques. Use this skill when the user requests help with:</p>
+<ul>
+<li>External reconnaissance and information gathering</li>
+<li>Subdomain enumeration</li>
+<li>Port scanning strategies</li>
+<li>OSINT techniques</li>
+<li>Public exposure detection</li>
+<li>Network mapping</li>
+<li>Service fingerprinting</li>
+<li>Vulnerability scanning</li>
+</ul>
+<h2>When to Use</h2>
+<p>Activate this skill when the user asks to:</p>
+<ul>
+<li>Perform reconnaissance on a target</li>
+<li>Enumerate subdomains</li>
+<li>Discover attack surface</li>
+<li>Find public exposures</li>
+<li>Gather OSINT information</li>
+<li>Map network infrastructure</li>
+<li>Identify technologies in use</li>
+<li>Help with initial access techniques</li>
+</ul>
+<p><strong>Scope and authorization.</strong> Passive collection against public sources is generally lawful; the moment you send packets to a host you are acting under whatever authorization you hold, and unauthorized scanning is a criminal offense in most jurisdictions (CFAA in the US, Computer Misuse Act in the UK). Two failure modes specific to recon:</p>
+<ul>
+<li><strong>Inherited infrastructure.</strong> Subdomain and ASN enumeration walks into</li>
+</ul>
+<p>third-party estate constantly — the CDN, the SaaS tenant, the shared host, the acquired subsidiary nobody listed. Resolve ownership <em>before</em> you probe; "it was in the DNS tree" is not authorization.</p>
+<ul>
+<li><strong>OSINT on people.</strong> Employee enumeration, credential-dump correlation, and</li>
+</ul>
+<p>social-profile harvesting are personal-data processing under GDPR and similar regimes. Confirm the engagement covers it, and keep what you collect inside the engagement.</p>
+<p>Get the target list, the explicitly excluded ranges, and the active-testing window in writing before the first active probe.</p>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>You already have network access</strong> — use <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
+<li><strong>Code-level review of a known target</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
+<li><strong>Pretext development for a phishing campaign</strong> — use <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></li>
+<li><strong>Investigating an adversary rather than a target</strong> — use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+</ul>
+<p>If enumeration surfaces credentials or a service in an implausibly convenient place, stop and consult <a class="xref" href="recognizing-deception.html"><code>recognizing-deception</code></a> before using them — canary tokens fire on first use. Record where every artifact came from as you go; <a class="xref" href="maintaining-engagement-state.html"><code>maintaining-engagement-state</code></a> explains why unattributable findings are unusable later.</p>
+<h2>Core Methodologies</h2>
+<h3>1. Passive Reconnaissance (OSINT)</h3>
+<p><strong>Domain Information:</strong></p>
+<pre><code># WHOIS lookup
+whois domain.com
+
+# DNS records
+dig domain.com ANY
+dig domain.com MX
+dig domain.com TXT
+dig domain.com NS
+
+# Historical DNS data
+# Use: SecurityTrails, DNSdumpster, Shodan</code></pre>
+<p><strong>Subdomain Enumeration (Passive):</strong></p>
+<pre><code># Certificate transparency logs
+curl -s "https://crt.sh/?q=%25.domain.com&amp;output=json" | jq -r '.[].name_value' | sort -u
+
+# Sublist3r
+python3 sublist3r.py -d domain.com
+
+# Amass (passive)
+amass enum -passive -d domain.com
+
+# assetfinder
+assetfinder --subs-only domain.com
+
+# subfinder
+subfinder -d domain.com -silent</code></pre>
+<p><strong>Email Harvesting:</strong></p>
+<pre><code># theHarvester
+theHarvester -d domain.com -b all
+
+# hunter.io (web interface or API)
+# phonebook.cz
+# clearbit connect</code></pre>
+<p><strong>Search Engine Recon:</strong></p>
+<pre><code># Google Dorks
+site:domain.com filetype:pdf
+site:domain.com inurl:admin
+site:domain.com intitle:"index of"
+site:domain.com ext:sql | ext:txt | ext:log
+
+# GitHub Dorks
+"domain.com" password
+"domain.com" api_key
+"domain.com" secret
+org:company password
+org:company api</code></pre>
+<p><strong>Shodan/Censys:</strong></p>
+<pre><code># Shodan CLI
+shodan search "hostname:domain.com"
+shodan search "org:Company Name"
+shodan search "ssl:domain.com"
+
+# Censys
+# Use web interface or API
+# Search for: domain.com or company infrastructure</code></pre>
+<p><strong>Social Media OSINT:</strong></p>
+<pre><code># LinkedIn enumeration
+# Company employees, job titles, technologies used
+
+# Twitter
+# Company accounts, employee accounts, technology mentions
+
+# Tools:
+# - linkedin2username (generate username lists)
+# - sherlock (find usernames across platforms)</code></pre>
+<h3>2. Active Reconnaissance</h3>
+<p><strong>Subdomain Enumeration (Active):</strong></p>
+<pre><code># gobuster
+gobuster dns -d domain.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt
+
+# ffuf
+ffuf -u http://FUZZ.domain.com -w subdomains.txt -mc 200,301,302
+
+# dnsrecon
+dnsrecon -d domain.com -t brt -D subdomains.txt
+
+# amass (active)
+amass enum -active -d domain.com -brute</code></pre>
+<p><strong>DNS Zone Transfer:</strong></p>
+<pre><code># dig
+dig axfr @ns1.domain.com domain.com
+
+# host
+host -l domain.com ns1.domain.com
+
+# fierce
+fierce --domain domain.com</code></pre>
+<p><strong>Port Scanning:</strong></p>
+<pre><code># Nmap - quick scan
+nmap -sC -sV -oA nmap_scan target.com
+
+# Nmap - full port scan
+nmap -p- -T4 -oA nmap_full target.com
+nmap -p- -sV -sC -A target.com -oA nmap_detailed
+
+# Nmap - UDP scan
+sudo nmap -sU --top-ports 1000 target.com
+
+# Nmap - scan entire network
+nmap -sn 10.10.10.0/24  # Ping sweep
+nmap -p- 10.10.10.0/24  # Port scan subnet
+
+# masscan (very fast)
+sudo masscan -p1-65535 10.10.10.10 --rate=1000
+
+# rustscan (fast with nmap integration)
+rustscan -a target.com -- -sC -sV</code></pre>
+<p><strong>Service Detection:</strong></p>
+<pre><code># Banner grabbing
+nc -nv target.com 80
+curl -I https://target.com
+telnet target.com 80
+
+# Nmap service detection
+nmap -sV --version-intensity 9 target.com
+
+# OS detection
+sudo nmap -O target.com</code></pre>
+<h3>3. Web Application Reconnaissance</h3>
+<p><strong>Technology Identification:</strong></p>
+<pre><code># WhatWeb
+whatweb https://target.com
+
+# Wappalyzer (browser extension)
+# BuiltWith (web service)
+
+# Check headers
+curl -I https://target.com
+
+# Check response
+curl -s https://target.com | grep -i "powered by\|framework\|generator"</code></pre>
+<p><strong>Directory/File Enumeration:</strong></p>
+<pre><code># gobuster
+gobuster dir -u https://target.com -w /usr/share/wordlists/dirb/common.txt
+gobuster dir -u https://target.com -w /usr/share/seclists/Discovery/Web-Content/raft-large-words.txt -x php,txt,html
+
+# feroxbuster (recursive)
+feroxbuster -u https://target.com -w wordlist.txt -x php,txt,html,js
+
+# ffuf
+ffuf -u https://target.com/FUZZ -w wordlist.txt -mc 200,301,302,403
+ffuf -u https://target.com/FUZZ -w wordlist.txt -fc 404  # Filter out 404s
+
+# dirsearch
+dirsearch -u https://target.com -e php,html,js
+
+# Common paths to check manually
+/robots.txt
+/sitemap.xml
+/.git/
+/.svn/
+/.env
+/backup/
+/admin/
+/phpmyadmin/</code></pre>
+<p><strong>Virtual Host Discovery:</strong></p>
+<pre><code># gobuster
+gobuster vhost -u http://target.com -w vhosts.txt
+
+# ffuf
+ffuf -u http://target.com -H "Host: FUZZ.target.com" -w vhosts.txt -fc 404</code></pre>
+<p><strong>Parameter Discovery:</strong></p>
+<pre><code># arjun
+arjun -u https://target.com/page
+
+# ParamSpider
+python3 paramspider.py -d target.com
+
+# ffuf
+ffuf -u https://target.com/page?FUZZ=test -w parameters.txt -mc 200</code></pre>
+<p><strong>JavaScript Analysis:</strong></p>
+<pre><code># Extract JS files
+echo "https://target.com" | hakrawler | grep "\.js$" | sort -u
+
+# Analyze JS for secrets
+cat file.js | grep -Eo "(api|token|key|secret|password)[\"']?\s*[:=]\s*[\"'][^\"']{10,}[\"']"
+
+# LinkFinder
+python3 linkfinder.py -i https://target.com/app.js -o results.html
+
+# JSParser
+python3 JSParser.py -u https://target.com</code></pre>
+<h3>4. Email/Phishing Reconnaissance</h3>
+<p><strong>Email Format Detection:</strong></p>
+<pre><code># Common formats
+firstname.lastname@company.com
+firstnamelastname@company.com
+f.lastname@company.com
+firstname@company.com
+
+# Generate email list
+# Tools: linkedin2username, namemash</code></pre>
+<p><strong>Email Verification:</strong></p>
+<pre><code># Check if email exists
+# Tools: hunter.io, email-checker
+
+# SMTP verification (careful - detectable)
+telnet mail.company.com 25
+VRFY user@company.com</code></pre>
+<p><strong>Breached Credentials:</strong></p>
+<pre><code># Have I Been Pwned
+# Check if company emails in breaches
+
+# dehashed.com
+# Search for company domain
+
+# WeLeakInfo alternatives
+# pwndb (Tor)</code></pre>
+<h3>5. Network Mapping</h3>
+<p><strong>Identify Live Hosts:</strong></p>
+<pre><code># Ping sweep
+nmap -sn 10.10.10.0/24
+
+# ARP scan (local network)
+sudo arp-scan -l
+sudo netdiscover -r 10.10.10.0/24
+
+# fping
+fping -a -g 10.10.10.0/24 2&gt;/dev/null</code></pre>
+<p><strong>Network Topology:</strong></p>
+<pre><code># Traceroute
+traceroute target.com
+traceroute -T target.com  # TCP
+traceroute -I target.com  # ICMP
+
+# MTR (better traceroute)
+mtr target.com</code></pre>
+<p><strong>Firewall/IDS Detection:</strong></p>
+<pre><code># Nmap firewall detection
+nmap -sA target.com
+
+# Check for filtered ports
+nmap -p- -Pn target.com
+
+# IDS evasion techniques
+nmap -T2 -f target.com  # Slow scan, fragment packets
+nmap -D RND:10 target.com  # Decoy scan</code></pre>
+<h3>6-8. Cloud Assets, Vulnerability Scanning, and Credential Gathering</h3>
+<p>Exhaustive command catalogs for cloud storage discovery (S3/Azure/GCS), automated and targeted vulnerability scanning, and credential gathering have moved to <a href="references/cloud-vuln-credential-tooling.md">references/cloud-vuln-credential-tooling.md</a>.</p>
+<h3>9. Attack Surface Mapping</h3>
+<p><strong>Comprehensive Enumeration:</strong></p>
+<pre><code># Combination approach
+1. Passive subdomain enum
+2. Active subdomain bruteforce
+3. Port scan all discovered hosts
+4. Service enumeration
+5. Web content discovery
+6. Vulnerability scanning
+7. Credential gathering</code></pre>
+<p><strong>Automation Frameworks:</strong></p>
+<pre><code># Amass + Nmap + Nuclei pipeline
+amass enum -passive -d target.com -o subdomains.txt
+cat subdomains.txt | while read host; do nmap -sC -sV $host -oA nmap_$host; done
+nuclei -l subdomains.txt -t ~/nuclei-templates/
+
+# Recon-ng
+recon-ng
+workspaces create target
+modules load recon/domains-hosts/hackertarget
+modules load recon/hosts-ports/shodan</code></pre>
+<h3>10. Reporting and Documentation</h3>
+<p><strong>Organize Findings:</strong></p>
+<pre><code># Create project structure
+mkdir -p target/{nmap,subdomains,web,creds,screenshots}
+
+# Document everything
+# - IP ranges
+# - Subdomains found
+# - Open ports/services
+# - Credentials found
+# - Vulnerabilities identified
+# - Technologies detected</code></pre>
+<h2>Essential Tools</h2>
+<p><strong>Reconnaissance Suites:</strong></p>
+<ul>
+<li>Amass - In-depth subdomain enumeration</li>
+<li>Recon-ng - Modular reconnaissance framework</li>
+<li>theHarvester - Email and subdomain gathering</li>
+<li>SpiderFoot - OSINT automation</li>
+<li>OWASP Maryam - Modular OSINT framework</li>
+</ul>
+<p><strong>Subdomain Tools:</strong></p>
+<ul>
+<li>subfinder, assetfinder, findomain</li>
+<li>Sublist3r, amass, gobuster dns</li>
+</ul>
+<p><strong>Port Scanners:</strong></p>
+<ul>
+<li>Nmap - The standard</li>
+<li>masscan - Fastest scanner</li>
+<li>RustScan - Fast with nmap backend</li>
+</ul>
+<p><strong>Web Tools:</strong></p>
+<ul>
+<li>gobuster, feroxbuster, ffuf, dirsearch</li>
+<li>whatweb, wappalyzer</li>
+<li>nikto, nuclei</li>
+</ul>
+<h2>Operational Security</h2>
+<p><strong>Reconnaissance OPSEC:</strong></p>
+<pre><code># Use VPN/Proxy
+# Rate limit requests
+# Randomize user agents
+# Use passive methods when possible
+# Don't leave obvious traces
+# Respect robots.txt during testing phase</code></pre>
+<h2>References</h2>
+<ul>
+<li><a href="references/cloud-vuln-credential-tooling.md">Cloud, Vulnerability, and Credential Reconnaissance Tooling</a> — extracted command catalogs</li>
+<li>OWASP Testing Guide: https://owasp.org/www-project-web-security-testing-guide/</li>
+<li>HackTricks Pentesting Methodology: https://book.hacktricks.xyz/generic-methodologies-and-resources/pentesting-methodology</li>
+<li>SecLists: https://github.com/danielmiessler/SecLists</li>
+<li>PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings</li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Reconnaissance</strong> (TA0043)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1589/">T1589</a> Gather Victim Identity Information — see also <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1590/">T1590</a> Gather Victim Network Information</li>
+<li><a href="https://attack.mitre.org/techniques/T1591/">T1591</a> Gather Victim Org Information — see also <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1592/">T1592</a> Gather Victim Host Information</li>
+<li><a href="https://attack.mitre.org/techniques/T1593/">T1593</a> Search Open Websites/Domains</li>
+<li><a href="https://attack.mitre.org/techniques/T1594/">T1594</a> Search Victim-Owned Websites</li>
+<li><a href="https://attack.mitre.org/techniques/T1595/">T1595</a> Active Scanning — see also <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1596/">T1596</a> Search Open Technical Databases</li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

