@@ -1,6 +1,7 @@
 ---
 name: investigating-m365-entra
 description: Investigate security incidents in Microsoft 365 and Entra ID (Azure AD) -- search the Unified Audit Log, correlate sign-in and audit events, trace illicit OAuth consent grants, analyze mailbox rule manipulation, and contain compromised identities. Use when responding to a BEC incident, investigating Entra ID compromise, analyzing suspicious OAuth app permissions, tracing mail forwarding abuse, or reviewing Azure AD sign-in anomalies.
+verified: 2026-07-27
 ---
 
 # Investigating M365 and Entra ID

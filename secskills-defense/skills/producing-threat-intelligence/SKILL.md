@@ -1,6 +1,7 @@
 ---
 name: producing-threat-intelligence
 description: Produce cyber threat intelligence by pivoting on indicators to find related infrastructure, tracking actors and campaigns, enriching and contextualizing IOCs, applying attribution discipline and analytic confidence, and packaging finished intel products tied to a consumer's decision. Covers the intelligence lifecycle, the Diamond Model and Pyramid of Pain, STIX/MISP/OpenCTI storage, TLP sharing, and passive enrichment via passive DNS, crt.sh, Shodan, Censys, GreyNoise, and VirusTotal. Use when pivoting from a domain, IP, hash, or certificate to related infrastructure, tracking a threat actor or campaign, enriching raw indicators, writing a finished intel report, assessing an external report's relevance to your org, or building a threat model of adversaries that matter to you.
+verified: 2026-07-27
 ---
 
 # Producing Threat Intelligence

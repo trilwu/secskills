@@ -1,6 +1,7 @@
 ---
 name: analyzing-linux-persistence
 description: Systematically identify and analyze persistence mechanisms on Linux systems during DFIR investigations -- sweep systemd units, cron jobs, shell initialization, SSH config, kernel modules, LD_PRELOAD, package manager hooks, udev rules, container entrypoints, and XDG autostart entries. Use when investigating a compromised Linux host, performing forensic analysis of a Linux disk image, looking for backdoors or unauthorized access mechanisms, or determining how an attacker maintained access.
+verified: 2026-07-27
 ---
 
 # Analyzing Linux Persistence
