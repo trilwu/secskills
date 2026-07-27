@@ -50,7 +50,9 @@
     "investigating-gcp-incidents": "Enterprise ATT&CK techniques appear in the activity investigated, not in the investigation method; this is a cloud-IR process skill like its AWS/Azure siblings",
     "defending-kubernetes": "Defensive hardening and detection for containers/orchestration; the techniques it defends against are mapped under the offensive container skills",
     "hardening-cloud-posture": "Proactive defensive process; no adversary technique of its own",
-    "managing-vulnerabilities": "Vulnerability-management process; not an ATT&CK technique"
+    "managing-vulnerabilities": "Vulnerability-management process; not an ATT&CK technique",
+    "hunting-web-backdoors": "Web-shell hunting maps loosely to T1505.003 (Server Software Component: Web Shell) but this is defensive discovery of planted code, not the adversary technique; kept unmapped like the other audit skills",
+    "auditing-php-applications": "Source-code vulnerability audit; CWE-based, not an ATT&CK technique — same rationale as auditing-code-for-vulnerabilities"
   },
   "tactics": {
     "TA0043": "Reconnaissance",

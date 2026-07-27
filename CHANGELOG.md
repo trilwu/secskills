@@ -3,6 +3,38 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [4.3.0] - 2026-07-27
+
+Two PHP-focused core skills, split by intent as requested: hunting planted
+malice versus auditing for vulnerabilities. Both shipped source-verified.
+
+### Added
+
+- **`hunting-web-backdoors`** (core) — find webshells and backdoors an attacker
+  already planted in a web source tree: directory triage at scale, static
+  deobfuscation with the never-execute-the-payload rule, append-infection
+  detection by diff/checksum, known shell families as leads not verdicts, and
+  the discipline that an empty `grep eval` is not a clean tree. Fills a real
+  gap: `auditing-code-for-vulnerabilities` covers weaknesses, `analyzing-malware`
+  covers a single recovered sample, but nothing swept a tree for planted code.
+- **`auditing-php-applications`** (core) — the PHP-specific vulnerability layer
+  on top of `auditing-code-for-vulnerabilities`: object injection via
+  `unserialize` and `phar://` POP chains, type-juggling and magic-hash auth
+  bypass, `php://`/`phar://` LFI-to-RCE wrappers, `extract()`/superglobal
+  trust, SQLi, command sinks, and WordPress/Magento/Laravel context. Framed
+  tightly as PHP-only and deferring general methodology to the parent skill, so
+  it does not open per-language proliferation.
+
+Both verified against php.net and RFCs before stamping — including the
+version-gated traps the audit skill is built around: `preg_replace /e` removed
+in 7.0, `create_function`/string-`assert` removed in 8.0, the PHP 8.0
+number-vs-string comparison change (`0 == "foo"` true→false) while the `0e`
+magic-hash bypass survives, `strcmp(array)` NULL→TypeError at 8.0, and the
+`phar://` auto-unserialize removal in 8.0 (so that vector is a PHP 7.x issue).
+Registered under `_unmapped`, made reachable from
+`auditing-code-for-vulnerabilities` and `analyzing-malware`, with four
+`trap_for` eval cases. Core: 20 → 22 (81 total).
+
 ## [4.2.0] - 2026-07-27
 
 Four defense skills closing the offense/defense asymmetry surfaced by the gap
