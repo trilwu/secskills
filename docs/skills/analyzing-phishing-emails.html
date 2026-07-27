@@ -1,0 +1,329 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>analyzing-phishing-emails — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / analyzing-phishing-emails</div>
+  <h1 class="sk">analyzing-phishing-emails</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
+  </div>
+  <p class="sdesc">Triage and forensically analyze reported phishing safely — extract the raw message, read the Received chain, verify SPF/DKIM/DMARC, detect display-name and lookalike spoofing, unwrap redirects and SafeLinks/URLDefense, decode quishing QR codes, triage attachments, and pull IOCs for hunting. Use when handed a reported phishing email, a suspicious .eml or .msg file, a set of email headers to analyze, a malicious attachment or link to triage, or a business email compromise or spoofing case.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>An email is a stack of claims — who sent it, where it came from, that its links are safe — and phishing analysis is checking each claim against evidence the sender could not forge: the Received chain, the authentication results, and the true destination of every link and attachment. The From header is a display, not a fact. Anyone can type any address into it; your job is to find the evidence that agrees or disagrees.</p>
+<h2>When to Use</h2>
+<ul>
+<li>A user reports a suspicious email and you need a verdict and IOCs</li>
+<li>You have a <code>.eml</code> or <code>.msg</code> file to analyze offline</li>
+<li>You are handed raw headers and asked whether a message is spoofed</li>
+<li>A message carries a link or attachment that needs safe triage</li>
+<li>A business email compromise, invoice-fraud, or vendor-impersonation case</li>
+<li>Confirming whether a domain or brand was spoofed against your users</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>You extracted an attachment and need to detonate it</strong> — come here first to</li>
+</ul>
+<p>safely extract and defang it, then hand the payload to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></p>
+<ul>
+<li>**The phish already succeeded and you are chasing the mailbox/OAuth</li>
+</ul>
+<p>compromise in the tenant** — use <a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a></p>
+<ul>
+<li><strong>You are building the phishing campaign, not analyzing one</strong> — use</li>
+</ul>
+<p><a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></p>
+<ul>
+<li><strong>The broader incident the phish kicked off</strong> — use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><strong>Analyzing the callback traffic from a detonated payload</strong> — use</li>
+</ul>
+<p><a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></p>
+<h2>Safe Handling — Do This First</h2>
+<p>Treat every reported message as live. The failure mode is not misreading a header; it is clicking a link in a production mail client or double-clicking an attachment on your own host.</p>
+<ul>
+<li>Never open the message in a live client. Attacker-controlled remote images</li>
+</ul>
+<p>fire a read beacon; one click on a link authenticates you to their harvester.</p>
+<ul>
+<li>Work from the raw source only — the <code>.eml</code>/<code>.msg</code>, not a forwarded copy.</li>
+</ul>
+<p>Forwarding rewrites headers and strips the evidence you need.</p>
+<ul>
+<li>Defang every indicator before it touches a report, ticket, or chat:</li>
+</ul>
+<p><code>http</code> → <code>hxxp</code>, <code>.</code> → <code>[.]</code>, <code>@</code> → <code>[at]</code>. So <code>http://evil.com/login</code> becomes <code>hxxp://evil[.]com/login</code>. Defanging prevents an accidental click downstream and stops link-preview bots from detonating it for you.</p>
+<ul>
+<li>Extract and detonate only in an isolated VM with no host sharing and</li>
+</ul>
+<p>simulated or monitored egress — see <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for the build.</p>
+<h2>Getting the Raw Message</h2>
+<p>The visible email is a rendering. You need the source with all headers.</p>
+<ul>
+<li><strong>Outlook/Exchange</strong>: save as <code>.msg</code>, or in OWA use "View message source".</li>
+<li><strong>Gmail</strong>: "Show original" → Download Original gives a <code>.eml</code>.</li>
+<li><strong><code>.msg</code> → readable</strong>: <code>msgconvert sample.msg</code> produces a <code>.eml</code> (RFC822).</li>
+<li><strong>Inspect structure</strong>: <code>emldump.py sample.eml</code> lists MIME parts and indices;</li>
+</ul>
+<p><code>emldump.py -s 4 -d sample.eml</code> dumps part 4 (an attachment) without opening it. A <code>.msg</code> is an OLE compound file — <code>oledump.py</code> (DidierStevens) lists its streams.</p>
+<ul>
+<li><strong>View full headers</strong>: read the top block of the raw file directly, or paste</li>
+</ul>
+<p>into Message Header Analyzer (MHA) / Google's <code>mha</code> / MXToolbox Header Analyzer for a parsed hop table.</p>
+<p>Keep the original file hashed and untouched; work on copies.</p>
+<h2>The Received Chain</h2>
+<p>The <code>Received:</code> headers are added by each mail server the message passes through, newest at the top. Read them <strong>bottom-up</strong>: the bottom-most <code>Received</code> is the originating server — the earliest, least-forgeable hop.</p>
+<pre><code>Received: from mail.contoso.com (mail.contoso.com [203.0.113.9])
+    by mx.recipient.com ... ; Tue, 21 Jul 2026 09:14:02 +0000   &lt;- final hop
+Received: from smtp.sketchy-vps.ru ([185.220.101.5])
+    by mail.contoso.com ...   ; Tue, 21 Jul 2026 09:13:58 +0000  &lt;- origin</code></pre>
+<ul>
+<li><strong>Trace the originating IP</strong>: the bottom hop's <code>[bracketed IP]</code>. Geolocate</li>
+</ul>
+<p>and WHOIS it (<code>whois 185.220.101.5</code>), check reputation, and reconcile it against the claimed sender. A "From: ceo@contoso.com" that originates on a Russian VPS is your finding.</p>
+<ul>
+<li><strong>Spot forged hops</strong>: attackers prepend fake <code>Received</code> lines to fabricate a</li>
+</ul>
+<p>reputable origin. Only hops added by servers you trust are reliable — trust breaks at the first server outside your control. A hop that references a server not present in the next hop's <code>by</code> is invented.</p>
+<ul>
+<li><strong>Timezone and hop-time anomalies</strong>: hop timestamps should increase upward by</li>
+</ul>
+<p>seconds. Negative deltas, multi-hour jumps, or a mix of implausible timezones indicate forgery or relay through odd infrastructure.</p>
+<ul>
+<li><strong>Reconcile with the claimed sender</strong>: the origin domain, its PTR/rDNS, and</li>
+</ul>
+<p>the <code>From</code> domain should tell one coherent story. They usually do not in a phish.</p>
+<h2>Authentication Results</h2>
+<p>SPF, DKIM, and DMARC are the forgery-resistant checks. The receiving server records them in <code>Authentication-Results</code>. Read it, and re-verify rather than trusting a summary.</p>
+<pre><code>Authentication-Results: mx.recipient.com;
+  spf=pass (sender IP is 185.220.101.5) smtp.mailfrom=bounce.sketchy-vps.ru;
+  dkim=pass header.d=sketchy-vps.ru header.s=selector1;
+  dmarc=fail (p=reject sp=reject dis=none) header.from=contoso.com</code></pre>
+<ul>
+<li><strong>SPF</strong> authenticates the <em>envelope</em> sender (<code>Return-Path</code> / <code>smtp.mailfrom</code></li>
+</ul>
+<p>/ <code>MAIL FROM</code>), <strong>not</strong> the visible <code>From</code>. Values: <code>pass</code> (IP is authorized for the envelope domain), <code>fail</code> (hard <code>-all</code> reject), <code>softfail</code> (<code>~all</code>, suspicious but delivered), <code>neutral</code>/<code>none</code> (no policy). Check the domain's record: <code>dig txt contoso.com</code> and read the <code>v=spf1 ...</code> string.</p>
+<ul>
+<li><strong>DKIM</strong> is a cryptographic signature over selected headers and the body.</li>
+</ul>
+<p><code>dkim=pass</code> proves the message was signed by the key at <code>d=</code>'s selector and not modified. The load-bearing question is <strong>alignment</strong>: does <code>header.d=</code> match the <code>From</code> domain? A valid signature from <code>d=mailer-xyz.com</code> on a message claiming <code>From: contoso.com</code> is not contoso. Re-verify with <code>dkimverify &amp;lt; sample.eml</code> (dkimpy) and fetch the key via <code>dig txt selector1._domainkey.contoso.com</code>.</p>
+<ul>
+<li><strong>DMARC</strong> ties SPF/DKIM to the visible <code>From</code> via <em>alignment</em> and applies the</li>
+</ul>
+<p>domain owner's <em>policy</em>. <code>dmarc=pass</code> requires SPF <strong>or</strong> DKIM to pass AND be aligned with <code>header.from</code>. Read the policy: <code>dig txt _dmarc.contoso.com</code> → <code>v=DMARC1; p=reject; ...</code>. <code>p=reject</code>/<code>quarantine</code> with <code>dmarc=fail</code> means the owner told you to distrust it.</p>
+<ul>
+<li><strong>ARC</strong> (<code>ARC-Seal</code>/<code>ARC-Authentication-Results</code>) preserves upstream auth</li>
+</ul>
+<p>results across forwarders that would otherwise break SPF/DKIM. Use it to see how auth looked before a mailing list or gateway relayed the message.</p>
+<ul>
+<li><strong>Envelope vs header From</strong>: <code>Return-Path</code>/envelope-from is what bounces go to</li>
+</ul>
+<p>and what SPF checks; the header <code>From:</code> is what the user sees. Phishers make them differ — a benign-looking <code>From</code> with a throwaway envelope domain that happens to pass SPF is the classic pattern.</p>
+<h2>Display-Name and Lookalike Spoofing</h2>
+<p>Much phishing passes authentication because it comes from a <em>real</em> mailbox on a <em>lookalike</em> domain. The auth checks pass for that domain; the deception is visual.</p>
+<ul>
+<li><strong>Display-name spoofing</strong>: <code>From: "IT Helpdesk" &amp;lt;random@gmail.com&amp;gt;</code>. The name</li>
+</ul>
+<p>is a free-text label; read the actual address.</p>
+<ul>
+<li><strong>Cousin / lookalike domains</strong>: <code>cont0so.com</code>, <code>contoso-support.com</code>,</li>
+</ul>
+<p><code>contoso.co</code>. Diff against the real domain character by character.</p>
+<ul>
+<li><strong>Homoglyph / IDN</strong>: Unicode characters that render like ASCII (Cyrillic <code>а</code></li>
+</ul>
+<p>for Latin <code>a</code>). Punycode-encoded domains appear in headers as <code>xn--</code> — e.g. <code>xn--cntoso-...</code>. Decode with <code>idn</code> / <code>python3 -c "print('xn--80ak6aa92e.com'.encode().decode('idna'))"</code> and compare the rendered form.</p>
+<ul>
+<li><strong>Reply-To mismatch</strong>: <code>From: ceo@contoso.com</code> but</li>
+</ul>
+<p><code>Reply-To: ceo.contoso@gmail.com</code>. The reply silently goes to the attacker — a hallmark of BEC.</p>
+<ul>
+<li><strong>BEC with no payload</strong>: pure text asking for a wire transfer, gift cards, or</li>
+</ul>
+<p>W-2 data. No link, no attachment, nothing to sandbox. The signal is entirely in the headers (Reply-To, origin, auth) and the pretext.</p>
+<h2>Header Forensics</h2>
+<ul>
+<li><strong><code>Message-ID</code> sanity</strong>: format is <code>&amp;lt;unique@sending-domain&amp;gt;</code>. The domain</li>
+</ul>
+<p>should match the sending infrastructure. A <code>Message-ID</code> domain that disagrees with the origin, or a malformed/duplicated ID, suggests a spoofing tool.</p>
+<ul>
+<li><strong><code>X-Originating-IP</code></strong>: some webmail stamps the true client IP here — pivot on</li>
+</ul>
+<p>it, but note it is client-suppliable and can be forged.</p>
+<ul>
+<li><strong><code>X-Mailer</code> / User-Agent</strong>: reveals the sending client. Bulk-phish kits and</li>
+</ul>
+<p>scripts (<code>PHPMailer</code>, <code>Python</code>, custom mailers) look nothing like Outlook or the claimed sender's normal stack.</p>
+<ul>
+<li><strong>Mailer fingerprints</strong>: legitimate bulk senders (SendGrid, Amazon SES,</li>
+</ul>
+<p>Mailchimp) add characteristic <code>X-</code> headers and <code>Received</code> paths. Their presence on a "personal" note from your CEO is a contradiction.</p>
+<h2>URL Analysis</h2>
+<p>Every link is a claim about where it goes. Resolve it without visiting it.</p>
+<ul>
+<li><strong>Unwrap redirects and shorteners</strong>: expand <code>bit.ly</code>/<code>t.co</code> with</li>
+</ul>
+<p><code>curl -sI hxxp://bit[.]ly/xyz</code> (read <code>Location:</code>, do not follow) or a preview service. Chase every hop to the real landing page.</p>
+<ul>
+<li><strong>Decode wrapper rewrites</strong> — the real URL is inside the wrapper:</li>
+<ul>
+<li>Microsoft <strong>SafeLinks</strong>: <code>https://*.safelinks.protection.outlook.com/?url=&amp;lt;encoded&amp;gt;&amp;amp;...</code></li>
+</ul>
+</ul>
+<p>— URL-decode the <code>url=</code> parameter.</p>
+<ul>
+<ul>
+<li>Proofpoint <strong>URLDefense</strong>: <code>https://urldefense.com/v3/__&amp;lt;encoded&amp;gt;__;...</code> —</li>
+</ul>
+</ul>
+<p>decode with the published <code>urldefense</code> decoder (v2/v3 schemes differ). These wrappers hide the destination; always extract the original.</p>
+<ul>
+<li><strong>Quishing (QR-code phishing)</strong>: the payload is an image, not a link. Extract</li>
+</ul>
+<p>the image part (<code>emldump.py -s N -d</code>), then decode: <code>zbarimg qr.png</code> or <code>python3 -c "from PIL import Image; import pyzbar.pyzbar as z; print(z.decode(Image.open('qr.png')))"</code>. Analyze the decoded URL like any other.</p>
+<ul>
+<li><strong>Intent — harvest vs delivery</strong>: a link to a cloned login page (Microsoft,</li>
+</ul>
+<p>DocuSign, a bank) is <strong>credential harvesting</strong>; a link that downloads a file is <strong>malware delivery</strong>. They need different responses.</p>
+<ul>
+<li><strong>Detonate safely</strong>: submit the URL to <strong>urlscan.io</strong> (use unlisted/private</li>
+</ul>
+<p>scans for targeted phish so you don't tip the actor) or a sandbox, and pull the real landing page, screenshot, and served content. Extract the landing page and any kit files for the IOC set.</p>
+<h2>Attachment Analysis</h2>
+<p>Identify and defang before anything executes.</p>
+<ul>
+<li><strong>Hash and identify</strong>: <code>sha256sum att.ext &amp;amp;&amp;amp; file att.ext</code>. Extract with</li>
+</ul>
+<p><code>emldump.py -s N -d sample.eml &amp;gt; att.ext</code> — never by double-clicking.</p>
+<ul>
+<li><strong>Common delivery wrappers</strong>: HTML smuggling (a <code>.html</code> that assembles a</li>
+</ul>
+<p>payload in-browser via a Blob), ISO/IMG/VHD (mount bypasses MOTW), LNK shortcuts, OneNote (<code>.one</code>) with embedded scripts, and password-protected archives (password in the email body defeats gateway scanning).</p>
+<ul>
+<li><strong>Documents/macros</strong>: <code>exiftool att.docx</code> for metadata and authoring</li>
+</ul>
+<p>fingerprints; <code>oleid att.xls</code> and <code>olevba --deobf att.xls</code> / <code>oledump.py att.doc</code> for macros; <code>rtfobj att.rtf</code> for embedded objects.</p>
+<ul>
+<li>Once identified, <strong>hand the live payload to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></strong> for</li>
+</ul>
+<p>sandboxed detonation, unpacking, and C2 extraction. This skill's job is safe extraction and triage, not detonation.</p>
+<h2>Pulling and Packaging IOCs</h2>
+<p>Extract a clean, defanged indicator set for blocking and hunting:</p>
+<ul>
+<li><strong>Sender infrastructure</strong>: originating IP, envelope-from domain, <code>From</code>/cousin</li>
+</ul>
+<p>domains, <code>Reply-To</code>, <code>Message-ID</code> domain, mailer fingerprints.</p>
+<ul>
+<li><strong>URLs</strong>: the wrapped and unwrapped forms, final landing page, shortener</li>
+</ul>
+<p>chain, and any kit hostnames from urlscan.</p>
+<ul>
+<li><strong>Hashes</strong>: SHA-256 of every attachment and of decoded/downloaded payloads.</li>
+<li><strong>Hunting selectors</strong>: subject lines, sender display names, and body</li>
+</ul>
+<p>fingerprints to search the mail gateway and other mailboxes.</p>
+<p>Package these for <a class="xref" href="producing-threat-intelligence.html"><code>producing-threat-intelligence</code></a> when the phish is part of a tracked campaign, and for <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> for the writeup.</p>
+<h2>Scoping the Campaign</h2>
+<p>One report is rarely the only recipient. Find the rest before you close.</p>
+<ul>
+<li><strong>M365</strong>: <code>Search-UnifiedAuditLog</code> and Content Search / <code>New-ComplianceSearch</code></li>
+</ul>
+<p>for the subject, sender, and URL across all mailboxes; hard-delete or quarantine matches via <code>Get-QuarantineMessage</code> / eDiscovery purge.</p>
+<ul>
+<li><strong>Mail gateway</strong> (Proofpoint, Mimecast, Defender for O365): search message</li>
+</ul>
+<p>trace / Threat Explorer for the sender domain, URL, and attachment hash to enumerate every recipient and whether anyone clicked or replied.</p>
+<ul>
+<li>If any recipient interacted, the phish may have succeeded — pivot to</li>
+</ul>
+<p><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a> for tenant-side hunting (sign-ins, inbox rules, OAuth grants) and to <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> for the broader response.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"SPF passed, so it's legitimate."</em> SPF authenticates the envelope domain,</li>
+</ul>
+<p>not the visible <code>From</code>. A passing SPF on a lookalike or throwaway envelope domain is exactly what a competent phish shows. Check DMARC alignment.</p>
+<ul>
+<li><em>"DKIM is valid, so it's from them."</em> A valid signature only proves the <code>d=</code></li>
+</ul>
+<p>domain signed it. If <code>d=</code> isn't aligned with the <code>From</code> domain, it's signed by someone else. Alignment is the question, not signature validity.</p>
+<ul>
+<li><em>"No attachment or link, so it's harmless."</em> BEC and payment-fraud phish</li>
+</ul>
+<p>carry neither — the weapon is the pretext and the Reply-To. Read the headers.</p>
+<ul>
+<li><em>"DMARC failed but it was delivered, so it's fine."</em> Delivery reflects the</li>
+</ul>
+<p>receiver's enforcement config, not the message's legitimacy. <code>dmarc=fail</code> with <code>p=reject</code> is the sender's domain telling you to distrust it.</p>
+<ul>
+<li><em>"The From address is our real domain, so it's internal."</em> The <code>From</code> header</li>
+</ul>
+<p>is free text. Without aligned SPF/DKIM and a plausible origin hop, an internal-looking From means nothing.</p>
+<ul>
+<li><em>"I'll just click the link to see where it goes."</em> Clicking authenticates you</li>
+</ul>
+<p>to a harvester or fires a beacon. Resolve URLs with headers-only requests, wrapper decoders, and urlscan — never a live browser.</p>
+<ul>
+<li><em>"The gateway let it through, so it's clean."</em> Gateways miss lookalike</li>
+</ul>
+<p>domains, freshly registered infrastructure, HTML smuggling, and password- protected archives by design. A delivered message is not a vetted one.</p>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Reconnaissance</strong> (TA0043)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1598/">T1598</a> Phishing for Information — see also <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></li>
+</ul>
+<p><strong>Initial Access</strong> (TA0001)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1566/">T1566</a> Phishing — see also <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1566/001/">T1566.001</a> Spearphishing Attachment — see also <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a>, <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1566/002/">T1566.002</a> Spearphishing Link — see also <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — sandboxed detonation and C2 extraction of attachments</li>
+<li><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a> — tenant-side hunting when the phish succeeded</li>
+<li><a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a> — building phishing campaigns (offensive)</li>
+<li><a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a> — callback traffic from a detonated payload</li>
+<li><a class="xref" href="producing-threat-intelligence.html"><code>producing-threat-intelligence</code></a> — pivoting IOCs into tracked campaigns</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — writing up the triage and verdict</li>
+<li><code>oletools</code> (olevba, oleid, rtfobj), <code>oledump.py</code>/<code>emldump.py</code> (DidierStevens</li>
+</ul>
+<p>suite), <code>msgconvert</code> (Email::Outlook::Message, Perl), and <code>exiftool</code> for message and attachment parsing</p>
+<ul>
+<li>Message Header Analyzer (MHA) and MXToolbox for parsing the Received chain</li>
+</ul>
+<p>and querying SPF/DKIM/DMARC records</p>
+<ul>
+<li>urlscan.io and VirusTotal for URL/file detonation and reputation</li>
+<li>PhishTool for guided end-to-end phishing analysis and reporting</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

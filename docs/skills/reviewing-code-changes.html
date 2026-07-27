@@ -1,0 +1,196 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reviewing-code-changes — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / reviewing-code-changes</div>
+  <h1 class="sk">reviewing-code-changes</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Perform a security review of a diff, branch, or pull request — assessing what the change introduces, weakens, or exposes, with a triage-first workflow and false-positive discipline. Use when asked to security review a PR or branch, check a diff before merge or commit, or assess whether a change is safe to ship.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Reviewing a diff is not auditing a codebase in miniature. The diff shows you what changed but hides what the change <em>means</em> — the caller that now receives untrusted data, the check that used to run, the assumption that no longer holds. Reviewing only the added lines is the standard way to miss the bug.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Security review of a pull request, branch, or commit range</li>
+<li>Pre-commit or pre-merge check on your own changes</li>
+<li>Assessing risk of a dependency bump or config change</li>
+<li>Reviewing an AI-generated change before it ships</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Whole-codebase audit</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
+<li><strong>Runtime testing of the deployed change</strong> — use the relevant testing skill</li>
+<li><strong>Dependency/CI changes as the main subject</strong> — use <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a></li>
+</ul>
+<h2>Get the Real Diff First</h2>
+<pre><code># Against the actual merge base, not against whatever HEAD happens to be
+BASE=$(git merge-base HEAD origin/main)
+git diff --stat $BASE...HEAD
+git diff $BASE...HEAD
+
+# Rename and whitespace noise hides real changes
+git diff -M -C -w $BASE...HEAD
+
+# Files changed most, and by whom — where to spend attention
+git diff --numstat $BASE...HEAD | sort -rn | head -20</code></pre>
+<p>Three things to establish before reading code:</p>
+<ol>
+<li><strong>What is this change trying to do?</strong> Read the PR description and the</li>
+</ol>
+<p>tests. A security review without the intent is pattern matching.</p>
+<ol>
+<li><strong>Does the diff match the description?</strong> Unexplained files — a config</li>
+</ol>
+<p>change, a new dependency, a workflow edit riding along with a feature — are the highest-signal thing in a review.</p>
+<ol>
+<li><strong>What is the change's exposure?</strong> A change to an unauthenticated request</li>
+</ol>
+<p>path deserves an order of magnitude more attention than an internal refactor.</p>
+<h2>Triage: Where to Spend the Review</h2>
+<p>Not all diffs deserve equal time. Rank hunks by what they touch:</p>
+<div class="tw"><table><thead><tr><th>Priority</th><th>Signals</th></tr></thead><tbody><tr><td><strong>Critical</strong></td><td>Auth/authz logic, session handling, crypto, input parsing on an untrusted boundary, SQL/command/template construction, file path handling, deserialization, CI/CD workflows, IAM/security-group config, dependency additions</td></tr><tr><td><strong>High</strong></td><td>New endpoints or routes, new tool/RPC surface, error handling on security paths, logging of user data, tenant scoping, cache keys, rate limits</td></tr><tr><td><strong>Medium</strong></td><td>Business logic that consumes validated input, refactors that move security-relevant code</td></tr><tr><td><strong>Low</strong></td><td>Tests, docs, formatting, comments — but read test <em>deletions</em></td></tr></tbody></table></div>
+<pre><code># Fast triage of a large diff
+git diff $BASE...HEAD --name-only | rg 'auth|login|session|crypto|password|token|admin|permission|\.github/workflows|Dockerfile|terraform|policy'
+git diff $BASE...HEAD -U10 | rg -n '^\+.*(eval\(|exec\(|system\(|innerHTML|pickle|yaml\.load|Sprintf.*SELECT|shell=True|verify=False|InsecureSkipVerify)'</code></pre>
+<h2>What to Look For</h2>
+<h3>Removals and weakenings — read the minus lines first</h3>
+<p>The most dangerous diffs delete things. Search the removed lines specifically:</p>
+<pre><code>git diff $BASE...HEAD | rg '^-' | rg -i 'auth|verify|valid|check|sanitiz|escape|permission|assert|csrf|limit'</code></pre>
+<ul>
+<li>A validation call deleted "because it was redundant"</li>
+<li>An authorization decorator removed during a refactor</li>
+<li>A test deleted rather than fixed</li>
+<li>A <code>TODO: add authz</code> that was never done and is now shipping</li>
+<li>A timeout, size cap, or rate limit removed</li>
+<li><code>strict</code> mode, a security header, or a CSP directive relaxed</li>
+</ul>
+<h3>Additions — the ordinary classes, in context</h3>
+<p>Apply the bug-class hunting from <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>, but scoped to the changed paths: injection sinks, authorization on new object lookups, SSRF in new outbound calls, path handling on new file operations, deserialization, secrets, weak randomness, unsafe defaults.</p>
+<p>The two questions that catch most real issues in a diff:</p>
+<blockquote><strong>Does new untrusted data reach an old sink?</strong> <strong>Does old untrusted data reach a new sink?</strong></blockquote>
+<p>Both require reading outside the diff.</p>
+<h3>Context beyond the diff</h3>
+<p>Read the whole function for every non-trivial hunk. Then check callers:</p>
+<pre><code># Who calls the changed function, and do they still satisfy its assumptions?
+rg -n 'changedFunctionName\s*\(' --type &lt;lang&gt;
+# What else in the codebase uses the pattern this change introduced?
+git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after</code></pre>
+<p>Specifically check whether the change alters an invariant that other code relies on: a function that used to sanitize and now does not, a return value whose meaning flipped, a nullable that became non-null, an ordering guarantee that was dropped.</p>
+<h3>Config, infra, and pipeline changes riding along</h3>
+<pre><code>git diff $BASE...HEAD -- '*.yml' '*.yaml' '*.tf' 'Dockerfile*' '.github/**' '*.json'</code></pre>
+<ul>
+<li>New or bumped dependencies: who maintains them, and does the lockfile change</li>
+</ul>
+<p>match the manifest change? (See <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a>.)</p>
+<ul>
+<li>Workflow permissions widened, <code>pull_request_target</code> added, unpinned actions</li>
+<li>Security group / firewall rules opened, buckets made public, IAM <code>"*"</code></li>
+<li>Debug flags, verbose logging of request bodies, disabled TLS verification</li>
+<li>Feature flags that default to on</li>
+</ul>
+<h3>AI-generated and large mechanical changes</h3>
+<p>Machine-written diffs fail in characteristic ways: plausible-looking validation that does not actually constrain, error handling that swallows security-relevant failures, invented API usage that silently no-ops, and copied patterns applied where the surrounding assumptions differ. For a large generated diff, sample the security-relevant hunks and verify against the real library behaviour rather than reading for plausibility.</p>
+<h2>Verify Before Reporting</h2>
+<p>Diff review generates false positives faster than any other review mode, because the missing context is exactly what makes a hunk look wrong. Before raising a finding:</p>
+<ol>
+<li><strong>Read the surrounding function and the callers.</strong> The check you think is</li>
+</ol>
+<p>missing is often two frames up.</p>
+<ol>
+<li><strong>Check the framework's behaviour.</strong> Many "missing escaping" findings are</li>
+</ol>
+<p>handled by the template engine.</p>
+<ol>
+<li><strong>Confirm reachability</strong> with the caller privilege required.</li>
+<li><strong>Look for the same pattern elsewhere in the codebase.</strong> If it is</li>
+</ol>
+<p>everywhere and predates this PR, it is a codebase finding, not a PR blocker — say so, and file it separately.</p>
+<p>Then state the finding with a concrete failure scenario: the input, the path, and the result. "This could be unsafe" is not a review comment; it is a request for someone else to do the analysis.</p>
+<h2>Output</h2>
+<p>Separate what blocks the merge from what does not:</p>
+<pre><code>## Security review — PR #482
+
+**Blocking**
+1. `api/reports.go:214` — export handler drops the tenant predicate present on
+   the list path. Any authenticated user can export another tenant's report by
+   ID. Add `AND tenant_id = ?` to the lookup.
+
+**Non-blocking, should fix**
+2. `api/reports.go:190` — report IDs are sequential, making enumeration
+   trivial once (1) is fixed. Consider opaque IDs.
+
+**Notes / pre-existing**
+3. The `findByID` pattern without scoping appears in 14 other handlers and
+   predates this PR. Filed as ISSUE-991 rather than blocking here.
+
+**Reviewed but clear**
+- New `/webhooks/stripe` route: signature verified before body parse, replay
+  window enforced. No finding.
+- Dependency bump `lodash 4.17.20 → 4.17.21`: patch for CVE-2021-23337, no
+  API change.
+
+**Not covered**
+- The React changes under `web/` were not reviewed for XSS in depth; the diff
+  touches 40 components.</code></pre>
+<p>Stating what you reviewed and found clean is as useful as the findings — it tells the next reviewer where not to spend time, and it makes the coverage of the review honest.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The diff looks fine."</em> You reviewed the added lines. Read the removed ones</li>
+</ul>
+<p>and the callers.</p>
+<ul>
+<li><em>"CI passed."</em> CI runs the tests that exist for the behaviour someone</li>
+</ul>
+<p>anticipated.</p>
+<ul>
+<li><em>"It's a small change."</em> One deleted decorator is a small change.</li>
+<li><em>"The author is senior."</em> Review the code.</li>
+<li><em>"It's just a refactor."</em> Refactors move security-relevant code across trust</li>
+</ul>
+<p>boundaries more often than features do.</p>
+<ul>
+<li><em>"That's pre-existing."</em> True, and worth saying — but confirm it is</li>
+</ul>
+<p>pre-existing rather than assuming, and file it rather than dropping it.</p>
+<ul>
+<li><em>"I'd need to understand the whole system to be sure."</em> Then say what you</li>
+</ul>
+<p>could not determine. An honest uncertainty is a reviewable statement; silence reads as approval.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — full audit methodology and bug classes</li>
+<li><a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a> — dependency and workflow changes in the diff</li>
+<li><a class="xref" href="securing-ai-systems.html"><code>securing-ai-systems</code></a> — reviewing changes to LLM/agent features</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity and write-up when a finding leaves the PR</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

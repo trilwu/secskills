@@ -1,0 +1,223 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hunting-web-backdoors — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / hunting-web-backdoors</div>
+  <h1 class="sk">hunting-web-backdoors</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Hunt planted webshells and backdoors across a web source tree — PHP first (also JSP, ASP, Node) — triaging a directory at scale, statically decoding obfuscation layers without ever executing the payload, finding append-infections and fake plugins, and treating known shell families as leads rather than verdicts. Use when a web server is suspected compromised, cleaning a hacked WordPress/Magento/CMS site, vetting a downloaded PHP codebase or plugin for hidden malicious code, or when a file contains eval on decoded input.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>This is not a vulnerability audit. You are looking for code an attacker <strong>already planted</strong> — a webshell, a one-line eval backdoor, a fake plugin, a malicious line appended to a legitimate file. The weakness that let them in is <a class="xref" href="auditing-php-applications.html"><code>auditing-php-applications</code></a>' job; this skill finds what they left behind.</p>
+<p>Two things make it hard. The malicious code is deliberately hidden — obfuscated, split, or buried in a tree of thousands of legitimate files — so a naive grep misses it. And the tells (<code>eval</code>, <code>base64_decode</code>, dynamic calls) appear in plenty of benign code, so a naive grep also drowns you in false positives. The work is the discrimination.</p>
+<h2>When to Use</h2>
+<ul>
+<li>A web server is suspected or confirmed compromised and you need every shell</li>
+<li>Cleaning a hacked WordPress, Magento, Joomla, or custom PHP site</li>
+<li>Vetting a downloaded plugin, theme, or codebase before deploying it</li>
+<li>A file contains <code>eval</code>, <code>assert</code>, or <code>system</code> on decoded or request-derived input</li>
+<li>Triaging a web root full of unfamiliar PHP for planted malice</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Finding the vulnerability that allowed the upload</strong> — use</li>
+</ul>
+<p><a class="xref" href="auditing-php-applications.html"><code>auditing-php-applications</code></a></p>
+<ul>
+<li><strong>Deep single-sample analysis</strong> (a specific shell you want to fully reverse,</li>
+</ul>
+<p>its C2, its capabilities) — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></p>
+<ul>
+<li><strong>The broader incident</strong> (scoping, timeline, containment) — use</li>
+</ul>
+<p><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>; this skill is the source-tree sweep within it</p>
+<ul>
+<li><strong>Malicious dependencies / package install scripts</strong> — use</li>
+</ul>
+<p><a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a></p>
+<ul>
+<li><strong>Host-level persistence</strong> (cron, systemd, LD_PRELOAD) — use</li>
+</ul>
+<p><a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a></p>
+<h2>Never Execute to Deobfuscate</h2>
+<p>The single rule that must not bend: <strong>the obfuscated code is the payload.</strong> Do not run it, do not "just let PHP decode it," do not replace <code>eval(</code> with <code>echo(</code> and execute the file, do not paste it into an online sandbox that runs it. Deobfuscation is a <strong>static</strong> transformation:</p>
+<ul>
+<li>Decode the layers by hand or with a decode-only tool (<code>base64_decode</code>,</li>
+</ul>
+<p><code>gzinflate</code>, <code>gzuncompress</code>, <code>str_rot13</code>, hex/<code>\xNN</code>, <code>strrev</code>) applied as string operations, not as executed PHP.</p>
+<ul>
+<li>If you must automate, use a de-obfuscator that decodes without executing</li>
+</ul>
+<p>(UnPHP's decoder, a Python reimplementation of the decode chain) — never the PHP interpreter on the sample.</p>
+<ul>
+<li>Replacing the final <code>eval(</code> with <code>file_put_contents('out.php', ...)</code> and</li>
+</ul>
+<p>running it <em>is</em> executing the payload if any prior layer has side effects. Decode statically, then read.</p>
+<p>"Most webshells are three or four layers of encoding around ten lines of logic" — peel to the logic, do not detonate the wrapper.</p>
+<h2>Triage a Directory at Scale</h2>
+<p>You cannot read every file. Rank candidates by cheap signals, then read the top of the list:</p>
+<pre><code># 1. PHP where PHP should not be — uploads, cache, images, media dirs
+find wp-content/uploads -name '*.php' -o -name '*.php[0-9]' -o -name '*.phtml' 2&gt;/dev/null
+
+# 2. Recently modified, clustered in time (attackers touch many files at once)
+find . -name '*.php' -newermt '2026-07-01' -printf '%T+ %p\n' | sort
+
+# 3. High entropy / long single lines — the shape of packed obfuscation
+find . -name '*.php' -exec awk 'length&gt;1000{print FILENAME": "length; nextfile}' {} \;
+
+# 4. The dangerous-sink grep — leads, NOT verdicts (see the FP problem below)
+grep -rnE '\b(eval|assert|system|passthru|shell_exec|proc_open|popen|create_function)\s*\(' --include='*.php' .
+grep -rnE '(base64_decode|gzinflate|gzuncompress|str_rot13|hex2bin)\s*\(' --include='*.php' .
+
+# 5. Request-driven code execution — the webshell core
+grep -rnE '\$_(GET|POST|REQUEST|COOKIE|SERVER)\s*\[[^]]*\]\s*\(' --include='*.php' .
+grep -rnE '(eval|assert|system|passthru)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)' --include='*.php' .</code></pre>
+<p>The most reliable single lead is <strong>variable execution of request data</strong> — <code>$_POST['x']()</code>, <code>eval($_GET[...])</code>, <code>assert($_REQUEST[...])</code>, <code>call_user_func($_GET['f'], ...)</code>. Legitimate code almost never dispatches a function name straight from a superglobal.</p>
+<h2>The Grep Is Not Clean Just Because It Is Empty</h2>
+<p>A source tree that returns nothing for <code>grep eval</code> can still be backdoored. Attackers defeat the obvious grep deliberately:</p>
+<ul>
+<li><strong>Concatenation:</strong> <code>$a='ev'.'al'; $a($code);</code> or <code>('e'.'v'.'a'.'l')(...)</code>.</li>
+<li><strong>Variable variables / indirection:</strong> <code>$f='system'; $f($_GET['c']);</code>,</li>
+</ul>
+<p><code>${'_'.'GET'}</code>, <code>$$x</code>.</p>
+<ul>
+<li><strong>Char/hex/octal escapes:</strong> <code>"\x65\x76\x61\x6c"</code> is <code>eval</code>;</li>
+</ul>
+<p><code>chr(101).chr(118)...</code>.</p>
+<ul>
+<li><strong>Callback sinks:</strong> <code>array_map</code>, <code>array_filter</code>, <code>usort</code>,</li>
+</ul>
+<p><code>preg_replace_callback</code>, <code>register_shutdown_function</code>, <code>ob_start</code> with a user-controlled callback.</p>
+<ul>
+<li><strong>String-eval that is not <code>eval</code>:</strong> <code>assert($str)</code> (pre-8.0),</li>
+</ul>
+<p><code>preg_replace('/./e', $str, ...)</code> (pre-7.0), <code>create_function('', $str)</code> (pre-8.0), <code>mb_ereg_replace</code> with <code>e</code>.</p>
+<ul>
+<li><strong>Comment and whitespace insertion</strong> between token pieces to break naive</li>
+</ul>
+<p>regex.</p>
+<p>So grep is a <em>lead generator</em>, not a coverage guarantee. When grep is empty and you still suspect infection, fall back to: entropy/long-line ranking, mtime clustering, and diffing against a known-good copy (below).</p>
+<h2>Append-Infections Are the Ones You Miss</h2>
+<p>The hardest infection is a backdoor <strong>appended to or inserted into a legitimate file</strong> — <code>index.php</code>, <code>wp-config.php</code>, a theme's <code>functions.php</code>, <code>vendor/</code> autoloaders. The file is 99% real, so it does not stand out by name, location, or entropy overall. Find these by comparison, not by inspection:</p>
+<pre><code># Diff the tree against a pristine copy of the same CMS/plugin version
+# (download the exact version from wordpress.org / the vendor)
+diff -rq ./site /known-good/wordpress-6.x/
+
+# WordPress core/plugin integrity via checksums
+wp core verify-checksums; wp plugin verify-checksums --all
+
+# git/composer/npm: what changed vs the committed/locked state
+git status --porcelain; git diff</code></pre>
+<p>If you have no known-good baseline, the tells are: code <em>after</em> the closing <code>?&amp;gt;</code> of an otherwise-normal file, a lone <code>eval</code>/<code>base64_decode</code> line wedged at the top of a config file, or a <code>&amp;lt;?php ... ?&amp;gt;</code> block whose style clashes with the surrounding file.</p>
+<h2>Version-Gated Tells Date the Code</h2>
+<p>The presence of a removed language feature tells you something:</p>
+<ul>
+<li><code>preg_replace</code> with the <code>/e</code> modifier — <strong>removed in PHP 7.0</strong>. Its presence</li>
+</ul>
+<p>means the backdoor targets (or predates) PHP 5.x.</p>
+<ul>
+<li><code>create_function()</code> and string-argument <code>assert()</code> as code execution —</li>
+</ul>
+<p><strong>removed in PHP 8.0</strong>. Common in older shells; on a PHP 8 server they would fault, which is itself a signal about when the code was planted.</p>
+<h2>Known Families Are Leads, Not Verdicts</h2>
+<p>Fingerprints speed triage but do not replace reading the code:</p>
+<ul>
+<li><strong>China Chopper</strong> — a <em>one-liner</em>: <code>&amp;lt;?php @eval($_POST['pass']);?&amp;gt;</code> (or</li>
+</ul>
+<p><code>assert</code>), often under 30 bytes. Tiny, so easy to miss and easy to append.</p>
+<ul>
+<li><strong>WSO, b374k, c99, r57, indoxploit</strong> — full-featured panels; grep their</li>
+</ul>
+<p>banner strings, characteristic function names, or auth-cookie names as leads.</p>
+<ul>
+<li><strong>Weevely</strong> — generates obfuscated, password-gated shells that change per</li>
+</ul>
+<p>build; signature matching is weak, so rely on the request-driven-execution and obfuscation signals instead.</p>
+<p>A signature hit confirms <em>a</em> shell. It does not confirm you found them all — attackers plant several, and the second one rarely matches the first's family.</p>
+<h2>When You Confirm One, Assume More</h2>
+<ol>
+<li><strong>Preserve before you delete.</strong> A confirmed shell is evidence — copy it</li>
+</ol>
+<p>(hash it) to a holding location before removing it, per <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>. Deletion alone loses the timeline and, if you miss the entry point, the attacker re-plants within hours.</p>
+<ol>
+<li><strong>Find the entry point.</strong> A shell got there somehow — a vulnerable upload,</li>
+</ol>
+<p>a known-CVE plugin, stolen credentials. Hand that to <a class="xref" href="auditing-php-applications.html"><code>auditing-php-applications</code></a> (source) or <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> (logs); a cleaned site with the hole still open is re-infected by morning.</p>
+<ol>
+<li><strong>Keep hunting.</strong> One shell found is a reason to raise suspicion of the</li>
+</ol>
+<p>whole tree, not to close the case. Re-run the sweep after removing the obvious one.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"grep for eval came back clean, so the tree is clean."</em> Concatenation, hex</li>
+</ul>
+<p>escapes, and callback sinks all evade it. Empty grep is not coverage — fall back to entropy, mtime, and diff-against-known-good.</p>
+<ul>
+<li><em>"I'll just run it to see what it decodes to."</em> That is executing the</li>
+</ul>
+<p>payload. Decode statically, always.</p>
+<ul>
+<li><em>"It uses <code>eval</code>, so it's a backdoor."</em> Templating engines, caches, and</li>
+</ul>
+<p>frameworks use <code>eval</code> legitimately. The tell is <code>eval</code> on <em>decoded or request-derived</em> input, not <code>eval</code> itself.</p>
+<ul>
+<li><em>"It's heavily obfuscated, so it's malicious."</em> Commercial plugins ship</li>
+</ul>
+<p>obfuscated (ionCube, Zend Guard, licensing). Obfuscation raises suspicion; it does not convict. Decode and read the logic.</p>
+<ul>
+<li><em>"I found the shell and deleted it, done."</em> You found <em>a</em> shell. Preserve it,</li>
+</ul>
+<p>find the entry point, and re-sweep — attackers plant redundancy.</p>
+<ul>
+<li><em>"The file is a core CMS file, it must be safe."</em> Append-infections live in</li>
+</ul>
+<p>exactly those files precisely because you assume that. Verify by checksum.</p>
+<ul>
+<li><em>"No known-shell signature matched."</em> Weevely and custom shells match</li>
+</ul>
+<p>nothing. Signatures are leads; behaviour (request-driven execution, obfuscation) is the evidence.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="auditing-php-applications.html"><code>auditing-php-applications</code></a> — the vulnerability that let the shell in</li>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — deep reverse of a single recovered shell, its C2 and</li>
+</ul>
+<p>capabilities</p>
+<ul>
+<li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — evidence handling, scoping, and the wider IR this</li>
+</ul>
+<p>sweep sits inside</p>
+<ul>
+<li><a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a> — host-level persistence beyond the web root</li>
+<li><a class="xref" href="writing-yara-rules.html"><code>writing-yara-rules</code></a> — turning a confirmed family into a reusable signature</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

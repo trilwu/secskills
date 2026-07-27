@@ -1,0 +1,164 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>managing-vulnerabilities — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / managing-vulnerabilities</div>
+  <h1 class="sk">managing-vulnerabilities</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Prioritize and drive remediation of a vulnerability backlog by real risk, not raw CVSS — combining severity with exploitation signals (EPSS, CISA KEV), asset exposure and business context, using SSVC-style decisions, distinguishing reachable from merely present, and tracking remediation and exceptions. Use when triaging scanner output, deciding what to patch first, building a risk-based vulnerability management process, or explaining why a critical CVE is not the top priority.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>A scanner returns ten thousand findings, most rated High or Critical, and the team can patch a few hundred a month. Vulnerability management is the function that decides <em>which</em> few hundred — and the default of "sort by CVSS descending" is close to the worst possible order, because CVSS measures theoretical severity, not the probability that this vulnerability, on this asset, gets exploited.</p>
+<p>The whole discipline is turning an undifferentiated backlog into a defensible order of operations that a limited team can actually execute.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Triaging vulnerability scanner output into a remediation order</li>
+<li>Deciding what to patch first under a fixed remediation budget</li>
+<li>Building or reviewing a risk-based vulnerability management process</li>
+<li>Explaining why a CVSS 9.8 is not this week's top priority</li>
+<li>Deciding whether a finding warrants an exception rather than a fix</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li>**Working a security <em>alert</em> queue** (EDR/SIEM detections) — use</li>
+</ul>
+<p><a class="xref" href="triaging-security-alerts.html"><code>triaging-security-alerts</code></a>; that is detected activity, this is latent weakness</p>
+<ul>
+<li><strong>Auditing source for new vulnerabilities</strong> — use</li>
+</ul>
+<p><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></p>
+<ul>
+<li><strong>Cloud misconfiguration rather than software CVEs</strong> — use</li>
+</ul>
+<p><a class="xref" href="hardening-cloud-posture.html"><code>hardening-cloud-posture</code></a></p>
+<ul>
+<li><strong>Exploiting a vulnerability to prove it</strong> — use the relevant offensive skill</li>
+</ul>
+<h2>CVSS Is Severity, Not Priority</h2>
+<p>CVSS base score answers "how bad is this if exploited, in the abstract?" It does not answer "will it be exploited here?" — which is the question remediation order actually turns on. The evidence is stark: the large majority of CVEs are never exploited in the wild, yet most are scored High or Critical. Sorting by CVSS spends the team's finite capacity on vulnerabilities that will never be attacked while genuinely exploited ones wait behind them.</p>
+<p>Use CVSS 4.0 as one input — the severity term — and combine it with signals that speak to <em>probability</em> and <em>impact-here</em>.</p>
+<h2>The Three Signals to Combine</h2>
+<h3>1. Is it being exploited? — EPSS and KEV</h3>
+<ul>
+<li><strong>CISA KEV (Known Exploited Vulnerabilities).</strong> A curated catalog of CVEs</li>
+</ul>
+<p>with <em>confirmed, observed</em> exploitation in the wild. Presence in KEV is the single strongest prioritization signal available: it is not a prediction, it is a fact of exploitation. Anything in your environment that is on the KEV list jumps the queue. For US federal agencies KEV also carries a binding remediation deadline; treat those dates as a sensible default even if you are not bound by them.</p>
+<ul>
+<li><strong>EPSS (Exploit Prediction Scoring System).</strong> A daily-updated machine-learning</li>
+</ul>
+<p>probability, from 0 to 1, that a CVE will be exploited <strong>in the next 30 days</strong>. It is a <em>prediction</em>, not observed fact, and it is a probability, not a ranking — a 0.90 means ~90% likely, and most CVEs sit far below 0.10. Use it to rank the long tail that is not (yet) in KEV. Because it updates daily, re-pull it; a CVE's EPSS can climb sharply when exploitation tooling appears.</p>
+<p>KEV and EPSS answer different questions — "known exploited" versus "likely to be" — and you want both. KEV is the floor of certainty; EPSS orders everything below it.</p>
+<h3>2. Is it reachable? — exposure and context</h3>
+<p>A vulnerability that is present but not reachable is not the same as one an attacker can touch:</p>
+<ul>
+<li>Is the affected service internet-facing, internal-only, or on an isolated</li>
+</ul>
+<p>segment?</p>
+<ul>
+<li>Is the vulnerable code path actually invoked, or is it a dependency present</li>
+</ul>
+<p>but never called? (Reachability analysis — see <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a> for the dependency case.)</p>
+<ul>
+<li>Is there a compensating control — a WAF rule, network policy, a disabled</li>
+</ul>
+<p>feature — that breaks the exploit precondition?</p>
+<ul>
+<li>Does exploitation need authentication, local access, or user interaction</li>
+</ul>
+<p>that the placement makes unlikely?</p>
+<p>An internet-facing, unauthenticated, KEV-listed RCE and an internal, authenticated, same-CVSS bug are not the same priority, whatever the score says.</p>
+<h3>3. What does it protect? — asset value</h3>
+<p>The same vulnerability on a domain controller, a crown-jewel database, and a developer's throwaway VM warrants three different urgencies. Tie the finding to asset criticality; a vulnerability management programme without an asset inventory is ranking blind.</p>
+<h2>Decide with SSVC, Not a Single Number</h2>
+<p>Rather than collapsing everything into one score, a decision-tree approach (SSVC — Stakeholder-Specific Vulnerability Categorization) asks the questions above in order and lands on an action: **exploitation status → exposure → automatable → impact → {track / track\* / attend / act}.** The value is that each decision is <em>explainable</em> to the team doing the work and to the risk owner signing the exceptions, in a way "it scored 8.7" never is.</p>
+<p>Whatever the framing, the output must be an <strong>ordered, executable list with owners and dates</strong>, not a risk score. The programme's product is patched systems, not a dashboard.</p>
+<h2>Track Remediation and Exceptions Honestly</h2>
+<ul>
+<li><strong>A finding is open until verified fixed</strong>, not until a ticket is closed.</li>
+</ul>
+<p>Re-scan to confirm; "patched" and "no longer detected" are different claims.</p>
+<ul>
+<li><strong>Exceptions are decisions with an owner and an expiry</strong>, not silent</li>
+</ul>
+<p>suppressions. "Accepted risk" with no name and no review date is how a KEV CVE sits open for a year.</p>
+<ul>
+<li><strong>Recurrence is a process finding.</strong> The same vulnerability returning after a</li>
+</ul>
+<p>fix means the base image, the golden template, or the pipeline is reintroducing it — fix the source, not the instance, the same way cloud guardrails beat point-fixes.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"It's a 9.8, so it's top priority."</em> CVSS is severity, not probability of</li>
+</ul>
+<p>exploitation. A 9.8 that is not in KEV, has a low EPSS, and sits on an isolated internal host ranks below a 7.5 that is KEV-listed and internet-facing.</p>
+<ul>
+<li><em>"It's only a 5.3, we can ignore it."</em> Not if it is KEV-listed and reachable.</li>
+</ul>
+<p>Observed exploitation outranks a mediocre severity score.</p>
+<ul>
+<li><em>"We patch everything Critical within 30 days."</em> A blanket SLA by severity</li>
+</ul>
+<p>spends the budget by the wrong axis. Patch <em>exploited and reachable</em> within days; let unexploited, unreachable Criticals follow.</p>
+<ul>
+<li><em>"The dependency is vulnerable, so we're vulnerable."</em> Only if the vulnerable</li>
+</ul>
+<p>code path is reachable. Present-but-uncalled is real backlog but not the same urgency as invoked.</p>
+<ul>
+<li><em>"EPSS is low, so it's safe."</em> EPSS is a 30-day prediction that moves. Re-pull</li>
+</ul>
+<p>it, and remember KEV overrides it — observed beats predicted.</p>
+<ul>
+<li><em>"We closed the ticket."</em> Closing a ticket is not fixing a vulnerability.</li>
+</ul>
+<p>Re-scan and verify, or it is still open.</p>
+<ul>
+<li><em>"It's an accepted risk."</em> Accepted by whom, reviewed when? An exception with</li>
+</ul>
+<p>no owner and no expiry is an unmanaged vulnerability wearing a label.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="triaging-security-alerts.html"><code>triaging-security-alerts</code></a> — the detected-activity counterpart to this</li>
+</ul>
+<p>latent-weakness work; both rank by real risk under finite capacity</p>
+<ul>
+<li><a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a> — dependency reachability, the input to signal 2 for</li>
+</ul>
+<p>library CVEs</p>
+<ul>
+<li><a class="xref" href="hardening-cloud-posture.html"><code>hardening-cloud-posture</code></a> — the config-misconfiguration counterpart to</li>
+</ul>
+<p>software CVEs</p>
+<ul>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — communicating prioritized risk to owners</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

@@ -1,0 +1,403 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>testing-mobile-applications — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / testing-mobile-applications</div>
+  <h1 class="sk">testing-mobile-applications</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Pentest Android and iOS mobile applications including APK analysis, dynamic analysis, SSL pinning bypass, root/jailbreak detection bypass, and mobile-specific vulnerabilities. Use when testing mobile app security or performing mobile pentesting.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><h2>When to Use</h2>
+<ul>
+<li>Android APK analysis and exploitation</li>
+<li>iOS application pentesting</li>
+<li>Mobile app security assessment</li>
+<li>Bypassing security controls (SSL pinning, root detection)</li>
+<li>Testing mobile-specific vulnerabilities</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Backend API testing</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a></li>
+<li><strong>Deep native binary reversing</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
+<li><strong>Analyzing a malicious app</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
+<li><strong>Source code is available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
+</ul>
+<h2>Check the Framework Before Anything Else</h2>
+<p><code>jadx</code> returning almost nothing does not mean the app is obfuscated — it usually means the logic is not in the dex at all. Run this first; it decides which skill you should be in.</p>
+<pre><code>unzip -l target.apk | rg 'libflutter|libapp\.so|index\.android\.bundle|libhermes|global-metadata|libil2cpp|Assembly-CSharp'</code></pre>
+<div class="tw"><table><thead><tr><th>Marker</th><th>Framework</th><th>Skill</th></tr></thead><tbody><tr><td><code>libflutter.so</code>, <code>libapp.so</code>, <code>flutter_assets/</code></td><td>Flutter / Dart</td><td><a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a></td></tr><tr><td><code>index.android.bundle</code>, <code>libhermes.so</code>, <code>main.jsbundle</code></td><td>React Native</td><td><a class="xref" href="reversing-react-native-apps.html"><code>reversing-react-native-apps</code></a></td></tr><tr><td><code>global-metadata.dat</code>, <code>libil2cpp.so</code>, <code>Assembly-CSharp.dll</code></td><td>Unity</td><td><a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a></td></tr><tr><td><code>libmonodroid.so</code>, <code>assemblies.blob</code>, <code>libxamarin-app.so</code></td><td>Xamarin / .NET MAUI</td><td><a class="xref" href="reversing-xamarin-maui.html"><code>reversing-xamarin-maui</code></a></td></tr><tr><td><code>classes*.dex</code> with real application packages</td><td>Native Android</td><td>continue here</td></tr></tbody></table></div>
+<p>Two framework symptoms are worth naming, because they waste the most time when misread: a Flutter app shows <strong>no traffic at all</strong> in your proxy (it ignores the system proxy and CA store), and a React Native or Unity app shows a <strong>near-empty dex</strong> with all the logic in <code>assets/</code>.</p>
+<p>Three more procedure skills split out of this one, because each needs far more detail than a general assessment can carry:</p>
+<div class="tw"><table><thead><tr><th>Situation</th><th>Skill</th></tr></thead><tbody><tr><td>App exits on a rooted device, or dies when Frida attaches</td><td><a class="xref" href="bypassing-root-jailbreak-detection.html"><code>bypassing-root-jailbreak-detection</code></a></td></tr><tr><td>iOS binary work: FairPlay decryption, Mach-O, class-dump, entitlements</td><td><a class="xref" href="analyzing-ios-binaries.html"><code>analyzing-ios-binaries</code></a></td></tr><tr><td>Exported components, deep links, URL schemes, content providers</td><td><a class="xref" href="testing-mobile-ipc.html"><code>testing-mobile-ipc</code></a></td></tr></tbody></table></div>
+<p>If the proxy fails for any other reason — a TLS handshake alert, or an app that reports a network error with the proxy on — go to <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> before assuming certificate pinning. On Android 7+ the most common cause is that your CA is installed as a user certificate, which apps do not trust by default, and no pinning bypass fixes that.</p>
+<h2>Android Pentesting</h2>
+<h3>APK Analysis Tools</h3>
+<pre><code># Decompile APK
+apktool d app.apk -o app_decompiled
+
+# Convert DEX to JAR
+d2j-dex2jar app.apk
+
+# View JAR with JD-GUI
+jd-gui app-dex2jar.jar
+
+# Automated analysis
+mobsf  # Mobile Security Framework
+jadx app.apk  # APK to Java decompiler</code></pre>
+<h3>ADB (Android Debug Bridge)</h3>
+<pre><code># List devices
+adb devices
+
+# Connect over network
+adb connect 192.168.1.100:5555
+
+# Install APK
+adb install app.apk
+
+# Uninstall
+adb uninstall com.package.name
+
+# List packages
+adb shell pm list packages
+adb shell pm list packages | grep -i "keyword"
+
+# Get APK path
+adb shell pm path com.package.name
+
+# Pull APK from device
+adb pull /data/app/com.package.name-xxx/base.apk
+
+# Start activity
+adb shell am start -n com.package.name/.MainActivity
+
+# View logs
+adb logcat
+
+# Shell access
+adb shell</code></pre>
+<h3>Static Analysis</h3>
+<p><strong>Search for Sensitive Data:</strong></p>
+<pre><code># Extract strings
+strings app.apk | grep -i password
+strings app.apk | grep -i api
+strings app.apk | grep -i token
+strings app.apk | grep -i key
+
+# Search in decompiled code
+grep -r "password" app_decompiled/
+grep -r "http://" app_decompiled/
+grep -r "api_key" app_decompiled/</code></pre>
+<p><strong>Check AndroidManifest.xml:</strong></p>
+<pre><code># Decompile and view
+apktool d app.apk
+cat app_decompiled/AndroidManifest.xml
+
+# Look for:
+# - android:debuggable="true"
+# - android:allowBackup="true"
+# - Exported activities/services
+# - Custom permissions
+# - URL schemes</code></pre>
+<h3>Dynamic Analysis</h3>
+<p><strong>Frida (Runtime Instrumentation):</strong></p>
+<pre><code># List running apps
+frida-ps -U
+
+# Attach to app
+frida -U -n "App Name"
+frida -U -f com.package.name
+
+# Load script
+frida -U -f com.package.name -l script.js
+
+# Common scripts
+# - Bypass SSL pinning
+# - Bypass root detection
+# - Hook functions
+# - Dump memory</code></pre>
+<p><strong>SSL Pinning Bypass:</strong></p>
+<pre><code>// Frida script - Universal SSL pinning bypass
+Java.perform(function() {
+    var TrustManager = Java.use('javax.net.ssl.X509TrustManager');
+    TrustManager.checkServerTrusted.implementation = function() {};
+
+    var SSLContext = Java.use('javax.net.ssl.SSLContext');
+    SSLContext.init.overload('[Ljavax.net.ssl.KeyManager;', '[Ljavax.net.ssl.TrustManager;', 'java.security.SecureRandom').implementation = function(a,b,c) {
+        this.init.overload('[Ljavax.net.ssl.KeyManager;', '[Ljavax.net.ssl.TrustManager;', 'java.security.SecureRandom').call(this, a, null, c);
+    };
+});</code></pre>
+<p><strong>Root Detection Bypass:</strong></p>
+<pre><code>// Frida - Bypass root detection
+Java.perform(function() {
+    var RootClass = Java.use('com.package.name.RootDetection');
+    RootClass.isRooted.implementation = function() {
+        return false;
+    };
+});</code></pre>
+<h3>Intercepting Traffic</h3>
+<p><strong>Burp Suite Setup:</strong></p>
+<pre><code># 1. Install Burp CA certificate
+# Download from http://burp:8080 on device
+# Install in Settings -&gt; Security -&gt; Install from storage
+
+# 2. Configure proxy
+adb shell settings put global http_proxy 192.168.1.100:8080
+
+# 3. For apps with SSL pinning, use Frida bypass
+
+# 4. Clear proxy when done
+adb shell settings put global http_proxy :0</code></pre>
+<p><strong>mitmproxy:</strong></p>
+<pre><code># Start mitmproxy
+mitmproxy --listen-port 8080
+
+# Install certificate on device
+# http://mitm.it
+
+# Set device proxy to attacker IP:8080</code></pre>
+<h3>Modifying and Repackaging APK</h3>
+<pre><code># 1. Decompile
+apktool d app.apk -o app_mod
+
+# 2. Modify smali code
+# Edit files in app_mod/smali/
+
+# 3. Recompile
+apktool b app_mod -o app_modified.apk
+
+# 4. Sign APK
+# Generate keystore (first time only)
+keytool -genkey -v -keystore my-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000
+
+# Sign
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-key.keystore app_modified.apk alias_name
+
+# Or use uber-apk-signer
+java -jar uber-apk-signer.jar -a app_modified.apk
+
+# 5. Install
+adb install app_modified.apk</code></pre>
+<h3>Common Vulnerabilities</h3>
+<p><strong>Insecure Data Storage:</strong></p>
+<pre><code># Check shared preferences
+adb shell
+cd /data/data/com.package.name/shared_prefs/
+cat *.xml
+
+# Check databases
+cd /data/data/com.package.name/databases/
+sqlite3 database.db
+.tables
+SELECT * FROM users;
+
+# Check files
+cd /data/data/com.package.name/files/
+ls -la
+cat *</code></pre>
+<p><strong>Exported Components:</strong></p>
+<pre><code># List exported activities
+adb shell dumpsys package com.package.name | grep -A 20 "Activity"
+
+# Start exported activity
+adb shell am start -n com.package.name/.ExportedActivity
+
+# Call exported service
+adb shell am startservice -n com.package.name/.ExportedService
+
+# Broadcast to receiver
+adb shell am broadcast -a com.package.name.ACTION</code></pre>
+<p><strong>Insecure WebView:</strong></p>
+<pre><code># Check for JavaScript enabled
+# Look in code for:
+webView.getSettings().setJavaScriptEnabled(true);
+
+# Check for addJavascriptInterface
+# Can lead to RCE if exposed</code></pre>
+<h2>iOS Pentesting</h2>
+<h3>Setup</h3>
+<p><strong>Jailbreak Tools:</strong></p>
+<ul>
+<li>checkra1n (iOS 12-14)</li>
+<li>unc0ver (iOS 11-14.8)</li>
+<li>Taurine (iOS 14-14.3)</li>
+</ul>
+<p><strong>SSH Access:</strong></p>
+<pre><code># Default credentials
+ssh root@&lt;device-ip&gt;
+# password: alpine
+
+# Change default password!
+passwd</code></pre>
+<h3>IPA Analysis</h3>
+<pre><code># Extract IPA
+unzip app.ipa
+
+# View binary
+otool -L Payload/App.app/App
+strings Payload/App.app/App
+
+# Class dump
+class-dump Payload/App.app/App &gt; classes.txt
+
+# Decrypt binary (on jailbroken device)
+frida-ios-dump -u App
+
+# Static analysis with Hopper/Ghidra</code></pre>
+<h3>Runtime Analysis</h3>
+<p><strong>Frida on iOS:</strong></p>
+<pre><code># List apps
+frida-ps -Ua
+
+# Attach
+frida -U -n "App Name"
+frida -U -f com.company.app
+
+# SSL pinning bypass (iOS)
+objection -g "App Name" explore
+ios sslpinning disable</code></pre>
+<p><strong>Objection:</strong></p>
+<pre><code># Launch objection
+objection -g com.company.app explore
+
+# Common commands
+ios info binary
+ios hooking list classes
+ios hooking search methods MainActivity
+ios sslpinning disable
+ios jailbreak disable
+ios keychain dump
+ios nsuserdefaults get</code></pre>
+<h3>File System Access</h3>
+<pre><code># Connect via SSH
+ssh root@device-ip
+
+# App data location
+cd /var/mobile/Containers/Data/Application/&lt;UUID&gt;/
+
+# Find app UUID
+ipainstaller -l  # List apps
+ls /var/mobile/Containers/Data/Application/
+
+# Common paths
+Documents/
+Library/
+Library/Preferences/  # plist files
+Library/Caches/
+tmp/</code></pre>
+<h3>Keychain Access</h3>
+<pre><code># Using objection
+ios keychain dump
+
+# Manual (requires keychain-dumper on device)
+./keychain_dumper
+
+# Specific item
+security find-generic-password -s "ServiceName"</code></pre>
+<h3>Common iOS Vulnerabilities</h3>
+<p><strong>Insecure Data Storage:</strong></p>
+<pre><code># Check plist files
+plutil -p Info.plist
+
+# Check UserDefaults
+ios nsuserdefaults get
+
+# Check SQLite databases
+sqlite3 database.db
+.tables
+SELECT * FROM sensitive_table;</code></pre>
+<p><strong>Binary Protections:</strong></p>
+<pre><code># Check for PIE
+otool -hv App | grep PIE
+
+# Check for stack canaries
+otool -I App | grep stack_chk
+
+# Check for ARC
+otool -I App | grep objc_release</code></pre>
+<h2>Mobile-Specific Attacks</h2>
+<p><strong>Deep Link Exploitation:</strong></p>
+<pre><code># Android
+adb shell am start -a android.intent.action.VIEW -d "app://open?param=value"
+
+# iOS
+xcrun simctl openurl booted "app://open?param=value"</code></pre>
+<p><strong>Intent Injection:</strong></p>
+<pre><code># Send malicious intent
+adb shell am start -n com.package/.Activity --es "extra_key" "malicious_value"</code></pre>
+<p><strong>Backup Extraction:</strong></p>
+<pre><code># Android backup
+adb backup -f backup.ab com.package.name
+# Extract
+java -jar abe.jar unpack backup.ab backup.tar
+
+# iOS backup
+idevicebackup2 backup --full backup_directory</code></pre>
+<h2>Tools</h2>
+<p><strong>Android:</strong></p>
+<ul>
+<li>APKTool - Decompile/recompile APKs</li>
+<li>dex2jar - Convert DEX to JAR</li>
+<li>JADX - APK to Java decompiler</li>
+<li>Frida - Dynamic instrumentation</li>
+<li>Objection - Frida-based toolkit</li>
+<li>MobSF - Automated analysis</li>
+<li>Drozer - Android security framework</li>
+</ul>
+<p><strong>iOS:</strong></p>
+<ul>
+<li>Frida - Dynamic instrumentation</li>
+<li>Objection - Frida toolkit</li>
+<li>class-dump - Extract class info</li>
+<li>Hopper/Ghidra - Disassemblers</li>
+<li>frida-ios-dump - Decrypt binaries</li>
+<li>iproxy - Forward ports</li>
+</ul>
+<h2>Quick Testing Workflow</h2>
+<ol>
+<li><strong>Static Analysis</strong> - Decompile, search strings, analyze manifest/Info.plist</li>
+<li><strong>Install</strong> - Install on emulator/device</li>
+<li><strong>Intercept Traffic</strong> - Set up Burp/mitmproxy, bypass SSL pinning</li>
+<li><strong>Dynamic Analysis</strong> - Use Frida to hook functions, bypass protections</li>
+<li><strong>Test Components</strong> - Test exported components, deep links, intents</li>
+<li><strong>Data Storage</strong> - Check for insecure data storage in files/DB/keychain</li>
+<li><strong>Repackage</strong> - Modify and recompile to test additional scenarios</li>
+</ol>
+<h2>References</h2>
+<ul>
+<li>https://book.hacktricks.xyz/mobile-pentesting</li>
+<li>https://github.com/OWASP/owasp-mstg</li>
+<li>https://mobile-security.gitbook.io/</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

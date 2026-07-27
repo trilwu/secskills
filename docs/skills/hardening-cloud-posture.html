@@ -1,0 +1,154 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hardening-cloud-posture — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / hardening-cloud-posture</div>
+  <h1 class="sk">hardening-cloud-posture</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Proactively harden a cloud account or organization before an incident — prioritizing IAM and identity risk over checkbox findings, closing the exposures that become attack paths (public storage, over-broad roles, missing audit logging, unencrypted data), reading CSPM output critically, and enforcing guardrails at the org level. Use when reviewing a cloud environment&#x27;s security posture, triaging a Prowler/ScoutSuite/Security Hub report, deciding which misconfigurations actually matter, or setting preventive controls across AWS, Azure, or GCP.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>A CSPM scan returns a thousand findings. Almost none of them are the way in. The job is not to close a thousand findings; it is to find the handful that form an attack path and close those, then set guardrails so they cannot recur. Posture work that treats every finding as equal drowns the real one.</p>
+<p>The organizing principle: <strong>identity is the perimeter.</strong> In cloud, the attack path is almost always a chain of IAM permissions, not a network hop. Rank by "what does this let a principal reach?", not by a scanner's severity label.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Reviewing an AWS/Azure/GCP account or organization's security posture</li>
+<li>Triaging a Prowler, ScoutSuite, Security Hub, or Defender for Cloud report</li>
+<li>Deciding which of many misconfigurations actually matter</li>
+<li>Setting preventive guardrails (SCPs, Azure Policy, org policies)</li>
+<li>Enabling the logging and controls an investigation will later depend on</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Actively investigating a live incident</strong> — use <a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a>,</li>
+</ul>
+<p><a class="xref" href="investigating-azure-incidents.html"><code>investigating-azure-incidents</code></a>, or <a class="xref" href="investigating-gcp-incidents.html"><code>investigating-gcp-incidents</code></a></p>
+<ul>
+<li><strong>Attacking the environment to prove the path</strong> — use</li>
+</ul>
+<p><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></p>
+<ul>
+<li><strong>Kubernetes cluster-plane hardening</strong> — use <a class="xref" href="defending-kubernetes.html"><code>defending-kubernetes</code></a></li>
+<li><strong>Ranking CVEs in workloads rather than cloud config</strong> — use</li>
+</ul>
+<p><a class="xref" href="managing-vulnerabilities.html"><code>managing-vulnerabilities</code></a></p>
+<h2>Rank by Attack Path, Not Finding Count</h2>
+<p>Work findings in the order an attacker would exploit them, not the order the scanner lists them:</p>
+<ol>
+<li><strong>Public exposure of data or compute.</strong> Public S3/GCS buckets and storage</li>
+</ol>
+<p>accounts, publicly reachable databases, management ports open to <code>0.0.0.0/0</code>. These need no credential — they are pre-authentication. Close first.</p>
+<ol>
+<li><strong>Identity that over-reaches.</strong> Wildcard <code>Action</code>/<code>Resource</code> policies, roles</li>
+</ol>
+<p>assumable by <code>*</code> or by external accounts without a condition, users with <code>iam:PassRole</code> to a privileged role, service principals with <code>Owner</code>. This is where a foothold becomes account-takeover.</p>
+<ol>
+<li><strong>Missing or disabled audit logging.</strong> CloudTrail not multi-region, GCP Data</li>
+</ol>
+<p>Access logs off, Azure diagnostic settings absent. This does not create the breach but it blinds the investigation — enable it <em>now</em>, because you cannot retroactively log the incident you are about to have.</p>
+<ol>
+<li><strong>Unencrypted data and absent key management.</strong> Real, but rarely the entry</li>
+</ol>
+<p>path. Fix after the above unless a compliance obligation reorders it.</p>
+<p>A public bucket with customer data outranks a hundred "encryption not enabled" findings, even though the scanner may score them alike.</p>
+<h2>Read CSPM Output Critically</h2>
+<p>Prowler, ScoutSuite, Security Hub, and Defender for Cloud are the standard tools and they are useful — but their output is a starting point, not a verdict:</p>
+<ul>
+<li><strong>Severity is generic.</strong> The tool does not know your environment. A "medium"</li>
+</ul>
+<p>on a role assumable cross-account may be your worst finding; a "high" on an internal-only resource may be noise.</p>
+<ul>
+<li><strong>Findings lack blast radius.</strong> The tool reports that a policy has <code>*</code>; it</li>
+</ul>
+<p>does not tell you that role is attached to an internet-facing function. You supply the reachability.</p>
+<ul>
+<li><strong>Suppressions hide real risk.</strong> A finding suppressed months ago "because it</li>
+</ul>
+<p>was accepted" may no longer be acceptable. Review the suppression list as carefully as the open findings.</p>
+<ul>
+<li><strong>Green is not clean.</strong> The scanner checks what it checks. A passing scan</li>
+</ul>
+<p>with Data Access logging disabled has a large blind spot it will never report as a finding.</p>
+<p>Map the top findings to CIS Benchmark controls where a compliance frame helps, but do not let the benchmark set your priority — the benchmark is comprehensive, your remediation budget is not.</p>
+<h2>Guardrails Beat Findings</h2>
+<p>A fixed misconfiguration recurs the next time someone provisions a resource. A guardrail prevents the whole class:</p>
+<ul>
+<li><strong>AWS:</strong> Service Control Policies to deny public S3 org-wide, deny disabling</li>
+</ul>
+<p>CloudTrail, restrict regions; <code>s3:BlockPublicAccess</code> at the account level.</p>
+<ul>
+<li><strong>Azure:</strong> Azure Policy with <code>deny</code> effects for public network access,</li>
+</ul>
+<p>required encryption, required diagnostic settings.</p>
+<ul>
+<li><strong>GCP:</strong> Organization Policy constraints (<code>storage.publicAccessPrevention</code>,</li>
+</ul>
+<p><code>iam.disableServiceAccountKeyCreation</code>, <code>compute.requireOsLogin</code>).</p>
+<p>Prefer the org-level <code>deny</code> over the per-resource fix. The point-fix closes one finding; the guardrail closes the class and every future instance of it.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"We closed all the high-severity findings."</em> Severity is the scanner's guess</li>
+</ul>
+<p>about a generic environment. The finding that matters is the one on the attack path, whatever it is labelled.</p>
+<ul>
+<li><em>"The scan is green, so the account is secure."</em> The scan covers its checks.</li>
+</ul>
+<p>Disabled logging, an over-broad role the tool rates low, and a suppressed finding are all invisible to a green result.</p>
+<ul>
+<li><em>"Encryption-at-rest is our top gap."</em> Rarely the entry path. A public bucket</li>
+</ul>
+<p>or a cross-account-assumable admin role outranks it unless compliance forces the order.</p>
+<ul>
+<li><em>"We fixed the public bucket."</em> One bucket. Without an org-level guardrail the</li>
+</ul>
+<p>next team makes the same bucket public next week. Fix the class.</p>
+<ul>
+<li><em>"That finding was accepted as a risk."</em> By whom, when, and is it still true?</li>
+</ul>
+<p>Stale acceptances are where real exposure hides.</p>
+<ul>
+<li><em>"IAM is too complex to audit fully."</em> Then audit the escalation primitives</li>
+</ul>
+<p>first — <code>PassRole</code>, wildcard trust policies, cross-account assume — not nothing. Identity is the perimeter; it is not optional.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> — the attack paths this posture work closes</li>
+<li><a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a> / <a class="xref" href="investigating-azure-incidents.html"><code>investigating-azure-incidents</code></a> /</li>
+</ul>
+<p><a class="xref" href="investigating-gcp-incidents.html"><code>investigating-gcp-incidents</code></a> — what the audit logging you enable here feeds</p>
+<ul>
+<li><a class="xref" href="defending-kubernetes.html"><code>defending-kubernetes</code></a> — the cluster plane, when the account runs managed k8s</li>
+<li><a class="xref" href="managing-vulnerabilities.html"><code>managing-vulnerabilities</code></a> — the workload-CVE counterpart to config posture</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

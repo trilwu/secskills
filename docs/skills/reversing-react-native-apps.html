@@ -1,0 +1,145 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reversing-react-native-apps — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / reversing-react-native-apps</div>
+  <h1 class="sk">reversing-react-native-apps</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Reverse engineer React Native mobile apps, including Hermes bytecode bundles, using hbctool, hermes-dec, and Frida. Use when an APK contains index.android.bundle or libhermes.so, when an IPA contains main.jsbundle, when jadx shows only ReactActivity classes, or when a bundle file starts with the Hermes magic bytes instead of readable JavaScript.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>React Native apps are JavaScript wearing a native shell. That is good news — the application logic ships as a bundle you can read — unless the bundle was compiled to Hermes bytecode, in which case you need a decompiler and the version compatibility problem becomes the whole task.</p>
+<h2>When to Use</h2>
+<ul>
+<li><code>jadx</code> shows <code>ReactActivity</code>, <code>ReactNativeHost</code>, and little application logic</li>
+<li>The APK contains <code>assets/index.android.bundle</code> or <code>lib/*/libhermes.so</code></li>
+<li>The IPA contains <code>main.jsbundle</code></li>
+<li>You need to find API endpoints, secrets, or business logic in an RN app</li>
+<li>You need to patch or hook JavaScript-level behaviour</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Flutter</strong> (<code>libapp.so</code>, <code>libflutter.so</code>) — use <a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a></li>
+<li><strong>Unity</strong> (<code>global-metadata.dat</code>) — use <a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a></li>
+<li><strong>Native Java/Kotlin apps</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
+<li><strong>Native modules written in C/C++</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
+</ul>
+<h2>Identify the Bundle Format</h2>
+<p>This one check decides whether the job takes ten minutes or a day.</p>
+<pre><code>unzip -j target.apk 'assets/index.android.bundle' -d ./out
+file ./out/index.android.bundle
+xxd ./out/index.android.bundle | head -2</code></pre>
+<div class="tw"><table><thead><tr><th>First bytes</th><th>Format</th><th>Path</th></tr></thead><tbody><tr><td>Readable JS (<code>var __BUNDLE_START</code>, <code>__d(function</code>)</td><td>Plain JavaScript</td><td>Beautify and read directly</td></tr><tr><td>Binary, Hermes magic (<code>c6 1f bc 03</code> little-endian)</td><td>Hermes bytecode</td><td>Decompile — see below</td></tr></tbody></table></div>
+<pre><code># Plain bundle: beautify, then it reads like any minified web app
+npx js-beautify index.android.bundle -o bundle.js
+rg -n 'https?://|api[_-]?key|Bearer |secret|token' bundle.js | head -50</code></pre>
+<p>A plain bundle is a gift. Module boundaries survive as <code>__d(function(...)</code> registrations, source maps are occasionally shipped by mistake (<code>index.android.bundle.map</code> — always check), and the whole application logic is in front of you.</p>
+<h2>Hermes Bytecode</h2>
+<p>Hermes compiles JS to its own bytecode (HBC). The bytecode version is embedded in the header and <strong>changes with React Native releases</strong>, which is the single biggest practical obstacle: a tool that supports HBC 74 will refuse or misparse HBC 96.</p>
+<pre><code># Read the version out of the header before choosing a tool
+hbctool disasm index.android.bundle ./disasm     # HBC 59, 62, 74 ONLY
+hermes-dec ...                                    # decompiler; wider version support</code></pre>
+<p>Upstream <code>hbctool</code> ships support for exactly three bytecode versions — <strong>59, 62, and 74</strong>. Anything else fails at parse. Check the header version first rather than reading a parse error as "the bundle is protected"; on a current React Native release you will usually be above 74 and should reach for <code>hermes-dec</code> or a <code>hermesc</code> you built from the matching Hermes tag.</p>
+<div class="tw"><table><thead><tr><th>Tool</th><th>Gives you</th><th>Caveat</th></tr></thead><tbody><tr><td><code>hbctool</code></td><td>Disassembly <em>and</em> reassembly — you can patch and repack</td><td>Supports a limited set of HBC versions</td></tr><tr><td><code>hermes-dec</code></td><td>Decompiled pseudo-JavaScript</td><td>Read-only; output is approximate</td></tr><tr><td><code>hasmer</code></td><td>Disassembly/assembly, alternate version coverage</td><td>Try when <code>hbctool</code> refuses the version</td></tr></tbody></table></div>
+<p>When every tool rejects the version, the reliable fallback is to build the matching <code>hermesc</code> from the React Native release the app used, and use its tooling. That is slower but version-correct.</p>
+<p><strong>What to do with the output.</strong> Even imperfect decompilation is enough for the questions that matter: string tables survive intact, so endpoints, keys, and feature flags are recoverable directly:</p>
+<pre><code>strings -n 6 index.android.bundle | rg -i 'https?://|api|token|secret|firebase' | sort -u</code></pre>
+<p>The Hermes string table is a flat, readable region of the file. Reach for it before decompiling — it often answers the question outright.</p>
+<h2>Runtime Analysis</h2>
+<p>Frida is frequently faster than static work on RN, because the interesting boundary is where JavaScript calls into native.</p>
+<pre><code># Enumerate the native modules the JS side can reach
+frida -U -f com.target.app -l rn-enumerate-modules.js
+
+# Hook the bridge: every JS↔native call, with arguments
+# (target the ReactNative bridge / TurboModule dispatch)
+objection -g com.target.app explore</code></pre>
+<p>Useful hook points: <code>fetch</code>/<code>XMLHttpRequest</code> in the JS runtime, the native networking module (OkHttp on Android — hookable with standard pinning bypass), <code>AsyncStorage</code> reads and writes, and any <code>NativeModules.*</code> the app defines.</p>
+<p>TLS interception is ordinary here — unlike Flutter, RN uses the platform HTTP stack, so the usual system-CA plus proxy setup works, and standard pinning bypasses apply. If interception fails, suspect pinning in a native module, not a separate trust store.</p>
+<h2>Where the Findings Usually Are</h2>
+<p>React Native apps concentrate the same few problems:</p>
+<ul>
+<li><strong>Secrets in the bundle.</strong> API keys, Firebase configs, and third-party</li>
+</ul>
+<p>tokens shipped in JS because "it's compiled." Hermes is not encryption.</p>
+<ul>
+<li><strong>Client-side authorization.</strong> Role checks and feature gates implemented in</li>
+</ul>
+<p>JS, trivially patched or simply ignored by calling the API directly.</p>
+<ul>
+<li><strong><code>AsyncStorage</code> as a credential store.</strong> Unencrypted by default; tokens and</li>
+</ul>
+<p>PII routinely land there.</p>
+<ul>
+<li><strong>Over-broad native modules.</strong> Custom bridge methods that expose file system</li>
+</ul>
+<p>or shell access to JS, reachable from any injected script.</p>
+<ul>
+<li><strong>Debug artifacts.</strong> Source maps, dev-mode bundles, and <code>console.log</code> output</li>
+</ul>
+<p>left in release builds.</p>
+<h2>Patching and Repacking</h2>
+<pre><code>hbctool disasm index.android.bundle ./work
+# edit ./work/instruction.hasm and ./work/metadata.json
+hbctool asm ./work index.android.bundle.patched
+# replace in the APK, then re-sign
+apktool b target -o patched.apk &amp;&amp; apksigner sign --ks debug.keystore patched.apk</code></pre>
+<p>Patch only what you must, and only with authorization. Repacking trips integrity checks in hardened apps; if the app validates its own bundle, hook the check rather than defeating it by editing.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The bundle is binary, so the logic is protected."</em> Hermes is a compiler,</li>
+</ul>
+<p>not a protection. The string table alone often gives up the API.</p>
+<ul>
+<li><em>"jadx found nothing, so it's obfuscated."</em> There is nothing in the dex.</li>
+</ul>
+<p>Look in <code>assets/</code>.</p>
+<ul>
+<li><em>"No tool supports this HBC version, dead end."</em> Build <code>hermesc</code> from the</li>
+</ul>
+<p>matching React Native release, or read the string table.</p>
+<ul>
+<li><em>"The key is only used client-side."</em> It is in the bundle, so it is public.</li>
+</ul>
+<p>Treat every bundle secret as disclosed.</p>
+<ul>
+<li><em>"The app enforces the role check."</em> The app is the client. Verify the check</li>
+</ul>
+<p>server-side by calling the API without it.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the wider assessment, storage, and platform issues</li>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — the backend, which is where the real findings are</li>
+<li><a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a> — the other common cross-platform framework</li>
+<li>hbctool, hermes-dec, hasmer, Frida/objection, jadx, apktool</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

@@ -1,0 +1,198 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reviewing-cryptography — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / reviewing-cryptography</div>
+  <h1 class="sk">reviewing-cryptography</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Review cryptographic implementations and protocol usage for misuse — weak primitives, nonce and IV handling, key management, authentication of ciphertext, randomness, timing side channels, TLS and JWT configuration, and password storage. Use when auditing code that encrypts, signs, hashes, or authenticates, or when assessing TLS and token configurations.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Almost no real system is broken by cryptanalysis. They are broken by misuse: a reused nonce, unauthenticated ciphertext, a comparison that returns early, a key checked into git. Review for misuse, and leave primitive design to cryptographers.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Auditing code that encrypts, decrypts, signs, verifies, or hashes</li>
+<li>Reviewing key management, rotation, and storage</li>
+<li>Assessing TLS/mTLS configuration and certificate validation</li>
+<li>Reviewing JWT, session token, and API signature schemes</li>
+<li>Checking password and secret storage</li>
+<li>Evaluating randomness quality for security-relevant values</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Designing a new primitive or protocol</strong> — that needs a cryptographer and</li>
+</ul>
+<p>formal review, not a code audit</p>
+<ul>
+<li><strong>Breaking cryptography in a CTF</strong> — different discipline; use</li>
+</ul>
+<p><code>solving</code>-oriented offensive skills and known-attack tooling</p>
+<ul>
+<li><strong>General code review</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
+<li><strong>Password cracking</strong> — use <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
+</ul>
+<h2>The Misuse Checklist</h2>
+<p>Work through these in order. Each has caught real production breaks.</p>
+<h3>1. Is the ciphertext authenticated?</h3>
+<p>Encryption without authentication is the single most common serious finding. CBC or CTR without a MAC means an attacker can modify plaintext — and with a decryption oracle, recover it (padding oracle).</p>
+<pre><code>Good:  AES-GCM, ChaCha20-Poly1305, AES-CBC + HMAC (encrypt-then-MAC)
+Bad:   AES-CBC alone, AES-ECB (ever), CTR without a MAC, MAC-then-encrypt</code></pre>
+<pre><code>rg -n 'AES/ECB|AES\.MODE_ECB|CipherMode\.ECB|"AES"\)' -i
+rg -n 'AES/CBC/PKCS5Padding|MODE_CBC|createCipheriv\(.*cbc' -i</code></pre>
+<p>If you see CBC, find the MAC. If there is no MAC, that is a finding regardless of how the ciphertext is transported.</p>
+<h3>2. Nonce and IV handling</h3>
+<div class="tw"><table><thead><tr><th>Mode</th><th>Rule</th><th>Failure</th></tr></thead><tbody><tr><td>GCM / ChaCha20-Poly1305</td><td>Never reuse a (key, nonce) pair</td><td>Catastrophic: reveals the auth key, forgery becomes trivial</td></tr><tr><td>CBC</td><td>IV must be unpredictable and random per message</td><td>Chosen-plaintext attacks (BEAST-class)</td></tr><tr><td>CTR</td><td>Never reuse a counter with the same key</td><td>Keystream reuse; XOR of plaintexts</td></tr></tbody></table></div>
+<pre><code># The classic bug: a fixed or zero IV
+rg -n 'iv\s*=\s*(b?["\x27]0|new byte\[\d+\]|bytes\(\d+\)|\[0\]\s*\*)' -i
+rg -n 'IvParameterSpec\(new byte\[16\]\)|createCipheriv\([^,]+,[^,]+,\s*["\x27]'</code></pre>
+<p>Random 96-bit nonces for GCM are safe up to roughly 2^32 messages per key. A counter-based nonce is safer, but only if the counter state genuinely survives restarts and is not duplicated across instances. Ask where the counter is persisted; "in memory" plus horizontal scaling means reuse.</p>
+<h3>3. Key management</h3>
+<ul>
+<li>Where does the key come from? Hardcoded, env var, KMS/HSM, derived?</li>
+<li>Hardcoded keys, keys in source, keys in config committed to the repo, keys</li>
+</ul>
+<p>in container images, keys in CI logs — check all of these.</p>
+<ul>
+<li>Is a key used for exactly one purpose? Key reuse across encryption and</li>
+</ul>
+<p>signing, or across tenants, is a finding.</p>
+<ul>
+<li>Is there a rotation path at all? A system that cannot rotate has no response</li>
+</ul>
+<p>to compromise.</p>
+<ul>
+<li>Derived keys: is a proper KDF used (HKDF for key material, Argon2id/scrypt/</li>
+</ul>
+<p>PBKDF2 for passwords)? A raw SHA-256 of a password is not a KDF.</p>
+<pre><code>rg -n 'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|-----BEGIN'
+rg -n '(secret|api[_-]?key|password|token)\s*[:=]\s*["\x27][A-Za-z0-9/+=]{16,}' -i
+gitleaks detect --source . --redact      # history matters more than the tree</code></pre>
+<h3>4. Password storage</h3>
+<pre><code>Correct:   Argon2id (preferred), scrypt, bcrypt, PBKDF2-HMAC-SHA256 with a
+           high iteration count — each with a per-user random salt
+Wrong:     MD5, SHA-1, SHA-256, SHA-512 (raw or salted), any unsalted hash,
+           encryption instead of hashing, a "pepper" as the only defense</code></pre>
+<p>Check the work factor against current guidance, not the value that was adequate when the code was written. And check that the verification path uses the library's constant-time verify function rather than comparing strings.</p>
+<h3>5. Randomness</h3>
+<p>Security-relevant values — tokens, session IDs, nonces, salts, password reset codes, IVs — must come from a CSPRNG.</p>
+<pre><code>rg -n 'math/rand|Math\.random\(\)|random\.random\(|rand\(\)|mt_rand|Random\(\)' 
+# Correct: crypto/rand, secrets.token_bytes, window.crypto.getRandomValues,
+#          SecureRandom, os.urandom, RandomNumberGenerator</code></pre>
+<p>Also check: seeding with a timestamp or PID, UUIDv1/v4-from-a-weak-source used as a secret, and predictable sequential IDs used where unguessability is assumed.</p>
+<h3>6. Timing side channels</h3>
+<p>Any comparison of a secret must be constant time: MACs, tokens, API signatures, password hashes, OTPs.</p>
+<pre><code>rg -n 'hmac.*==|token\s*==|signature\s*==|\.equals\(.*(hmac|token|sig)' -i
+# Correct: hmac.compare_digest, crypto.timingSafeEqual, subtle.ConstantTimeCompare,
+#          MessageDigest.isEqual, hash_equals</code></pre>
+<p>Early-return string comparison of an HMAC is a practical remote attack, not a theoretical one.</p>
+<h3>7. Signature verification</h3>
+<ul>
+<li>Is the signature actually verified, or merely parsed?</li>
+<li>Is the algorithm taken from the message? (JWT <code>alg</code> confusion: <code>none</code>, and</li>
+</ul>
+<p>RS256→HS256 where the public key becomes the HMAC key.)</p>
+<ul>
+<li>Is the key selected by an identifier the attacker controls (<code>kid</code>, <code>jku</code>,</li>
+</ul>
+<p><code>x5u</code>)? Those fields are attacker input; treat them as such.</p>
+<ul>
+<li>Are claims validated after signature verification: <code>exp</code>, <code>nbf</code>, <code>iss</code>,</li>
+</ul>
+<p><code>aud</code>, and — critically — the subject's current authorization?</p>
+<pre><code>rg -n 'jwt\.decode\(|verify\s*[:=]\s*(False|false)|algorithms\s*=\s*\[?["\x27]?none' -i
+rg -n 'InsecureSkipVerify|verify\s*=\s*False|CURLOPT_SSL_VERIFYPEER.*0|rejectUnauthorized:\s*false'</code></pre>
+<h3>8. TLS configuration</h3>
+<pre><code># Server side
+testssl.sh --severity MEDIUM https://target
+sslyze --regular target:443
+nmap --script ssl-enum-ciphers -p 443 target
+
+# Look for: TLS &lt; 1.2, RC4/3DES/NULL/EXPORT ciphers, no forward secrecy,
+# weak DH params, expired or misissued certs, missing HSTS</code></pre>
+<p>Client side is more often wrong than server side. Check that certificate verification is enabled, that hostname verification is on (it is separate from chain verification in several libraries), and that custom trust stores are not silently accepting everything. A custom <code>TrustManager</code> that returns without throwing is the Java idiom for "no TLS at all."</p>
+<h3>9. Post-quantum posture</h3>
+<p>For anything with a long confidentiality lifetime, note harvest-now-decrypt later exposure and whether a hybrid key exchange (e.g. X25519 + ML-KEM) is available in the stack. This is a roadmap finding, not usually an urgent one — but say so explicitly rather than omitting it.</p>
+<h2>Protocol-Level Questions</h2>
+<p>Beyond primitives, ask:</p>
+<ul>
+<li><strong>Replay</strong>: is there a nonce, timestamp, or sequence number, and is it</li>
+</ul>
+<p>actually checked and stored?</p>
+<ul>
+<li><strong>Binding</strong>: is the signature bound to the whole message, including the</li>
+</ul>
+<p>recipient and context? Signature-stripping and cross-protocol reuse come from under-scoped signing.</p>
+<ul>
+<li><strong>Downgrade</strong>: can a client or server be negotiated to a weaker mode?</li>
+<li><strong>Oracles</strong>: does the error handling distinguish "bad padding" from "bad</li>
+</ul>
+<p>MAC", or decryption failure from authorization failure? Any observable difference — including timing and response size — is an oracle.</p>
+<ul>
+<li><strong>Canonicalization</strong>: if a signature covers a serialized structure, can the</li>
+</ul>
+<p>same structure serialize two ways? JSON and XML signature schemes break here routinely.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"It's encrypted."</em> Encrypted is not authenticated, and not authorized.</li>
+<li><em>"We use AES-256, so it's strong."</em> Key size is almost never the weak link.</li>
+<li><em>"The IV is random enough."</em> Show where it is generated and from what.</li>
+<li><em>"Timing attacks aren't practical over a network."</em> They are, and have been</li>
+</ul>
+<p>demonstrated repeatedly across the internet.</p>
+<ul>
+<li><em>"We rolled our own because the library was awkward."</em> Custom crypto is a</li>
+</ul>
+<p>finding on its own. Name the library that should be used instead.</p>
+<ul>
+<li><em>"The key is in an environment variable, not the code."</em> Better, but check</li>
+</ul>
+<p>where the env var is set, who can read the process environment, and whether it appears in logs, crash dumps, or the container image.</p>
+<ul>
+<li><em>"Certificate pinning is too much hassle."</em> Fine — but then say so as an</li>
+</ul>
+<p>accepted risk, do not disable verification instead.</p>
+<ul>
+<li><em>"It's internal traffic."</em> Internal networks are where lateral movement</li>
+</ul>
+<p>happens.</p>
+<h2>Deliverable</h2>
+<p>For each finding: the primitive or protocol involved, the specific misuse, the concrete attack it enables (not "weak crypto"), the affected data and its confidentiality lifetime, and the specific correct construction — named library, named mode, named parameters. Cryptography findings that recommend "use strong encryption" do not get fixed.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the surrounding code review</li>
+<li><a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a> — offensive side of weak password storage</li>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — token and signature handling at the API layer</li>
+<li>Libraries to recommend: libsodium/NaCl, Google Tink, <code>age</code>, platform AEAD APIs</li>
+<li><code>testssl.sh</code>, <code>sslyze</code>, <code>cryptography</code> (Python) audit APIs, <code>cargo-crev</code></li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

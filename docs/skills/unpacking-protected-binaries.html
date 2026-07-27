@@ -1,0 +1,191 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>unpacking-protected-binaries — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / unpacking-protected-binaries</div>
+  <h1 class="sk">unpacking-protected-binaries</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Unpack and dump protected executables — UPX and commodity packers, custom crypters, commercial protectors like Themida and VMProtect, and .NET packers — by finding the original entry point, dumping from memory, and rebuilding the import table with Scylla, pe-sieve, or x64dbg. Use when a binary has high entropy, few imports, unnamed sections, or when analysis tools show almost no code.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Static unpacking is a trap for anything beyond UPX. The reliable method is to let the program unpack itself, then take the result out of memory. Almost every protector, however sophisticated, must eventually produce executable code in a readable page — that moment is what you are waiting for.</p>
+<p>Run protected samples only in a contained environment; see <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>.</p>
+<h2>When to Use</h2>
+<ul>
+<li><code>binwalk -E</code> shows uniformly high entropy across most of the file</li>
+<li>The import table has a handful of entries (<code>LoadLibrary</code>, <code>GetProcAddress</code>)</li>
+<li>Section names are absent, random, or <code>UPX0</code>/<code>.themida</code>/<code>.vmp0</code></li>
+<li>Disassembly shows a small stub and one large data blob</li>
+<li>A tool reports the file is packed, or analysis finds essentially no code</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>The wider malware workflow</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for containment,</li>
+</ul>
+<p>triage, and IOC output; come back here for the unpacking step</p>
+<ul>
+<li><strong>.NET assemblies</strong> — use <a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a>, which covers .NET</li>
+</ul>
+<p>packers and managed memory dumping specifically</p>
+<ul>
+<li><strong>Obfuscation without packing</strong> (readable imports, normal entropy, confusing</li>
+</ul>
+<p>control flow) — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></p>
+<ul>
+<li><strong>Firmware images</strong> — <code>binwalk -Me</code> extraction is a different job; see</li>
+</ul>
+<p><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></p>
+<h2>Identify the Protector First</h2>
+<p>The response differs enormously between a commodity packer and a commercial protector, so spend a minute here.</p>
+<pre><code>diec target.exe                     # Detect It Easy — the best single identifier
+rg -a -o 'UPX|MPRESS|Themida|VMProtect|ASPack|Enigma|Obsidium|PECompact' target.exe
+binwalk -E target.exe               # entropy profile</code></pre>
+<pre><code># Structural tells
+readpe target.exe                   # or: rabin2 -S target.exe
+#   raw size ≈ 0 with large virtual size   → section unpacked at runtime
+#   section marked writable AND executable → self-modifying
+#   entry point outside the first section  → stub in a later section
+#   TLS callbacks present                  → code runs BEFORE the entry point</code></pre>
+<p><strong>TLS callbacks matter.</strong> They execute before the entry point, so a debugger set to break at the EP has already run the protector's anti-debug checks. Set the debugger to break on TLS callbacks, not on the entry point.</p>
+<div class="tw"><table><thead><tr><th>Identified as</th><th>Approach</th></tr></thead><tbody><tr><td>UPX (unmodified)</td><td><code>upx -d</code> — takes seconds</td></tr><tr><td>UPX (modified header)</td><td>Repair the magic, or unpack dynamically</td></tr><tr><td>Commodity crypter, custom stub</td><td>Dynamic dump at OEP</td></tr><tr><td>Themida, VMProtect, Enigma</td><td>Dump plus heavy import repair; expect virtualized functions to stay virtualized</td></tr><tr><td>.NET packer</td><td><a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a></td></tr></tbody></table></div>
+<pre><code>upx -d target.exe -o unpacked.exe          # try first, costs nothing</code></pre>
+<h2>The Dynamic Unpacking Loop</h2>
+<pre><code>1. Break before the stub runs (TLS callbacks, or the EP if none)
+2. Run until the unpacked code exists in memory
+3. Find the OEP — the original entry point of the real program
+4. Dump the process image
+5. Rebuild the import table
+6. Fix the PE headers and verify the dump loads</code></pre>
+<p><strong>Finding the OEP</strong> is the part that takes judgment. Reliable signals:</p>
+<ul>
+<li><strong>Memory write-then-execute.</strong> Set a hardware breakpoint on execute over the</li>
+</ul>
+<p>section the stub is writing into. The first execution there is usually at or near the OEP. In x64dbg this is a page guard on the target section.</p>
+<ul>
+<li><strong>The tail jump.</strong> Packer stubs end with a jump far outside the stub's own</li>
+</ul>
+<p>section. Step to the end of the stub and watch for the long jump.</p>
+<ul>
+<li><strong>Compiler entry signature.</strong> Real entry points look like a compiler's CRT</li>
+</ul>
+<p>startup — <code>security_init_cookie</code>, a call to <code>__scrt_common_main</code>, or a standard prologue. When execution lands somewhere that looks like normal compiled code rather than obfuscated stub code, you have arrived.</p>
+<ul>
+<li><strong><code>GetCommandLine</code> / <code>GetModuleHandle</code> calls</strong> early in the real program.</li>
+</ul>
+<pre><code>x64dbg workflow:
+  Options → Events → break on TLS callbacks and on system breakpoint
+  Run, then in the Memory Map set "Break on execute" for the target section
+  When it breaks, confirm the code looks compiler-generated → that is the OEP</code></pre>
+<h2>Dumping and Import Repair</h2>
+<pre><code># Dump from the debugger at OEP: Scylla (built into x64dbg)
+#   1. Attach / already broken at OEP
+#   2. Scylla → set OEP → IAT Autosearch → Get Imports
+#   3. Fix invalid/unresolved entries, then Dump + Fix Dump
+
+# Or dump externally
+pe-sieve /pid &lt;pid&gt; /dmode 3        # dumps and repairs; good for automation
+# hollows_hunter for scanning a whole system for unpacked/injected modules</code></pre>
+<p><strong>Import repair is where most dumps fail.</strong> Packers replace the import table with a runtime-resolved stub, so a raw dump has API calls pointing into the packer's own thunk area. Scylla's IAT search finds the resolved table; when it returns unresolved entries, that usually means:</p>
+<ul>
+<li>The dump was taken before the imports were fully resolved — run further</li>
+<li>The protector uses API redirection, where each call goes through an obfuscated</li>
+</ul>
+<p>stub that computes the real address — these need manual resolution or an emulation-based unstubber</p>
+<ul>
+<li>The API is resolved lazily on first call — trigger the functionality, then dump</li>
+</ul>
+<p>Verify the dump before analyzing it:</p>
+<pre><code>readpe dumped.exe | head -30          # sane headers, correct EP
+rabin2 -i dumped.exe | head -20       # imports resolve to real API names
+# The strongest test: does it run, or does a decompiler produce sane output?</code></pre>
+<h2>Commercial Protectors</h2>
+<p>Themida, VMProtect, Enigma, and similar do more than pack. Expect:</p>
+<ul>
+<li><strong>Virtualized functions.</strong> Selected functions are converted to bytecode for a</li>
+</ul>
+<p>custom VM. Dumping recovers the program <em>around</em> them, but the virtualized functions remain a VM interpreter loop. Devirtualization is a research-scale effort per protector version.</p>
+<ul>
+<li><strong>Aggressive anti-debug and anti-VM.</strong> Handle detection first —</li>
+</ul>
+<p>ScyllaHide, TitanHide, or a hypervisor-level debugger — or the process will exit or corrupt itself before you reach OEP.</p>
+<ul>
+<li><strong>Multiple unpacking stages</strong> with re-encryption of earlier stages.</li>
+</ul>
+<p>The practical decision: if only a few functions are virtualized, dump and analyze everything else, then handle those functions <strong>dynamically</strong> — hook their inputs and outputs rather than reading their logic. That answers "what does it do" without defeating the VM.</p>
+<h2>When Dumping Is Not Available</h2>
+<p>Some samples never fully unpack in one place: they decrypt individual functions on demand and re-encrypt after use, or they run entirely from a JIT-style buffer.</p>
+<ul>
+<li><strong>Trace-based recovery.</strong> Record execution with an instrumentation framework</li>
+</ul>
+<p>and reconstruct the executed code path from the trace.</p>
+<ul>
+<li><strong>Hook the decryption routine</strong> and log every plaintext block as it is</li>
+</ul>
+<p>produced — you get the code piecemeal but complete.</p>
+<ul>
+<li><strong>Frida/Pin/DynamoRIO</strong> for the instrumentation.</li>
+</ul>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"<code>upx -d</code> failed, so it isn't UPX."</em> Modified UPX headers are the most</li>
+</ul>
+<p>common commodity evasion. Check the section names and stub pattern.</p>
+<ul>
+<li><em>"I'll write a static unpacker."</em> Worth it for one family you will see a</li>
+</ul>
+<p>thousand times. Otherwise dumping is an order of magnitude cheaper.</p>
+<ul>
+<li><em>"The dump won't run, so it's wrong."</em> Verify what you actually need. Many</li>
+</ul>
+<p>dumps are unrunnable but perfectly analyzable.</p>
+<ul>
+<li><em>"Imports are broken, dump is useless."</em> Re-dump later in execution, or</li>
+</ul>
+<p>resolve manually. Timing is usually the issue.</p>
+<ul>
+<li><em>"It's VMProtect, so it's impossible."</em> Only the virtualized functions are.</li>
+</ul>
+<p>Dump everything else and treat those as black boxes with observable I/O.</p>
+<ul>
+<li><em>"I'll set a breakpoint on the entry point."</em> TLS callbacks already ran.</li>
+<li><em>"Nothing happened when I ran it."</em> Anti-VM or anti-debug fired. Handle</li>
+</ul>
+<p>detection before unpacking.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment, capability model, IOCs; the workflow this fits into</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — post-unpacking analysis and anti-analysis handling</li>
+<li><a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a> — .NET packers and managed dumping</li>
+<li>Detect It Easy, x64dbg + Scylla + ScyllaHide, pe-sieve, hollows_hunter, UPX</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

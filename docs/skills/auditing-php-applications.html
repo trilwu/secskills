@@ -1,0 +1,204 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>auditing-php-applications — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / auditing-php-applications</div>
+  <h1 class="sk">auditing-php-applications</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Audit PHP web application source for critical vulnerabilities using PHP&#x27;s specific sink and footgun catalog — object injection via unserialize and phar:// POP chains, type-juggling and magic-hash auth bypass, LFI/RFI through php:// and phar:// wrappers, dynamic includes and extract()/superglobal trust, SQL injection in string-built and legacy mysql_* queries, command-execution sinks, and SSRF. Use when reviewing a PHP codebase, a WordPress/Magento/Laravel app, or a plugin for exploitable bugs. Defers general audit methodology to auditing-code-for-vulnerabilities.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>This is the PHP-specific layer on top of <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>. Take the methodology from that skill — context → attack surface → bug-class hunt → variant analysis → the four-question verification gate — and apply the PHP sink catalog below to it. This skill exists because PHP has footguns no language-agnostic methodology carries: features that turn a file read into remote code execution, and comparison rules that turn <code>==</code> into an auth bypass.</p>
+<p>The collection deliberately has no per-language audit skills except this one. PHP earns the exception because it dominates the legacy-web and WordPress/Magento space where critical bugs actually live, and because its dynamic features fail in ways a reviewer must be primed for specifically.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Reviewing a PHP codebase or plugin for exploitable vulnerabilities</li>
+<li>Auditing a WordPress, Magento, Joomla, or Laravel application's source</li>
+<li>Tracing a suspected RCE, LFI, SQLi, or object-injection path in PHP</li>
+<li>Deciding whether a <code>unserialize</code>, <code>include</code>, or <code>==</code> on user input is exploitable</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>General audit methodology, or a non-PHP language</strong> — use</li>
+</ul>
+<p><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>; this skill assumes it</p>
+<ul>
+<li><strong>Finding a planted webshell or backdoor</strong> rather than a vulnerability — use</li>
+</ul>
+<p><a class="xref" href="hunting-web-backdoors.html"><code>hunting-web-backdoors</code></a></p>
+<ul>
+<li><strong>Building the deserialization exploit chain</strong> once you have the sink — use</li>
+</ul>
+<p><a class="xref" href="exploiting-deserialization.html"><code>exploiting-deserialization</code></a></p>
+<ul>
+<li><strong>Black-box testing a running app</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
+<li><strong>Reviewing only the diff of a change</strong> — use <a class="xref" href="reviewing-code-changes.html"><code>reviewing-code-changes</code></a></li>
+</ul>
+<h2>Sinks by Bug Class</h2>
+<p>Trace user input (superglobals, headers, uploaded filenames, DB values that were once user input) to each of these. A sink is only a bug when a source reaches it.</p>
+<h3>Remote code execution</h3>
+<ul>
+<li><strong>Direct eval sinks:</strong> <code>eval</code>, <code>assert</code> (string arg, pre-8.0),</li>
+</ul>
+<p><code>preg_replace</code> with <code>/e</code> (pre-7.0), <code>create_function</code> (pre-8.0), <code>mb_ereg_replace</code>/<code>mb_eregi_replace</code> with the <code>e</code> option.</p>
+<ul>
+<li><strong>Command execution:</strong> <code>system</code>, <code>exec</code>, <code>passthru</code>, <code>shell_exec</code>, backticks,</li>
+</ul>
+<p><code>proc_open</code>, <code>popen</code>, <code>pcntl_exec</code>. Watch <code>escapeshellarg</code> vs <code>escapeshellcmd</code> misuse — <code>escapeshellcmd</code> does <strong>not</strong> prevent argument injection.</p>
+<ul>
+<li><strong>Dynamic dispatch:</strong> <code>$func()</code> where <code>$func</code> derives from input,</li>
+</ul>
+<p><code>call_user_func</code>/<code>call_user_func_array</code>, <code>array_map</code>/<code>usort</code>/ <code>preg_replace_callback</code> with a user-influenced callback.</p>
+<h3>Object injection (the PHP-defining bug)</h3>
+<ul>
+<li><code>unserialize()</code> on any user-controlled data is object injection. Exploitation</li>
+</ul>
+<p>is a <strong>POP chain</strong>: existing classes with <code>__wakeup</code>, <code>__destruct</code>, <code>__toString</code>, or <code>__call</code> magic methods that do something dangerous when the object is materialized. The vulnerable file often contains no dangerous code at all — the gadget lives in a framework or dependency.</p>
+<ul>
+<li><strong><code>phar://</code> is unserialize in disguise — but version-gated.</strong> On **PHP</li>
+</ul>
+<p>before 8.0<strong>, any file operation (<code>file_exists</code>, <code>fopen</code>, <code>include</code>, <code>getimagesize</code>, …) on a <code>phar://</code> path automatically deserializes the Phar's metadata, so a path-traversal or LFI that points a file function at an uploaded <code>.phar</code> (or any file carrying Phar metadata) is object injection with no <code>unserialize</code> call in sight. </strong>PHP 8.0 removed that automatic unserialize** — only explicit <code>Phar::getMetadata()</code> deserializes now. So the bug is critical on the huge installed base of PHP 7.x and a non-issue on 8.x unless the code calls <code>getMetadata()</code> itself. Check the runtime version before ruling it in or out.</p>
+<ul>
+<li>Prefer <code>json_decode</code> in remediation; flag every <code>unserialize</code> on non-trusted</li>
+</ul>
+<p>data regardless of an obvious gadget — the gadget may arrive with the next dependency update.</p>
+<h3>LFI / RFI and stream wrappers</h3>
+<ul>
+<li><code>include</code>, <code>require</code>, <code>include_once</code>, <code>require_once</code> with user input.</li>
+<li><strong>Wrappers that change everything:</strong> <code>php://filter/...</code> (read source, and a</li>
+</ul>
+<p>known RCE chain via <code>convert.iconv</code>/compression filters), <code>php://input</code> (RFI-style body inclusion), <code>data://</code> (inline payload), <code>phar://</code> (object injection), <code>expect://</code>, <code>zip://</code>. <code>allow_url_include</code> being on turns LFI into remote RFI.</p>
+<ul>
+<li>File-read sinks (<code>file_get_contents</code>, <code>readfile</code>, <code>fopen</code>, <code>highlight_file</code>)</li>
+</ul>
+<p>with traversal give source and secret disclosure.</p>
+<h3>SQL injection</h3>
+<ul>
+<li>Legacy <code>mysql_query</code>/<code>mysqli_query</code> with string-concatenated input.</li>
+<li><code>$wpdb-&amp;gt;query("... $var ...")</code> <strong>without</strong> <code>$wpdb-&amp;gt;prepare()</code> — a <code>-&amp;gt;prepare</code></li>
+</ul>
+<p>that is present but interpolates outside its placeholders is still injectable.</p>
+<ul>
+<li>PDO/mysqli used with string building instead of bound parameters. Placeholder</li>
+</ul>
+<p>usage on the <em>table/column</em> name (which cannot be bound) is a common real hole.</p>
+<h3>Type juggling and magic-hash auth bypass</h3>
+<ul>
+<li><strong><code>==</code> and <code>!=</code> are loose.</strong> <code>strcmp</code>/<code>hash_equals</code>/<code>===</code> are the safe forms.</li>
+</ul>
+<p>The classic bypass: <code>if (md5($input) == $stored)</code> where two inputs both hash to a <code>0e[0-9]+</code> "magic hash" compare equal, because two numeric strings compare as numbers (<code>0e123 == 0e456</code> → <code>0.0 == 0.0</code>).</p>
+<ul>
+<li><strong>Version matters and it is a trap.</strong> In PHP 8.0 the number-vs-string rules</li>
+</ul>
+<p>changed: <code>0 == "foo"</code> was <code>true</code> in PHP 7 and is <code>false</code> in PHP 8, so a <code>in_array(0, $userStrings)</code> or <code>0 == $token</code> bypass that worked on PHP 7 fails on PHP 8. <strong>But the <code>0e</code> magic-hash bypass survives PHP 8</strong>, because both sides are numeric strings and still compare as numbers. Check the target PHP version before ruling a juggling bug in or out.</p>
+<ul>
+<li><code>strcmp($_GET['x'], $secret)</code> returned <code>NULL</code> (loosely <code>== 0</code>) when passed an</li>
+</ul>
+<p>array in PHP 7 — an auth bypass; in PHP 8 it throws a <code>TypeError</code>. Same code, different verdict by version.</p>
+<h3>Superglobal trust and variable variables</h3>
+<ul>
+<li><code>extract($_GET/$_POST/$_REQUEST)</code> lets a request set arbitrary local</li>
+</ul>
+<p>variables — overwrites auth flags, config, anything not yet initialized.</p>
+<ul>
+<li><code>$$var</code> / <code>${$key}</code> variable variables, <code>parse_str</code> without a result array</li>
+</ul>
+<p>(writes into scope), <code>import_request_variables</code> (removed 5.4) — all register_globals-flavoured variable injection.</p>
+<h3>SSRF and file upload</h3>
+<ul>
+<li><code>file_get_contents</code>/<code>curl</code>/<code>fopen</code> on a user-supplied URL is SSRF — route the</li>
+</ul>
+<p>exploitation reasoning through <a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a>.</p>
+<ul>
+<li>Uploads: check the destination is outside the web root, the extension is not</li>
+</ul>
+<p>attacker-chosen (double extensions, <code>.phtml</code>, <code>.php5</code>, null bytes on old PHP), and the server will not execute the type. A validated MIME with an attacker-controlled extension in a web-served directory is RCE.</p>
+<h2>Ecosystem Context</h2>
+<ul>
+<li><strong>WordPress:</strong> nonces are <strong>CSRF</strong> protection, not authorization — a valid</li>
+</ul>
+<p>nonce does not mean the user is allowed to act; look for the missing <code>current_user_can()</code> check. <code>$wpdb-&amp;gt;prepare</code> is mandatory for interpolation. <code>unfiltered_html</code>, <code>edit_*</code> capabilities, and unauthenticated AJAX/REST (<code>wp_ajax_nopriv_*</code>, <code>permission_callback =&amp;gt; '__return_true'</code>) are the usual holes.</p>
+<ul>
+<li><strong>Magento:</strong> heavy <code>unserialize</code> history, layout-XML injection, and the admin</li>
+</ul>
+<p>path/patch level matter for known-CVE reachability.</p>
+<ul>
+<li><strong>Laravel:</strong> mass assignment (<code>$fillable</code>/<code>$guarded</code>), Blade <code>{!! !!}</code></li>
+</ul>
+<p>(unescaped) vs <code>{{ }}</code> (escaped), and a leaked <code>APP_KEY</code> enabling cookie/<code>decrypt</code> object injection.</p>
+<h2>Verify Before You Report</h2>
+<p>Apply <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>' gate: trace the source to the sink, confirm the path is reachable (auth, routing, and — critically — the <strong>PHP version</strong> for juggling and removed-function bugs), and demonstrate impact rather than asserting it. A <code>unserialize</code> with no reachable gadget, or a <code>/e</code> regex on PHP 8, is a hardening note, not a critical finding — say which.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"There's no <code>unserialize</code>, so no object injection."</em> <code>phar://</code> reaches</li>
+</ul>
+<p>unserialize through ordinary file functions. Check every file operation whose path a user can influence.</p>
+<ul>
+<li><em>"It uses <code>==</code>, that's fine for a hash check."</em> <code>==</code> on hashes is the</li>
+</ul>
+<p>magic-hash bypass. Only <code>hash_equals</code>/<code>===</code> are safe, and the bypass survives PHP 8.</p>
+<ul>
+<li><em>"The comparison bug works, I confirmed it."</em> On which PHP version? <code>0 == "x"</code></li>
+</ul>
+<p>and <code>strcmp(array)</code> flipped verdict at PHP 8.0. State the version.</p>
+<ul>
+<li><em>"<code>prepare()</code> is called, so the query is safe."</em> Only for values inside</li>
+</ul>
+<p>placeholders. Interpolated table/column names and text spliced around the placeholders are still injectable.</p>
+<ul>
+<li><em>"The nonce check passes, so it's authorized."</em> WordPress nonces are CSRF</li>
+</ul>
+<p>tokens. Authorization is a separate <code>current_user_can()</code> you must find.</p>
+<ul>
+<li><em>"The upload validates the MIME type."</em> MIME is spoofable and irrelevant if</li>
+</ul>
+<p>the attacker controls the extension and the directory executes PHP.</p>
+<ul>
+<li><em>"It's a framework class, the gadget isn't here."</em> POP-chain gadgets live in</li>
+</ul>
+<p>dependencies by design. The absence of dangerous code in the vulnerable file is normal, not exculpatory.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the general methodology and gate this</li>
+</ul>
+<p>skill sits on top of</p>
+<ul>
+<li><a class="xref" href="hunting-web-backdoors.html"><code>hunting-web-backdoors</code></a> — planted malice rather than vulnerabilities</li>
+<li><a class="xref" href="exploiting-deserialization.html"><code>exploiting-deserialization</code></a> — building the POP chain once you find the</li>
+</ul>
+<p><code>unserialize</code>/<code>phar://</code> sink</p>
+<ul>
+<li><a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a> — the exploitation side of a user-controlled URL fetch</li>
+<li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — black-box testing of the running application</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

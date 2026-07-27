@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reversing-unity-il2cpp — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / core / reversing-unity-il2cpp</div>
+  <h1 class="sk">reversing-unity-il2cpp</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Reverse engineer Unity games and apps built with IL2CPP or Mono, using Il2CppDumper, Il2CppInspector, and dnSpy. Use when an APK or IPA contains global-metadata.dat, libil2cpp.so, UnityFramework, or Assembly-CSharp.dll, when jadx shows only UnityPlayerActivity, or when the target is described as a Unity build.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Unity ships in two very different shapes, and identifying which one you have is the entire first decision. A Mono build hands you decompilable .NET assemblies. An IL2CPP build compiles C# to C++ to native code, and the C# metadata lives in a separate file that you must recombine with the binary before anything is readable.</p>
+<h2>When to Use</h2>
+<ul>
+<li>The APK contains <code>assets/bin/Data/Managed/Metadata/global-metadata.dat</code> and</li>
+</ul>
+<p><code>lib/arm64-v8a/libil2cpp.so</code></p>
+<ul>
+<li>The APK contains <code>assets/bin/Data/Managed/Assembly-CSharp.dll</code> (Mono build)</li>
+<li>The IPA contains <code>Frameworks/UnityFramework.framework</code></li>
+<li><code>jadx</code> shows only <code>UnityPlayerActivity</code> and Unity plumbing</li>
+<li>You need to recover game or app logic, anti-cheat behaviour, or the API layer</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Flutter or React Native</strong> — use <a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a> or</li>
+</ul>
+<p><a class="xref" href="reversing-react-native-apps.html"><code>reversing-react-native-apps</code></a></p>
+<ul>
+<li><strong>Ordinary native apps</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
+<li><strong>Desktop game binaries with no Unity markers</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
+<li><strong>Building cheats or bypassing anti-cheat in live multiplayer services</strong> —</li>
+</ul>
+<p>out of scope; that is service abuse, not assessment</p>
+<h2>Identify the Build</h2>
+<pre><code>unzip -l target.apk | rg 'global-metadata|libil2cpp|Assembly-CSharp|libmono'</code></pre>
+<div class="tw"><table><thead><tr><th>Present</th><th>Build</th><th>Difficulty</th></tr></thead><tbody><tr><td><code>Assembly-CSharp.dll</code>, <code>libmono*.so</code></td><td>Mono</td><td>Easy — decompile the DLL directly</td></tr><tr><td><code>global-metadata.dat</code> + <code>libil2cpp.so</code></td><td>IL2CPP</td><td>The main path below</td></tr><tr><td>Neither, but <code>UnityFramework</code></td><td>iOS IL2CPP</td><td>Same as IL2CPP; extract from the decrypted IPA</td></tr></tbody></table></div>
+<p><strong>Mono builds are a short job.</strong> Pull the assembly and open it:</p>
+<pre><code>unzip -j target.apk 'assets/bin/Data/Managed/Assembly-CSharp.dll' -d ./out
+# dnSpy / dnSpyEx / ILSpy / dotPeek — full C# source recovery, and dnSpy can edit
+ilspycmd ./out/Assembly-CSharp.dll -o ./decompiled</code></pre>
+<p>Everything below is for IL2CPP.</p>
+<h2>Recombining Metadata with the Binary</h2>
+<p>IL2CPP splits the information: <code>libil2cpp.so</code> holds the compiled code, <code>global-metadata.dat</code> holds the C# type system — class names, method names, field names, string literals. Neither is useful alone. The tools' job is to match them and produce symbols.</p>
+<pre><code>unzip -j target.apk 'lib/arm64-v8a/libil2cpp.so' \
+                    'assets/bin/Data/Managed/Metadata/global-metadata.dat' -d ./in
+
+# Il2CppDumper: the standard first attempt
+Il2CppDumper ./in/libil2cpp.so ./in/global-metadata.dat ./out</code></pre>
+<p>Typical output and what it is for:</p>
+<div class="tw"><table><thead><tr><th>Artifact</th><th>Use</th></tr></thead><tbody><tr><td><code>dump.cs</code></td><td>Every class, method, and field with addresses — <strong>read this first</strong></td></tr><tr><td><code>DummyDll/</code></td><td>Stub .NET assemblies; open in dnSpy/ILSpy to browse the type system comfortably</td></tr><tr><td><code>script.json</code></td><td>Symbol import for IDA/Ghidra — applies names to <code>libil2cpp.so</code></td></tr><tr><td><code>stringliteral.json</code></td><td>String constants: URLs, keys, messages</td></tr></tbody></table></div>
+<p><code>Il2CppInspector</code> is the alternative when Il2CppDumper fails; it supports a different range of Unity versions and emits Ghidra and IDA scripts plus a richer C++ header. Try both before concluding a build is unsupported.</p>
+<p><strong>Version mismatch is the usual failure.</strong> The metadata format changes across Unity releases; the tool asks for or infers the version. Read the Unity version first and feed it explicitly:</p>
+<pre><code>strings ./in/libil2cpp.so | rg -m3 '20[0-9]{2}\.[0-9]+\.[0-9]+' 
+strings ./in/global-metadata.dat | head -5</code></pre>
+<p><strong>Protected builds</strong> encrypt or scramble <code>global-metadata.dat</code> — the header magic will be wrong and the dumpers will refuse. Signs: the file does not start with the expected metadata magic, or entropy is uniformly high. The practical route is dynamic: let the app decrypt the metadata itself, then dump it from memory once loaded.</p>
+<pre><code># Dump the decrypted metadata from a running process
+frida -U -f com.target.app -l dump-metadata.js
+# Then feed the dumped file to Il2CppDumper as normal</code></pre>
+<p>That pattern — let it unpack itself, dump from memory — is the same one used for packed malware, and it is almost always cheaper than defeating the protection statically. See <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a>.</p>
+<h2>Working the Recovered Code</h2>
+<ol>
+<li><strong>Read <code>dump.cs</code> for the type map.</strong> Search for the classes that matter:</li>
+</ol>
+<p>anything named <code>*Manager</code>, <code>*Service</code>, <code>*Api</code>, <code>*Network</code>, <code>*Auth</code>, <code>*Purchase</code>, <code>*Config</code>.</p>
+<ol>
+<li><strong>Load <code>script.json</code> into IDA or Ghidra</strong> so <code>libil2cpp.so</code> shows C# method</li>
+</ol>
+<p>names instead of <code>sub_1A2B3C</code>. Without this step the disassembly is unreadable; with it, it reads like decompiled C#.</p>
+<ol>
+<li><strong>Check <code>stringliteral.json</code> for endpoints and keys.</strong> Same reasoning as</li>
+</ol>
+<p>every other framework — string constants survive everything.</p>
+<ol>
+<li><strong>Hook at runtime with Frida</strong> using the addresses from <code>dump.cs</code>. Method</li>
+</ol>
+<p>addresses are relative to the <code>libil2cpp.so</code> base, so resolve the module base and add the offset.</p>
+<pre><code>// Pattern: resolve base, add the RVA from dump.cs, intercept
+const base = Module.findBaseAddress('libil2cpp.so');
+Interceptor.attach(base.add(0x1A2B3C), {
+  onEnter(args) { console.log('called with', args[1]); },
+  onLeave(ret)  { console.log('-&gt;', ret); }
+});</code></pre>
+<h2>Security-Relevant Findings</h2>
+<p>For an assessment rather than a curiosity exercise, the recurring issues:</p>
+<ul>
+<li><strong>Hardcoded credentials and endpoints</strong> in <code>stringliteral.json</code> — backend</li>
+</ul>
+<p>keys, analytics tokens, cloud storage credentials.</p>
+<ul>
+<li><strong>Client-authoritative logic.</strong> Currency, entitlements, and validation done</li>
+</ul>
+<p>in C# and trusted by the server. Verify by calling the API directly.</p>
+<ul>
+<li><strong>Weak or absent certificate pinning.</strong> Unity's networking layer is often</li>
+</ul>
+<p>configured permissively; check <code>UnityWebRequest</code> usage.</p>
+<ul>
+<li><strong>Local save and config tampering.</strong> <code>PlayerPrefs</code> and local save files</li>
+</ul>
+<p>storing values the server trusts.</p>
+<ul>
+<li><strong>Receipt validation done client-side</strong> for in-app purchases.</li>
+</ul>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"jadx shows nothing, so it's protected."</em> Unity apps have almost nothing in</li>
+</ul>
+<p>the dex by design.</p>
+<ul>
+<li><em>"The dumper failed, so the build can't be analyzed."</em> Try the other dumper,</li>
+</ul>
+<p>supply the Unity version explicitly, and if metadata is encrypted, dump it from memory.</p>
+<ul>
+<li><em>"IL2CPP is compiled, so the logic is safe."</em> The metadata ships alongside</li>
+</ul>
+<p>it. That is the whole point of the format.</p>
+<ul>
+<li><em>"The client validates the purchase."</em> Then the purchase is not validated.</li>
+<li><em>"I'll read the raw arm64."</em> Apply <code>script.json</code> first. The same function is</li>
+</ul>
+<p>unreadable before and routine after.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — platform storage, permissions, and native layer</li>
+<li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — the backend, where client-authoritative logic becomes a finding</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — memory dumping and anti-analysis for protected builds</li>
+<li>Il2CppDumper, Il2CppInspector, dnSpy/ILSpy, Frida, IDA/Ghidra</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

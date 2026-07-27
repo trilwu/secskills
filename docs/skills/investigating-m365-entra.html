@@ -1,0 +1,295 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>investigating-m365-entra — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / investigating-m365-entra</div>
+  <h1 class="sk">investigating-m365-entra</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+  </div>
+  <p class="sdesc">Investigate security incidents in Microsoft 365 and Entra ID (Azure AD) -- search the Unified Audit Log, correlate sign-in and audit events, trace illicit OAuth consent grants, analyze mailbox rule manipulation, and contain compromised identities. Use when responding to a BEC incident, investigating Entra ID compromise, analyzing suspicious OAuth app permissions, tracing mail forwarding abuse, or reviewing Azure AD sign-in anomalies.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>M365/Entra investigations differ from on-premises DFIR -- there are no disk images, no memory dumps, and no event logs you can collect yourself. Everything comes from API queries against Microsoft's log stores, several of which require E5 licensing or advanced audit to retain what you need. Knowing which logs exist, which ones are missing, and how long they last is half the investigation.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Business email compromise (BEC) -- unauthorized mailbox access, forwarding, or impersonation</li>
+<li>Entra ID account compromise -- suspicious sign-ins, token replay, credential stuffing</li>
+<li>Suspicious OAuth consent grants -- third-party apps with excessive permissions</li>
+<li>Mailbox rule manipulation -- inbox rules hiding attacker communications or forwarding mail</li>
+<li>Azure AD sign-in anomalies -- impossible travel, legacy auth, anonymizer networks</li>
+<li>Conditional Access or MFA tampering -- policy changes, MFA fatigue attacks</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>Broader incident response methodology</strong> -- use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
+<li><strong>Offensive testing of Entra ID</strong> -- use <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></li>
+<li><strong>An Azure resource/subscription compromise</strong> -- use <a class="xref" href="investigating-azure-incidents.html"><code>investigating-azure-incidents</code></a></li>
+<li><strong>An AWS compromise</strong> -- use <a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a></li>
+<li><strong>Other cloud infrastructure (GCP, offensive testing)</strong> -- use <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
+<li><strong>Building detection rules from findings</strong> -- use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
+</ul>
+<h2>Log Landscape and Retention</h2>
+<p>Before you query anything, establish what you have and how far back it goes. Missing logs are a finding, not a reason to skip the question.</p>
+<div class="tw"><table><thead><tr><th>Log source</th><th>Retention (default)</th><th>License gate</th><th>Key operations</th></tr></thead><tbody><tr><td>Unified Audit Log (UAL)</td><td>180d default; 1 year for E5-licensed users</td><td>MailItemsAccessed requires E5</td><td>MailItemsAccessed, New-InboxRule, Set-Mailbox, consent grants</td></tr><tr><td>Entra ID sign-in logs</td><td>30d</td><td>Export to Log Analytics for longer</td><td>Sign-in events, CA evaluation, MFA results</td></tr><tr><td>Entra ID audit logs</td><td>30d</td><td>None</td><td>Role assignments, app registrations, credential changes</td></tr><tr><td>Identity Protection</td><td>30d</td><td>Requires P2</td><td>Risky sign-ins, risk detections</td></tr><tr><td>Defender for Cloud Apps</td><td>180d</td><td>Requires MDCA license</td><td>Activity log, OAuth app inventory</td></tr><tr><td>Mailbox audit log</td><td>90d (on by default)</td><td>MailItemsAccessed requires E5</td><td>Mail access, send-as, delegate ops</td></tr></tbody></table></div>
+<p><strong>Get the retention right before you conclude anything from a gap.</strong> Since 17 October 2023 the Audit (Standard) default is <strong>180 days</strong>, not the 90 days most older material still cites — records generated <em>before</em> that date kept the old 90-day window. One year is the default only for users holding an E5 (or Purview Audit add-on) licence, and even then only for Exchange, SharePoint, OneDrive, and Entra ID. An E3 tenant therefore has 180 days of UAL and no <code>MailItemsAccessed</code>, and cannot extend retention in-product.</p>
+<p>Retention is per-user by licence, not per-tenant: in a mixed tenant the same query can return a year of history for an E5 custodian and 180 days for the E3 account next to them. Confirm the licence on the account you are investigating before you read an empty result as "no activity". State that gap explicitly. Check SIEM or Log Analytics for extended retention.</p>
+<h2>Unified Audit Log (UAL)</h2>
+<p>The UAL is the single richest data source. Every investigation starts here.</p>
+<pre><code>Connect-ExchangeOnline -UserPrincipalName admin@tenant.onmicrosoft.com
+
+# Basic search -- always constrain by date and user
+Search-UnifiedAuditLog -StartDate "2026-07-01" -EndDate "2026-07-20" `
+  -UserIds compromised@contoso.com -ResultSize 5000
+
+# Search specific operations
+Search-UnifiedAuditLog -StartDate "2026-07-01" -EndDate "2026-07-20" `
+  -Operations "New-InboxRule","Set-InboxRule","Set-Mailbox","Add-MailboxPermission" `
+  -ResultSize 5000
+
+# MailItemsAccessed (E5 only)
+Search-UnifiedAuditLog -StartDate "2026-07-01" -EndDate "2026-07-20" `
+  -Operations MailItemsAccessed -UserIds compromised@contoso.com -ResultSize 5000
+
+# Export -- AuditData field is JSON, expand it
+Search-UnifiedAuditLog -StartDate "2026-07-01" -EndDate "2026-07-20" `
+  -UserIds compromised@contoso.com -ResultSize 5000 |
+  Select-Object CreationDate, UserIds, Operations,
+    @{N='AuditData';E={$_.AuditData | ConvertFrom-Json | ConvertTo-Json -Depth 10}} |
+  Export-Csv -Path .\ual_export.csv -NoTypeInformation</code></pre>
+<h3>Key UAL operations</h3>
+<div class="tw"><table><thead><tr><th>Operation</th><th>Significance</th></tr></thead><tbody><tr><td>MailItemsAccessed</td><td>Bind = single item read, Sync = bulk download. Bulk sync is the BEC exfiltration indicator.</td></tr><tr><td>New-InboxRule / Set-InboxRule</td><td>Rules hiding replies or forwarding. Check for keyword targets: "invoice", "payment", "security".</td></tr><tr><td>Set-Mailbox</td><td>ForwardingSMTPAddress or ForwardingAddress changed -- silent external forwarding.</td></tr><tr><td>Add-MailboxPermission</td><td>FullAccess or SendAs delegation -- persistence.</td></tr><tr><td>Consent to application</td><td>OAuth grant. AuditData contains the permissions.</td></tr><tr><td>Add service principal credentials</td><td>New secret/certificate on an app registration.</td></tr><tr><td>HardDelete / SoftDelete</td><td>Evidence destruction -- attacker deleting sent items.</td></tr></tbody></table></div>
+<p>The UAL caps at 50,000 results per query. Narrow the date range if you hit it.</p>
+<h2>Entra ID Sign-In Analysis</h2>
+<p>Query sign-in logs and look for:</p>
+<ul>
+<li><strong>Impossible travel</strong> -- distant locations within an impossible timeframe</li>
+<li><strong>Anonymous IPs</strong> -- Tor exits, VPN services, known anonymizers</li>
+<li><strong>Legacy auth</strong> -- IMAP, POP3, SMTP AUTH bypass MFA unless CA blocks them</li>
+<li><strong>Token replay</strong> -- same correlation ID from different source IPs</li>
+<li><strong>Anomalous user agents</strong> -- Python requests, PowerShell hitting OWA or Graph</li>
+</ul>
+<pre><code>// Sign-ins from the compromised account
+SigninLogs
+| where UserPrincipalName == "compromised@contoso.com"
+| where TimeGenerated &gt; ago(30d)
+| project TimeGenerated, AppDisplayName, IPAddress, Location,
+    ClientAppUsed, ResultType, AuthenticationRequirement, MfaDetail, RiskState
+| order by TimeGenerated asc
+
+// Legacy auth sign-ins that bypass MFA
+SigninLogs
+| where ClientAppUsed in ("IMAP4", "POP3", "SMTP", "Exchange ActiveSync",
+    "MAPI Over HTTP", "Outlook Anywhere", "Exchange Web Services")
+| where ResultType == 0
+| summarize count() by UserPrincipalName, ClientAppUsed, IPAddress</code></pre>
+<h3>MFA analysis</h3>
+<ul>
+<li><strong>ResultType 50074</strong> -- MFA required, not completed</li>
+<li><strong>ResultType 50076</strong> -- MFA completed (attacker had the factor or used MFA fatigue)</li>
+<li><strong>AuthenticationRequirement = singleFactorAuthentication</strong> -- MFA not required (CA gap)</li>
+<li>Check <code>MfaDetail</code> -- push acceptance after repeated prompts = MFA fatigue</li>
+</ul>
+<h2>OAuth and Consent Grant Investigation</h2>
+<p>Illicit consent grants are the most-missed persistence in M365 compromise.</p>
+<pre><code>Connect-MgGraph -Scopes "Application.Read.All","Directory.Read.All"
+
+# Delegated permission grants -- look for Mail.Read, Files.ReadWrite, etc.
+Get-MgOauth2PermissionGrant -All | Where-Object {
+    $_.Scope -match "Mail.Read|Mail.ReadWrite|Files.ReadWrite|User.Read.All"
+} | Format-Table ClientId, ConsentType, Scope, PrincipalId
+
+# Application permission assignments
+Get-MgServicePrincipal -All | ForEach-Object {
+    $sp = $_
+    Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $sp.Id -ErrorAction SilentlyContinue |
+    Select-Object @{N='AppName';E={$sp.DisplayName}}, @{N='AppId';E={$sp.AppId}},
+                  PrincipalDisplayName, @{N='Created';E={$_.CreatedDateTime}}
+}</code></pre>
+<div class="tw"><table><thead><tr><th>Permission</th><th>Risk</th></tr></thead><tbody><tr><td>Mail.Read / Mail.ReadWrite</td><td>Email exfiltration. Suspicious on unknown apps.</td></tr><tr><td>Files.ReadWrite.All</td><td>Full SharePoint/OneDrive access.</td></tr><tr><td>Directory.ReadWrite.All</td><td>Can modify users, groups, roles.</td></tr><tr><td>full_access_as_app</td><td>Exchange app-level mailbox access -- almost never legitimate for third parties.</td></tr></tbody></table></div>
+<p>Distinguish delegated consent (one user's data) from admin consent (tenant-wide). Admin consent to a malicious app exposes every user.</p>
+<h2>Mailbox Rule Forensics</h2>
+<p>Inbox rules persist after password resets. Always check them.</p>
+<pre><code># Inbox rules
+Get-InboxRule -Mailbox compromised@contoso.com |
+  Select-Object Name, Enabled, MoveToFolder, DeleteMessage, ForwardTo,
+    RedirectTo, MarkAsRead | Format-List
+
+# Mailbox-level forwarding
+Get-Mailbox -Identity compromised@contoso.com |
+  Select-Object ForwardingSMTPAddress, ForwardingAddress, DeliverToMailboxAndForward
+
+# All mailboxes with external forwarding
+Get-Mailbox -ResultSize Unlimited |
+  Where-Object { $_.ForwardingSMTPAddress -ne $null } |
+  Select-Object UserPrincipalName, ForwardingSMTPAddress
+
+# Transport rules
+Get-TransportRule | Where-Object { $_.RedirectMessageTo -or $_.BlindCopyTo } |
+  Select-Object Name, State, RedirectMessageTo, BlindCopyTo
+
+# Delegate access
+Get-MailboxPermission -Identity compromised@contoso.com |
+  Where-Object { $_.User -ne "NT AUTHORITY\SELF" -and -not $_.IsInherited }</code></pre>
+<p>Red flags: rules targeting keywords ("security", "password", "MFA"), rules deleting or moving to RSS Feeds / Conversation History, blank-named rules, forwarding to free email providers, rules created after the first suspicious sign-in.</p>
+<h2>eDiscovery and Content Search</h2>
+<pre><code>Connect-IPPSSession -UserPrincipalName admin@tenant.onmicrosoft.com
+
+# Preserve mailbox content -- do this early
+Set-Mailbox -Identity compromised@contoso.com -LitigationHoldEnabled $true
+
+# Search outbound mail from compromised account
+New-ComplianceSearch -Name "IR-2026-042 Outbound" `
+  -ExchangeLocation compromised@contoso.com `
+  -ContentMatchQuery "sent&gt;=2026-07-01 AND sent&lt;=2026-07-20"
+Start-ComplianceSearch -Identity "IR-2026-042 Outbound"</code></pre>
+<p>Place litigation holds before retention policies or the attacker can purge evidence.</p>
+<h2>Azure AD Audit Log Analysis</h2>
+<pre><code>// Role assignments
+AuditLogs
+| where OperationName == "Add member to role"
+| extend TargetUser = tostring(TargetResources[0].userPrincipalName),
+         RoleName = tostring(TargetResources[0].modifiedProperties[1].newValue)
+| project TimeGenerated, InitiatedBy, TargetUser, RoleName
+
+// Service principal credential changes (persistence)
+AuditLogs
+| where OperationName in ("Add service principal credentials",
+    "Update application - Certificates and secrets management")
+| project TimeGenerated, InitiatedBy, TargetResources
+
+// Conditional Access policy changes
+AuditLogs
+| where OperationName has "conditional access"
+| project TimeGenerated, OperationName, InitiatedBy, Result
+
+// MFA method changes (attacker registering their own factor)
+AuditLogs
+| where OperationName in ("User registered security info",
+    "Admin registered security info", "User deleted security info")
+| project TimeGenerated, OperationName, InitiatedBy, TargetResources</code></pre>
+<p>Attackers with Application Admin or Global Admin can add credentials to existing app registrations for persistent, MFA-independent access:</p>
+<pre><code>Get-MgApplication -All | ForEach-Object {
+    $app = $_
+    $app.PasswordCredentials + $app.KeyCredentials | Where-Object {
+        $_.StartDateTime -gt (Get-Date).AddDays(-30)
+    } | Select-Object @{N='App';E={$app.DisplayName}}, @{N='AppId';E={$app.AppId}},
+                      StartDateTime, EndDateTime
+}</code></pre>
+<h2>Timeline Construction</h2>
+<p>Correlate across the three primary log sources:</p>
+<pre><code>Sign-in logs  --&gt;  When and where the attacker authenticated
+Audit logs    --&gt;  Configuration changes they made
+UAL           --&gt;  Data they accessed or modified</code></pre>
+<ol>
+<li>Anchor on the earliest suspicious sign-in</li>
+<li>Pull sign-in, UAL, and audit events for that user +/- 7 days</li>
+<li>Merge into a single UTC timeline</li>
+<li>Look for the pattern: sign-in, reconnaissance, persistence (rule/forwarding/OAuth), action on objectives</li>
+</ol>
+<pre><code>UTC Timestamp        | Source  | Event                                    | Detail
+2026-07-12 08:41:22  | SignIn  | Sign-in from 198.51.x.x                  | Nigeria, no MFA
+2026-07-12 08:42:05  | UAL     | MailItemsAccessed (Sync)                 | 847 items via Graph
+2026-07-12 08:43:18  | UAL     | New-InboxRule "."                        | Delete "security alert"
+2026-07-12 08:44:01  | UAL     | Set-Mailbox                              | ForwardingSMTPAddress set
+2026-07-12 08:45:33  | UAL     | Consent to application                   | Mail.Read, Mail.Send
+2026-07-12 09:12:44  | UAL     | Send (SendAs)                            | Invoice redirect to vendor</code></pre>
+<h2>Containment</h2>
+<p>Execute simultaneously once scoping is complete. Partial containment alerts the attacker.</p>
+<pre><code># Revoke sessions and reset credentials
+Revoke-MgUserSignInSession -UserId compromised@contoso.com
+Update-MgUser -UserId compromised@contoso.com -PasswordProfile @{
+    Password = (New-Guid).Guid + "!Aa1"; ForceChangePasswordNextSignIn = $true }
+
+# Disable account if active compromise is ongoing
+Update-MgUser -UserId compromised@contoso.com -AccountEnabled:$false
+
+# Remove attacker inbox rules
+Get-InboxRule -Mailbox compromised@contoso.com |
+  Where-Object { $_.Name -match "^\.$|^$" -or $_.DeleteMessage -eq $true } |
+  Remove-InboxRule -Confirm:$false
+
+# Remove forwarding
+Set-Mailbox -Identity compromised@contoso.com `
+  -ForwardingSMTPAddress $null -ForwardingAddress $null `
+  -DeliverToMailboxAndForward $false
+
+# Remove unauthorized delegate access
+Get-MailboxPermission -Identity compromised@contoso.com |
+  Where-Object { $_.User -ne "NT AUTHORITY\SELF" -and -not $_.IsInherited } |
+  ForEach-Object { Remove-MailboxPermission -Identity compromised@contoso.com `
+    -User $_.User -AccessRights $_.AccessRights -Confirm:$false }
+
+# Block malicious OAuth app
+$sp = Get-MgServicePrincipal -Filter "appId eq '&lt;malicious-app-id&gt;'"
+Update-MgServicePrincipal -ServicePrincipalId $sp.Id -AccountEnabled:$false
+Get-MgOauth2PermissionGrant -Filter "clientId eq '$($sp.Id)'" |
+  Remove-MgOauth2PermissionGrant</code></pre>
+<p>Session revocation alone is insufficient -- tokens may remain valid up to one hour. Disable the account for immediate lockout. After containment, verify: no forwarding remains, no unknown delegates, no unknown OAuth grants, no attacker-registered MFA methods, no service principal credentials from the compromise window.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"We reset the password, so the account is secure."</em> Refresh tokens, OAuth</li>
+</ul>
+<p>grants, inbox rules, forwarding, and delegate access all survive a password reset. Revoke sessions and audit every persistence mechanism.</p>
+<ul>
+<li><em>"We only have E3, so we cannot investigate mail access."</em> MailItemsAccessed</li>
+</ul>
+<p>is unavailable, but sign-in logs, UAL operations, inbox rules, and forwarding still exist. State the gap and work with what you have.</p>
+<ul>
+<li><em>"The sign-in was from a VPN, so it is probably the user."</em> Correlate the</li>
+</ul>
+<p>exit IP, user agent, and timing against established patterns. Attackers use VPNs too.</p>
+<ul>
+<li><em>"No alerts fired in Defender, so there is no compromise."</em> Defender requires</li>
+</ul>
+<p>the right license tier and policy config. Absence of alerts is not evidence of absence.</p>
+<ul>
+<li><em>"The OAuth app only has delegated permissions."</em> Delegated permissions with</li>
+</ul>
+<p>a valid refresh token give persistent access without needing the password again.</p>
+<ul>
+<li><em>"We blocked the IP, so the attacker is locked out."</em> Attackers rotate IPs.</li>
+</ul>
+<p>Revoke the tokens and credentials, not just the network path.</p>
+<ul>
+<li><em>"Logs only go back 30 days, so the compromise started within that window."</em></li>
+</ul>
+<p>That is your visibility limit, not the attacker's timeline. Document the limitation and check SIEM for extended retention.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> -- broader IR methodology and evidence handling</li>
+<li><a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a> -- offensive Entra ID techniques, useful for understanding attacker methods</li>
+<li><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> -- cloud infrastructure attacks beyond M365</li>
+<li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- building detection rules from investigation findings</li>
+<li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> -- proactive hunting in M365 and Entra ID telemetry</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>

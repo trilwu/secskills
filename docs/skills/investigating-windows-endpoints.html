@@ -1,0 +1,362 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>investigating-windows-endpoints — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    article{padding:44px 0 72px;border-top:1px solid var(--border)}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
+<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="index.html">secskills</a> / defense / investigating-windows-endpoints</div>
+  <h1 class="sk">investigating-windows-endpoints</h1>
+  <div class="stags">
+    <span><span class="dot dot-defense"></span> defense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
+  </div>
+  <p class="sdesc">Investigate a compromised or suspicious Windows host from on-disk artifacts -- triage collection, evidence of execution (Prefetch, Amcache, Shimcache, SRUM, UserAssist, BAM), the event-log workhorses by ID (Security 4624/4688/4720/7045/1102, Sysmon, PowerShell 4104, RDP, WMI), persistence hunting across every autostart, lateral-movement traces, $MFT/USN filesystem forensics, anti-forensics detection, and building a super-timeline with the Eric Zimmerman suite, Chainsaw, Hayabusa, and Plaso. Use when triaging a compromised or suspicious Windows host, working through EVTX/Sysmon logs, reconstructing what executed on a Windows machine, hunting persistence and lateral-movement traces, or analyzing a KAPE/triage collection.</p>
+  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<article><div class="wrap"><p>Windows records execution, persistence, and access in dozens of artifacts the attacker rarely cleans completely. The event logs are only the surface -- the registry, prefetch, amcache, and the file-system journals corroborate or contradict them. The investigation is cross-referencing independent artifacts into one timeline that no single cleared log can defeat.</p>
+<h2>When to Use</h2>
+<ul>
+<li>Triaging a compromised or suspicious Windows host, live or from an image</li>
+<li>Working through a KAPE, Velociraptor, or EDR triage collection</li>
+<li>Reconstructing what executed on a Windows machine and in what order</li>
+<li>Parsing EVTX / Sysmon / PowerShell logs to reconstruct attacker activity</li>
+<li>Hunting persistence and lateral-movement traces across the endpoint</li>
+<li>Detecting timestomping, log clears, and other on-host anti-forensics</li>
+</ul>
+<h2>When NOT to Use</h2>
+<ul>
+<li><strong>The host is Linux</strong> -- use <a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a></li>
+<li><strong>You need the overall IR process and multi-host coordination</strong> -- use</li>
+</ul>
+<p><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>; come here when one Windows host is the focus</p>
+<ul>
+<li><strong>You have a RAM capture to work</strong> -- use <a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a>; come</li>
+</ul>
+<p>here for the on-disk artifacts</p>
+<ul>
+<li><strong>The compromise is in cloud identity, not on the endpoint</strong> -- use</li>
+</ul>
+<p><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a></p>
+<ul>
+<li><strong>Proactive fleet-wide hunting with no specific host</strong> -- use</li>
+</ul>
+<p><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></p>
+<ul>
+<li><strong>You are the attacker on the host, not the responder</strong> -- use</li>
+</ul>
+<p><a class="xref" href="escalating-windows-privileges.html"><code>escalating-windows-privileges</code></a></p>
+<h2>Triage Collection First</h2>
+<p>Do not analyze the live disk in place. Collect a triage set, hash it, and work on the copy. For most incidents a targeted triage collection answers the question faster than a full image; image only the hosts that matter.</p>
+<p><strong>Dead vs. live acquisition.</strong> A powered-off host or a mounted disk image is a dead acquisition -- consistent, but you lose running processes, network state, and unflushed logs. A live host lets you capture volatile state (memory, <code>netstat -anob</code>, <code>Get-NetTCPConnection</code>, <code>tasklist /svc</code>) but every action mutates the disk; record what you touch. Capture memory first if the host is live and "are they still here" is open, then hand it to <a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a>.</p>
+<pre><code>:: KAPE targeted triage -- the fastest way to a defensible artifact set
+kape.exe --tsource C: --target !SANS_Triage --tdest E:\out\host01 --vhdx host01
+:: Broader coverage: registry hives, event logs, $MFT/$J, browser, prefetch
+kape.exe --tsource C: --target KapeTriage,RegistryHives,EventLogs,FileSystem ^
+  --tdest E:\out\host01
+
+:: Then run the parsers (Modules) over what you collected
+kape.exe --msource E:\out\host01 --mdest E:\out\host01\parsed ^
+  --module !EZParser</code></pre>
+<p>Velociraptor (<code>Windows.KapeFiles.Targets</code>) collects the same set at fleet scale over an agent. Whatever the tool, verify hashes before and after every copy.</p>
+<p><strong>Key artifact directories</strong> to make sure your collection contains:</p>
+<pre><code>C:\Windows\System32\winevt\Logs\          Event logs (.evtx)
+C:\Windows\System32\config\               Registry hives: SYSTEM, SOFTWARE, SAM, SECURITY
+C:\Users\&lt;u&gt;\NTUSER.DAT                    Per-user registry hive
+C:\Users\&lt;u&gt;\AppData\Local\Microsoft\Windows\UsrClass.dat   Shellbags, COM
+C:\Windows\Prefetch\                       *.pf execution evidence
+C:\Windows\appcompat\Programs\Amcache.hve  Amcache
+C:\Windows\System32\sru\SRUDB.dat          SRUM
+C:\Windows\System32\Tasks\                 Scheduled task XML
+C:\$MFT  C:\$Extend\$UsnJrnl  C:\$LogFile  Filesystem journals
+C:\$Recycle.Bin\                           Deleted-file $I records</code></pre>
+<h2>Evidence of Execution</h2>
+<p>Multiple independent artifacts record that a binary ran. Cross-reference them -- agreement raises confidence, disagreement is itself a finding.</p>
+<pre><code>:: Prefetch -- run count, first/last run, files/dirs the binary touched.
+:: Absent on most Servers; disabled on SSD-only systems -- note that, don't assume.
+PECmd.exe -d C:\Windows\Prefetch --csv E:\out\parsed -q
+
+:: Amcache -- SHA-1 of executed/present binaries, compile times, driver load
+AmcacheParser.exe -f C:\Windows\appcompat\Programs\Amcache.hve ^
+  --csv E:\out\parsed -i
+
+:: Shimcache / AppCompatCache (SYSTEM hive) -- path + last-modified; presence
+:: means the file was seen, NOT necessarily executed. Order is roughly LRU.
+AppCompatCacheParser.exe -f C:\Windows\System32\config\SYSTEM --csv E:\out\parsed
+
+:: SRUM -- per-process bytes sent/received and CPU over 30-60 days.
+:: Ties an executable to network volume even when netflow is gone.
+SrumECmd.exe -f C:\Windows\System32\sru\SRUDB.dat ^
+  -r C:\Windows\System32\config\SOFTWARE --csv E:\out\parsed</code></pre>
+<p>From the user (NTUSER.DAT / UsrClass.dat) hives, parse GUI-execution and file-access evidence with <code>RECmd</code>:</p>
+<pre><code>:: UserAssist (GUI program launches, run count, focus time),
+:: BAM/DAM (background/desktop activity moderator: last-run per exe per SID),
+:: RecentDocs, and RunMRU in one pass with the bundled batch file
+RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed</code></pre>
+<ul>
+<li><strong>Jump Lists</strong> (<code>...\Recent\AutomaticDestinations\*.automaticDestinations-ms</code>)</li>
+</ul>
+<p>and <strong>LNK files</strong> (<code>...\Recent\*.lnk</code>) record opened files/apps with target path, volume serial, and MAC times -- parse with <code>JLECmd</code> and <code>LECmd</code>.</p>
+<ul>
+<li><strong>RecentDocs</strong> and shellbags (below) show what folders and files were opened.</li>
+</ul>
+<h2>The Event-Log Workhorses</h2>
+<p>Parse EVTX first with a triage engine (Chainsaw / Hayabusa, below), then pivot into specific channels. The IDs that carry the most weight:</p>
+<p><strong>Security</strong> (<code>Security.evtx</code>):</p>
+<ul>
+<li><strong>4624</strong> logon success -- decode Logon Type: <strong>2</strong> interactive, <strong>3</strong></li>
+</ul>
+<p>network (SMB, shares, PtH), <strong>10</strong> RemoteInteractive (RDP), <strong>9</strong> NewCredentials (runas /netonly, often Overpass-the-Hash). Pivot on LogonId to correlate a session's activity.</p>
+<ul>
+<li><strong>4625</strong> logon failure -- password spraying and brute force by source IP.</li>
+<li><strong>4672</strong> special privileges assigned -- admin-equivalent logon; pair with</li>
+</ul>
+<p>4624 to flag privileged sessions.</p>
+<ul>
+<li><strong>4648</strong> explicit-credential logon -- runas and lateral movement.</li>
+<li><strong>4688</strong> process creation -- with command-line auditing enabled, the full</li>
+</ul>
+<p>command line and parent process. The single most valuable Security event.</p>
+<ul>
+<li><strong>4720/4722/4738</strong> account created/enabled/changed; <strong>4728/4732/4756</strong></li>
+</ul>
+<p>member added to a global/local/universal privileged group (Domain Admins, local Administrators) -- attacker account and group manipulation.</p>
+<ul>
+<li><strong>4698/4699/4702</strong> scheduled task created/deleted/updated.</li>
+<li><strong>7045</strong> (System log) new service installed; <strong>7036</strong> service state change --</li>
+</ul>
+<p>the PsExec and lateral-tooling signature.</p>
+<ul>
+<li><strong>1102</strong> the audit log was cleared -- an anti-forensic act and itself an</li>
+</ul>
+<p>indicator; correlate the gap it leaves.</p>
+<p><strong>Sysmon</strong> (<code>Microsoft-Windows-Sysmon/Operational</code>), if deployed, is the richest source:</p>
+<ul>
+<li><strong>1</strong> process create (with hashes, command line, parent) -- <strong>3</strong> network</li>
+</ul>
+<p>connection -- <strong>7</strong> image/DLL load (unsigned DLLs, sideloading) -- <strong>8</strong> CreateRemoteThread (injection) -- <strong>10</strong> process access (LSASS handle = credential dumping) -- <strong>11</strong> file create -- <strong>12/13/14</strong> registry create/set/rename (autoruns) -- <strong>15</strong> file-stream create (Zone.Identifier, ADS) -- <strong>22</strong> DNS query -- <strong>23/26</strong> file delete.</p>
+<p><strong>PowerShell</strong>:</p>
+<ul>
+<li><strong>4104</strong> script-block logging (<code>Microsoft-Windows-PowerShell/Operational</code>) --</li>
+</ul>
+<p>deobfuscated script content; hunt for <code>-enc</code>, <code>FromBase64String</code>, <code>DownloadString</code>, <code>IEX</code>, AMSI-bypass strings. <strong>4103</strong> module/pipeline logging. <strong>400/800</strong> in <code>Windows PowerShell.evtx</code> (engine start, version -- a v2 downgrade is evasion).</p>
+<p><strong>RDP / TerminalServices</strong>:</p>
+<ul>
+<li>Security <strong>4778/4779</strong> session reconnect/disconnect (RDP or Fast User</li>
+</ul>
+<p>Switching, not a fresh logon -- that is 4624). <strong>1149</strong> in <code>TerminalServices-RemoteConnectionManager</code> (auth succeeded -- user + source IP). <strong>21/22/25</strong> in <code>TerminalServices-LocalSessionManager</code> (logon, shell start, reconnect).</p>
+<p><strong>WMI</strong> (<code>Microsoft-Windows-WMI-Activity/Operational</code>): <strong>5857</strong> provider loaded, <strong>5858</strong> operation error, <strong>5859-5861</strong> permanent event-subscription registration -- WMI persistence.</p>
+<p><strong>Task Scheduler</strong> (<code>Microsoft-Windows-TaskScheduler/Operational</code>): <strong>106</strong> task registered, <strong>140</strong> updated, <strong>141</strong> deleted, <strong>200/201</strong> action executed/completed -- corroborates Security 4698.</p>
+<h2>Persistence Hunting</h2>
+<p>Sweep every autostart, not the handful your tool checks by default. This is the defensive mirror of <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a> -- read that skill for how each mechanism is planted, then hunt for the traces here.</p>
+<ul>
+<li><strong>Run keys</strong> -- <code>...\Software\Microsoft\Windows\CurrentVersion\Run</code> and</li>
+</ul>
+<p><code>RunOnce</code>, per SOFTWARE and each NTUSER.DAT; also <code>...\Policies\Explorer\Run</code>.</p>
+<ul>
+<li><strong>Services</strong> -- SYSTEM hive <code>...\Services</code>; correlate installs with 7045.</li>
+<li><strong>Scheduled tasks</strong> -- <code>C:\Windows\System32\Tasks\</code> XML (parse the Actions</li>
+</ul>
+<p>and Triggers); correlate 4698 / TaskScheduler 106.</p>
+<ul>
+<li><strong>WMI event subscriptions</strong> -- <code>__EventFilter</code>, <code>__EventConsumer</code>,</li>
+</ul>
+<p><code>__FilterToConsumerBinding</code> in the OBJECTS.DATA repository; <code>Get-WMIObject -Namespace root\subscription -Class __EventConsumer</code>.</p>
+<ul>
+<li><strong>Startup folders</strong> -- <code>...\Start Menu\Programs\Startup\</code> (per-user and</li>
+</ul>
+<p>All Users).</p>
+<ul>
+<li><strong>Winlogon</strong> -- <code>Shell</code>, <code>Userinit</code>, <code>Notify</code> under</li>
+</ul>
+<p><code>...\Winlogon</code>; anything appended after <code>explorer.exe</code> / <code>userinit.exe</code>.</p>
+<ul>
+<li><strong>IFEO</strong> -- <code>Image File Execution Options\&amp;lt;exe&amp;gt;\Debugger</code> (and</li>
+</ul>
+<p><code>GlobalFlag</code> + Silent Process Exit) hijacking a legit binary.</p>
+<ul>
+<li><strong>COM hijacks</strong> -- user-hive <code>Software\Classes\CLSID\...\InprocServer32</code></li>
+</ul>
+<p>shadowing a HKLM CLSID.</p>
+<ul>
+<li><strong>LSA / SSP</strong> -- <code>...\Lsa\Security Packages</code> and <code>Notification Packages</code>;</li>
+</ul>
+<p><code>...\Lsa\OSConfig</code>.</p>
+<ul>
+<li><strong>BITS jobs</strong> -- <code>bitsadmin /list /allusers /verbose</code> or parse</li>
+</ul>
+<p><code>...\Microsoft\Network\Downloader\qmgr*.dat</code> for download-and-execute jobs.</p>
+<pre><code>:: Autoruns from Sysinternals, offline against a mounted image, VirusTotal + verify
+autorunsc.exe -accepteula -a * -h -s -c -o autoruns.csv "\\?\E:\mount"
+:: RECmd has batch files that dump every autostart location from the hives
+RECmd.exe -d E:\out\host01 --bn BatchExamples\RegistryASEPs.reb --csv E:\out\parsed</code></pre>
+<h2>Lateral-Movement Traces</h2>
+<p>Movement leaves paired artifacts on source and destination. Correlate by time, account, and source IP.</p>
+<ul>
+<li><strong>Network logons</strong> -- destination Security <strong>4624 Type 3</strong> (SMB/admin</li>
+</ul>
+<p>shares, PtH) and <strong>Type 10</strong> (RDP); <strong>4648</strong> on the source. A Type 3 with <strong>NTLM</strong> to a domain-joined host where Kerberos was expected is a pass-the-hash signature. A Type 9 (NewCredentials) points to Overpass-the-Hash / <code>runas /netonly</code>.</p>
+<ul>
+<li><strong>PsExec / service-based exec</strong> -- <strong>7045</strong> service install (random or</li>
+</ul>
+<p><code>PSEXESVC</code>-style name) plus <strong>7036</strong> start on the destination; <strong>5145</strong> if detailed file-share auditing logged the <code>\ADMIN$\&amp;lt;svc&amp;gt;.exe</code> write. RemCom and similar clones follow the same 7045+7036 pattern.</p>
+<ul>
+<li><strong>WMI / WinRM exec</strong> -- WMI-Activity <strong>5857-5861</strong>, <code>wmiprvse.exe</code> spawning a</li>
+</ul>
+<p>child in Sysmon 1; WinRM over <strong>5985/5986</strong> (HTTP/HTTPS), with <code>Microsoft-Windows-WinRM/Operational</code> and 4624 Type 3.</p>
+<ul>
+<li><strong>Admin-share access</strong> -- <code>C$</code>, <code>ADMIN$</code>, <code>IPC$</code> in <strong>5140/5145</strong>;</li>
+</ul>
+<p>correlate with the tool written to <code>ADMIN$</code>.</p>
+<ul>
+<li><strong>SMB / file staging</strong> -- 5140/5145 and <code>$MFT</code> entries for tools dropped to</li>
+</ul>
+<p>the destination.</p>
+<h2>Filesystem Forensics</h2>
+<p>The NTFS metadata files are the ground truth the attacker is least likely to scrub, and the timestomp check that no cleared log defeats.</p>
+<pre><code>:: $MFT -- every file's four SI + four FN timestamps, parent, size, resident data
+MFTECmd.exe -f "E:\out\host01\$MFT" --csv E:\out\parsed
+:: USN change journal -- creates/deletes/renames even after the file is gone
+MFTECmd.exe -f "E:\out\host01\$Extend\$J" --csv E:\out\parsed
+:: $LogFile -- transactional, can recover changes the USN rolled past</code></pre>
+<ul>
+<li><strong>Timestomp detection.</strong> <code>$STANDARD_INFORMATION</code> times are settable from</li>
+</ul>
+<p>user land (SetFileTime, <code>timestomp</code>); <code>$FILE_NAME</code> times are set only by the kernel on rename/move. SI <strong>earlier than</strong> FN, sub-second zeros on SI, or SI disagreeing with the USN entry all flag forgery. Parse both from MFTECmd and diff them.</p>
+<ul>
+<li><strong>USN Journal</strong> (<code>$Extend\$UsnJrnl:$J</code>) records the filename, reason</li>
+</ul>
+<p>(FileCreate, RenameNew, FileDelete), and USN for changes -- reconstructs drop, rename, and cleanup of tooling even after deletion.</p>
+<ul>
+<li><strong>Recycle Bin</strong> -- <code>$I</code> files in <code>C:\$Recycle.Bin\&amp;lt;SID&amp;gt;\</code> hold the original</li>
+</ul>
+<p>path, size, and deletion time of each <code>$R</code> file (<code>RBCmd.exe</code>).</p>
+<ul>
+<li><strong>Shellbags</strong> (UsrClass.dat / NTUSER.DAT) prove a user browsed a specific</li>
+</ul>
+<p>folder, including deleted, external, and network paths -- <code>SBECmd.exe -d E:\out\host01 --csv E:\out\parsed</code>.</p>
+<ul>
+<li><strong>Alternate Data Streams</strong> -- <code>dir /r</code>, <code>Get-Item -Stream *</code>;</li>
+</ul>
+<p><code>Zone.Identifier</code> marks downloaded files (mark-of-the-web) and named streams hide payloads.</p>
+<h2>Browser and Account Artifacts</h2>
+<ul>
+<li><strong>Browser history / downloads</strong> -- Chrome/Edge <code>History</code> (SQLite,</li>
+</ul>
+<p><code>...\User Data\Default\History</code>), Firefox <code>places.sqlite</code>; the <code>downloads</code> table plus <code>Zone.Identifier</code> ADS establish what was pulled onto the host.</p>
+<ul>
+<li><strong>Local accounts</strong> -- SAM hive for created/enabled accounts, RID, last</li>
+</ul>
+<p>logon; correlate with Security 4720/4722/4732.</p>
+<ul>
+<li><strong>RDP cache / bitmaps</strong> (<code>...\Terminal Server Client\Cache\*.bmc</code>) can</li>
+</ul>
+<p>reconstruct what an interactive intruder saw.</p>
+<h2>Anti-Forensics Detection</h2>
+<p>Cleanup is signal, not silence. Hunt the traces of it:</p>
+<ul>
+<li><strong>Log clears</strong> -- Security <strong>1102</strong> (Security log cleared) and System <strong>104</strong></li>
+</ul>
+<p>(any log cleared) name the account and time. An event-log <strong>gap</strong> with no corresponding shutdown is itself a finding.</p>
+<ul>
+<li><strong>Timestomping</strong> -- SI vs. FN disagreement (above).</li>
+<li><strong>Prefetch disabled</strong> -- <code>...\Memory Management\PrefetchParameters\EnablePrefetcher = 0</code>.</li>
+<li><strong>USN journal deleted</strong> -- <code>fsutil usn deletejournal</code> leaves the journal</li>
+</ul>
+<p>truncated; note the missing history as a gap.</p>
+<ul>
+<li><strong>Sysmon / EDR tampering</strong> -- service stop (7036/7045 for the driver),</li>
+</ul>
+<p>config change, or a v2 PowerShell downgrade to dodge script-block logging.</p>
+<p>State every such gap explicitly in the timeline as a limitation -- never let a cleared log become an implicit "nothing happened."</p>
+<h2>Building the Super-Timeline</h2>
+<p>Fast triage first, then the full timeline. Normalize everything to <strong>UTC</strong>, cite the source artifact on every row, and separate observed from inferred.</p>
+<pre><code>:: Chainsaw -- fast EVTX triage with built-in + Sigma rules, minutes not hours
+chainsaw hunt E:\out\host01\...\winevt\Logs -s sigma\ ^
+  --mapping mappings\sigma-event-logs-all.yml -r rules\ --csv -o chainsaw_out
+
+:: Hayabusa -- EVTX -&gt; single timeline scored by severity, Sigma-backed
+hayabusa.exe csv-timeline -d E:\out\host01\...\winevt\Logs -o hayabusa.csv -p verbose</code></pre>
+<pre><code># Plaso -- ingest the whole triage set (or image) into one storage file...
+log2timeline.py --storage-file plaso.db E:\out\host01
+# ...then filter and export the super-timeline
+psort.py -o l2tcsv -w super.csv plaso.db "date &gt; '2026-07-01 00:00:00'"</code></pre>
+<p>Load the parsed CSVs (EZ Tools output, Chainsaw, psort) into <strong>Timeline Explorer</strong> to pivot, tag, and color across artifacts in one grid. The Eric Zimmerman suite -- <strong>PECmd, AmcacheParser, AppCompatCacheParser, SrumECmd, MFTECmd, RECmd, SBECmd, JLECmd, LECmd, RBCmd</strong> -- plus <strong>Chainsaw / Hayabusa</strong> for EVTX and <strong>Plaso</strong> for the union timeline is the core toolchain. Write detections for what you find with <a class="xref" href="writing-sigma-rules.html"><code>writing-sigma-rules</code></a>; hand the narrative to <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a>.</p>
+<h2>Rationalizations to Reject</h2>
+<ul>
+<li><em>"The Security log was cleared, so we're blind."</em> Sysmon, Prefetch, Amcache,</li>
+</ul>
+<p>SRUM, and the USN journal each independently record execution. A 1102 is itself an indicator, and it names the account that cleared it.</p>
+<ul>
+<li><em>"No Prefetch entry, so it never ran."</em> Prefetch is off on most Servers and</li>
+</ul>
+<p>disabled on some SSD systems. Amcache, Shimcache, SRUM, 4688, and Sysmon 1 all corroborate execution independently.</p>
+<ul>
+<li><em>"Shimcache shows it, so it executed."</em> Shimcache/AppCompatCache records that</li>
+</ul>
+<p>a file was <em>seen</em> by the shim engine, not that it ran. Confirm with Prefetch, Amcache, or a process-creation event.</p>
+<ul>
+<li><em>"The file timestamps look old, so it's original."</em> <code>$STANDARD_INFORMATION</code></li>
+</ul>
+<p>is trivially forged. Check <code>$FILE_NAME</code> and the USN journal; disagreement is the finding.</p>
+<ul>
+<li><em>"There's no EDR, so there's nothing to analyze."</em> The registry, event logs,</li>
+</ul>
+<p>prefetch, amcache, SRUM, and $MFT exist on every Windows host regardless of EDR. Most of this investigation predates EDR entirely.</p>
+<ul>
+<li><em>"One host alerted, so the intrusion is one host."</em> Correlate 4624 Type</li>
+</ul>
+<p>3/10, 4648, and 7045 outward -- lateral movement is the default assumption until auth logs rule it out.</p>
+<ul>
+<li><em>"PowerShell was obfuscated, so we can't read it."</em> Script-block logging</li>
+</ul>
+<p>(4104) records the <em>deobfuscated</em> content Windows actually executed. If 4104 is missing, that gap points to a v2 downgrade -- itself a finding.</p>
+<h2>References</h2>
+<ul>
+<li><a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a> -- the same host-forensic sweep for Linux</li>
+<li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> -- the IR process and multi-host coordination this</li>
+</ul>
+<p>feeds</p>
+<ul>
+<li><a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a> -- RAM analysis for the volatile half of the host</li>
+<li><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a> -- when the compromise is in cloud identity</li>
+<li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> -- proactive fleet-wide hunting with no specific host</li>
+<li><a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a> -- offensive view of the autostarts hunted here</li>
+<li><a class="xref" href="writing-sigma-rules.html"><code>writing-sigma-rules</code></a> -- detections for the event-log patterns found</li>
+<li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> -- turning the timeline into the deliverable</li>
+<li>Eric Zimmerman tools (https://ericzimmerman.github.io) -- PECmd,</li>
+</ul>
+<p>AmcacheParser, MFTECmd, RECmd, SBECmd, Timeline Explorer</p>
+<ul>
+<li>KAPE (Kroll Artifact Parser and Extractor) -- triage collection and parsing</li>
+<li>Chainsaw and Hayabusa -- fast Sigma-backed EVTX triage</li>
+<li>Plaso / log2timeline -- super-timeline generation</li>
+<li>Autoruns (Sysinternals) -- autostart enumeration</li>
+<li>Velociraptor -- endpoint triage collection at scale</li>
+</ul></div></article>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
