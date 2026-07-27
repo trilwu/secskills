@@ -60,9 +60,15 @@ misparse HBC 96.
 
 ```bash
 # Read the version out of the header before choosing a tool
-hbctool disasm index.android.bundle ./disasm     # older HBC versions
+hbctool disasm index.android.bundle ./disasm     # HBC 59, 62, 74 ONLY
 hermes-dec ...                                    # decompiler; wider version support
 ```
+
+Upstream `hbctool` ships support for exactly three bytecode versions — **59,
+62, and 74**. Anything else fails at parse. Check the header version first
+rather than reading a parse error as "the bundle is protected"; on a current
+React Native release you will usually be above 74 and should reach for
+`hermes-dec` or a `hermesc` you built from the matching Hermes tag.
 
 | Tool | Gives you | Caveat |
 | --- | --- | --- |
