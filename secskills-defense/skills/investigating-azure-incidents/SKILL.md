@@ -28,8 +28,9 @@ where.
 
 - **The compromise is Entra identity / M365 mailbox, not Azure resources** (though you will often need both) -- use `investigating-m365-entra`
 - **The incident is in AWS** -- use `investigating-aws-incidents`
+- **The incident is in Google Cloud** -- use `investigating-gcp-incidents`
 - **You are the attacker against the tenant, not the responder** -- use `attacking-entra-id`
-- **The pivot is specifically into AKS / Kubernetes** -- use `attacking-eks-gke-aks`
+- **The pivot is specifically into AKS / Kubernetes** -- use `attacking-eks-gke-aks`; for defending the cluster, `defending-kubernetes`
 - **The general IR process and host-level response** -- use `responding-to-incidents`
 
 ## Log Sources and Where They Live

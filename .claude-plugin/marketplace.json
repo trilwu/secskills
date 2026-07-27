@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Marketplace for SecSkills - offensive and defensive security skills for Claude Code, split into offense, defense, and a shared core plugin",
-    "version": "4.1.0"
+    "version": "4.2.0"
   },
   "plugins": [
     {
       "name": "secskills-offense",
       "source": "./secskills-offense",
       "description": "37 offensive security skills: web/API/auth exploitation (JWT, OAuth/OIDC, SAML, XXE, SSRF, deserialization, GraphQL, gRPC), Active Directory, Entra ID, Kerberos delegation, AD CS, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile app testing, wireless, Bluetooth/NFC, ICS/OT, Web3, reconnaissance, social engineering, persistence, and password cracking. Pentesting and red teaming. Pairs with secskills-core.",
-      "version": "4.1.0",
+      "version": "4.2.0",
       "category": "security",
       "keywords": [
         "security",
@@ -37,8 +37,8 @@
     {
       "name": "secskills-defense",
       "source": "./secskills-defense",
-      "description": "18 defensive security skills: malware and shellcode analysis, memory and disk forensics, network/PCAP forensics, phishing-email analysis, Windows endpoint DFIR, AWS/Azure/M365-Entra incident investigation, Linux persistence hunting, incident response, threat hunting, detection engineering, Sigma and YARA authoring, and threat intelligence. DFIR, hunting, and detection. Pairs with secskills-core.",
-      "version": "4.1.0",
+      "description": "22 defensive security skills: malware and shellcode analysis, memory and disk forensics, network/PCAP forensics, phishing-email analysis, Windows endpoint DFIR, AWS/Azure/M365-Entra incident investigation, Linux persistence hunting, incident response, threat hunting, detection engineering, Sigma and YARA authoring, and threat intelligence. DFIR, hunting, and detection. Pairs with secskills-core.",
+      "version": "4.2.0",
       "category": "security",
       "keywords": [
         "security",
@@ -62,7 +62,7 @@
       "name": "secskills-core",
       "source": "./secskills-core",
       "description": "20 dual-use security skills: reverse engineering (native, Go/Rust/.NET, iOS, firmware, packers, and Flutter/React Native/Unity/Xamarin runtimes), source-code and supply-chain auditing, cryptography and pull-request security review, AI/LLM and MCP security, ATT&CK technique mapping, and security findings reporting. The shared foundation for the offense and defense plugins; ships the ttp-index.json ATT&CK map.",
-      "version": "4.1.0",
+      "version": "4.2.0",
       "category": "security",
       "keywords": [
         "security",

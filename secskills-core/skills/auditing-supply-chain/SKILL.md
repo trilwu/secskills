@@ -26,6 +26,8 @@ your signing keys.
 - **Cloud infrastructure posture generally** — use `exploiting-cloud-platforms`
   for offensive assessment
 - **An in-progress compromise** — use `responding-to-incidents`
+- **Prioritizing which of many dependency CVEs to fix first** — use
+  `managing-vulnerabilities`; reachability analysis here feeds its ranking
 
 ## Two Different Risks
 

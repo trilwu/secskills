@@ -1,6 +1,6 @@
 {
   "name": "secskills-offense",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "37 offensive security skills for Claude Code: web/API/auth exploitation (JWT, OAuth/OIDC, SAML, XXE, SSRF, deserialization, GraphQL, gRPC), Active Directory, Entra ID, Kerberos delegation, AD CS, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile app testing, wireless, Bluetooth/NFC, ICS/OT, Web3, reconnaissance, social engineering, persistence, and password cracking. Use when pentesting, red-teaming, or exploiting a target. Pairs with secskills-core.",
   "author": {
     "name": "trilwu",

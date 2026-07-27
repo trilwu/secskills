@@ -3,6 +3,45 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [4.2.0] - 2026-07-27
+
+Four defense skills closing the offense/defense asymmetry surfaced by the gap
+analysis: offensive skills existed for Kubernetes, containers, and cloud with
+no defensive counterpart, cloud IR covered AWS and Azure but not GCP, and the
+defense plugin was entirely reactive (DFIR, hunting) with no proactive posture
+or vulnerability-management work. All four shipped source-verified.
+
+### Added
+
+- **`investigating-gcp-incidents`** (defense) — completes the cloud-IR trio.
+  Leads with GCP's audit-log defaults because they decide the investigation:
+  Admin Activity and System Event are always on (400-day `_Required` bucket),
+  Data Access is off by default except BigQuery, so read/exfiltration activity
+  is usually unprovable unless logging was enabled in advance — reported as a
+  visibility gap, not "no exfiltration."
+- **`defending-kubernetes`** (defense) — the blue-team counterpart to
+  `attacking-eks-gke-aks` and `exploiting-containers`. RBAC capability
+  enumeration (not role names), Pod Security Admission (`restricted`, since
+  PSP was removed in 1.25), network-policy default-deny with CNI-enforcement
+  caveat, token/secret exposure, control-plane and kubelet exposure, and
+  turning on the audit log.
+- **`hardening-cloud-posture`** (defense) — proactive counterpart to
+  `exploiting-cloud-platforms`. Ranks by attack path over finding count
+  (identity is the perimeter), reads CSPM output critically, and prefers
+  org-level guardrails over point-fixes.
+- **`managing-vulnerabilities`** (defense) — risk-based prioritization: CVSS is
+  severity not priority; combine with CISA KEV (confirmed exploited) and EPSS
+  (30-day probability), reachability, and asset value; decide with SSVC
+  (track/track*/attend/act); track fixes and exceptions honestly.
+
+All four registered under `_unmapped` in `ttp-index.json` (cloud-IR and
+defensive-process skills, none an Enterprise ATT&CK technique), made reachable
+from their offensive and sibling skills, and covered by new `trap_for` eval
+cases. Verified against primary sources before stamping: GCP audit-log
+streams, defaults, retention, method names and IAM permissions; Kubernetes PSP
+removal (1.25) and Pod Security levels; EPSS/KEV/SSVC definitions and outcomes.
+Plugin counts: offense 37, defense 22, core 20 (79 total).
+
 ## [4.1.0] - 2026-07-27
 
 Three new skills filling gaps identified by surveying comparable projects

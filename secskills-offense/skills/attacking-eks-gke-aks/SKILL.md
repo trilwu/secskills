@@ -32,6 +32,8 @@ Only against systems you are authorized to test.
   use `exploiting-containers`
 - **Cloud IAM and control-plane-only assessment (no cluster involved)** -- use
   `exploiting-cloud-platforms`
+- **Defending or hardening the cluster rather than attacking it** -- use
+  `defending-kubernetes`
 - **SSRF hitting IMDS from a web application, not from inside a pod** -- use
   `exploiting-ssrf`
 - **Writing detection rules for the attacks described here** -- use
