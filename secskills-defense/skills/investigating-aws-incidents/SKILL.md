@@ -26,6 +26,7 @@ rest of the intrusion falls out of the timeline.
 
 - **The incident is in Microsoft 365 / Entra ID, not AWS** -- use `investigating-m365-entra`
 - **The incident is in Azure resources/subscriptions** -- use `investigating-azure-incidents`
+- **The incident is in Google Cloud** -- use `investigating-gcp-incidents`
 - **The general IR process and host-level response** -- use `responding-to-incidents`
 - **You are the attacker, not the responder** -- use `exploiting-cloud-platforms`
 - **The pivot is specifically into Kubernetes on EKS** -- use `attacking-eks-gke-aks`

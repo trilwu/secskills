@@ -46,7 +46,11 @@
     "analyzing-disk-images": "Procedure skill (dead-disk forensics + Sleuth Kit/Plaso). Analysis method, not a technique",
     "recognizing-deception": "MITRE Engage (deception and adversary engagement), not Enterprise ATT&CK -- ATT&CK models adversary behaviour, not the defender's decoys an adversary encounters",
     "maintaining-engagement-state": "Engagement process discipline, not an adversary technique",
-    "triaging-security-alerts": "Defensive process; the techniques appear in whatever alert is being worked, not in the triage method itself"
+    "triaging-security-alerts": "Defensive process; the techniques appear in whatever alert is being worked, not in the triage method itself",
+    "investigating-gcp-incidents": "Enterprise ATT&CK techniques appear in the activity investigated, not in the investigation method; this is a cloud-IR process skill like its AWS/Azure siblings",
+    "defending-kubernetes": "Defensive hardening and detection for containers/orchestration; the techniques it defends against are mapped under the offensive container skills",
+    "hardening-cloud-posture": "Proactive defensive process; no adversary technique of its own",
+    "managing-vulnerabilities": "Vulnerability-management process; not an ATT&CK technique"
   },
   "tactics": {
     "TA0043": "Reconnaissance",
