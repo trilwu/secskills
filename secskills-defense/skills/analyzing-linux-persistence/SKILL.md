@@ -64,10 +64,19 @@ find /etc/systemd/system/*.d /run/systemd/system/*.d \
 # Masked units -- attacker may mask a security service
 systemctl list-unit-files --state=masked
 
-# Systemd generators -- scripts that dynamically create units at boot
+# Systemd generators -- scripts that dynamically create units at boot.
+# Four directories, in ascending precedence. Checking only the first two
+# misses generators dropped in the others.
 ls -la /etc/systemd/system-generators/
+ls -la /run/systemd/system-generators/         # tmpfs: runtime-injected
+ls -la /usr/local/lib/systemd/system-generators/
 ls -la /usr/lib/systemd/system-generators/
 ```
+
+A generator under `/run` does not survive reboot, so it is not persistence in
+the strict sense — but it is a live execution primitive, and its absence from a
+post-reboot image does not mean it was never there. Note it on a running host
+before you collect.
 
 **What to look for:** `ExecStart` pointing to `/tmp`, `/dev/shm`, or writable
 paths. `Restart=always` units. Timers with unusual schedules. Drop-ins that
@@ -156,9 +165,13 @@ ls -la /etc/ssh/sshd_config.d/ 2>/dev/null
 # PAM configuration for SSH
 cat /etc/pam.d/sshd
 # Look for added auth sufficient lines or custom PAM modules
-find /lib/security/ /lib64/security/ /usr/lib/security/ \
+# PAM module locations are distro-specific. Debian/Ubuntu use a multiarch
+# path, so the RHEL-style list alone returns nothing there -- and an empty
+# result reads as "no rogue module" when you simply looked in the wrong place.
+find /lib/security/ /lib64/security/ /usr/lib/security/ /usr/lib64/security/ \
+     /lib/*-linux-gnu/security/ /usr/lib/*-linux-gnu/security/ \
   -name 'pam_*.so' 2>/dev/null | \
-  xargs -I{} rpm -qf {} 2>/dev/null || dpkg -S {} 2>/dev/null
+  xargs -I{} sh -c 'rpm -qf {} 2>/dev/null || dpkg -S {} 2>/dev/null || echo "UNOWNED: {}"'
 
 # SSH agent hijacking -- check for forwarded agent sockets
 find /tmp -name 'agent.*' -type s 2>/dev/null
@@ -265,7 +278,7 @@ from package manager records.
 # Udev rules -- trigger on hardware events
 ls -la /etc/udev/rules.d/
 ls -la /usr/lib/udev/rules.d/
-grep -r 'RUN+=' /etc/udev/rules.d/ 2>/dev/null
+grep -r 'RUN+=' /etc/udev/rules.d/ /run/udev/rules.d/ /usr/lib/udev/rules.d/ 2>/dev/null
 
 # D-Bus system services
 ls -la /etc/dbus-1/system.d/ /usr/share/dbus-1/system-services/ 2>/dev/null
