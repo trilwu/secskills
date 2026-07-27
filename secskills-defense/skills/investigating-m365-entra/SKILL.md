@@ -36,14 +36,25 @@ Missing logs are a finding, not a reason to skip the question.
 
 | Log source | Retention (default) | License gate | Key operations |
 | --- | --- | --- | --- |
-| Unified Audit Log (UAL) | 180d (E5), 90d (E3) | MailItemsAccessed requires E5 | MailItemsAccessed, New-InboxRule, Set-Mailbox, consent grants |
+| Unified Audit Log (UAL) | 180d default; 1 year for E5-licensed users | MailItemsAccessed requires E5 | MailItemsAccessed, New-InboxRule, Set-Mailbox, consent grants |
 | Entra ID sign-in logs | 30d | Export to Log Analytics for longer | Sign-in events, CA evaluation, MFA results |
 | Entra ID audit logs | 30d | None | Role assignments, app registrations, credential changes |
 | Identity Protection | 30d | Requires P2 | Risky sign-ins, risk detections |
 | Defender for Cloud Apps | 180d | Requires MDCA license | Activity log, OAuth app inventory |
 | Mailbox audit log | 90d (on by default) | MailItemsAccessed requires E5 | Mail access, send-as, delegate ops |
 
-If the tenant is E3-only, you have 90 days of UAL and no MailItemsAccessed.
+**Get the retention right before you conclude anything from a gap.** Since
+17 October 2023 the Audit (Standard) default is **180 days**, not the 90 days
+most older material still cites — records generated *before* that date kept the
+old 90-day window. One year is the default only for users holding an E5 (or
+Purview Audit add-on) licence, and even then only for Exchange, SharePoint,
+OneDrive, and Entra ID. An E3 tenant therefore has 180 days of UAL and no
+`MailItemsAccessed`, and cannot extend retention in-product.
+
+Retention is per-user by licence, not per-tenant: in a mixed tenant the same
+query can return a year of history for an E5 custodian and 180 days for the E3
+account next to them. Confirm the licence on the account you are investigating
+before you read an empty result as "no activity".
 State that gap explicitly. Check SIEM or Log Analytics for extended retention.
 
 ## Unified Audit Log (UAL)
