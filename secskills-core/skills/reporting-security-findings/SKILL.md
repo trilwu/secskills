@@ -20,6 +20,9 @@ assessment creates is destroyed or preserved in the write-up.
 ## When NOT to Use
 
 - **Finding the bug** — use the relevant testing or audit skill first
+- **Assembling the raw record a report is built from** (provenance, artifact
+  register, evidence, dead ends) — use `maintaining-engagement-state`; this
+  skill consumes that record
 - **Incident narratives and postmortems** — use `responding-to-incidents`
 - **Compliance-framework mapping as the primary goal** — different document,
   different audience

@@ -1,7 +1,7 @@
 {
   "name": "secskills-core",
-  "version": "4.0.0",
-  "description": "19 dual-use security skills for Claude Code: reverse engineering (native, Go/Rust/.NET, iOS, firmware, packers, and Flutter/React Native/Unity/Xamarin runtimes), source-code and supply-chain auditing, cryptography and pull-request security review, AI/LLM and MCP security, ATT&CK technique mapping, and security findings reporting. The shared foundation for the secskills-offense and secskills-defense plugins; ships the ttp-index.json ATT&CK map. Use when reversing a binary, auditing code, reviewing crypto, or mapping techniques.",
+  "version": "4.1.0",
+  "description": "20 dual-use security skills for Claude Code: reverse engineering (native, Go/Rust/.NET, iOS, firmware, packers, and Flutter/React Native/Unity/Xamarin runtimes), source-code and supply-chain auditing, cryptography and pull-request security review, AI/LLM and MCP security, ATT&CK technique mapping, and security findings reporting. The shared foundation for the secskills-offense and secskills-defense plugins; ships the ttp-index.json ATT&CK map. Use when reversing a binary, auditing code, reviewing crypto, or mapping techniques.",
   "author": {
     "name": "trilwu",
     "url": "https://github.com/trilwu"

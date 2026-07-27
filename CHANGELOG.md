@@ -3,6 +3,36 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.0] - 2026-07-27
+
+Three new skills filling gaps identified by surveying comparable projects
+(Trail of Bits' skills, awesome-dfir-skills) and the 2025-2026 research on
+where LLM-driven security work fails. All three shipped source-verified.
+
+### Added
+
+- **`recognizing-deception`** (offense) — honeypots, canary tokens, decoy AD
+  accounts, and deceptive cloud credentials, and how to handle a suspected
+  decoy without tripping it. Addresses the documented failure mode where an
+  agent's state is poisoned by an environment that deliberately lies to it:
+  evidence grounding defends against self-generated hallucination but not
+  against a convincing planted service. No comparable project covers this.
+- **`maintaining-engagement-state`** (core) — the durable record that outlives
+  a session: credential provenance, access inventory, an artifact register for
+  cleanup, findings with evidence, and a dead-end log. Addresses LLM
+  statelessness and short context across multi-day engagements, and makes
+  findings attributable and cleanup possible.
+- **`triaging-security-alerts`** (defense) — working an alert queue to a
+  defensible disposition: the true / benign-true / false-positive distinction,
+  base-rate reasoning before escalation, cheapest-discriminator enrichment
+  order, and time-boxing. The single highest-volume SOC task, previously
+  absent; the defense plugin held only post-incident and hunting skills.
+
+Each is registered in `ttp-index.json` (all three under `_unmapped` — Engage,
+process discipline, and defensive process respectively, none an Enterprise
+ATT&CK technique), reachable from existing domain skills, and covered by new
+`trap_for` eval cases. Plugin counts: offense 37, defense 18, core 20.
+
 ## [4.0.0] - 2026-07-26
 
 Split the single `secskills` plugin into three, so users install only the side
