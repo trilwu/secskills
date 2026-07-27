@@ -1,6 +1,7 @@
 ---
 name: writing-yara-rules
 description: Author durable YARA detection rules — meta/strings/condition anatomy, string types and modifiers, structural conditions with file magic and offsets, the PE/ELF/math/hash modules, specificity-vs-durability tuning, atom-aware performance, memory and process scanning, and YARA-X. Use when writing a YARA rule, creating a signature for a malware family or a file/memory artifact, turning IOCs or a captured sample into a detection, or hunting for a family across a corpus with Retrohunt or an on-host scanner.
+verified: 2026-07-26
 ---
 
 # Writing YARA Rules

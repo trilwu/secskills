@@ -1,6 +1,7 @@
 ---
 name: attacking-saml
 description: Attack SAML single sign-on by decoding and tampering with signed XML assertions — XML signature wrapping (XSW1-XSW8), signature stripping, assertion and attribute tampering, NameID comment injection, XXE through the SAML parser, certificate faking, recipient confusion and IdP-initiated replay, and Golden SAML forgery. Use when a request carries a `SAMLRequest` or `SAMLResponse` parameter, when base64+deflate decodes to XML with `<saml:Assertion>`, when the target exposes a `/saml/acs` or `/sso` endpoint, when an IdP-initiated login lands an assertion at the SP, or when federation runs through Okta, ADFS, Ping, or Azure/Entra.
+verified: 2026-07-26
 ---
 
 # Attacking SAML

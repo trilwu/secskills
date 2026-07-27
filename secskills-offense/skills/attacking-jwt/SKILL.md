@@ -1,6 +1,7 @@
 ---
 name: attacking-jwt
 description: Attack JSON Web Tokens by breaking the server's signature-verification decision — alg:none and its case variants, RS256-to-HS256 key confusion using the public key as an HMAC secret, weak HMAC secret cracking, jku/x5u/kid/jwk header injection, embedded-key self-signing, claim tampering, and algorithm-confusion bugs like the ES256 psychic-signature CVE. Use when a request contains a token starting with eyJ, when an Authorization: Bearer header carries a JWT, or when a JWT sits in a cookie, localStorage, session storage, or query parameter.
+verified: 2026-07-26
 ---
 
 # Attacking JWT

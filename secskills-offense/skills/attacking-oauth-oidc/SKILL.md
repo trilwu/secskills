@@ -1,6 +1,7 @@
 ---
 name: attacking-oauth-oidc
 description: Attack OAuth 2.0 and OpenID Connect flows — enumerate endpoints from the OIDC discovery document, break redirect_uri validation with path traversal, open-redirect chaining, subdomain and regex weakness, and %2F/@ parser tricks, exploit missing state (callback CSRF) and absent or downgraded PKCE, steal codes and tokens via open redirectors and referer leakage, replay and inject authorization codes across clients, escalate scope and bypass consent, confuse access_token with id_token, and take over accounts through "Sign in with X" email trust and device-code consent phishing. Use when you see /authorize, /oauth/token, response_type, redirect_uri, client_id, code= or state= parameters, a "Sign in with Google/Microsoft/GitHub" button, or an OIDC discovery document at /.well-known/openid-configuration.
+verified: 2026-07-26
 ---
 
 # Attacking OAuth and OIDC

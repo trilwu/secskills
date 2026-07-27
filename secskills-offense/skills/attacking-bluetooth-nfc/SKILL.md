@@ -16,6 +16,27 @@ Bluetooth and NFC share a property with early Wi-Fi -- the protocols were design
 - Sniffing or intercepting BLE communication between device and app
 - Cloning or replaying NFC/RFID credentials
 
+**Scope and authorization.** RF work has a legal profile the rest of pentesting
+does not, because you cannot confine a radio to the target:
+
+- **Interception is wiretap law.** Capturing BLE or Bluetooth Classic traffic
+  sweeps in whatever else is transmitting nearby — staff phones, medical
+  devices, neighbouring tenants. In the US that implicates the Wiretap Act and
+  ECPA; most jurisdictions have an equivalent. Test in a shielded enclosure or
+  a controlled area where you can account for every device you capture, and
+  discard non-target captures without analysing them.
+- **Transmitting is regulated.** Jamming, active BLE injection, and
+  high-power relay setups can violate FCC Part 15 (or national equivalent)
+  regardless of who owns the target device.
+- **Cloned access credentials are physical keys.** A duplicated badge is
+  forgery-adjacent in many jurisdictions and gets you into spaces the
+  engagement may not cover. Enumerate which doors are in scope before you
+  clone, log every credential you produce, and destroy the clones at the end.
+
+Get physical-site authorization, an RF testing window, and a device inventory
+in writing — and carry the authorization letter, because RF testing is the
+scenario where you are most likely to be physically challenged mid-test.
+
 ## When NOT to Use
 
 - **Wi-Fi attacks** -- use `attacking-wireless-networks`

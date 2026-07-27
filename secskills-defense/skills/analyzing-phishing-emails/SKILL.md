@@ -1,6 +1,7 @@
 ---
 name: analyzing-phishing-emails
 description: Triage and forensically analyze reported phishing safely — extract the raw message, read the Received chain, verify SPF/DKIM/DMARC, detect display-name and lookalike spoofing, unwrap redirects and SafeLinks/URLDefense, decode quishing QR codes, triage attachments, and pull IOCs for hunting. Use when handed a reported phishing email, a suspicious .eml or .msg file, a set of email headers to analyze, a malicious attachment or link to triage, or a business email compromise or spoofing case.
+verified: 2026-07-26
 ---
 
 # Analyzing Phishing Emails
