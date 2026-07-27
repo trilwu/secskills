@@ -1,6 +1,7 @@
 ---
 name: responding-to-incidents
 description: Run digital forensics and incident response — triage, evidence acquisition with chain of custody, host and cloud artifact analysis, timeline reconstruction, scoping, containment, eradication, and postmortem. Use during a suspected compromise, when analyzing a disk or memory image, reconstructing an attacker timeline, or answering how far an intrusion spread.
+verified: 2026-07-27
 ---
 
 # Responding to Incidents
@@ -156,11 +157,11 @@ everything.
 
 ```bash
 # Memory analysis — where "are they still here" usually gets answered
-volatility3 -f mem.raw windows.pstree
-volatility3 -f mem.raw windows.malfind          # injected RWX regions
-volatility3 -f mem.raw windows.netscan
-volatility3 -f mem.raw windows.cmdline
-volatility3 -f mem.raw linux.bash               # recovered shell history
+vol -f mem.raw windows.pstree
+vol -f mem.raw windows.malfind          # injected RWX regions
+vol -f mem.raw windows.netscan
+vol -f mem.raw windows.cmdline
+vol -f mem.raw linux.bash               # recovered shell history
 
 # Filesystem timeline
 fls -r -m / image.dd > body.txt && mactime -b body.txt -d > timeline.csv

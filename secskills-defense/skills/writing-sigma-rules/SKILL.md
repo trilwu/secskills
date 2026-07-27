@@ -1,6 +1,7 @@
 ---
 name: writing-sigma-rules
 description: Author and maintain Sigma detection rules — structure, logsource taxonomy, detection logic with modifiers, false-positive filtering, backend conversion with pySigma, and offline validation with Hayabusa or Chainsaw. Use when translating threat intel into vendor-agnostic detection logic, building a detection-as-code pipeline around Sigma, reviewing or tuning existing Sigma rules, or converting rules across SIEM backends.
+verified: 2026-07-27
 ---
 
 # Writing Sigma Rules
@@ -156,7 +157,7 @@ Chain with `|`. Example: `CommandLine|contains|all`.
 | `cidr` | CIDR network range match on IP fields |
 | `windash` | Match both `-` and `/` as argument prefix |
 | `expand` | Expand environment variables like `%SystemRoot%` |
-| `wide` / `utf8` | Match UTF-16LE / UTF-8 encoding |
+| `wide` / `utf16le` / `utf16be` / `utf16` | Match the wide (UTF-16) encoding of the value; `wide` is an alias for `utf16le`. There is no `utf8` modifier |
 | `exists` | Field present (true) or absent (false) |
 
 ## Common Detection Patterns

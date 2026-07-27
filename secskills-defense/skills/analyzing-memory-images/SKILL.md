@@ -1,6 +1,7 @@
 ---
 name: analyzing-memory-images
 description: Analyze volatile memory images (RAM dumps) using Volatility 3 — process enumeration, injected code detection, credential extraction, network artifacts, rootkit analysis, and timeline construction from memory-resident data. Use when examining a memory capture from a compromised host, hunting for injected code or hollowed processes, extracting credentials or network state from RAM, or detecting kernel-level rootkits.
+verified: 2026-07-27
 ---
 
 # Analyzing Memory Images
@@ -43,8 +44,11 @@ winpmem_mini_x64.exe mem.raw
 # Alternative: DumpIt (single executable, click-to-run for non-technical staff)
 DumpIt.exe /OUTPUT mem.raw /QUIET
 
-# macOS — osxpmem
-sudo osxpmem -o mem.aff4
+# macOS — osxpmem is dead (Rekall archived, last release 2017, Intel-only, and
+# blocked by SIP/kext restrictions on Big Sur+ and all Apple Silicon). Full-RAM
+# capture on a modern Mac needs commercial tooling with Apple entitlements
+# (e.g. Volexity Surge Collect); otherwise take process-scoped dumps and
+# record that physical memory was not obtainable. See responding-to-incidents.
 
 # VM snapshots — no agent needed
 # VMware:   .vmem file alongside the .vmx (suspend the VM first for consistency)
