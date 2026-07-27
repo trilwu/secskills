@@ -1,6 +1,7 @@
 ---
 name: performing-social-engineering
 description: Conduct phishing campaigns, credential harvesting, pretexting, and social engineering attacks using tools like Gophish, SET, and custom techniques. Use when performing social engineering assessments or red team engagements.
+verified: 2026-07-27
 ---
 
 # Performing Social Engineering

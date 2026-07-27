@@ -1,6 +1,7 @@
 ---
 name: attacking-bluetooth-nfc
 description: Attack Bluetooth Classic, BLE, and NFC targets -- device enumeration, GATT characteristic exploitation, BLE MITM and replay, Ubertooth and nRF sniffing, MIFARE Classic cracking, Proxmark3 card cloning, NFC relay attacks, and access control bypass. Use when pentesting BLE peripherals or IoT devices, assessing NFC-based access controls or contactless payment security, testing Bluetooth pairing and authentication, or evaluating physical access card cloneability.
+verified: 2026-07-27
 ---
 
 # Attacking Bluetooth and NFC

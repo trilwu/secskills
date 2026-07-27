@@ -1,6 +1,7 @@
 ---
 name: bypassing-root-jailbreak-detection
 description: Defeat root, jailbreak, emulator, debugger, and Frida detection in mobile apps using Magisk DenyList, Zygisk modules, objection, and targeted Frida hooks, and understand where hardware-backed attestation like Play Integrity cannot be hooked. Use when an app exits, shows "device not secure", or silently fails on a rooted device or emulator, or when Frida attaches and the app immediately dies.
+verified: 2026-07-27
 ---
 
 # Bypassing Root and Jailbreak Detection

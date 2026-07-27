@@ -1,6 +1,7 @@
 ---
 name: testing-mobile-ipc
 description: Test mobile inter-process communication and deep link attack surface — exported Android activities, services, receivers and content providers, intent redirection, PendingIntent hijacking, App Links verification, iOS custom URL schemes, Universal Links, and App Groups — using drozer, adb, and Frida. Use when reviewing AndroidManifest.xml exported components, testing deeplinks or URL schemes, or assessing what another app on the device can reach.
+verified: 2026-07-27
 ---
 
 # Testing Mobile IPC and Deep Links

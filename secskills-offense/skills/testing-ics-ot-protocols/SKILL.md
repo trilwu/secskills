@@ -1,6 +1,7 @@
 ---
 name: testing-ics-ot-protocols
 description: Test Industrial Control Systems and Operational Technology protocols — Modbus, DNP3, OPC UA, BACnet, EtherNet/IP, S7comm, MQTT — with safety-first methodology for SCADA and ICS environments. Use when assessing OT network security, testing ICS protocol authentication, reviewing IT-OT segmentation, or performing authorized ICS penetration testing.
+verified: 2026-07-27
 ---
 
 # Testing ICS/OT Protocols

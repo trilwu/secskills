@@ -1,6 +1,7 @@
 ---
 name: attacking-wireless-networks
 description: Attack WiFi networks using WPA/WPA2 cracking, WPS exploitation, Evil Twin attacks, deauthentication, and wireless reconnaissance. Use when pentesting wireless networks or performing WiFi security assessments.
+verified: 2026-07-27
 ---
 
 # Attacking Wireless Networks

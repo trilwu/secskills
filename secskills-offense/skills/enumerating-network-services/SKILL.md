@@ -98,7 +98,7 @@ smbmap -H 10.10.10.10 -u username -p password -R  # Recursive listing
 enum4linux -a 10.10.10.10
 enum4linux -U -M -S -P -G 10.10.10.10
 
-# crackmapexec
+# NetExec (nxc, formerly CrackMapExec)
 nxc smb 10.10.10.10
 nxc smb 10.10.10.10 -u '' -p ''  # Null session
 nxc smb 10.10.10.10 -u username -p password --shares

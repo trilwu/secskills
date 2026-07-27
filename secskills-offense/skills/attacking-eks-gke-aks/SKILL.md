@@ -1,6 +1,7 @@
 ---
 name: attacking-eks-gke-aks
 description: Assess managed Kubernetes clusters on EKS, GKE, and AKS by exploiting the seams between cloud IAM and Kubernetes RBAC -- IRSA/OIDC trust abuse, Workload Identity Federation, pod-to-IMDS escalation, aws-auth ConfigMap takeover, node pool service account abuse, and AAD integration weaknesses. Use when pentesting a managed k8s cluster, reviewing RBAC in EKS/GKE/AKS, testing pod-to-cloud escalation, or assessing network policy enforcement across namespaces.
+verified: 2026-07-27
 ---
 
 # Attacking Managed Kubernetes (EKS, GKE, AKS)

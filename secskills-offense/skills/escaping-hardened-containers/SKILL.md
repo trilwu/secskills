@@ -1,6 +1,7 @@
 ---
 name: escaping-hardened-containers
 description: Escape containers that drop capabilities, enforce seccomp profiles, and run behind AppArmor or SELinux — enumerating residual capabilities, analyzing seccomp filters, abusing single-capability escapes, cgroup release agents, filesystem mounts, and runtime CVEs. Use when a container has no --privileged flag but retains exploitable capabilities, when seccomp or LSM blocks standard escape paths, when targeting gVisor or Kata sandboxes, or when reviewing a hardened container deployment for residual attack surface.
+verified: 2026-07-27
 ---
 
 # Escaping Hardened Containers

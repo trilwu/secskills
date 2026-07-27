@@ -1,6 +1,7 @@
 ---
 name: attacking-serverless
 description: Attack serverless compute — AWS Lambda, Azure Functions, GCP Cloud Functions, and edge runtimes like Cloudflare Workers. Enumerate functions, inject through event sources (S3, SQS, SNS, API Gateway, EventBridge), extract credentials from the execution environment, abuse over-privileged IAM roles, exploit cold-start persistence and container reuse, and test trigger misconfigurations. Use when a target runs serverless functions, when API Gateway or function URLs front compute, when event-driven architectures process untrusted input, or when cloud function execution roles need privilege-escalation testing.
+verified: 2026-07-27
 ---
 
 # Attacking Serverless
