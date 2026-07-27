@@ -1,6 +1,7 @@
 ---
 name: attacking-kerberos-delegation
 description: Identify and abuse Active Directory Kerberos delegation — unconstrained delegation with printer-bug coercion, constrained delegation with protocol transition (S4U2Self/S4U2Proxy), and resource-based constrained delegation via machine-account creation and msDS-AllowedToActOnBehalfOfOtherIdentity. Use when BloodHound or enumeration flags delegation, when you control an account with an SPN or GenericWrite over a computer, or when escalating within a domain.
+verified: 2026-07-27
 ---
 
 # Attacking Kerberos Delegation

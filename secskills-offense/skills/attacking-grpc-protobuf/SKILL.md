@@ -1,6 +1,7 @@
 ---
 name: attacking-grpc-protobuf
 description: Test gRPC and Protocol Buffers services — recovering .proto definitions from server reflection or compiled descriptors, calling methods with grpcurl and grpcui, intercepting HTTP/2 and gRPC-Web traffic, and fuzzing unknown message schemas with protobuf-inspector. Use when a target speaks gRPC, HTTP/2 with application/grpc, or when a request body is opaque binary protobuf rather than JSON.
+verified: 2026-07-27
 ---
 
 # Attacking gRPC and Protobuf Services

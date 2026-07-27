@@ -1,6 +1,7 @@
 ---
 name: abusing-adcs
 description: Enumerate and abuse Active Directory Certificate Services with Certipy and Certify — the ESC1 through ESC16 escalation paths, vulnerable template and CA configurations, NTLM relay to web enrollment, certificate-based authentication and persistence, and the strong-mapping changes that gate several of them. Use when a domain has a certificate authority, when Certipy or BloodHound reports vulnerable templates, or when escalating from a low-privilege domain user.
+verified: 2026-07-27
 ---
 
 # Abusing AD CS
