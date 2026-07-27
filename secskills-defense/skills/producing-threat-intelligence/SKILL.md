@@ -93,8 +93,12 @@ curl -s "https://crt.sh/?q=%25.example.com&output=json" | jq -r '.[].name_value'
 # Shodan: everything serving an identical favicon
 shodan search "http.favicon.hash:-247388890"
 
-# Censys: hosts presenting a given JARM fingerprint
-censys search "services.jarm.fingerprint: <jarm_hash>"
+# Censys: hosts presenting a given JARM fingerprint.
+# Censys Platform (CenQL) prefixes every parsed field with its dataset:
+censys search "host.services.jarm.fingerprint: <jarm_hash>"
+# Legacy Search used the unprefixed form below. It is deprecated as of
+# September 2026, so treat any older query you find as needing conversion:
+#   services.jarm.fingerprint: <jarm_hash>
 ```
 
 **Do not tip off the adversary.** Do not curl the live C2, resolve its domain
@@ -302,6 +306,12 @@ never route **adversary infrastructure** (phishing links, C2, malware hosting),
 **client-owned hosts**, or **engagement URLs** through it — the request leaves
 your machine to a third party, and for live adversary infrastructure it also
 tips off the operator.
+
+Some sites block the extractor and return an error blob rather than the page —
+`{"error":"Failed to fetch: 418 I'm a teapot"}` from freedesktop.org, for
+instance. That is the fetch being refused, **not** the source saying the thing
+does not exist. Re-fetch the URL directly before drawing any conclusion from
+it.
 
 ## References
 

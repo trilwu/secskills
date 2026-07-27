@@ -136,6 +136,13 @@ Use it for documentation, specs, vendor KB, and articles. Do **not** use it for:
   vendor documentation only.
 - **Authenticated or JS-rendered pages** — it fetches as an anonymous client.
 
+**A blocked fetch is not a negative result.** Some hosts refuse the extractor
+and return an error blob instead of the page — freedesktop.org answers with
+`{"error":"Failed to fetch: 418 I'm a teapot"}`. Treat that as "I did not read
+the page", never as "the page does not say this". It is the truncated-negative
+trap wearing a different hat, and the fix is the same: re-fetch directly before
+concluding anything.
+
 ## Programmatic Existence Probes
 
 Where a project publishes one doc page per module, existence is a **status

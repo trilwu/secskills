@@ -240,6 +240,12 @@ never route **adversary infrastructure** (phishing links, C2, malware hosting),
 your machine to a third party, and for live adversary infrastructure it also
 tips off the operator.
 
+Some sites block the extractor and return an error blob rather than the page —
+`{"error":"Failed to fetch: 418 I'm a teapot"}` from freedesktop.org, for
+instance. That is the fetch being refused, **not** the source saying the thing
+does not exist. Re-fetch the URL directly before drawing any conclusion from
+it.
+
 ## References
 
 - `references/ai-test-cases.md` — injection test corpus and tool-abuse cases
