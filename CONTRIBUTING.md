@@ -2,6 +2,27 @@
 
 Thanks for contributing. This document is the quality bar for what gets merged.
 
+## Two skills do this work with you
+
+The repo ships contributor skills in `.claude/skills/`. They load automatically
+when Claude Code is working in this repository, and they carry the operational
+detail this document summarises:
+
+- **`authoring-security-skills`** — plugin bucket, skill tier, writing a
+  description that triggers correctly, required sections, registering in
+  `ttp-index.json`, adding eval cases with negative `trap_for` traps, and the
+  validator sequence.
+- **`verifying-skill-accuracy`** — fact-checking against primary sources: the
+  source hierarchy, programmatic existence probes, class-before-instance
+  triage, the truncated-negative trap, and when a skill may be stamped
+  `verified:`.
+
+They are held to the same structural bar as shipped skills (`validate.py`
+checks them) but are not part of the collection and carry no ATT&CK mapping.
+
+**Authoring and verification are separate gates.** Passing all three validators
+means a skill is well-formed, not that it is true.
+
 ## Ground rules
 
 - Contributions must serve authorized security work: assessments with
