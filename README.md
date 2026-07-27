@@ -64,11 +64,27 @@ only one skill clean on both passes. The remaining 60 skills were written the
 same way and **have not been through that pass**, so the same error rate should
 be assumed to apply to them.
 
-Verified skills carry a `verified:` date in their frontmatter:
+There are two levels of checking, and they are not the same thing:
+
+**Full per-skill verification** — every checkable claim in the skill driven to
+a primary source. These carry a `verified:` date in their frontmatter:
 
 ```bash
-grep -l "^verified:" secskills-*/skills/*/SKILL.md   # 12 of 72 today
+grep -l "^verified:" secskills-*/skills/*/SKILL.md   # 14 of 72 today
+python3 scripts/validate.py --strict                 # prints the count
 ```
+
+**Class sweeps** — all 72 skills have been swept for whole categories of error
+that span files: dead or renamed tooling, CVE IDs, hashcat modes, cloud
+metadata endpoints, removed Kubernetes APIs, default ports, Android/iOS
+version-gated behaviour, and the Sigma, CVSS, MCP, and RFC 3227 specs. That
+caught the highest-impact defects — CrackMapExec archived since 2023 across 14
+invocations, the retired AzureAD PowerShell module, Volatility's entry point
+wrong in 40 commands — but a swept skill is **not** a verified skill. It means
+the known error classes were checked, not that everything in the file was.
+
+Assume an unstamped skill still carries errors in the claim classes nobody has
+swept yet.
 
 What this means in practice:
 

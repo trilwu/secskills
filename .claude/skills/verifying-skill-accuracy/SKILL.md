@@ -40,6 +40,26 @@ those can pass on a skill whose commands do not exist.
 > Green CI means the skill is well-formed. It says nothing about whether it is
 > true. Never cite a passing test run as evidence of accuracy.
 
+## Sweep by Class Across the Whole Collection
+
+Once you identify an error class, **check it everywhere before moving on** —
+not just in the skill that surfaced it. Errors of a class cluster, and a
+per-skill pass leaves the collection internally inconsistent.
+
+Two cases from this repo make the point. The legacy Sigma date format was
+fixed in `writing-sigma-rules`, then turned up again in
+`engineering-detections` — in a skill that had already been stamped, because
+the per-skill inventory did not include a class fixed elsewhere. And
+`attacking-entra-id` was still calling retired AzureAD PowerShell cmdlets
+while `investigating-m365-entra` already used the modern Graph equivalents:
+the collection contradicted itself, and only a cross-cutting grep showed it.
+
+So: fix the instance, then immediately grep every skill for the pattern, and
+say in the commit which classes you swept. Classes worth sweeping in a
+security collection — tool renames and archived projects, CVE IDs, cloud
+metadata endpoints, removed API versions, default ports, spec version claims,
+and any behaviour gated on a platform version.
+
 ## Triage: Class Errors Before Instance Errors
 
 Do not start by checking facts one at a time. First ask: **is there a single
