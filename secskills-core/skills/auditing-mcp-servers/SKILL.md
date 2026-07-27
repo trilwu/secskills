@@ -144,6 +144,26 @@ resource can cause it to do so.
 
 ### OAuth 2.0 integration
 
+Since the 2025-06-18 specification an MCP server is an OAuth **resource
+server**, not an ad-hoc token consumer. Three requirements carry explicit
+normative weight, and each is a high-severity finding when missing:
+
+- **Token passthrough is forbidden.** The server MUST NOT accept a token that
+  was not issued for it, and MUST NOT forward the client's token onward to an
+  upstream API. A server that relays its caller's token is the confused-deputy
+  bug in its most direct form: the upstream sees a legitimate token and cannot
+  tell the request did not come from the user. Look for any code path that
+  reads the incoming `Authorization` header and reuses it outbound.
+- **Audience validation.** The server MUST verify the token was minted for it
+  — RFC 8707 resource indicators, checked against the server's own canonical
+  URI. Accepting any structurally valid token from the right issuer is not
+  enough; that is what lets a token stolen from one MCP server unlock another.
+- **Protected resource metadata.** The server should publish
+  `/.well-known/oauth-protected-resource` so clients discover the correct
+  authorization server rather than being told which one to trust.
+
+Then the ordinary OAuth checks:
+
 - Scope: are OAuth scopes mapped to tool capabilities, or does a single
   scope grant access to everything?
 - Token storage: where does the client store tokens? Are they persisted to
@@ -181,7 +201,7 @@ Review each resource for:
 | Transport | Threat model | Requirements |
 | --- | --- | --- |
 | **stdio** | Process-local; no network exposure | Server must not be startable by unauthorized users; environment variables may leak secrets to child processes |
-| **SSE** (Server-Sent Events) | HTTP-based; network-accessible | TLS required; CORS must restrict origins; authentication on every request |
+| **SSE** (Server-Sent Events) | **Deprecated** — replaced by Streamable HTTP; still found in older deployments | Same as below, plus: flag the transport itself. A server still on HTTP+SSE is running against a superseded spec revision and likely predates the current authorization requirements |
 | **Streamable HTTP** | HTTP-based; supports bidirectional streaming | TLS required; CORS policy; session management; authentication per-stream |
 
 For HTTP transports, check:
