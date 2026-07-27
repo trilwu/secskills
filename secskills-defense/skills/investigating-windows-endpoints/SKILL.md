@@ -1,6 +1,7 @@
 ---
 name: investigating-windows-endpoints
 description: Investigate a compromised or suspicious Windows host from on-disk artifacts -- triage collection, evidence of execution (Prefetch, Amcache, Shimcache, SRUM, UserAssist, BAM), the event-log workhorses by ID (Security 4624/4688/4720/7045/1102, Sysmon, PowerShell 4104, RDP, WMI), persistence hunting across every autostart, lateral-movement traces, $MFT/USN filesystem forensics, anti-forensics detection, and building a super-timeline with the Eric Zimmerman suite, Chainsaw, Hayabusa, and Plaso. Use when triaging a compromised or suspicious Windows host, working through EVTX/Sysmon logs, reconstructing what executed on a Windows machine, hunting persistence and lateral-movement traces, or analyzing a KAPE/triage collection.
+verified: 2026-07-26
 ---
 
 # Investigating Windows Endpoints

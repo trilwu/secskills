@@ -1,6 +1,7 @@
 ---
 name: analyzing-disk-images
 description: Perform dead-disk forensics on an acquired disk image using The Sleuth Kit, Plaso, and bulk_extractor — verify integrity and mount read-only, map partitions, recover deleted files, build a file-system and super-timeline, carve unallocated space, mine registry hives and OS artifacts, and detect anti-forensics. Use when handed a .E01/.dd/.raw/.vmdk/.vhdx disk image or forensic acquisition to examine, recovering deleted files, building a file-system timeline, or carving artifacts from unallocated space.
+verified: 2026-07-26
 ---
 
 # Analyzing Disk Images

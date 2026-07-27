@@ -1,6 +1,7 @@
 ---
 name: analyzing-shellcode
 description: Analyze raw shellcode and position-independent code — extracting the bytes, guessing architecture, disassembling at the right base, decoding self-decoder stubs, resolving hashed Windows APIs, emulating to the decoded stage, and pulling C2 and stage IOCs. Use when handed a raw blob of position-independent code, an extracted payload with no PE/ELF header, shellcode lifted from an exploit or a macro/loader, a `\x`-escaped or base64 buffer, a suspected Cobalt Strike or Metasploit stager, or an egg-hunter.
+verified: 2026-07-26
 ---
 
 # Analyzing Shellcode

@@ -50,6 +50,40 @@ generic mobile skill cannot hold that without bloating for everyone else, and
 the person who needs it needs far more than a generic skill would carry. Both
 load only when relevant, so neither costs anything until it applies.
 
+## Verification status — read this first
+
+**These skills are methodology scaffolding, not a verified command reference.**
+They were drafted with LLM assistance, and the specific facts in them — tool
+flags, event IDs, log field names, CVE numbers, API paths — carry an error rate
+you must plan around.
+
+Twelve skills have been checked line-by-line against primary sources
+(vendor docs, RFCs, tool source) and then adversarially re-checked. That pass
+found **31 factual errors across 11 of the 12** — roughly 2.6 per skill, with
+only one skill clean on both passes. The remaining 60 skills were written the
+same way and **have not been through that pass**, so the same error rate should
+be assumed to apply to them.
+
+Verified skills carry a `verified:` date in their frontmatter:
+
+```bash
+grep -l "^verified:" secskills-*/skills/*/SKILL.md   # 12 of 72 today
+```
+
+What this means in practice:
+
+- **Trust the methodology; verify every specific.** The sequencing, the scope
+  boundaries, and the *Rationalizations to Reject* sections are the durable
+  part. Any command, ID, or field name is a starting point to confirm, not a
+  fact to paste into a deliverable.
+- **Be strictest with the defense skills.** A wrong flag in an offensive skill
+  fails loudly when you run it. A misread forensic artifact fails silently into
+  an incident timeline that lawyers and regulators later read.
+- **CI does not check accuracy.** `validate.py`, `sync_attack.py`, and
+  `run_evals.py` verify formatting, cross-references, ATT&CK-index consistency,
+  and routing against self-authored eval cases. All of that is internal
+  consistency. None of it touches ground truth.
+
 ## Skills
 
 ### Code and application security

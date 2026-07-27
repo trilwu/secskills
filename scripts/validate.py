@@ -25,8 +25,11 @@ MAX_DESC = 1024
 MIN_DESC = 60
 MAX_SKILL_LINES = 600
 
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
 errors: list[str] = []
 warnings: list[str] = []
+verified: list[str] = []  # skills fact-checked against primary sources
 
 
 def error(msg: str) -> None:
@@ -112,6 +115,16 @@ def check_skill(skill_dir: Path) -> None:
         if " when " not in desc.lower():
             warn(f"{rel}/SKILL.md: description has no trigger clause; add "
                  "'Use when ...' so Claude knows when to load it")
+
+    # Optional: date of the last primary-source fact-check. Absence is not an
+    # error — it means the skill is an unverified draft, which the README says
+    # is the default. A malformed date is an error, since it breaks the count.
+    stamp = fm.get("verified", "")
+    if stamp:
+        if not DATE_RE.match(stamp):
+            error(f"{rel}/SKILL.md: verified '{stamp}' must be YYYY-MM-DD")
+        else:
+            verified.append(skill_dir.name)
 
     body = skill_md.read_text(encoding="utf-8")
     lines = body.count("\n") + 1
@@ -209,6 +222,8 @@ def main() -> int:
 
     print(f"\nChecked {len(skill_names)} skills across {len(PLUGIN_DIRS)} plugins: "
           f"{len(errors)} error(s), {len(warnings)} warning(s)")
+    print(f"Fact-checked against primary sources: {len(verified)}/{len(skill_names)} "
+          f"({len(skill_names) - len(verified)} unverified drafts)")
 
     if errors or (args.strict and warnings):
         return 1

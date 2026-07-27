@@ -1,6 +1,7 @@
 ---
 name: investigating-aws-incidents
 description: Investigate security incidents in Amazon Web Services -- reconstruct attacker activity from CloudTrail, VPC Flow Logs, and GuardDuty, anchor the investigation on the compromised principal (access key or role), trace privilege escalation and persistence through IAM API calls, detect data exfiltration and crypto-mining, and contain without destroying evidence or tipping off the attacker. Use when responding to a suspected AWS compromise, exposed access keys, anomalous CloudTrail activity, a GuardDuty finding, unexpected IAM changes, crypto-mining EC2 instances, or S3 data exfiltration.
+verified: 2026-07-26
 ---
 
 # Investigating AWS Incidents

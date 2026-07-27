@@ -1,6 +1,7 @@
 ---
 name: investigating-azure-incidents
 description: Investigate security incidents in Microsoft Azure (resource and subscription control plane) -- reconstruct attacker activity from the Azure Activity Log and resource/data-plane diagnostic logs, anchor the investigation on the identity that made the calls (a user, service principal, or managed identity), trace privilege escalation through role assignments, hunt managed-identity token abuse and VM run-command code execution, and detect storage or Key Vault data theft while correlating back to Entra sign-in logs. Use when responding to a suspected Azure resource compromise, anomalous Azure Activity Log entries, a Microsoft Defender for Cloud alert, managed-identity or service-principal abuse, a crypto-mining VM, or storage-account exfiltration.
+verified: 2026-07-26
 ---
 
 # Investigating Azure Incidents

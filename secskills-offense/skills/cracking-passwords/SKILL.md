@@ -27,6 +27,29 @@ Activate this skill when the user asks to:
 - Perform pass-the-hash attacks
 - Help with credential-based attacks
 
+**Scope and authorization.** Cracking is only as authorized as the hashes were.
+Confirm the material came from a system in scope, and treat recovered plaintext
+as live credentials — encrypt at rest, never paste into a shared doc or a
+third-party cracking service, and destroy it at engagement end per the
+contracted retention terms.
+
+Three domain-specific traps:
+
+- **Spraying is an availability risk, not just an access one.** Online
+  attempts against production auth can lock out real accounts and page a real
+  SOC. You need the lockout threshold and observation window in writing, an
+  agreed attempt rate, and a named contact — or you cause an outage and a
+  false incident.
+- **Breach-corpus material is not fair game by default.** Third-party dump
+  data belongs to people who are not your client. Using it to seed wordlists
+  or validate reuse against live accounts needs explicit engagement coverage
+  and a lawful basis under GDPR-style regimes.
+- **Pass-the-hash is authentication, not analysis.** Replaying a hash is
+  unauthorized access unless lateral movement is explicitly in scope.
+
+Report the fact of a weak credential and its policy implication; there is
+rarely a reason to put recovered plaintext in a deliverable.
+
 ## When NOT to Use
 
 - **Online brute force against a live service** — that is testing, not cracking;

@@ -28,6 +28,24 @@ Activate this skill when the user asks to:
 - Identify technologies in use
 - Help with initial access techniques
 
+**Scope and authorization.** Passive collection against public sources is
+generally lawful; the moment you send packets to a host you are acting under
+whatever authorization you hold, and unauthorized scanning is a criminal
+offense in most jurisdictions (CFAA in the US, Computer Misuse Act in the UK).
+Two failure modes specific to recon:
+
+- **Inherited infrastructure.** Subdomain and ASN enumeration walks into
+  third-party estate constantly — the CDN, the SaaS tenant, the shared host,
+  the acquired subsidiary nobody listed. Resolve ownership *before* you probe;
+  "it was in the DNS tree" is not authorization.
+- **OSINT on people.** Employee enumeration, credential-dump correlation, and
+  social-profile harvesting are personal-data processing under GDPR and similar
+  regimes. Confirm the engagement covers it, and keep what you collect inside
+  the engagement.
+
+Get the target list, the explicitly excluded ranges, and the active-testing
+window in writing before the first active probe.
+
 ## When NOT to Use
 
 - **You already have network access** — use `enumerating-network-services`

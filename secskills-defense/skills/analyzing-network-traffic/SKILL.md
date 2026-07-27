@@ -1,6 +1,7 @@
 ---
 name: analyzing-network-traffic
 description: Analyze packet captures and network telemetry for intrusion evidence — capture and handling, the Wireshark/tshark triage funnel, Zeek log mining, Suricata rule runs, beacon and DNS-tunnel detection, TLS/JA3 fingerprinting, HTTP and file carving, exfiltration hunting, and IOC handoff. Use when a `.pcap` or `.pcapng` capture lands on your desk, when a suspected C2 beacon needs confirming, when there is data exfiltration to investigate, when malware network behaviour must be characterized from what it emitted, when a Zeek or Suricata alert needs running down, or when DNS tunneling or unusual TLS is suspected.
+verified: 2026-07-26
 ---
 
 # Analyzing Network Traffic
