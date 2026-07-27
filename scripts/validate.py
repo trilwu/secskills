@@ -209,9 +209,26 @@ def main() -> int:
             check_skill(d)
             skill_names.append(d.name)
 
+    # Repo-local contributor skills (.claude/skills/) are held to the same
+    # structural bar, but are not shipped, so they stay out of the plugin
+    # counts and the verified/total ratio for the collection.
+    local_dir = REPO / ".claude" / "skills"
+    local_names = []
+    if local_dir.is_dir():
+        for d in sorted(p for p in local_dir.iterdir() if p.is_dir()):
+            check_skill(d)
+            local_names.append(d.name)
+
     dupes = {n for n in skill_names if skill_names.count(n) > 1}
     if dupes:
         error(f"duplicate skill names across plugins: {', '.join(sorted(dupes))}")
+
+    collisions = set(skill_names) & set(local_names)
+    if collisions:
+        error(
+            "repo-local skill names collide with shipped skills: "
+            f"{', '.join(sorted(collisions))}"
+        )
 
     check_manifests()
 
@@ -220,10 +237,13 @@ def main() -> int:
     for e in errors:
         print(f"error: {e}", file=sys.stderr)
 
-    print(f"\nChecked {len(skill_names)} skills across {len(PLUGIN_DIRS)} plugins: "
-          f"{len(errors)} error(s), {len(warnings)} warning(s)")
-    print(f"Fact-checked against primary sources: {len(verified)}/{len(skill_names)} "
-          f"({len(skill_names) - len(verified)} unverified drafts)")
+    local_note = f" (+{len(local_names)} repo-local)" if local_names else ""
+    print(f"\nChecked {len(skill_names)} skills across {len(PLUGIN_DIRS)} plugins"
+          f"{local_note}: {len(errors)} error(s), {len(warnings)} warning(s)")
+    shipped_verified = [v for v in verified if v in set(skill_names)]
+    print(f"Fact-checked against primary sources: "
+          f"{len(shipped_verified)}/{len(skill_names)} "
+          f"({len(skill_names) - len(shipped_verified)} unverified drafts)")
 
     if errors or (args.strict and warnings):
         return 1
