@@ -1,6 +1,7 @@
 ---
 name: engineering-detections
 description: Build, test, and tune detection content — Sigma, YARA, Suricata, and EDR/SIEM queries — mapped to MITRE ATT&CK with explicit false-positive analysis and detection-as-code practices. Use when writing or reviewing a detection rule, converting IOCs or TTPs into alerts, measuring detection coverage, or reducing alert fatigue.
+verified: 2026-07-27
 ---
 
 # Engineering Detections
@@ -87,7 +88,7 @@ description: >
 references:
   - https://attack.mitre.org/techniques/T1003/001/
 author: secskills
-date: 2026/07/26
+date: 2026-07-26
 logsource:
   product: windows
   category: process_access
@@ -95,9 +96,11 @@ detection:
   selection:
     TargetImage|endswith: '\lsass.exe'
     GrantedAccess|contains:
-      - '0x1010'   # PROCESS_VM_READ | PROCESS_QUERY_INFORMATION
-      - '0x1410'
-      - '0x1438'
+      # QUERY_LIMITED_INFORMATION 0x1000 | QUERY_INFORMATION 0x0400
+      # VM_READ 0x0010 | VM_WRITE 0x0020 | VM_OPERATION 0x0008
+      - '0x1010'   # QUERY_LIMITED | VM_READ        — minimum to read lsass
+      - '0x1410'   # QUERY_LIMITED | QUERY_INFO | VM_READ
+      - '0x1438'   # the classic mimikatz mask: adds VM_WRITE | VM_OPERATION
   filter_legitimate:
     SourceImage|startswith:
       - 'C:\Program Files\<your EDR>\'
