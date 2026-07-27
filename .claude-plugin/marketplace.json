@@ -12,7 +12,7 @@
     {
       "name": "secskills-offense",
       "source": "./secskills-offense",
-      "description": "37 offensive security skills: web/API/auth exploitation (JWT, OAuth/OIDC, SAML, XXE, SSRF, deserialization, GraphQL, gRPC), Active Directory, Entra ID, Kerberos delegation, AD CS, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile app testing, wireless, Bluetooth/NFC, ICS/OT, Web3, reconnaissance, social engineering, persistence, and password cracking. Pentesting and red teaming. Pairs with secskills-core.",
+      "description": "Attacker tradecraft with the judgment, not just the commands. 37 offensive security skills for red teams and pentesters: web/API/auth exploitation (JWT, OAuth/OIDC, SAML, XXE, SSRF, deserialization, GraphQL, gRPC), Active Directory and Entra ID, AD CS ESC1-16, Kerberos delegation, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, Web3, reconnaissance, social engineering, persistence, and password cracking — plus deception-spotting and multi-day engagement discipline. Every skill fact-checked against primary sources. Pairs with secskills-core.",
       "version": "4.3.0",
       "category": "security",
       "keywords": [
@@ -37,7 +37,7 @@
     {
       "name": "secskills-defense",
       "source": "./secskills-defense",
-      "description": "22 defensive security skills: malware and shellcode analysis, memory and disk forensics, network/PCAP forensics, phishing-email analysis, Windows endpoint DFIR, AWS/Azure/M365-Entra incident investigation, Linux persistence hunting, incident response, threat hunting, detection engineering, Sigma and YARA authoring, and threat intelligence. DFIR, hunting, and detection. Pairs with secskills-core.",
+      "description": "DFIR and detection built on preserve-first, base-rate discipline. 22 defensive security skills for SOC analysts, incident responders, and detection engineers: alert triage, malware and shellcode analysis, memory/disk/network forensics, phishing-email analysis, Windows endpoint DFIR, Linux persistence hunting, AWS/Azure/GCP/M365-Entra incident investigation, Kubernetes defense, cloud posture hardening, threat hunting, detection-as-code (Sigma/YARA/Suricata) with real false-positive analysis, risk-based vulnerability management, and threat intelligence. Every skill fact-checked against primary sources. Pairs with secskills-core.",
       "version": "4.3.0",
       "category": "security",
       "keywords": [
@@ -61,7 +61,7 @@
     {
       "name": "secskills-core",
       "source": "./secskills-core",
-      "description": "22 dual-use security skills: reverse engineering (native, Go/Rust/.NET, iOS, firmware, packers, and Flutter/React Native/Unity/Xamarin runtimes), source-code and supply-chain auditing, cryptography and pull-request security review, AI/LLM and MCP security, ATT&CK technique mapping, and security findings reporting. The shared foundation for the offense and defense plugins; ships the ttp-index.json ATT&CK map.",
+      "description": "The reverse-engineering and code-audit foundation both sides share. 22 dual-use security skills: native and Go/Rust/.NET/iOS/firmware reverse engineering, packers, and Flutter/React Native/Unity/Xamarin runtimes; source-code auditing with PHP-specific depth; webshell and backdoor hunting; supply-chain, cryptography, MCP, and pull-request review; AI/LLM security; ATT&CK technique mapping; engagement-state discipline; and findings reporting. Ships the ttp-index.json ATT&CK map. Every skill fact-checked against primary sources.",
       "version": "4.3.0",
       "category": "security",
       "keywords": [
