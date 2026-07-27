@@ -50,41 +50,41 @@ generic mobile skill cannot hold that without bloating for everyone else, and
 the person who needs it needs far more than a generic skill would carry. Both
 load only when relevant, so neither costs anything until it applies.
 
-## Verification status — read this first
+## Verification status
 
-**These skills are methodology scaffolding, not a verified command reference.**
-They were drafted with LLM assistance, and the specific facts in them — tool
-flags, event IDs, log field names, CVE numbers, API paths — carry an error rate
-you must plan around.
-
-Twelve skills have been checked line-by-line against primary sources
-(vendor docs, RFCs, tool source) and then adversarially re-checked. That pass
-found **31 factual errors across 11 of the 12** — roughly 2.6 per skill, with
-only one skill clean on both passes. The remaining 60 skills were written the
-same way and **have not been through that pass**, so the same error rate should
-be assumed to apply to them.
-
-There are two levels of checking, and they are not the same thing:
-
-**Full per-skill verification** — every checkable claim in the skill driven to
-a primary source. These carry a `verified:` date in their frontmatter:
+**Every skill has been fact-checked against primary sources** — vendor docs,
+RFCs, tool source, upstream references — and carries a `verified:` date in its
+frontmatter. `validate.py` reports the count on every run:
 
 ```bash
-grep -l "^verified:" secskills-*/skills/*/SKILL.md   # 14 of 72 today
-python3 scripts/validate.py --strict                 # prints the count
+python3 scripts/validate.py --strict                 # "Fact-checked ...: 79/79"
+grep -L "^verified:" secskills-*/skills/*/SKILL.md   # any unverified (none today)
 ```
 
-**Class sweeps** — all 72 skills have been swept for whole categories of error
-that span files: dead or renamed tooling, CVE IDs, hashcat modes, cloud
-metadata endpoints, removed Kubernetes APIs, default ports, Android/iOS
-version-gated behaviour, and the Sigma, CVSS, MCP, and RFC 3227 specs. That
-caught the highest-impact defects — CrackMapExec archived since 2023 across 14
-invocations, the retired AzureAD PowerShell module, Volatility's entry point
-wrong in 40 commands — but a swept skill is **not** a verified skill. It means
-the known error classes were checked, not that everything in the file was.
+What that verification found and fixed, so you know what "verified" is worth
+here:
 
-Assume an unstamped skill still carries errors in the claim classes nobody has
-swept yet.
+- The first sampled pass over 12 skills found **31 factual errors across 11 of
+  them** — ~2.6 per skill — which is why the whole collection was then driven
+  through the same pass rather than trusted as written.
+- Cross-cutting class sweeps caught the highest-impact defects: CrackMapExec
+  archived since 2023 (14 invocations, now NetExec/`nxc`), the retired AzureAD
+  PowerShell module (now Microsoft Graph), Volatility's entry point wrong in
+  ~40 commands (`vol`, not `volatility3`), a fabricated Sigma `utf8` modifier,
+  and stale M365 audit-log retention that would read as "no activity" over a
+  gap that in fact had six months of history.
+
+**`verified:` is dated, not eternal.** It means every checkable claim was true
+against a primary source *on that date*. Tool flags, CVE version bounds,
+retention windows, and API paths drift; re-verify specifics before you rely on
+them in a deliverable, and treat the methodology — the sequencing, scope, and
+*Rationalizations to Reject* — as the durable part. The re-verification
+procedure is itself a skill: `.claude/skills/verifying-skill-accuracy`.
+
+Note that CI still checks **form, not truth** — `validate.py`, `sync_attack.py`,
+and `run_evals.py` verify structure, the ATT&CK index, and routing against
+self-authored cases. A green run means well-formed, not correct; the `verified:`
+dates are the accuracy signal.
 
 What this means in practice:
 

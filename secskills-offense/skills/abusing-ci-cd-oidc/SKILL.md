@@ -1,6 +1,7 @@
 ---
 name: abusing-ci-cd-oidc
 description: Exploit CI/CD pipeline misconfigurations and OIDC federation weaknesses across GitHub Actions, GitLab CI, and Jenkins -- poisoned workflows, secret exfiltration, runner compromise, overly broad OIDC trust policies, build artifact poisoning, and credential theft. Use when pentesting CI/CD infrastructure, assessing OIDC federation trust boundaries, reviewing pipeline security posture, or exploiting a path from repository access to cloud credentials.
+verified: 2026-07-27
 ---
 
 # Abusing CI/CD Pipelines and OIDC Federation

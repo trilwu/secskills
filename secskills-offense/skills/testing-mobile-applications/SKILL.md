@@ -1,6 +1,7 @@
 ---
 name: testing-mobile-applications
 description: Pentest Android and iOS mobile applications including APK analysis, dynamic analysis, SSL pinning bypass, root/jailbreak detection bypass, and mobile-specific vulnerabilities. Use when testing mobile app security or performing mobile pentesting.
+verified: 2026-07-27
 ---
 
 # Testing Mobile Applications

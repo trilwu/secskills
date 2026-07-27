@@ -1,6 +1,7 @@
 ---
 name: bypassing-mobile-pinning
 description: Diagnose and defeat TLS interception failures in mobile apps — certificate pinning, Android Network Security Config, user-CA distrust, native BoringSSL pinning, and mutual TLS — using objection, Frida, SSL Kill Switch, and APK patching. Use when Burp, mitmproxy, or Charles shows a TLS handshake error, an empty proxy, or "network error" from a mobile app, or when a target is known to pin certificates.
+verified: 2026-07-27
 ---
 
 # Bypassing Mobile Pinning

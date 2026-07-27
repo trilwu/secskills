@@ -1,6 +1,7 @@
 ---
 name: transferring-files
 description: Transfer files between systems using HTTP, SMB, FTP, netcat, base64 encoding, and living-off-the-land techniques for both Linux and Windows. Use when moving tools or exfiltrating data.
+verified: 2026-07-27
 ---
 
 # File Transfer Techniques Skill
