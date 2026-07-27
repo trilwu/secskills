@@ -19,13 +19,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Validate plugin structure, skills, and agents
+      - name: Validate plugin structure and skills
         run: python3 scripts/validate.py --strict
 
       - name: Check JSON manifests parse
         run: |
-          python3 -c "import json,sys; json.load(open('.claude-plugin/plugin.json'))"
-          python3 -c "import json,sys; json.load(open('.claude-plugin/marketplace.json'))"
+          python3 -c "import json; json.load(open('.claude-plugin/marketplace.json'))"
+          python3 -c "import json; json.load(open('secskills-core/ttp-index.json'))"
+          for p in secskills-offense secskills-defense secskills-core; do
+            python3 -c "import json; json.load(open('$p/.claude-plugin/plugin.json'))"
+          done
 
       - name: Check ATT&CK sections are in sync with the index
         run: python3 scripts/sync_attack.py --check
