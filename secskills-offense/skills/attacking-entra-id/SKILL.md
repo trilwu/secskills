@@ -172,13 +172,19 @@ multi-tenant app requesting Mail.Read and similar scopes, then phish a user
 into granting consent.
 
 ```powershell
+# Microsoft Graph PowerShell. The AzureAD and MSOnline modules are gone --
+# deprecated March 2024, unsupported after 30 March 2025, retired from
+# July 2025 -- so any Get-AzureAD*/Get-Msol* command you find in older
+# tradecraft will simply fail to authenticate.
+Connect-MgGraph -Scopes 'Policy.Read.All','Application.Read.All'
+
 # Check whether user consent is allowed
-(Get-AzureADMSAuthorizationPolicy).DefaultUserRolePermissions.PermissionGrantPoliciesAssigned
+(Get-MgPolicyAuthorizationPolicy).DefaultUserRolePermissions.PermissionGrantPoliciesAssigned
 # If "ManagePermissionGrantsForSelf.microsoft-user-default-legacy" is present,
 # users can consent to third-party apps
 
 # Enumerate existing consent grants
-Get-AzureADServicePrincipalOAuth2PermissionGrant -All $true
+Get-MgOauth2PermissionGrant -All
 ```
 
 ### App Role Assignment Escalation
