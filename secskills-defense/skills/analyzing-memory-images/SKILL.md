@@ -70,9 +70,9 @@ blindly — each question has a plugin that answers it.
 
 ```bash
 # Identify the OS profile and confirm the image is valid
-volatility3 -f mem.raw windows.info
-volatility3 -f mem.lime linux.bash
-volatility3 -f mem.raw banners.Banners    # fallback for unknown images
+vol -f mem.raw windows.info
+vol -f mem.lime linux.bash
+vol -f mem.raw banners.Banners    # fallback for unknown images
 ```
 
 `windows.info` gives you the OS version, build number, and kernel base address.
@@ -84,10 +84,10 @@ file — generate it from the kernel debug symbols of the exact kernel version.
 
 ```bash
 # Process listing — what was running
-volatility3 -f mem.raw windows.pslist     # walks the ActiveProcessLinks list
-volatility3 -f mem.raw windows.psscan     # scans for EPROCESS structures
+vol -f mem.raw windows.pslist     # walks the ActiveProcessLinks list
+vol -f mem.raw windows.psscan     # scans for EPROCESS structures
                                           # (finds hidden/unlinked processes)
-volatility3 -f mem.raw windows.pstree     # parent-child relationships
+vol -f mem.raw windows.pstree     # parent-child relationships
 
 # Compare pslist vs psscan: processes in psscan but not pslist were
 # unlinked from the active list — this is DKOM or a terminated process
@@ -104,11 +104,11 @@ volatility3 -f mem.raw windows.pstree     # parent-child relationships
 
 ```bash
 # DLL listing — what each process loaded
-volatility3 -f mem.raw windows.dlllist --pid <PID>
+vol -f mem.raw windows.dlllist --pid <PID>
 # Look for DLLs loaded from unusual paths (Temp, AppData, user-writable dirs)
 
 # Handles — files, registry keys, mutexes, events
-volatility3 -f mem.raw windows.handles --pid <PID>
+vol -f mem.raw windows.handles --pid <PID>
 # Mutexes are especially useful: malware families often use characteristic
 # mutex names to prevent re-infection
 ```
@@ -120,14 +120,14 @@ code that was never written to a file.
 
 ```bash
 # VAD-based detection — finds memory regions with suspicious protections
-volatility3 -f mem.raw windows.malfind
+vol -f mem.raw windows.malfind
 # Reports regions that are:
 #   - Committed, private memory with PAGE_EXECUTE_READWRITE
 #   - Containing a PE header (MZ magic) in a region not backed by a file
 #   - Tagged as VadS (private) rather than VadF (file-mapped)
 
 # Dump suspicious regions for further analysis
-volatility3 -f mem.raw windows.malfind --dump --pid <PID>
+vol -f mem.raw windows.malfind --dump --pid <PID>
 ```
 
 **Interpreting malfind results:**
@@ -143,7 +143,7 @@ volatility3 -f mem.raw windows.malfind --dump --pid <PID>
 
 ```bash
 # Compare on-disk PE headers with in-memory PE headers
-volatility3 -f mem.raw windows.pslist --dump   # dump process executables
+vol -f mem.raw windows.pslist --dump   # dump process executables
 # Then compare each dumped image against the on-disk original:
 #   - Different PE header = process hollowing
 #   - SizeOfImage mismatch = section unmapping/remapping
@@ -161,16 +161,16 @@ Kerberos tickets, and cached domain credentials.
 
 ```bash
 # SAM hashes (local accounts)
-volatility3 -f mem.raw windows.hashdump
+vol -f mem.raw windows.hashdump
 
 # LSA secrets (service account passwords, auto-logon credentials, VPN)
-volatility3 -f mem.raw windows.lsadump
+vol -f mem.raw windows.lsadump
 
 # Cached domain credentials (mscash2 format — crackable but slow)
-volatility3 -f mem.raw windows.cachedump
+vol -f mem.raw windows.cachedump
 
 # For Kerberos tickets, dump lsass.exe memory and use mimikatz/pypykatz:
-volatility3 -f mem.raw windows.memmap --pid <lsass_pid> --dump
+vol -f mem.raw windows.memmap --pid <lsass_pid> --dump
 pypykatz lsa minidump <dumped_lsass_file>
 # Yields: NTLM hashes, Kerberos TGTs and service tickets, WDigest
 # plaintext (if enabled), DPAPI master keys
@@ -184,14 +184,15 @@ into scoping during `responding-to-incidents`.
 
 ```bash
 # Active and recently closed connections, listening ports
-volatility3 -f mem.raw windows.netscan
+vol -f mem.raw windows.netscan
 # Fields: protocol, local/remote address:port, state, PID, owner process
 
-# DNS cache (recently resolved names)
-volatility3 -f mem.raw windows.dns_cache    # plugin availability varies
+# DNS cache: Volatility 3 has no built-in Windows DNS-cache plugin. Recover
+# resolved names from process memory instead, or use a third-party plugin.
+vol -f mem.raw windows.memmap --pid <PID> --dump && strings -a pid.*.dmp | grep -iE '\.(com|net|org|ru|cn)\b'
 
 # Linux equivalent
-volatility3 -f mem.lime linux.sockstat
+vol -f mem.lime linux.sockstat
 ```
 
 **What to look for:**
@@ -207,16 +208,16 @@ volatility3 -f mem.lime linux.sockstat
 
 ```bash
 # Command-line arguments for every process
-volatility3 -f mem.raw windows.cmdline
+vol -f mem.raw windows.cmdline
 # Reveals encoded PowerShell commands, lateral movement tool arguments,
 # reconnaissance commands, and data staging operations
 
 # Console input/output buffers (cmd.exe sessions)
-volatility3 -f mem.raw windows.consoles
+vol -f mem.raw windows.consoles
 # Can recover full command history and output even after the window is closed
 
 # Linux shell history from memory (survives history -c)
-volatility3 -f mem.lime linux.bash
+vol -f mem.lime linux.bash
 ```
 
 Encoded PowerShell is common. Decode `-EncodedCommand` arguments:
@@ -253,20 +254,22 @@ because the rootkit cannot hide from a raw memory image.
 
 ```bash
 # SSDT hooking — System Service Descriptor Table
-volatility3 -f mem.raw windows.ssdt
+vol -f mem.raw windows.ssdt
 # Entries pointing outside ntoskrnl.exe or win32k.sys are hooked
 
 # Driver and module enumeration
-volatility3 -f mem.raw windows.driverscan    # scan for DRIVER_OBJECT
-volatility3 -f mem.raw windows.modules       # loaded kernel modules
-volatility3 -f mem.raw windows.modscan       # scan for unlinked modules
+vol -f mem.raw windows.driverscan    # scan for DRIVER_OBJECT
+vol -f mem.raw windows.modules       # loaded kernel modules
+vol -f mem.raw windows.modscan       # scan for unlinked modules
 # Modules in modscan but not modules = hidden drivers
 
 # Callbacks — rootkits register notify routines to intercept operations
-volatility3 -f mem.raw windows.callbacks
+vol -f mem.raw windows.callbacks
 
-# IDT — Interrupt Descriptor Table modifications
-volatility3 -f mem.raw windows.idt
+# IDT — Interrupt Descriptor Table modifications. Volatility 3 ships this for
+# Linux only (linux.check_idt); there is no windows.idt. On Windows, IDT hooking
+# is largely a pre-PatchGuard (x86) technique — check SSDT and callbacks above.
+vol -f mem.lime linux.check_idt
 # Handlers pointing to addresses outside known kernel modules are suspicious
 ```
 
@@ -280,30 +283,30 @@ volatility3 -f mem.raw windows.idt
 
 ```bash
 # Process listing
-volatility3 -f mem.lime linux.pslist
-volatility3 -f mem.lime linux.pstree
-volatility3 -f mem.lime linux.psaux         # with command-line arguments
+vol -f mem.lime linux.pslist
+vol -f mem.lime linux.pstree
+vol -f mem.lime linux.psaux         # with command-line arguments
 
 # Shell history recovered from process memory
-volatility3 -f mem.lime linux.bash
+vol -f mem.lime linux.bash
 
 # ELF binaries in memory — find injected shared objects
-volatility3 -f mem.lime linux.elfs
+vol -f mem.lime linux.elfs
 
 # Syscall table integrity — detect syscall hooking
-volatility3 -f mem.lime linux.check_syscall
+vol -f mem.lime linux.check_syscall
 # Entries not pointing to the expected kernel text range are hooked
 
 # Loaded kernel modules and hidden modules
-volatility3 -f mem.lime linux.lsmod
-volatility3 -f mem.lime linux.hidden_modules
+vol -f mem.lime linux.lsmod
+vol -f mem.lime linux.hidden_modules
 
 # Open files and network connections
-volatility3 -f mem.lime linux.lsof
-volatility3 -f mem.lime linux.sockstat
+vol -f mem.lime linux.lsof
+vol -f mem.lime linux.sockstat
 
 # Mounted filesystems and their types
-volatility3 -f mem.lime linux.mountinfo
+vol -f mem.lime linux.mountinfo
 ```
 
 **Symbol tables for Linux:** Unlike Windows, Linux has no fixed kernel
@@ -319,9 +322,9 @@ hypothesis across the entire image.
 
 ```bash
 # YARA rules against the full image
-volatility3 -f mem.raw yarascan.YaraScan --yara-file rules.yar
+vol -f mem.raw yarascan.YaraScan --yara-file rules.yar
 # Scoping to a specific process:
-volatility3 -f mem.raw yarascan.YaraScan --yara-file rules.yar --pid <PID>
+vol -f mem.raw yarascan.YaraScan --yara-file rules.yar --pid <PID>
 
 # Strings extraction — raw approach, still useful
 strings -a -t d mem.raw > strings_ascii.txt

@@ -31,38 +31,55 @@ specificity without brittleness.
 
 Every rule is a YAML document with these fields in order:
 
+**The specification requires only three fields:** `title`, `logsource`, and
+`detection` (which must contain a `condition`). Everything else is optional
+*to the spec*. Do not confuse that with the SigmaHQ rule repository, which
+requires far more — `id`, `status`, `description`, `author`, `date`, `level`,
+and ATT&CK `tags` — before it will accept a contribution. Write to the stricter
+SigmaHQ convention by default, because a rule without an `id` or a `level` is
+unmanageable in a real pipeline, but know which constraint you are meeting when
+a converter accepts a rule your reviewer rejects.
+
 ```yaml
-title: Short Descriptive Name              # required, max ~100 chars
-id: a1b2c3d4-0000-4000-8000-000000000001  # required, UUIDv4, never reuse
+title: Short Descriptive Name              # REQUIRED by spec, max ~100 chars
+id: a1b2c3d4-0000-4000-8000-000000000001  # optional to spec; UUIDv4, never reuse
 related:                                    # optional, link to predecessor rules
   - id: <uuid>
     type: derived | obsoletes | merged | renamed | similar
-status: experimental | test | stable       # required, lifecycle stage
-description: >                             # required, what and why
+status: experimental                        # optional; see lifecycle below
+description: >                              # optional to spec, expected by SigmaHQ
   Detects X behaviour consistent with Y technique.
-references:                                # recommended
+references:                                 # optional, strongly recommended
   - https://attack.mitre.org/techniques/T1059/001/
-author: Your Name                          # required
-date: 2026/07/26                           # required, YYYY/MM/DD
-modified: 2026/07/26                       # required when updating
-tags:                                      # required, ATT&CK mappings
-  - attack.execution                       #   tactic (lowercase, dotted)
-  - attack.t1059.001                       #   technique (lowercase)
-logsource:                                 # required
+author: Your Name                           # optional to spec
+date: 2026-07-26                            # optional; ISO 8601 YYYY-MM-DD
+modified: 2026-07-26                        # optional; same format, on update
+tags:                                       # optional to spec, expected by SigmaHQ
+  - attack.execution                        #   tactic (lowercase, dotted)
+  - attack.t1059.001                        #   technique (lowercase)
+logsource:                                  # REQUIRED by spec
   category: process_creation
   product: windows
-detection:                                 # required
+detection:                                  # REQUIRED by spec
   selection:
     CommandLine|contains: 'some-indicator'
-  condition: selection
-falsepositives:                            # required
+  condition: selection                      # REQUIRED inside detection
+falsepositives:                             # optional to spec
   - Legitimate admin scripts using the same flag
-level: medium                              # informational|low|medium|high|critical
+level: medium                               # optional; informational|low|medium|high|critical
 ```
 
-**Status lifecycle.** `experimental` = observation only, no alerting. `test` =
-validated against emulation, ready for limited deployment. `stable` = tuned in
-production with documented FPs. Never promote without the corresponding work.
+**Date format.** The spec mandates ISO 8601 with hyphens — `YYYY-MM-DD`. Older
+rules and much online material use the legacy `YYYY/MM/DD`; that form is
+outdated, and some tooling now rejects it.
+
+**Status lifecycle.** The permitted values are `experimental`, `test`,
+`stable`, `deprecated`, and `unsupported`. In practice: `experimental` =
+observation only, no alerting. `test` = validated against emulation, ready for
+limited deployment. `stable` = tuned in production with documented FPs.
+`deprecated` = replaced, no longer accurate. `unsupported` = not usable as
+written (e.g. depends on homemade fields). Never promote without the
+corresponding work.
 
 ## Logsource Taxonomy
 
