@@ -22,6 +22,10 @@ description: Attack and enumerate Active Directory environments using Kerberos a
 - **Entra ID / Azure AD as the primary target** — use `attacking-entra-id`
 - **Detecting these attacks defensively** — use `engineering-detections`
 
+A privileged, Kerberoastable account with no logon history is a classic
+honeyuser: roasting it raises a high-fidelity alert. Check `recognizing-deception`
+before roasting an account that looks too convenient.
+
 ## Route to a Depth Skill
 
 Several AD escalation families are deep enough to have their own procedure

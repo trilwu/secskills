@@ -53,6 +53,12 @@ window in writing before the first active probe.
 - **Pretext development for a phishing campaign** — use `performing-social-engineering`
 - **Investigating an adversary rather than a target** — use `hunting-threats`
 
+If enumeration surfaces credentials or a service in an implausibly convenient
+place, stop and consult `recognizing-deception` before using them — canary
+tokens fire on first use. Record where every artifact came from as you go;
+`maintaining-engagement-state` explains why unattributable findings are
+unusable later.
+
 ## Core Methodologies
 
 ### 1. Passive Reconnaissance (OSINT)

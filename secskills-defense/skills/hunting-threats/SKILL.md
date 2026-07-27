@@ -22,6 +22,8 @@ degrade into confirmation bias.
 
 ## When NOT to Use
 
+- **Working an alert queue rather than a hypothesis** — use
+  `triaging-security-alerts`; a hunt starts from a question, triage from a queue
 - **Confirmed incident in progress** — use `responding-to-incidents`
 - **Writing the rule for what you found** — use `engineering-detections`
 - **Sample analysis** — use `analyzing-malware`

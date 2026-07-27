@@ -21,6 +21,9 @@ supporting detail. Answer those two in order and the response follows.
 
 - **Deep analysis of a recovered sample** — use `analyzing-malware`
 - **Proactive searching with no known incident** — use `hunting-threats`
+- **Deciding whether an alert is even an incident yet** — use
+  `triaging-security-alerts`; response begins once triage confirms a true
+  positive
 - **Building the detections that would have caught it** — use `engineering-detections`
 - **The incident is in AWS** (exposed keys, CloudTrail/GuardDuty) — use
   `investigating-aws-incidents`; in Microsoft 365 / Entra — use `investigating-m365-entra`
