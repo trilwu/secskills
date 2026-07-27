@@ -1,6 +1,7 @@
 ---
 name: reversing-unity-il2cpp
 description: Reverse engineer Unity games and apps built with IL2CPP or Mono, using Il2CppDumper, Il2CppInspector, and dnSpy. Use when an APK or IPA contains global-metadata.dat, libil2cpp.so, UnityFramework, or Assembly-CSharp.dll, when jadx shows only UnityPlayerActivity, or when the target is described as a Unity build.
+verified: 2026-07-27
 ---
 
 # Reversing Unity IL2CPP

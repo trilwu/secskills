@@ -1,6 +1,7 @@
 ---
 name: auditing-code-for-vulnerabilities
 description: Audit source code for exploitable vulnerabilities using threat-model-driven review, taint tracing, invariant checking, and variant analysis. Use when reviewing a codebase or diff for security bugs, performing a security audit, hunting for vulnerabilities in a target's source, or validating whether a suspected finding is real.
+verified: 2026-07-27
 ---
 
 # Auditing Code for Vulnerabilities

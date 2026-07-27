@@ -1,6 +1,7 @@
 ---
 name: mapping-attack-techniques
 description: Navigate security work by MITRE ATT&CK tactic and technique — resolve a technique ID or name to the right skill, map a threat intel report or adversary emulation plan to procedures, and run the purple-team loop from technique to detection to validation. Use when a request names an ATT&CK ID like T1003.001, a tactic like lateral movement, an APT group or intel report, or when planning coverage against the matrix.
+verified: 2026-07-27
 ---
 
 # Mapping ATT&CK Techniques

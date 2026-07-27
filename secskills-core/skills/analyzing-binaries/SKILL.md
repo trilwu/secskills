@@ -1,6 +1,7 @@
 ---
 name: analyzing-binaries
 description: Reverse engineer compiled binaries, firmware, and mobile app packages using triage, static disassembly, decompilation, and dynamic instrumentation. Use when analyzing an executable, ELF/PE/Mach-O file, firmware image, or stripped binary, recovering an algorithm or protocol, or working a CTF reversing challenge.
+verified: 2026-07-27
 ---
 
 # Analyzing Binaries

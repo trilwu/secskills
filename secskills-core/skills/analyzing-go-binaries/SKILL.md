@@ -1,6 +1,7 @@
 ---
 name: analyzing-go-binaries
 description: Reverse engineer Go binaries by recovering function names and types from pclntab and moduledata using GoReSym, redress, and IDA/Ghidra Go plugins, and by reading Go's non-standard calling convention, interface dispatch, and string layout. Use when a binary contains Go runtime strings, when strings show runtime.main or go:buildid, when a stripped binary is unexpectedly large, or when analyzing Go malware or a Go-based service.
+verified: 2026-07-27
 ---
 
 # Analyzing Go Binaries

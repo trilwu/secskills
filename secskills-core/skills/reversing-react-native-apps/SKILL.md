@@ -1,6 +1,7 @@
 ---
 name: reversing-react-native-apps
 description: Reverse engineer React Native mobile apps, including Hermes bytecode bundles, using hbctool, hermes-dec, and Frida. Use when an APK contains index.android.bundle or libhermes.so, when an IPA contains main.jsbundle, when jadx shows only ReactActivity classes, or when a bundle file starts with the Hermes magic bytes instead of readable JavaScript.
+verified: 2026-07-27
 ---
 
 # Reversing React Native Apps

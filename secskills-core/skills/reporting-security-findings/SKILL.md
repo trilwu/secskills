@@ -1,6 +1,7 @@
 ---
 name: reporting-security-findings
 description: Write security findings and assessment reports — severity scoring with CVSS and business impact, reproducible proof of concept, remediation guidance, executive summaries, and coordinated disclosure. Use when writing up a vulnerability, producing a pentest or audit report, triaging a bug bounty submission, or preparing a disclosure timeline.
+verified: 2026-07-27
 ---
 
 # Reporting Security Findings

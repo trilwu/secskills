@@ -1,6 +1,7 @@
 ---
 name: reviewing-cryptography
 description: Review cryptographic implementations and protocol usage for misuse — weak primitives, nonce and IV handling, key management, authentication of ciphertext, randomness, timing side channels, TLS and JWT configuration, and password storage. Use when auditing code that encrypts, signs, hashes, or authenticates, or when assessing TLS and token configurations.
+verified: 2026-07-27
 ---
 
 # Reviewing Cryptography

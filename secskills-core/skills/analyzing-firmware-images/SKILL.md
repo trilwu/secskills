@@ -1,6 +1,7 @@
 ---
 name: analyzing-firmware-images
 description: Extract, analyze, and assess firmware images from embedded devices, IoT hardware, routers, and similar targets — filesystem extraction, hardcoded credential discovery, binary analysis across architectures, web interface review, network service enumeration, emulation, and cryptographic assessment. Use when analyzing a firmware update file, reviewing IoT device security, hunting for hardcoded secrets in device firmware, or assessing the attack surface of an embedded system.
+verified: 2026-07-27
 ---
 
 # Analyzing Firmware Images

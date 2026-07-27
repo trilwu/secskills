@@ -1,6 +1,7 @@
 ---
 name: auditing-supply-chain
 description: Audit software supply chain risk — dependency and transitive package review, typosquatting and dependency confusion, lockfile and SBOM analysis, CI/CD pipeline and GitHub Actions security, build provenance, and secrets exposure. Use when assessing third-party package risk, reviewing a build pipeline, investigating a malicious package, or hardening release infrastructure.
+verified: 2026-07-27
 ---
 
 # Auditing Supply Chain

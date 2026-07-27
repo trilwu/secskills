@@ -1,6 +1,7 @@
 ---
 name: analyzing-dotnet-assemblies
 description: Reverse engineer .NET assemblies and executables with dnSpyEx, ILSpy, and de4dot — identifying and unwrapping obfuscators and packers, deobfuscating control flow and string encryption, handling single-file and NativeAOT publishes, and patching IL. Use when a binary is a managed PE, when ILSpy shows mangled names or empty method bodies, or when analyzing .NET malware, a loader, or a Windows application.
+verified: 2026-07-27
 ---
 
 # Analyzing .NET Assemblies

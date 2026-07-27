@@ -1,6 +1,7 @@
 ---
 name: unpacking-protected-binaries
 description: Unpack and dump protected executables — UPX and commodity packers, custom crypters, commercial protectors like Themida and VMProtect, and .NET packers — by finding the original entry point, dumping from memory, and rebuilding the import table with Scylla, pe-sieve, or x64dbg. Use when a binary has high entropy, few imports, unnamed sections, or when analysis tools show almost no code.
+verified: 2026-07-27
 ---
 
 # Unpacking Protected Binaries

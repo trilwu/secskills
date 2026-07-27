@@ -1,6 +1,7 @@
 ---
 name: reversing-flutter-apps
 description: Reverse engineer and intercept traffic from Flutter/Dart mobile apps using blutter, reFlutter, and Frida. Use when an APK or IPA contains libflutter.so, libapp.so, App.framework, or flutter_assets, when jadx shows only a thin Dart wrapper, when Burp or mitmproxy sees no traffic from an app that is clearly online, or when the target is described as built with Flutter or Dart.
+verified: 2026-07-27
 ---
 
 # Reversing Flutter Apps

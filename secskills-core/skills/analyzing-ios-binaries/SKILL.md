@@ -1,6 +1,7 @@
 ---
 name: analyzing-ios-binaries
 description: Analyze iOS applications at the binary level — decrypting FairPlay-protected IPAs with frida-ios-dump or bagbak, inspecting Mach-O load commands, recovering Objective-C headers with class-dump, and reading Swift metadata. Use when working with an IPA or .app bundle, when a downloaded App Store binary shows cryptid=1, when class-dump returns nothing, or when analyzing iOS frameworks and app extensions.
+verified: 2026-07-27
 ---
 
 # Analyzing iOS Binaries
