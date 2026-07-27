@@ -360,6 +360,26 @@ rule Family_X_Loader : loader family_x {
 - *"Broad now, tune later."* Every noisy hit in production burns analyst trust
   and buries real matches. Tune before you deploy, not after.
 
+## Reading External Sources
+
+Fetch public advisories, specifications, and vendor reports as Markdown:
+
+```bash
+curl -sL "https://defuddle.md/<url>"      # scheme in the path is optional
+```
+
+This strips page boilerplate — roughly 78% fewer tokens on a prose page — and
+returns the full text rather than a summary, so you can grep it and trust a
+negative result.
+
+Three things it is not for. Fetch JSON and API responses raw, because
+readability extraction mangles structured data. Fetch authenticated or
+JavaScript-rendered pages directly, because it retrieves them anonymously. And
+never route **adversary infrastructure** (phishing links, C2, malware hosting),
+**client-owned hosts**, or **engagement URLs** through it — the request leaves
+your machine to a third party, and for live adversary infrastructure it also
+tips off the operator.
+
 ## References
 
 - `writing-sigma-rules` — the same craft for log and SIEM telemetry
