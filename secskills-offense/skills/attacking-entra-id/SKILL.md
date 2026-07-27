@@ -1,6 +1,7 @@
 ---
 name: attacking-entra-id
 description: Attack and enumerate Azure AD / Entra ID tenants — initial recon with AADInternals and ROADtools, password spraying, token theft (PRT, CAE, refresh tokens), application and service principal abuse, Conditional Access bypass, cross-tenant pivoting, hybrid identity attacks (PTA agent, Azure AD Connect), and managed identity abuse. Use when pentesting Entra ID tenants, assessing Azure AD security posture, or exploiting cloud identity misconfigurations.
+verified: 2026-07-27
 ---
 
 # Attacking Entra ID

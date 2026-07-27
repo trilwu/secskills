@@ -1,6 +1,7 @@
 ---
 name: attacking-active-directory
 description: Attack and enumerate Active Directory environments using Kerberos attacks (Kerberoasting, ASREPRoasting), credential dumping (DCSync, Mimikatz), lateral movement (PtH, PtT), and BloodHound analysis. Use when pentesting Windows domains or exploiting AD misconfigurations.
+verified: 2026-07-27
 ---
 
 # Attacking Active Directory

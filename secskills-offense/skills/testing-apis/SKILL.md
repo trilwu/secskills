@@ -1,6 +1,7 @@
 ---
 name: testing-apis
 description: Test REST and GraphQL APIs for authentication bypasses, authorization flaws, IDOR, mass assignment, injection attacks, and rate limiting issues. Use when pentesting APIs or testing microservices security.
+verified: 2026-07-27
 ---
 
 # API Security Testing Skill

@@ -1,6 +1,7 @@
 ---
 name: attacking-graphql
 description: Test GraphQL APIs — introspection and schema recovery when introspection is disabled, field suggestion abuse, batching and alias-based rate limit bypass, query depth and complexity denial of service, authorization gaps per field and per resolver, and mutation abuse. Use when a target exposes /graphql, /v1/graphql, or /api/graphql, when requests contain a query or mutation body, or when responses carry a data and errors envelope.
+verified: 2026-07-27
 ---
 
 # Attacking GraphQL

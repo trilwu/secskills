@@ -1,6 +1,7 @@
 ---
 name: establishing-persistence
 description: Establish persistence on Windows and Linux systems using registry keys, scheduled tasks, services, cron jobs, SSH keys, backdoor accounts, and rootkits. Use when performing post-exploitation or maintaining long-term access.
+verified: 2026-07-27
 ---
 
 # Establishing Persistence
