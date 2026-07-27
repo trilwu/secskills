@@ -143,6 +143,42 @@ def check_skill(skill_dir: Path) -> None:
             error(f"{rel}/SKILL.md: references missing file '{ref}'")
 
 
+SHARED_HEADING = "## Reading External Sources"
+
+
+def check_shared_blocks() -> None:
+    """Boilerplate copied across skills must stay byte-identical.
+
+    The external-sources block carries safety caveats (never route adversary
+    infrastructure or engagement URLs through a third-party extractor). If
+    copies drift, some skills quietly lose those caveats, so the identity is
+    enforced rather than trusted.
+    """
+    blocks: dict[str, list[str]] = {}
+    for pd in PLUGIN_DIRS:
+        for d in sorted((pd / "skills").iterdir()):
+            skill_md = d / "SKILL.md"
+            if not skill_md.is_file():
+                continue
+            text = skill_md.read_text(encoding="utf-8")
+            start = text.find(SHARED_HEADING)
+            if start == -1:
+                continue
+            end = text.find("\n## ", start + len(SHARED_HEADING))
+            body = text[start:end if end != -1 else len(text)].rstrip()
+            blocks.setdefault(body, []).append(d.name)
+
+    if len(blocks) > 1:
+        variants = sorted(blocks.values(), key=len, reverse=True)
+        canonical, *drifted = variants
+        for group in drifted:
+            error(
+                f"'{SHARED_HEADING}' block differs in {', '.join(sorted(group))} "
+                f"(majority form used by {len(canonical)} other skills); "
+                "keep shared blocks byte-identical"
+            )
+
+
 def check_manifests() -> None:
     market_json = REPO / ".claude-plugin" / "marketplace.json"
     try:
@@ -222,6 +258,8 @@ def main() -> int:
     dupes = {n for n in skill_names if skill_names.count(n) > 1}
     if dupes:
         error(f"duplicate skill names across plugins: {', '.join(sorted(dupes))}")
+
+    check_shared_blocks()
 
     collisions = set(skill_names) & set(local_names)
     if collisions:

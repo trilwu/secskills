@@ -368,6 +368,26 @@ from retired techniques create mapping errors downstream.
   reflects signal quality, not technique category. A noisy critical rule
   causes more damage than a precise medium one.
 
+## Reading External Sources
+
+Fetch public advisories, specifications, and vendor reports as Markdown:
+
+```bash
+curl -sL "https://defuddle.md/<url>"      # scheme in the path is optional
+```
+
+This strips page boilerplate — roughly 78% fewer tokens on a prose page — and
+returns the full text rather than a summary, so you can grep it and trust a
+negative result.
+
+Three things it is not for. Fetch JSON and API responses raw, because
+readability extraction mangles structured data. Fetch authenticated or
+JavaScript-rendered pages directly, because it retrieves them anonymously. And
+never route **adversary infrastructure** (phishing links, C2, malware hosting),
+**client-owned hosts**, or **engagement URLs** through it — the request leaves
+your machine to a third party, and for live adversary infrastructure it also
+tips off the operator.
+
 ## References
 
 - `engineering-detections` -- the full detection lifecycle including YARA, Suricata, and coverage measurement

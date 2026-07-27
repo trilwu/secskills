@@ -113,6 +113,20 @@ availability risk; RF work has wiretap and spectrum law because you cannot
 confine a radio to the target. Generic "get permission first" text is worth
 nothing.
 
+**If the skill's workflow reads public reference material** — advisories,
+specs, RFCs, vendor reports, ATT&CK pages — include the standard
+`## Reading External Sources` block before `## References`. Copy it verbatim
+from a skill that has it (`producing-threat-intelligence`,
+`auditing-supply-chain`); it must stay identical across skills so it does not
+drift. It routes public documentation through `defuddle.md` for a large token
+saving and full greppable text.
+
+Do **not** add that block to a skill whose network activity is aimed at a
+target. Cloud metadata endpoints, the target's own services, exfil hosts,
+phishing URLs, and C2 must be fetched directly — routing them through a
+third-party extractor breaks the command, leaks engagement URLs, and for live
+adversary infrastructure tips off the operator.
+
 Write for judgment, not recall:
 
 | Write this | Not this |
