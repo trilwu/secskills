@@ -173,7 +173,7 @@ cdxgen -o sbom.json
 
 # Consume — an SBOM is only useful if you scan it on a schedule
 grype sbom:sbom.json
-osv-scanner --sbom=sbom.json
+osv-scanner scan source -L sbom.json   # v2 takes SBOMs via -L; --sbom is gone
 ```
 
 An SBOM produced once for a compliance checkbox has no security value. The
