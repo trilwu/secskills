@@ -1,6 +1,6 @@
 {
   "name": "secskills-defense",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "22 defensive security skills for Claude Code: malware and shellcode analysis, memory and disk forensics, network/PCAP forensics, phishing-email analysis, Windows endpoint DFIR, AWS/Azure/M365-Entra incident investigation, Linux persistence hunting, incident response, threat hunting, detection engineering, Sigma and YARA authoring, and threat intelligence. Use when investigating a compromise, running DFIR, hunting threats, or building detections. Pairs with secskills-core.",
   "author": {
     "name": "trilwu",
