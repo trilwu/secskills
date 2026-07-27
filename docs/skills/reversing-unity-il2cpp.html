@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Reverse engineer Unity games and apps built with IL2CPP or Mono, using Il2CppDumper, Il2CppInspector, and dnSpy. Use when an APK or IPA contains global-metadata.dat, libil2cpp.so, UnityFramework, or Assembly-CSharp.dll, when jadx shows only UnityPlayerActivity, or when the target is described as a Unity build.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Unity ships in two very different shapes, and identifying which one you have is the entire first decision. A Mono build hands you decompilable .NET assemblies. An IL2CPP build compiles C# to C++ to native code, and the C# metadata lives in a separate file that you must recombine with the binary before anything is readable.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Unity ships in two very different shapes, and identifying which one you have is the entire first decision. A Mono build hands you decompilable .NET assemblies. An IL2CPP build compiles C# to C++ to native code, and the C# metadata lives in a separate file that you must recombine with the binary before anything is readable.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>The APK contains <code>assets/bin/Data/Managed/Metadata/global-metadata.dat</code> and</li>
 </ul>
@@ -50,7 +61,7 @@
 <li><code>jadx</code> shows only <code>UnityPlayerActivity</code> and Unity plumbing</li>
 <li>You need to recover game or app logic, anti-cheat behaviour, or the API layer</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Flutter or React Native</strong> — use <a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a> or</li>
 </ul>
@@ -61,33 +72,42 @@
 <li><strong>Building cheats or bypassing anti-cheat in live multiplayer services</strong> —</li>
 </ul>
 <p>out of scope; that is service abuse, not assessment</p>
-<h2>Identify the Build</h2>
-<pre><code>unzip -l target.apk | rg 'global-metadata|libil2cpp|Assembly-CSharp|libmono'</code></pre>
+<h2 id="identify-the-build">Identify the Build</h2>
+<div class="codeblk cx"><button class="copy" data-copy="unzip -l target.apk | rg &#x27;global-metadata|libil2cpp|Assembly-CSharp|libmono&#x27;">copy</button><pre><code>unzip -l target.apk | rg 'global-metadata|libil2cpp|Assembly-CSharp|libmono'</code></pre></div>
 <div class="tw"><table><thead><tr><th>Present</th><th>Build</th><th>Difficulty</th></tr></thead><tbody><tr><td><code>Assembly-CSharp.dll</code>, <code>libmono*.so</code></td><td>Mono</td><td>Easy — decompile the DLL directly</td></tr><tr><td><code>global-metadata.dat</code> + <code>libil2cpp.so</code></td><td>IL2CPP</td><td>The main path below</td></tr><tr><td>Neither, but <code>UnityFramework</code></td><td>iOS IL2CPP</td><td>Same as IL2CPP; extract from the decrypted IPA</td></tr></tbody></table></div>
 <p><strong>Mono builds are a short job.</strong> Pull the assembly and open it:</p>
-<pre><code>unzip -j target.apk 'assets/bin/Data/Managed/Assembly-CSharp.dll' -d ./out
+<div class="codeblk cx"><button class="copy" data-copy="unzip -j target.apk &#x27;assets/bin/Data/Managed/Assembly-CSharp.dll&#x27; -d ./out
 # dnSpy / dnSpyEx / ILSpy / dotPeek — full C# source recovery, and dnSpy can edit
-ilspycmd ./out/Assembly-CSharp.dll -o ./decompiled</code></pre>
+ilspycmd ./out/Assembly-CSharp.dll -o ./decompiled">copy</button><pre><code>unzip -j target.apk 'assets/bin/Data/Managed/Assembly-CSharp.dll' -d ./out
+# dnSpy / dnSpyEx / ILSpy / dotPeek — full C# source recovery, and dnSpy can edit
+ilspycmd ./out/Assembly-CSharp.dll -o ./decompiled</code></pre></div>
 <p>Everything below is for IL2CPP.</p>
-<h2>Recombining Metadata with the Binary</h2>
+<h2 id="recombining-metadata-with-the-binary">Recombining Metadata with the Binary</h2>
 <p>IL2CPP splits the information: <code>libil2cpp.so</code> holds the compiled code, <code>global-metadata.dat</code> holds the C# type system — class names, method names, field names, string literals. Neither is useful alone. The tools' job is to match them and produce symbols.</p>
-<pre><code>unzip -j target.apk 'lib/arm64-v8a/libil2cpp.so' \
+<div class="codeblk cx"><button class="copy" data-copy="unzip -j target.apk &#x27;lib/arm64-v8a/libil2cpp.so&#x27; \
+                    &#x27;assets/bin/Data/Managed/Metadata/global-metadata.dat&#x27; -d ./in
+
+# Il2CppDumper: the standard first attempt
+Il2CppDumper ./in/libil2cpp.so ./in/global-metadata.dat ./out">copy</button><pre><code>unzip -j target.apk 'lib/arm64-v8a/libil2cpp.so' \
                     'assets/bin/Data/Managed/Metadata/global-metadata.dat' -d ./in
 
 # Il2CppDumper: the standard first attempt
-Il2CppDumper ./in/libil2cpp.so ./in/global-metadata.dat ./out</code></pre>
+Il2CppDumper ./in/libil2cpp.so ./in/global-metadata.dat ./out</code></pre></div>
 <p>Typical output and what it is for:</p>
 <div class="tw"><table><thead><tr><th>Artifact</th><th>Use</th></tr></thead><tbody><tr><td><code>dump.cs</code></td><td>Every class, method, and field with addresses — <strong>read this first</strong></td></tr><tr><td><code>DummyDll/</code></td><td>Stub .NET assemblies; open in dnSpy/ILSpy to browse the type system comfortably</td></tr><tr><td><code>script.json</code></td><td>Symbol import for IDA/Ghidra — applies names to <code>libil2cpp.so</code></td></tr><tr><td><code>stringliteral.json</code></td><td>String constants: URLs, keys, messages</td></tr></tbody></table></div>
 <p><code>Il2CppInspector</code> is the alternative when Il2CppDumper fails; it supports a different range of Unity versions and emits Ghidra and IDA scripts plus a richer C++ header. Try both before concluding a build is unsupported.</p>
 <p><strong>Version mismatch is the usual failure.</strong> The metadata format changes across Unity releases; the tool asks for or infers the version. Read the Unity version first and feed it explicitly:</p>
-<pre><code>strings ./in/libil2cpp.so | rg -m3 '20[0-9]{2}\.[0-9]+\.[0-9]+' 
-strings ./in/global-metadata.dat | head -5</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="strings ./in/libil2cpp.so | rg -m3 &#x27;20[0-9]{2}\.[0-9]+\.[0-9]+&#x27; 
+strings ./in/global-metadata.dat | head -5">copy</button><pre><code>strings ./in/libil2cpp.so | rg -m3 '20[0-9]{2}\.[0-9]+\.[0-9]+' 
+strings ./in/global-metadata.dat | head -5</code></pre></div>
 <p><strong>Protected builds</strong> encrypt or scramble <code>global-metadata.dat</code> — the header magic will be wrong and the dumpers will refuse. Signs: the file does not start with the expected metadata magic, or entropy is uniformly high. The practical route is dynamic: let the app decrypt the metadata itself, then dump it from memory once loaded.</p>
-<pre><code># Dump the decrypted metadata from a running process
+<div class="codeblk cx"><button class="copy" data-copy="# Dump the decrypted metadata from a running process
 frida -U -f com.target.app -l dump-metadata.js
-# Then feed the dumped file to Il2CppDumper as normal</code></pre>
+# Then feed the dumped file to Il2CppDumper as normal">copy</button><pre><code># Dump the decrypted metadata from a running process
+frida -U -f com.target.app -l dump-metadata.js
+# Then feed the dumped file to Il2CppDumper as normal</code></pre></div>
 <p>That pattern — let it unpack itself, dump from memory — is the same one used for packed malware, and it is almost always cheaper than defeating the protection statically. See <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a>.</p>
-<h2>Working the Recovered Code</h2>
+<h2 id="working-the-recovered-code">Working the Recovered Code</h2>
 <ol>
 <li><strong>Read <code>dump.cs</code> for the type map.</strong> Search for the classes that matter:</li>
 </ol>
@@ -104,13 +124,18 @@ frida -U -f com.target.app -l dump-metadata.js
 <li><strong>Hook at runtime with Frida</strong> using the addresses from <code>dump.cs</code>. Method</li>
 </ol>
 <p>addresses are relative to the <code>libil2cpp.so</code> base, so resolve the module base and add the offset.</p>
-<pre><code>// Pattern: resolve base, add the RVA from dump.cs, intercept
+<div class="codeblk cx"><button class="copy" data-copy="// Pattern: resolve base, add the RVA from dump.cs, intercept
+const base = Module.findBaseAddress(&#x27;libil2cpp.so&#x27;);
+Interceptor.attach(base.add(0x1A2B3C), {
+  onEnter(args) { console.log(&#x27;called with&#x27;, args[1]); },
+  onLeave(ret)  { console.log(&#x27;-&gt;&#x27;, ret); }
+});">copy</button><pre><code>// Pattern: resolve base, add the RVA from dump.cs, intercept
 const base = Module.findBaseAddress('libil2cpp.so');
 Interceptor.attach(base.add(0x1A2B3C), {
   onEnter(args) { console.log('called with', args[1]); },
   onLeave(ret)  { console.log('-&gt;', ret); }
-});</code></pre>
-<h2>Security-Relevant Findings</h2>
+});</code></pre></div>
+<h2 id="security-relevant-findings">Security-Relevant Findings</h2>
 <p>For an assessment rather than a curiosity exercise, the recurring issues:</p>
 <ul>
 <li><strong>Hardcoded credentials and endpoints</strong> in <code>stringliteral.json</code> — backend</li>
@@ -131,7 +156,7 @@ Interceptor.attach(base.add(0x1A2B3C), {
 <ul>
 <li><strong>Receipt validation done client-side</strong> for in-app purchases.</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"jadx shows nothing, so it's protected."</em> Unity apps have almost nothing in</li>
 </ul>
@@ -149,11 +174,14 @@ Interceptor.attach(base.add(0x1A2B3C), {
 <li><em>"I'll read the raw arm64."</em> Apply <code>script.json</code> first. The same function is</li>
 </ul>
 <p>unreadable before and routine after.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — platform storage, permissions, and native layer</li>
 <li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — the backend, where client-authoritative logic becomes a finding</li>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — memory dumping and anti-analysis for protected builds</li>
 <li>Il2CppDumper, Il2CppInspector, dnSpy/ILSpy, Frida, IDA/Ghidra</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#identify-the-build">Identify the Build</a><a href="#recombining-metadata-with-the-binary">Recombining Metadata with the Binary</a><a href="#working-the-recovered-code">Working the Recovered Code</a><a href="#security-relevant-findings">Security-Relevant Findings</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Pentest Android and iOS mobile applications including APK analysis, dynamic analysis, SSL pinning bypass, root/jailbreak detection bypass, and mobile-specific vulnerabilities. Use when testing mobile app security or performing mobile pentesting.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><h2>When to Use</h2>
+<div class="wrap slayout"><article><h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Android APK analysis and exploitation</li>
 <li>iOS application pentesting</li>
@@ -47,24 +59,24 @@
 <li>Bypassing security controls (SSL pinning, root detection)</li>
 <li>Testing mobile-specific vulnerabilities</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Backend API testing</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a></li>
 <li><strong>Deep native binary reversing</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
 <li><strong>Analyzing a malicious app</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
 <li><strong>Source code is available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
 </ul>
-<h2>Check the Framework Before Anything Else</h2>
+<h2 id="check-the-framework-before-anything-else">Check the Framework Before Anything Else</h2>
 <p><code>jadx</code> returning almost nothing does not mean the app is obfuscated — it usually means the logic is not in the dex at all. Run this first; it decides which skill you should be in.</p>
-<pre><code>unzip -l target.apk | rg 'libflutter|libapp\.so|index\.android\.bundle|libhermes|global-metadata|libil2cpp|Assembly-CSharp'</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="unzip -l target.apk | rg &#x27;libflutter|libapp\.so|index\.android\.bundle|libhermes|global-metadata|libil2cpp|Assembly-CSharp&#x27;">copy</button><pre><code>unzip -l target.apk | rg 'libflutter|libapp\.so|index\.android\.bundle|libhermes|global-metadata|libil2cpp|Assembly-CSharp'</code></pre></div>
 <div class="tw"><table><thead><tr><th>Marker</th><th>Framework</th><th>Skill</th></tr></thead><tbody><tr><td><code>libflutter.so</code>, <code>libapp.so</code>, <code>flutter_assets/</code></td><td>Flutter / Dart</td><td><a class="xref" href="reversing-flutter-apps.html"><code>reversing-flutter-apps</code></a></td></tr><tr><td><code>index.android.bundle</code>, <code>libhermes.so</code>, <code>main.jsbundle</code></td><td>React Native</td><td><a class="xref" href="reversing-react-native-apps.html"><code>reversing-react-native-apps</code></a></td></tr><tr><td><code>global-metadata.dat</code>, <code>libil2cpp.so</code>, <code>Assembly-CSharp.dll</code></td><td>Unity</td><td><a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a></td></tr><tr><td><code>libmonodroid.so</code>, <code>assemblies.blob</code>, <code>libxamarin-app.so</code></td><td>Xamarin / .NET MAUI</td><td><a class="xref" href="reversing-xamarin-maui.html"><code>reversing-xamarin-maui</code></a></td></tr><tr><td><code>classes*.dex</code> with real application packages</td><td>Native Android</td><td>continue here</td></tr></tbody></table></div>
 <p>Two framework symptoms are worth naming, because they waste the most time when misread: a Flutter app shows <strong>no traffic at all</strong> in your proxy (it ignores the system proxy and CA store), and a React Native or Unity app shows a <strong>near-empty dex</strong> with all the logic in <code>assets/</code>.</p>
 <p>Three more procedure skills split out of this one, because each needs far more detail than a general assessment can carry:</p>
 <div class="tw"><table><thead><tr><th>Situation</th><th>Skill</th></tr></thead><tbody><tr><td>App exits on a rooted device, or dies when Frida attaches</td><td><a class="xref" href="bypassing-root-jailbreak-detection.html"><code>bypassing-root-jailbreak-detection</code></a></td></tr><tr><td>iOS binary work: FairPlay decryption, Mach-O, class-dump, entitlements</td><td><a class="xref" href="analyzing-ios-binaries.html"><code>analyzing-ios-binaries</code></a></td></tr><tr><td>Exported components, deep links, URL schemes, content providers</td><td><a class="xref" href="testing-mobile-ipc.html"><code>testing-mobile-ipc</code></a></td></tr></tbody></table></div>
 <p>If the proxy fails for any other reason — a TLS handshake alert, or an app that reports a network error with the proxy on — go to <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> before assuming certificate pinning. On Android 7+ the most common cause is that your CA is installed as a user certificate, which apps do not trust by default, and no pinning bypass fixes that.</p>
-<h2>Android Pentesting</h2>
+<h2 id="android-pentesting">Android Pentesting</h2>
 <h3>APK Analysis Tools</h3>
-<pre><code># Decompile APK
+<div class="codeblk cx"><button class="copy" data-copy="# Decompile APK
 apktool d app.apk -o app_decompiled
 
 # Convert DEX to JAR
@@ -75,9 +87,49 @@ jd-gui app-dex2jar.jar
 
 # Automated analysis
 mobsf  # Mobile Security Framework
-jadx app.apk  # APK to Java decompiler</code></pre>
+jadx app.apk  # APK to Java decompiler">copy</button><pre><code># Decompile APK
+apktool d app.apk -o app_decompiled
+
+# Convert DEX to JAR
+d2j-dex2jar app.apk
+
+# View JAR with JD-GUI
+jd-gui app-dex2jar.jar
+
+# Automated analysis
+mobsf  # Mobile Security Framework
+jadx app.apk  # APK to Java decompiler</code></pre></div>
 <h3>ADB (Android Debug Bridge)</h3>
-<pre><code># List devices
+<div class="codeblk cx"><button class="copy" data-copy="# List devices
+adb devices
+
+# Connect over network
+adb connect 192.168.1.100:5555
+
+# Install APK
+adb install app.apk
+
+# Uninstall
+adb uninstall com.package.name
+
+# List packages
+adb shell pm list packages
+adb shell pm list packages | grep -i &quot;keyword&quot;
+
+# Get APK path
+adb shell pm path com.package.name
+
+# Pull APK from device
+adb pull /data/app/com.package.name-xxx/base.apk
+
+# Start activity
+adb shell am start -n com.package.name/.MainActivity
+
+# View logs
+adb logcat
+
+# Shell access
+adb shell">copy</button><pre><code># List devices
 adb devices
 
 # Connect over network
@@ -106,10 +158,19 @@ adb shell am start -n com.package.name/.MainActivity
 adb logcat
 
 # Shell access
-adb shell</code></pre>
+adb shell</code></pre></div>
 <h3>Static Analysis</h3>
 <p><strong>Search for Sensitive Data:</strong></p>
-<pre><code># Extract strings
+<div class="codeblk cx"><button class="copy" data-copy="# Extract strings
+strings app.apk | grep -i password
+strings app.apk | grep -i api
+strings app.apk | grep -i token
+strings app.apk | grep -i key
+
+# Search in decompiled code
+grep -r &quot;password&quot; app_decompiled/
+grep -r &quot;http://&quot; app_decompiled/
+grep -r &quot;api_key&quot; app_decompiled/">copy</button><pre><code># Extract strings
 strings app.apk | grep -i password
 strings app.apk | grep -i api
 strings app.apk | grep -i token
@@ -118,9 +179,18 @@ strings app.apk | grep -i key
 # Search in decompiled code
 grep -r "password" app_decompiled/
 grep -r "http://" app_decompiled/
-grep -r "api_key" app_decompiled/</code></pre>
+grep -r "api_key" app_decompiled/</code></pre></div>
 <p><strong>Check AndroidManifest.xml:</strong></p>
-<pre><code># Decompile and view
+<div class="codeblk cx"><button class="copy" data-copy="# Decompile and view
+apktool d app.apk
+cat app_decompiled/AndroidManifest.xml
+
+# Look for:
+# - android:debuggable=&quot;true&quot;
+# - android:allowBackup=&quot;true&quot;
+# - Exported activities/services
+# - Custom permissions
+# - URL schemes">copy</button><pre><code># Decompile and view
 apktool d app.apk
 cat app_decompiled/AndroidManifest.xml
 
@@ -129,10 +199,24 @@ cat app_decompiled/AndroidManifest.xml
 # - android:allowBackup="true"
 # - Exported activities/services
 # - Custom permissions
-# - URL schemes</code></pre>
+# - URL schemes</code></pre></div>
 <h3>Dynamic Analysis</h3>
 <p><strong>Frida (Runtime Instrumentation):</strong></p>
-<pre><code># List running apps
+<div class="codeblk cx"><button class="copy" data-copy="# List running apps
+frida-ps -U
+
+# Attach to app
+frida -U -n &quot;App Name&quot;
+frida -U -f com.package.name
+
+# Load script
+frida -U -f com.package.name -l script.js
+
+# Common scripts
+# - Bypass SSL pinning
+# - Bypass root detection
+# - Hook functions
+# - Dump memory">copy</button><pre><code># List running apps
 frida-ps -U
 
 # Attach to app
@@ -146,9 +230,18 @@ frida -U -f com.package.name -l script.js
 # - Bypass SSL pinning
 # - Bypass root detection
 # - Hook functions
-# - Dump memory</code></pre>
+# - Dump memory</code></pre></div>
 <p><strong>SSL Pinning Bypass:</strong></p>
-<pre><code>// Frida script - Universal SSL pinning bypass
+<div class="codeblk cx"><button class="copy" data-copy="// Frida script - Universal SSL pinning bypass
+Java.perform(function() {
+    var TrustManager = Java.use(&#x27;javax.net.ssl.X509TrustManager&#x27;);
+    TrustManager.checkServerTrusted.implementation = function() {};
+
+    var SSLContext = Java.use(&#x27;javax.net.ssl.SSLContext&#x27;);
+    SSLContext.init.overload(&#x27;[Ljavax.net.ssl.KeyManager;&#x27;, &#x27;[Ljavax.net.ssl.TrustManager;&#x27;, &#x27;java.security.SecureRandom&#x27;).implementation = function(a,b,c) {
+        this.init.overload(&#x27;[Ljavax.net.ssl.KeyManager;&#x27;, &#x27;[Ljavax.net.ssl.TrustManager;&#x27;, &#x27;java.security.SecureRandom&#x27;).call(this, a, null, c);
+    };
+});">copy</button><pre><code>// Frida script - Universal SSL pinning bypass
 Java.perform(function() {
     var TrustManager = Java.use('javax.net.ssl.X509TrustManager');
     TrustManager.checkServerTrusted.implementation = function() {};
@@ -157,18 +250,24 @@ Java.perform(function() {
     SSLContext.init.overload('[Ljavax.net.ssl.KeyManager;', '[Ljavax.net.ssl.TrustManager;', 'java.security.SecureRandom').implementation = function(a,b,c) {
         this.init.overload('[Ljavax.net.ssl.KeyManager;', '[Ljavax.net.ssl.TrustManager;', 'java.security.SecureRandom').call(this, a, null, c);
     };
-});</code></pre>
+});</code></pre></div>
 <p><strong>Root Detection Bypass:</strong></p>
-<pre><code>// Frida - Bypass root detection
+<div class="codeblk cx"><button class="copy" data-copy="// Frida - Bypass root detection
+Java.perform(function() {
+    var RootClass = Java.use(&#x27;com.package.name.RootDetection&#x27;);
+    RootClass.isRooted.implementation = function() {
+        return false;
+    };
+});">copy</button><pre><code>// Frida - Bypass root detection
 Java.perform(function() {
     var RootClass = Java.use('com.package.name.RootDetection');
     RootClass.isRooted.implementation = function() {
         return false;
     };
-});</code></pre>
+});</code></pre></div>
 <h3>Intercepting Traffic</h3>
 <p><strong>Burp Suite Setup:</strong></p>
-<pre><code># 1. Install Burp CA certificate
+<div class="codeblk cx"><button class="copy" data-copy="# 1. Install Burp CA certificate
 # Download from http://burp:8080 on device
 # Install in Settings -&gt; Security -&gt; Install from storage
 
@@ -178,17 +277,33 @@ adb shell settings put global http_proxy 192.168.1.100:8080
 # 3. For apps with SSL pinning, use Frida bypass
 
 # 4. Clear proxy when done
-adb shell settings put global http_proxy :0</code></pre>
+adb shell settings put global http_proxy :0">copy</button><pre><code># 1. Install Burp CA certificate
+# Download from http://burp:8080 on device
+# Install in Settings -&gt; Security -&gt; Install from storage
+
+# 2. Configure proxy
+adb shell settings put global http_proxy 192.168.1.100:8080
+
+# 3. For apps with SSL pinning, use Frida bypass
+
+# 4. Clear proxy when done
+adb shell settings put global http_proxy :0</code></pre></div>
 <p><strong>mitmproxy:</strong></p>
-<pre><code># Start mitmproxy
+<div class="codeblk cx"><button class="copy" data-copy="# Start mitmproxy
 mitmproxy --listen-port 8080
 
 # Install certificate on device
 # http://mitm.it
 
-# Set device proxy to attacker IP:8080</code></pre>
+# Set device proxy to attacker IP:8080">copy</button><pre><code># Start mitmproxy
+mitmproxy --listen-port 8080
+
+# Install certificate on device
+# http://mitm.it
+
+# Set device proxy to attacker IP:8080</code></pre></div>
 <h3>Modifying and Repackaging APK</h3>
-<pre><code># 1. Decompile
+<div class="codeblk cx"><button class="copy" data-copy="# 1. Decompile
 apktool d app.apk -o app_mod
 
 # 2. Modify smali code
@@ -208,10 +323,30 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-key.keystore
 java -jar uber-apk-signer.jar -a app_modified.apk
 
 # 5. Install
-adb install app_modified.apk</code></pre>
+adb install app_modified.apk">copy</button><pre><code># 1. Decompile
+apktool d app.apk -o app_mod
+
+# 2. Modify smali code
+# Edit files in app_mod/smali/
+
+# 3. Recompile
+apktool b app_mod -o app_modified.apk
+
+# 4. Sign APK
+# Generate keystore (first time only)
+keytool -genkey -v -keystore my-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000
+
+# Sign
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-key.keystore app_modified.apk alias_name
+
+# Or use uber-apk-signer
+java -jar uber-apk-signer.jar -a app_modified.apk
+
+# 5. Install
+adb install app_modified.apk</code></pre></div>
 <h3>Common Vulnerabilities</h3>
 <p><strong>Insecure Data Storage:</strong></p>
-<pre><code># Check shared preferences
+<div class="codeblk cx"><button class="copy" data-copy="# Check shared preferences
 adb shell
 cd /data/data/com.package.name/shared_prefs/
 cat *.xml
@@ -225,9 +360,33 @@ SELECT * FROM users;
 # Check files
 cd /data/data/com.package.name/files/
 ls -la
-cat *</code></pre>
+cat *">copy</button><pre><code># Check shared preferences
+adb shell
+cd /data/data/com.package.name/shared_prefs/
+cat *.xml
+
+# Check databases
+cd /data/data/com.package.name/databases/
+sqlite3 database.db
+.tables
+SELECT * FROM users;
+
+# Check files
+cd /data/data/com.package.name/files/
+ls -la
+cat *</code></pre></div>
 <p><strong>Exported Components:</strong></p>
-<pre><code># List exported activities
+<div class="codeblk cx"><button class="copy" data-copy="# List exported activities
+adb shell dumpsys package com.package.name | grep -A 20 &quot;Activity&quot;
+
+# Start exported activity
+adb shell am start -n com.package.name/.ExportedActivity
+
+# Call exported service
+adb shell am startservice -n com.package.name/.ExportedService
+
+# Broadcast to receiver
+adb shell am broadcast -a com.package.name.ACTION">copy</button><pre><code># List exported activities
 adb shell dumpsys package com.package.name | grep -A 20 "Activity"
 
 # Start exported activity
@@ -237,15 +396,20 @@ adb shell am start -n com.package.name/.ExportedActivity
 adb shell am startservice -n com.package.name/.ExportedService
 
 # Broadcast to receiver
-adb shell am broadcast -a com.package.name.ACTION</code></pre>
+adb shell am broadcast -a com.package.name.ACTION</code></pre></div>
 <p><strong>Insecure WebView:</strong></p>
-<pre><code># Check for JavaScript enabled
+<div class="codeblk cx"><button class="copy" data-copy="# Check for JavaScript enabled
 # Look in code for:
 webView.getSettings().setJavaScriptEnabled(true);
 
 # Check for addJavascriptInterface
-# Can lead to RCE if exposed</code></pre>
-<h2>iOS Pentesting</h2>
+# Can lead to RCE if exposed">copy</button><pre><code># Check for JavaScript enabled
+# Look in code for:
+webView.getSettings().setJavaScriptEnabled(true);
+
+# Check for addJavascriptInterface
+# Can lead to RCE if exposed</code></pre></div>
+<h2 id="ios-pentesting">iOS Pentesting</h2>
 <h3>Setup</h3>
 <p><strong>Jailbreak Tools:</strong></p>
 <ul>
@@ -254,14 +418,19 @@ webView.getSettings().setJavaScriptEnabled(true);
 <li>Taurine (iOS 14-14.3)</li>
 </ul>
 <p><strong>SSH Access:</strong></p>
-<pre><code># Default credentials
+<div class="codeblk cx"><button class="copy" data-copy="# Default credentials
 ssh root@&lt;device-ip&gt;
 # password: alpine
 
 # Change default password!
-passwd</code></pre>
+passwd">copy</button><pre><code># Default credentials
+ssh root@&lt;device-ip&gt;
+# password: alpine
+
+# Change default password!
+passwd</code></pre></div>
 <h3>IPA Analysis</h3>
-<pre><code># Extract IPA
+<div class="codeblk cx"><button class="copy" data-copy="# Extract IPA
 unzip app.ipa
 
 # View binary
@@ -274,10 +443,32 @@ class-dump Payload/App.app/App &gt; classes.txt
 # Decrypt binary (on jailbroken device)
 frida-ios-dump -u App
 
-# Static analysis with Hopper/Ghidra</code></pre>
+# Static analysis with Hopper/Ghidra">copy</button><pre><code># Extract IPA
+unzip app.ipa
+
+# View binary
+otool -L Payload/App.app/App
+strings Payload/App.app/App
+
+# Class dump
+class-dump Payload/App.app/App &gt; classes.txt
+
+# Decrypt binary (on jailbroken device)
+frida-ios-dump -u App
+
+# Static analysis with Hopper/Ghidra</code></pre></div>
 <h3>Runtime Analysis</h3>
 <p><strong>Frida on iOS:</strong></p>
-<pre><code># List apps
+<div class="codeblk cx"><button class="copy" data-copy="# List apps
+frida-ps -Ua
+
+# Attach
+frida -U -n &quot;App Name&quot;
+frida -U -f com.company.app
+
+# SSL pinning bypass (iOS)
+objection -g &quot;App Name&quot; explore
+ios sslpinning disable">copy</button><pre><code># List apps
 frida-ps -Ua
 
 # Attach
@@ -286,9 +477,9 @@ frida -U -f com.company.app
 
 # SSL pinning bypass (iOS)
 objection -g "App Name" explore
-ios sslpinning disable</code></pre>
+ios sslpinning disable</code></pre></div>
 <p><strong>Objection:</strong></p>
-<pre><code># Launch objection
+<div class="codeblk cx"><button class="copy" data-copy="# Launch objection
 objection -g com.company.app explore
 
 # Common commands
@@ -298,9 +489,19 @@ ios hooking search methods MainActivity
 ios sslpinning disable
 ios jailbreak disable
 ios keychain dump
-ios nsuserdefaults get</code></pre>
+ios nsuserdefaults get">copy</button><pre><code># Launch objection
+objection -g com.company.app explore
+
+# Common commands
+ios info binary
+ios hooking list classes
+ios hooking search methods MainActivity
+ios sslpinning disable
+ios jailbreak disable
+ios keychain dump
+ios nsuserdefaults get</code></pre></div>
 <h3>File System Access</h3>
-<pre><code># Connect via SSH
+<div class="codeblk cx"><button class="copy" data-copy="# Connect via SSH
 ssh root@device-ip
 
 # App data location
@@ -315,19 +516,41 @@ Documents/
 Library/
 Library/Preferences/  # plist files
 Library/Caches/
-tmp/</code></pre>
+tmp/">copy</button><pre><code># Connect via SSH
+ssh root@device-ip
+
+# App data location
+cd /var/mobile/Containers/Data/Application/&lt;UUID&gt;/
+
+# Find app UUID
+ipainstaller -l  # List apps
+ls /var/mobile/Containers/Data/Application/
+
+# Common paths
+Documents/
+Library/
+Library/Preferences/  # plist files
+Library/Caches/
+tmp/</code></pre></div>
 <h3>Keychain Access</h3>
-<pre><code># Using objection
+<div class="codeblk cx"><button class="copy" data-copy="# Using objection
 ios keychain dump
 
 # Manual (requires keychain-dumper on device)
 ./keychain_dumper
 
 # Specific item
-security find-generic-password -s "ServiceName"</code></pre>
+security find-generic-password -s &quot;ServiceName&quot;">copy</button><pre><code># Using objection
+ios keychain dump
+
+# Manual (requires keychain-dumper on device)
+./keychain_dumper
+
+# Specific item
+security find-generic-password -s "ServiceName"</code></pre></div>
 <h3>Common iOS Vulnerabilities</h3>
 <p><strong>Insecure Data Storage:</strong></p>
-<pre><code># Check plist files
+<div class="codeblk cx"><button class="copy" data-copy="# Check plist files
 plutil -p Info.plist
 
 # Check UserDefaults
@@ -336,35 +559,62 @@ ios nsuserdefaults get
 # Check SQLite databases
 sqlite3 database.db
 .tables
-SELECT * FROM sensitive_table;</code></pre>
+SELECT * FROM sensitive_table;">copy</button><pre><code># Check plist files
+plutil -p Info.plist
+
+# Check UserDefaults
+ios nsuserdefaults get
+
+# Check SQLite databases
+sqlite3 database.db
+.tables
+SELECT * FROM sensitive_table;</code></pre></div>
 <p><strong>Binary Protections:</strong></p>
-<pre><code># Check for PIE
+<div class="codeblk cx"><button class="copy" data-copy="# Check for PIE
 otool -hv App | grep PIE
 
 # Check for stack canaries
 otool -I App | grep stack_chk
 
 # Check for ARC
-otool -I App | grep objc_release</code></pre>
-<h2>Mobile-Specific Attacks</h2>
+otool -I App | grep objc_release">copy</button><pre><code># Check for PIE
+otool -hv App | grep PIE
+
+# Check for stack canaries
+otool -I App | grep stack_chk
+
+# Check for ARC
+otool -I App | grep objc_release</code></pre></div>
+<h2 id="mobile-specific-attacks">Mobile-Specific Attacks</h2>
 <p><strong>Deep Link Exploitation:</strong></p>
-<pre><code># Android
+<div class="codeblk cx"><button class="copy" data-copy="# Android
+adb shell am start -a android.intent.action.VIEW -d &quot;app://open?param=value&quot;
+
+# iOS
+xcrun simctl openurl booted &quot;app://open?param=value&quot;">copy</button><pre><code># Android
 adb shell am start -a android.intent.action.VIEW -d "app://open?param=value"
 
 # iOS
-xcrun simctl openurl booted "app://open?param=value"</code></pre>
+xcrun simctl openurl booted "app://open?param=value"</code></pre></div>
 <p><strong>Intent Injection:</strong></p>
-<pre><code># Send malicious intent
-adb shell am start -n com.package/.Activity --es "extra_key" "malicious_value"</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="# Send malicious intent
+adb shell am start -n com.package/.Activity --es &quot;extra_key&quot; &quot;malicious_value&quot;">copy</button><pre><code># Send malicious intent
+adb shell am start -n com.package/.Activity --es "extra_key" "malicious_value"</code></pre></div>
 <p><strong>Backup Extraction:</strong></p>
-<pre><code># Android backup
+<div class="codeblk cx"><button class="copy" data-copy="# Android backup
 adb backup -f backup.ab com.package.name
 # Extract
 java -jar abe.jar unpack backup.ab backup.tar
 
 # iOS backup
-idevicebackup2 backup --full backup_directory</code></pre>
-<h2>Tools</h2>
+idevicebackup2 backup --full backup_directory">copy</button><pre><code># Android backup
+adb backup -f backup.ab com.package.name
+# Extract
+java -jar abe.jar unpack backup.ab backup.tar
+
+# iOS backup
+idevicebackup2 backup --full backup_directory</code></pre></div>
+<h2 id="tools">Tools</h2>
 <p><strong>Android:</strong></p>
 <ul>
 <li>APKTool - Decompile/recompile APKs</li>
@@ -384,7 +634,7 @@ idevicebackup2 backup --full backup_directory</code></pre>
 <li>frida-ios-dump - Decrypt binaries</li>
 <li>iproxy - Forward ports</li>
 </ul>
-<h2>Quick Testing Workflow</h2>
+<h2 id="quick-testing-workflow">Quick Testing Workflow</h2>
 <ol>
 <li><strong>Static Analysis</strong> - Decompile, search strings, analyze manifest/Info.plist</li>
 <li><strong>Install</strong> - Install on emulator/device</li>
@@ -394,10 +644,13 @@ idevicebackup2 backup --full backup_directory</code></pre>
 <li><strong>Data Storage</strong> - Check for insecure data storage in files/DB/keychain</li>
 <li><strong>Repackage</strong> - Modify and recompile to test additional scenarios</li>
 </ol>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li>https://book.hacktricks.xyz/mobile-pentesting</li>
 <li>https://github.com/OWASP/owasp-mstg</li>
 <li>https://mobile-security.gitbook.io/</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#check-the-framework-before-anything-else">Check the Framework Before Anything Else</a><a href="#android-pentesting">Android Pentesting</a><a href="#ios-pentesting">iOS Pentesting</a><a href="#mobile-specific-attacks">Mobile-Specific Attacks</a><a href="#tools">Tools</a><a href="#quick-testing-workflow">Quick Testing Workflow</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

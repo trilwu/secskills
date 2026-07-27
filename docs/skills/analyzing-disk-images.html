@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
   </div>
   <p class="sdesc">Perform dead-disk forensics on an acquired disk image using The Sleuth Kit, Plaso, and bulk_extractor — verify integrity and mount read-only, map partitions, recover deleted files, build a file-system and super-timeline, carve unallocated space, mine registry hives and OS artifacts, and detect anti-forensics. Use when handed a .E01/.dd/.raw/.vmdk/.vhdx disk image or forensic acquisition to examine, recovering deleted files, building a file-system timeline, or carving artifacts from unallocated space.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>A disk image is a frozen crime scene, and the whole discipline is preserving that. Work only from a verified, read-only copy, prove nothing changed with hashes at every step, and remember that the deleted and the unallocated often say more than the live file system — because that is exactly what someone tried to remove.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>A disk image is a frozen crime scene, and the whole discipline is preserving that. Work only from a verified, read-only copy, prove nothing changed with hashes at every step, and remember that the deleted and the unallocated often say more than the live file system — because that is exactly what someone tried to remove.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>You have an acquired disk image (<code>.E01</code>, <code>.dd</code>/<code>.raw</code>, <code>.aff4</code>, <code>.vmdk</code>, <code>.vhdx</code>) to examine</li>
 <li>Recovering deleted files, or reconstructing what was on a wiped or reformatted volume</li>
@@ -49,7 +61,7 @@
 <li>Mining registry hives, browser data, logs, or other artifacts offline from a mounted image</li>
 <li>Confirming or refuting anti-forensics — timestomping, wiping, hidden or encrypted containers</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>You have a RAM capture, not a disk image</strong> — use <a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a></li>
 <li>**You have a live or triage Windows host and want the artifact-by-artifact</li>
@@ -63,9 +75,22 @@
 <ul>
 <li><strong>You recovered a specific sample and want to detonate it</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
 </ul>
-<h2>Acquisition and Integrity</h2>
+<h2 id="acquisition-and-integrity">Acquisition and Integrity</h2>
 <p>Everything downstream is worthless if the image is not provably the disk. Never touch the original media without a write blocker, and never analyze the original image — work on a copy.</p>
-<pre><code># Acquire to E01 (EWF) with built-in compression and hashing — preferred format
+<div class="codeblk cx"><button class="copy" data-copy="# Acquire to E01 (EWF) with built-in compression and hashing — preferred format
+sudo ewfacquire -t /evidence/host01 -f encase6 -c deflate:fast \
+     -C &quot;IR-2026-014&quot; -E &quot;1&quot; -D &quot;Dell OptiPlex sda&quot; /dev/sda
+
+# Raw acquisition alternative — dd with error handling, hash inline
+sudo dd if=/dev/sda bs=4M conv=noerror,sync status=progress \
+     | tee /evidence/host01.dd | sha256sum
+
+# Verify an existing E01 against its stored hashes
+ewfverify /evidence/host01.E01
+
+# Hash the working copy and record it — MD5 and SHA-256 both, for legacy tooling
+md5sum   /evidence/host01.dd
+sha256sum /evidence/host01.dd">copy</button><pre><code># Acquire to E01 (EWF) with built-in compression and hashing — preferred format
 sudo ewfacquire -t /evidence/host01 -f encase6 -c deflate:fast \
      -C "IR-2026-014" -E "1" -D "Dell OptiPlex sda" /dev/sda
 
@@ -78,22 +103,29 @@ ewfverify /evidence/host01.E01
 
 # Hash the working copy and record it — MD5 and SHA-256 both, for legacy tooling
 md5sum   /evidence/host01.dd
-sha256sum /evidence/host01.dd</code></pre>
+sha256sum /evidence/host01.dd</code></pre></div>
 <p><strong>Record at acquisition time, not later:</strong></p>
-<pre><code>Evidence ID | Source host/serial | Collected by | UTC timestamp | Tool + version
+<div class="codeblk cx"><button class="copy" data-copy="Evidence ID | Source host/serial | Collected by | UTC timestamp | Tool + version
 Write blocker used (Y/N + model) | MD5 + SHA-256 at acquisition
-SHA-256 verified after each copy | Custodian at each handoff | Storage location</code></pre>
+SHA-256 verified after each copy | Custodian at each handoff | Storage location">copy</button><pre><code>Evidence ID | Source host/serial | Collected by | UTC timestamp | Tool + version
+Write blocker used (Y/N + model) | MD5 + SHA-256 at acquisition
+SHA-256 verified after each copy | Custodian at each handoff | Storage location</code></pre></div>
 <p>Verify the hash after every copy or transfer. A mismatch means stop — you no longer have the evidence you think you have. If the case may reach litigation or a regulator, involve legal before acquisition.</p>
 <p><strong>Expose the image as a raw device without altering it.</strong> E01 and AFF4 are containers; most TSK and mount operations want a raw block device or file.</p>
-<pre><code># Mount an E01 as a raw device (read-only, FUSE) — exposes ./ewf1
+<div class="codeblk cx"><button class="copy" data-copy="# Mount an E01 as a raw device (read-only, FUSE) — exposes ./ewf1
 ewfmount /evidence/host01.E01 /mnt/ewf
 # /mnt/ewf/ewf1 is now a raw image you can feed to mmls, fls, mount -o loop, etc.
 
 # xmount can also convert on the fly (E01 -&gt; raw or VDI) without a second copy
-xmount --in ewf /evidence/host01.E01 --out raw /mnt/xmount</code></pre>
-<h2>Mounting and Partition Layout</h2>
+xmount --in ewf /evidence/host01.E01 --out raw /mnt/xmount">copy</button><pre><code># Mount an E01 as a raw device (read-only, FUSE) — exposes ./ewf1
+ewfmount /evidence/host01.E01 /mnt/ewf
+# /mnt/ewf/ewf1 is now a raw image you can feed to mmls, fls, mount -o loop, etc.
+
+# xmount can also convert on the fly (E01 -&gt; raw or VDI) without a second copy
+xmount --in ewf /evidence/host01.E01 --out raw /mnt/xmount</code></pre></div>
+<h2 id="mounting-and-partition-layout">Mounting and Partition Layout</h2>
 <p>Understand the geometry before you mount anything. The offsets matter — mount at the wrong one and you see nothing or you see garbage.</p>
-<pre><code># Sleuth Kit partition table — gives you the starting SECTOR of each volume
+<div class="codeblk cx"><button class="copy" data-copy="# Sleuth Kit partition table — gives you the starting SECTOR of each volume
 mmls /mnt/ewf/ewf1
 #   Slot   Start        End          Length       Description
 #   002    0000002048   0000206847   0000204800   NTFS / exFAT (0x07)
@@ -105,10 +137,22 @@ fdisk -l /mnt/ewf/ewf1
 # Loopback-mount a partition read-only. Offset = start_sector * 512.
 # 206848 * 512 = 105906176
 sudo mount -o ro,noexec,norecover,loop,offset=105906176 \
-     /mnt/ewf/ewf1 /mnt/evidence</code></pre>
+     /mnt/ewf/ewf1 /mnt/evidence">copy</button><pre><code># Sleuth Kit partition table — gives you the starting SECTOR of each volume
+mmls /mnt/ewf/ewf1
+#   Slot   Start        End          Length       Description
+#   002    0000002048   0000206847   0000204800   NTFS / exFAT (0x07)
+#   003    0000206848   0976771071   0976564224   NTFS / exFAT (0x07)
+
+# Cross-check with fdisk
+fdisk -l /mnt/ewf/ewf1
+
+# Loopback-mount a partition read-only. Offset = start_sector * 512.
+# 206848 * 512 = 105906176
+sudo mount -o ro,noexec,norecover,loop,offset=105906176 \
+     /mnt/ewf/ewf1 /mnt/evidence</code></pre></div>
 <p><code>ro,noexec</code> prevents writes and accidental execution; <code>norecover</code> stops ntfs-3g replaying the NTFS journal (a write) on mount. For ext4 use <code>ro,noload</code>; the journal replay is the classic way an examiner silently modifies evidence.</p>
 <p><strong>Layered and encrypted volumes:</strong></p>
-<pre><code># LVM — scan and activate, then mount the logical volume read-only
+<div class="codeblk cx"><button class="copy" data-copy="# LVM — scan and activate, then mount the logical volume read-only
 sudo losetup -r -f -P /mnt/ewf/ewf1
 sudo pvscan &amp;&amp; sudo vgchange -ay
 sudo mount -o ro /dev/mapper/vg0-root /mnt/evidence
@@ -123,11 +167,26 @@ sudo mount -o ro,loop /mnt/bde/dislocker-file /mnt/evidence
 
 # macOS APFS / HFS+ — apfs-fuse for APFS containers, read-only
 apfs-fuse -o ro /dev/loop0p2 /mnt/evidence      # APFS
-sudo mount -t hfsplus -o ro,loop /dev/loop0p2 /mnt/evidence   # HFS+</code></pre>
+sudo mount -t hfsplus -o ro,loop /dev/loop0p2 /mnt/evidence   # HFS+">copy</button><pre><code># LVM — scan and activate, then mount the logical volume read-only
+sudo losetup -r -f -P /mnt/ewf/ewf1
+sudo pvscan &amp;&amp; sudo vgchange -ay
+sudo mount -o ro /dev/mapper/vg0-root /mnt/evidence
+
+# LUKS — needs the passphrase or a recovered key file
+sudo cryptsetup --readonly luksOpen /dev/loop0p2 evd_crypt
+sudo mount -o ro /dev/mapper/evd_crypt /mnt/evidence
+
+# BitLocker — dislocker with a recovery key, clear key, or FVEK
+sudo dislocker -r -V /dev/loop0p2 -p&lt;48-digit-recovery-key&gt; -- /mnt/bde
+sudo mount -o ro,loop /mnt/bde/dislocker-file /mnt/evidence
+
+# macOS APFS / HFS+ — apfs-fuse for APFS containers, read-only
+apfs-fuse -o ro /dev/loop0p2 /mnt/evidence      # APFS
+sudo mount -t hfsplus -o ro,loop /dev/loop0p2 /mnt/evidence   # HFS+</code></pre></div>
 <p>Without the BitLocker recovery key or LUKS passphrase you have an encrypted brick — pursue the key (escrow, AD, MDM, a memory image, a sticky note) rather than attacking the crypto.</p>
-<h2>The Sleuth Kit Workflow</h2>
+<h2 id="the-sleuth-kit-workflow">The Sleuth Kit Workflow</h2>
 <p>TSK reads the file system directly from the image — no mount, no OS interpretation, and it sees deleted entries the live view hides. Give every TSK command the offset (<code>-o</code> in sectors) so it targets the right partition.</p>
-<pre><code># List files including deleted (*) ones, recursively, from the NTFS at sector 206848
+<div class="codeblk cx"><button class="copy" data-copy="# List files including deleted (*) ones, recursively, from the NTFS at sector 206848
 fls -r -o 206848 /mnt/ewf/ewf1
 #   r/r * 5613-128-1:  Users/jdoe/AppData/.../invoice.xlsx   &lt;- deleted
 
@@ -141,11 +200,37 @@ icat -o 206848 /mnt/ewf/ewf1 5613-128-1 &gt; /evidence/recovered/invoice.xlsx
 blkls -o 206848 /mnt/ewf/ewf1 &gt; /evidence/unalloc.dd
 
 # Bulk-recover every allocated and deleted file TSK can reconstruct
-tsk_recover -e -o 206848 /mnt/ewf/ewf1 /evidence/recovered/</code></pre>
+tsk_recover -e -o 206848 /mnt/ewf/ewf1 /evidence/recovered/">copy</button><pre><code># List files including deleted (*) ones, recursively, from the NTFS at sector 206848
+fls -r -o 206848 /mnt/ewf/ewf1
+#   r/r * 5613-128-1:  Users/jdoe/AppData/.../invoice.xlsx   &lt;- deleted
+
+# Detail a specific inode/MFT entry: timestamps, allocation, data runs
+istat -o 206848 /mnt/ewf/ewf1 5613
+
+# Extract a file BY INODE, even when deleted, straight out of the image
+icat -o 206848 /mnt/ewf/ewf1 5613-128-1 &gt; /evidence/recovered/invoice.xlsx
+
+# Dump all unallocated blocks for carving
+blkls -o 206848 /mnt/ewf/ewf1 &gt; /evidence/unalloc.dd
+
+# Bulk-recover every allocated and deleted file TSK can reconstruct
+tsk_recover -e -o 206848 /mnt/ewf/ewf1 /evidence/recovered/</code></pre></div>
 <p><code>icat</code> on an inode is the cleanest recovery path — if the <code>$MFT</code> record and data runs survive, you get the exact file back, no carving guesswork. <strong>Autopsy</strong> is the GUI over TSK; it wraps all of the above (fls/istat/icat, keyword indexing, timelines, carving) in a case-managed interface and is the right tool when you want to browse rather than script.</p>
-<h2>File-System Timelines and the Super-Timeline</h2>
+<h2 id="file-system-timelines-and-the-super-timeline">File-System Timelines and the Super-Timeline</h2>
 <p>The timeline is the deliverable everything else supports. Build two: the fast file-system timeline first, then the full super-timeline when you need application-level events.</p>
-<pre><code># 1. File-system timeline (MAC times) from the whole image via TSK
+<div class="codeblk cx"><button class="copy" data-copy="# 1. File-system timeline (MAC times) from the whole image via TSK
+fls -r -m &quot;/&quot; -o 206848 /mnt/ewf/ewf1 &gt; /evidence/body.txt
+mactime -b /evidence/body.txt -d -z UTC &gt; /evidence/fs_timeline.csv
+# Filter to a window:
+mactime -b /evidence/body.txt -d -z UTC 2026-07-10..2026-07-13 &gt; /evidence/window.csv
+
+# 2. Super-timeline with Plaso across the ENTIRE image (all partitions, all parsers)
+log2timeline.py --storage-file /evidence/host01.plaso /mnt/ewf/ewf1
+
+# Render, filtered to the incident window, sorted, UTC
+psort.py -o l2tcsv -z UTC \
+     -w /evidence/super_timeline.csv /evidence/host01.plaso \
+     &quot;date &gt; &#x27;2026-07-10 00:00:00&#x27; AND date &lt; &#x27;2026-07-13 23:59:59&#x27;&quot;">copy</button><pre><code># 1. File-system timeline (MAC times) from the whole image via TSK
 fls -r -m "/" -o 206848 /mnt/ewf/ewf1 &gt; /evidence/body.txt
 mactime -b /evidence/body.txt -d -z UTC &gt; /evidence/fs_timeline.csv
 # Filter to a window:
@@ -157,11 +242,11 @@ log2timeline.py --storage-file /evidence/host01.plaso /mnt/ewf/ewf1
 # Render, filtered to the incident window, sorted, UTC
 psort.py -o l2tcsv -z UTC \
      -w /evidence/super_timeline.csv /evidence/host01.plaso \
-     "date &gt; '2026-07-10 00:00:00' AND date &lt; '2026-07-13 23:59:59'"</code></pre>
+     "date &gt; '2026-07-10 00:00:00' AND date &lt; '2026-07-13 23:59:59'"</code></pre></div>
 <p>Plaso parses registry, event logs, prefetch, browser history, LNK files, <code>$MFT</code>, <code>$UsnJrnl</code>, and dozens more into one normalized timeline — far richer than MAC times alone. Load the CSV into <strong>Timeline Explorer</strong> (Eric Zimmerman) to filter, color, and pivot interactively; a million-row super-timeline is unusable in a text editor. Everything in UTC, and cite the source artifact per row.</p>
-<h2>Deleted-File Recovery and Carving</h2>
+<h2 id="deleted-file-recovery-and-carving">Deleted-File Recovery and Carving</h2>
 <p>Two distinct techniques. Recovery uses file-system metadata that still points at the data; carving ignores metadata entirely and finds files by their content signatures. Run both.</p>
-<pre><code># Metadata-based recovery (already shown) — precise, keeps filenames
+<div class="codeblk cx"><button class="copy" data-copy="# Metadata-based recovery (already shown) — precise, keeps filenames
 tsk_recover -e -o 206848 /mnt/ewf/ewf1 /evidence/recovered/
 
 # Signature carving over unallocated space — recovers files whose MFT record is gone
@@ -173,12 +258,33 @@ scalpel -o /evidence/scalpel /evidence/unalloc.dd    # foremost successor, confi
 bulk_extractor -o /evidence/be_out /mnt/ewf/ewf1
 #   emails, URLs, credit-card numbers (with Luhn validation), search terms,
 #   PII, EXIF, PGP keys, and *_histogram.txt files. Read the histograms first —
-#   frequency-stacked domains and emails surface C2 and exfil targets fast.</code></pre>
+#   frequency-stacked domains and emails surface C2 and exfil targets fast.">copy</button><pre><code># Metadata-based recovery (already shown) — precise, keeps filenames
+tsk_recover -e -o 206848 /mnt/ewf/ewf1 /evidence/recovered/
+
+# Signature carving over unallocated space — recovers files whose MFT record is gone
+photorec /evidence/unalloc.dd            # interactive; broadest format support
+foremost -o /evidence/foremost -c /etc/foremost.conf /evidence/unalloc.dd
+scalpel -o /evidence/scalpel /evidence/unalloc.dd    # foremost successor, configurable
+
+# bulk_extractor — structured artifacts across the RAW image, no file system needed
+bulk_extractor -o /evidence/be_out /mnt/ewf/ewf1
+#   emails, URLs, credit-card numbers (with Luhn validation), search terms,
+#   PII, EXIF, PGP keys, and *_histogram.txt files. Read the histograms first —
+#   frequency-stacked domains and emails surface C2 and exfil targets fast.</code></pre></div>
 <p>Carve from <code>blkls</code> output when you specifically want deleted content; carve from the full raw image when you want everything including file slack. Carved files have no timestamps and no names — correlate them back to the timeline by content and location.</p>
-<h2>The Artifact Goldmine by OS</h2>
+<h2 id="the-artifact-goldmine-by-os">The Artifact Goldmine by OS</h2>
 <p>Deleted files are half the story. The high-value forensic artifacts are the system's own records of what ran, what connected, and what was opened.</p>
 <p><strong>Windows</strong> — mount read-only, then pull the hives and journals:</p>
-<pre><code># Registry hives (system-wide + per-user)
+<div class="codeblk cx"><button class="copy" data-copy="# Registry hives (system-wide + per-user)
+#   SOFTWARE, SYSTEM, SAM   -&gt; C:\Windows\System32\config\
+#   NTUSER.DAT              -&gt; C:\Users\&lt;user&gt;\
+RECmd.exe --f &quot;/mnt/evidence/Windows/System32/config/SYSTEM&quot; --bn Services.reb
+rip.pl -r /mnt/evidence/Windows/System32/config/SOFTWARE -f software  # RegRipper
+
+# NTFS journals — extract by inode with icat, then parse
+#   $MFT (0), $LogFile (2), $UsnJrnl:$J
+icat -o 206848 /mnt/ewf/ewf1 0-128-1 &gt; /evidence/\$MFT
+MFTECmd.exe -f &quot;/evidence/\$MFT&quot; --csv /evidence/ --csvf mft.csv">copy</button><pre><code># Registry hives (system-wide + per-user)
 #   SOFTWARE, SYSTEM, SAM   -&gt; C:\Windows\System32\config\
 #   NTUSER.DAT              -&gt; C:\Users\&lt;user&gt;\
 RECmd.exe --f "/mnt/evidence/Windows/System32/config/SYSTEM" --bn Services.reb
@@ -187,23 +293,38 @@ rip.pl -r /mnt/evidence/Windows/System32/config/SOFTWARE -f software  # RegRippe
 # NTFS journals — extract by inode with icat, then parse
 #   $MFT (0), $LogFile (2), $UsnJrnl:$J
 icat -o 206848 /mnt/ewf/ewf1 0-128-1 &gt; /evidence/\$MFT
-MFTECmd.exe -f "/evidence/\$MFT" --csv /evidence/ --csvf mft.csv</code></pre>
+MFTECmd.exe -f "/evidence/\$MFT" --csv /evidence/ --csvf mft.csv</code></pre></div>
 <p>Windows artifact analysis runs deep — prefetch, amcache, shimcache, shellbags, jumplists, event logs, SRUM. For that artifact-by-artifact investigation hand off to <a class="xref" href="investigating-windows-endpoints.html"><code>investigating-windows-endpoints</code></a>; here, extract the raw hives and journals from the image and pass them on intact.</p>
 <p><strong>Linux</strong> — the evidence is text and it is where you expect it:</p>
-<pre><code>#   /var/log/{auth.log,syslog,secure,journal}   authentication + system events
+<div class="codeblk cx"><button class="copy" data-copy="#   /var/log/{auth.log,syslog,secure,journal}   authentication + system events
 #   /home/*/.bash_history, /root/.bash_history  command history
 #   /etc/{crontab,cron.d,rc.local}, /etc/systemd, ~/.ssh/authorized_keys
 #   /etc/passwd, /etc/shadow, /etc/ld.so.preload  accounts + preload persistence
-grep -aiE "sudo|ssh|useradd|wget|curl" /mnt/evidence/var/log/auth.log</code></pre>
+grep -aiE &quot;sudo|ssh|useradd|wget|curl&quot; /mnt/evidence/var/log/auth.log">copy</button><pre><code>#   /var/log/{auth.log,syslog,secure,journal}   authentication + system events
+#   /home/*/.bash_history, /root/.bash_history  command history
+#   /etc/{crontab,cron.d,rc.local}, /etc/systemd, ~/.ssh/authorized_keys
+#   /etc/passwd, /etc/shadow, /etc/ld.so.preload  accounts + preload persistence
+grep -aiE "sudo|ssh|useradd|wget|curl" /mnt/evidence/var/log/auth.log</code></pre></div>
 <p>For a systematic init-path persistence sweep, follow <a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a>.</p>
 <p><strong>macOS</strong> — unified logs and property lists:</p>
-<pre><code>#   /var/db/diagnostics/*.tracev3          unified log (parse with `log show`)
+<div class="codeblk cx"><button class="copy" data-copy="#   /var/db/diagnostics/*.tracev3          unified log (parse with `log show`)
 #   /Library/LaunchDaemons, ~/Library/LaunchAgents   persistence plists
 #   ~/Library/Preferences/*.plist          app state, recent items
-plutil -p /mnt/evidence/Library/LaunchDaemons/com.suspect.plist</code></pre>
-<h2>Registry and Hive Mining</h2>
+plutil -p /mnt/evidence/Library/LaunchDaemons/com.suspect.plist">copy</button><pre><code>#   /var/db/diagnostics/*.tracev3          unified log (parse with `log show`)
+#   /Library/LaunchDaemons, ~/Library/LaunchAgents   persistence plists
+#   ~/Library/Preferences/*.plist          app state, recent items
+plutil -p /mnt/evidence/Library/LaunchDaemons/com.suspect.plist</code></pre></div>
+<h2 id="registry-and-hive-mining">Registry and Hive Mining</h2>
 <p>Offline hive parsing is one of the richest sources on a Windows image — it records execution, device history, and user activity that no log retains.</p>
-<pre><code># Autoruns / persistence from the hives
+<div class="codeblk cx"><button class="copy" data-copy="# Autoruns / persistence from the hives
+rip.pl -r /mnt/evidence/Windows/System32/config/SOFTWARE -p soft_run
+RECmd.exe --f &quot;/mnt/evidence/.../NTUSER.DAT&quot; --bn RunMRU.reb --csv /evidence/
+
+# LastWrite times on keys are effectively per-key timestamps — treat them as evidence
+# Shellbags — folders a user browsed, including now-deleted/removable paths
+SBECmd.exe -d /mnt/evidence/Users/jdoe -o /evidence/shellbags/
+# USB device history — SYSTEM\MountedDevices, USBSTOR; SOFTWARE\...\Windows Portable Devices
+rip.pl -r /mnt/evidence/Windows/System32/config/SYSTEM -p usbstor">copy</button><pre><code># Autoruns / persistence from the hives
 rip.pl -r /mnt/evidence/Windows/System32/config/SOFTWARE -p soft_run
 RECmd.exe --f "/mnt/evidence/.../NTUSER.DAT" --bn RunMRU.reb --csv /evidence/
 
@@ -211,9 +332,9 @@ RECmd.exe --f "/mnt/evidence/.../NTUSER.DAT" --bn RunMRU.reb --csv /evidence/
 # Shellbags — folders a user browsed, including now-deleted/removable paths
 SBECmd.exe -d /mnt/evidence/Users/jdoe -o /evidence/shellbags/
 # USB device history — SYSTEM\MountedDevices, USBSTOR; SOFTWARE\...\Windows Portable Devices
-rip.pl -r /mnt/evidence/Windows/System32/config/SYSTEM -p usbstor</code></pre>
+rip.pl -r /mnt/evidence/Windows/System32/config/SYSTEM -p usbstor</code></pre></div>
 <p>Key LastWrite times let you place configuration and persistence changes on the timeline. Shellbags and USBSTOR routinely prove access to data and use of removable media that the live file system no longer shows.</p>
-<h2>Anti-Forensics and Hidden Data</h2>
+<h2 id="anti-forensics-and-hidden-data">Anti-Forensics and Hidden Data</h2>
 <p>Assume the subject tried to hide something. The traces of hiding are themselves findings.</p>
 <ul>
 <li><strong>Timestomping</strong> — <code>$STANDARD_INFORMATION</code> times are trivially forged; the</li>
@@ -239,13 +360,16 @@ rip.pl -r /mnt/evidence/Windows/System32/config/SYSTEM -p usbstor</code></pre>
 <li><strong>Encrypted containers</strong> — VeraCrypt/TrueCrypt volumes look like</li>
 </ul>
 <p>high-entropy files with no header and a size that is a round multiple; a hidden volume lives in the free space of an outer volume. <code>bulk_extractor</code>'s entropy view and file-size outliers flag candidates.</p>
-<pre><code># Enumerate ADS across a mounted NTFS image
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate ADS across a mounted NTFS image
+fls -r -o 206848 /mnt/ewf/ewf1 | grep &#x27;:&#x27;
+# Extract slack for carving
+blkls -s -o 206848 /mnt/ewf/ewf1 &gt; /evidence/slack.dd">copy</button><pre><code># Enumerate ADS across a mounted NTFS image
 fls -r -o 206848 /mnt/ewf/ewf1 | grep ':'
 # Extract slack for carving
-blkls -s -o 206848 /mnt/ewf/ewf1 &gt; /evidence/slack.dd</code></pre>
-<h2>String and Keyword Search at Scale</h2>
+blkls -s -o 206848 /mnt/ewf/ewf1 &gt; /evidence/slack.dd</code></pre></div>
+<h2 id="string-and-keyword-search-at-scale">String and Keyword Search at Scale</h2>
 <p>When you do not know where the answer is, or need to validate a hypothesis across the whole disk.</p>
-<pre><code># bulk_extractor is the scalable default — indexed, structured, histogrammed
+<div class="codeblk cx"><button class="copy" data-copy="# bulk_extractor is the scalable default — indexed, structured, histogrammed
 bulk_extractor -o /evidence/be_out /mnt/ewf/ewf1
 grep -f keywords.txt /evidence/be_out/*_histogram.txt
 
@@ -254,9 +378,18 @@ strings -a -t d      /mnt/ewf/ewf1 | grep -aiF -f keywords.txt
 strings -a -t d -e l /mnt/ewf/ewf1 | grep -aiF -f keywords.txt
 
 # YARA across the entire raw image — malware and IOC hunting on disk
-yara -s -r /evidence/rules/incident.yar /mnt/ewf/ewf1</code></pre>
+yara -s -r /evidence/rules/incident.yar /mnt/ewf/ewf1">copy</button><pre><code># bulk_extractor is the scalable default — indexed, structured, histogrammed
+bulk_extractor -o /evidence/be_out /mnt/ewf/ewf1
+grep -f keywords.txt /evidence/be_out/*_histogram.txt
+
+# Raw strings + grep on the image (ASCII and UTF-16LE), when you need a specific token
+strings -a -t d      /mnt/ewf/ewf1 | grep -aiF -f keywords.txt
+strings -a -t d -e l /mnt/ewf/ewf1 | grep -aiF -f keywords.txt
+
+# YARA across the entire raw image — malware and IOC hunting on disk
+yara -s -r /evidence/rules/incident.yar /mnt/ewf/ewf1</code></pre></div>
 <p>For writing effective YARA against disk artifacts — unpacked-form strings, config blocks, tight condition logic — see <a class="xref" href="writing-yara-rules.html"><code>writing-yara-rules</code></a>. Feed the <code>-t d</code> byte offset from a strings hit back into <code>mmls</code>/<code>ifind</code> to map a raw offset to a file.</p>
-<h2>Reporting the Timeline and Handing Off</h2>
+<h2 id="reporting-the-timeline-and-handing-off">Reporting the Timeline and Handing Off</h2>
 <p>The disk analysis is one input to a larger investigation. Package it so the next stage can use it without re-deriving your work.</p>
 <ul>
 <li><strong>Deliver the timeline</strong> — UTC, one source artifact cited per row, observed</li>
@@ -274,7 +407,7 @@ yara -s -r /evidence/rules/incident.yar /mnt/ewf/ewf1</code></pre>
 <li><strong>State the gaps</strong> — wiped regions, missing partitions, encryption you could</li>
 </ul>
 <p>not open, and log retention limits, explicitly, so they are not read as "nothing was there."</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The file was deleted, so it's gone."</em> Until the clusters are reused it is</li>
 </ul>
@@ -303,7 +436,7 @@ yara -s -r /evidence/rules/incident.yar /mnt/ewf/ewf1</code></pre>
 <li><em>"Carving gave me the files, that's enough."</em> Carved files have no metadata,</li>
 </ul>
 <p>no names, no timestamps. Correlate them to the file-system timeline and inode source, or you cannot say where they came from or when.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a> — a recovered RAM capture, hiberfil, or pagefile</li>
 <li><a class="xref" href="investigating-windows-endpoints.html"><code>investigating-windows-endpoints</code></a> — artifact-by-artifact Windows investigation</li>
@@ -316,5 +449,8 @@ yara -s -r /evidence/rules/incident.yar /mnt/ewf/ewf1</code></pre>
 <li>bulk_extractor (github.com/simsong/bulk_extractor), PhotoRec / foremost / scalpel</li>
 <li>libewf / ewf-tools (ewfacquire, ewfverify, ewfmount), RegRipper, Eric Zimmerman tools</li>
 </ul>
-<p>(MFTECmd, RECmd, SBECmd, Timeline Explorer)</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>(MFTECmd, RECmd, SBECmd, Timeline Explorer)</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#acquisition-and-integrity">Acquisition and Integrity</a><a href="#mounting-and-partition-layout">Mounting and Partition Layout</a><a href="#the-sleuth-kit-workflow">The Sleuth Kit Workflow</a><a href="#file-system-timelines-and-the-super-timeline">File-System Timelines and the Super-Timeline</a><a href="#deleted-file-recovery-and-carving">Deleted-File Recovery and Carving</a><a href="#the-artifact-goldmine-by-os">The Artifact Goldmine by OS</a><a href="#registry-and-hive-mining">Registry and Hive Mining</a><a href="#anti-forensics-and-hidden-data">Anti-Forensics and Hidden Data</a><a href="#string-and-keyword-search-at-scale">String and Keyword Search at Scale</a><a href="#reporting-the-timeline-and-handing-off">Reporting the Timeline and Handing Off</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-26</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

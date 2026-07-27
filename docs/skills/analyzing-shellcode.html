@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
   </div>
   <p class="sdesc">Analyze raw shellcode and position-independent code — extracting the bytes, guessing architecture, disassembling at the right base, decoding self-decoder stubs, resolving hashed Windows APIs, emulating to the decoded stage, and pulling C2 and stage IOCs. Use when handed a raw blob of position-independent code, an extracted payload with no PE/ELF header, shellcode lifted from an exploit or a macro/loader, a `\x`-escaped or base64 buffer, a suspected Cobalt Strike or Metasploit stager, or an egg-hunter.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Shellcode is code with no container — no PE/ELF header, no imports table, no fixed load address — so it must find everything it needs at runtime. That self-reliance is exactly what gives it away: the PEB walk, the API hashing, the position-independent GetPC trick are structural fingerprints you can read even before you know what the payload does.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Shellcode is code with no container — no PE/ELF header, no imports table, no fixed load address — so it must find everything it needs at runtime. That self-reliance is exactly what gives it away: the PEB walk, the API hashing, the position-independent GetPC trick are structural fingerprints you can read even before you know what the payload does.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>A raw blob of position-independent code with no PE/ELF/Mach-O header</li>
 <li>A payload carved from an exploit, a macro, a loader, or a JS/HTA dropper</li>
@@ -49,7 +61,7 @@
 <li>An egg-hunter or GetPC/decoder stub found while triaging a larger binary</li>
 <li>Bytes recovered from network capture, RWX memory, or a document stream</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>The sample is a normal PE/ELF/Mach-O with headers</strong> — use</li>
 </ul>
@@ -70,9 +82,19 @@
 <li><strong>Deep static reversing once decoded</strong> — <code>reverse-engineering</code> is not a</li>
 </ul>
 <p>skill; route sustained disassembly work back to <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></p>
-<h2>Get the Bytes First</h2>
+<h2 id="get-the-bytes-first">Get the Bytes First</h2>
 <p>Shellcode arrives wrapped. Normalize it to a flat binary before anything else.</p>
-<pre><code># \x-escaped or 0x C-array pasted from an exploit → raw bytes
+<div class="codeblk cx"><button class="copy" data-copy="# \x-escaped or 0x C-array pasted from an exploit → raw bytes
+python3 -c &quot;import sys,re; d=open(&#x27;sc.txt&#x27;).read(); \
+  b=bytes(int(x,16) for x in re.findall(r&#x27;(?:0x|\\\\x)([0-9a-fA-F]{2})&#x27;,d)); \
+  open(&#x27;sc.bin&#x27;,&#x27;wb&#x27;).write(b); sys.stderr.write(f&#x27;{len(b)} bytes\n&#x27;)&quot;
+
+# base64 buffer
+base64 -d payload.b64 &gt; sc.bin
+
+# single-byte XOR brute (find the key that yields printable / low entropy)
+python3 -c &quot;import sys; d=open(&#x27;sc.bin&#x27;,&#x27;rb&#x27;).read(); \
+  [print(k, bytes(c^k for c in d[:16]).hex()) for k in range(256)]&quot;">copy</button><pre><code># \x-escaped or 0x C-array pasted from an exploit → raw bytes
 python3 -c "import sys,re; d=open('sc.txt').read(); \
   b=bytes(int(x,16) for x in re.findall(r'(?:0x|\\\\x)([0-9a-fA-F]{2})',d)); \
   open('sc.bin','wb').write(b); sys.stderr.write(f'{len(b)} bytes\n')"
@@ -82,13 +104,14 @@ base64 -d payload.b64 &gt; sc.bin
 
 # single-byte XOR brute (find the key that yields printable / low entropy)
 python3 -c "import sys; d=open('sc.bin','rb').read(); \
-  [print(k, bytes(c^k for c in d[:16]).hex()) for k in range(256)]"</code></pre>
+  [print(k, bytes(c^k for c in d[:16]).hex()) for k in range(256)]"</code></pre></div>
 <p>Then sniff what you have before disassembling:</p>
-<pre><code>file sc.bin &amp;&amp; wc -c &lt; sc.bin           # size: stagers ~200-800B, stages tens of KB
-ent sc.bin 2&gt;/dev/null || binwalk -E sc.bin   # high entropy → encoded/self-decoder</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="file sc.bin &amp;&amp; wc -c &lt; sc.bin           # size: stagers ~200-800B, stages tens of KB
+ent sc.bin 2&gt;/dev/null || binwalk -E sc.bin   # high entropy → encoded/self-decoder">copy</button><pre><code>file sc.bin &amp;&amp; wc -c &lt; sc.bin           # size: stagers ~200-800B, stages tens of KB
+ent sc.bin 2&gt;/dev/null || binwalk -E sc.bin   # high entropy → encoded/self-decoder</code></pre></div>
 <p>For document- and capture-borne shellcode, extract first: <code>olevba --deobf</code> for Office macros (<a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> covers this), and carve from PCAP with <code>tshark -r c.pcap --export-objects http,out/</code> or a <code>tcp.stream</code> follow, then treat the bytes as above.</p>
-<h2>First-Look Triage</h2>
-<pre><code>xxd sc.bin | head -40</code></pre>
+<h2 id="first-look-triage">First-Look Triage</h2>
+<div class="codeblk cx"><button class="copy" data-copy="xxd sc.bin | head -40">copy</button><pre><code>xxd sc.bin | head -40</code></pre></div>
 <p>Read the head for structure, not meaning:</p>
 <ul>
 <li><strong>Architecture guess.</strong> x86 shows <code>55 8B EC</code> prologues, <code>64 A1 30 00</code> /</li>
@@ -106,9 +129,21 @@ ent sc.bin 2&gt;/dev/null || binwalk -E sc.bin   # high entropy → encoded/self
 <li><strong>Null-free / alnum encoding.</strong> No <code>00</code> bytes, or all-printable bytes, means</li>
 </ul>
 <p>an encoder stub (Metasploit <code>alpha_mixed</code>, <code>shikata_ga_nai</code>) wraps the real code — you are looking at the decoder, not the payload.</p>
-<h2>Static Disassembly at the Right Base</h2>
+<h2 id="static-disassembly-at-the-right-base">Static Disassembly at the Right Base</h2>
 <p>The single most common mistake is disassembling at the wrong architecture or mid-instruction. Try both widths and read which one produces a sane prologue.</p>
-<pre><code># objdump on a raw blob — set the arch explicitly, Intel syntax
+<div class="codeblk cx"><button class="copy" data-copy="# objdump on a raw blob — set the arch explicitly, Intel syntax
+objdump -D -b binary -m i386        -M intel sc.bin     # 32-bit
+objdump -D -b binary -m i386:x86-64 -M intel sc.bin     # 64-bit
+
+# ndisasm — quick, and -e skips a leading offset if the entry is not at 0
+ndisasm -b 32 sc.bin
+ndisasm -b 64 sc.bin
+
+# rizin / radare2: assemble/disassemble a blob directly
+rasm2 -a x86 -b 32 -d &quot;$(xxd -p sc.bin | tr -d &#x27;\n&#x27;)&quot;
+r2 -a x86 -b 32 -m 0x400000 sc.bin      # load raw at a base
+#   e asm.arch=x86 ; e asm.bits=32 ; s 0 ; pd 60      disassemble entry
+#   pdf @ 0                                            treat entry as a function">copy</button><pre><code># objdump on a raw blob — set the arch explicitly, Intel syntax
 objdump -D -b binary -m i386        -M intel sc.bin     # 32-bit
 objdump -D -b binary -m i386:x86-64 -M intel sc.bin     # 64-bit
 
@@ -120,9 +155,9 @@ ndisasm -b 64 sc.bin
 rasm2 -a x86 -b 32 -d "$(xxd -p sc.bin | tr -d '\n')"
 r2 -a x86 -b 32 -m 0x400000 sc.bin      # load raw at a base
 #   e asm.arch=x86 ; e asm.bits=32 ; s 0 ; pd 60      disassemble entry
-#   pdf @ 0                                            treat entry as a function</code></pre>
+#   pdf @ 0                                            treat entry as a function</code></pre></div>
 <p>To load raw shellcode in Ghidra/IDA/Cutter: import as a <strong>raw binary</strong>, set the processor (x86:LE:32 or x86:LE:64), pick a base address, and <strong>define an entry point / disassemble at the true first instruction</strong> — not offset 0 if a length prefix or junk sled precedes it. Without a defined entry the auto-analyzer will disassemble data as code and the listing is noise.</p>
-<h2>Decode Self-Decoders</h2>
+<h2 id="decode-self-decoders">Decode Self-Decoders</h2>
 <p>Encoded shellcode is a small decoder stub followed by an encrypted body. Do not try to read the body statically — disassemble only the stub, then let it run.</p>
 <ul>
 <li><strong>Recognize the stub.</strong> A short loop with <code>xor</code>/<code>add</code>/<code>sub</code>/<code>rol</code> against a</li>
@@ -136,10 +171,12 @@ r2 -a x86 -b 32 -m 0x400000 sc.bin      # load raw at a base
 <li><strong>Let it decode itself.</strong> Emulate or single-step the stub and dump memory once</li>
 </ul>
 <p>the loop exits; the region it wrote is the real stage. Then disassemble that.</p>
-<pre><code># scdbg dumps the decoded buffer and unpacks the second stage for x86 Windows
+<div class="codeblk cx"><button class="copy" data-copy="# scdbg dumps the decoded buffer and unpacks the second stage for x86 Windows
 scdbg -f sc.bin -s -1                     # -s -1 lifts the step limit (default 2M)
-scdbg -f sc.bin -d                       # dump self-modified/decoded memory</code></pre>
-<h2>Windows API Resolution by Hash</h2>
+scdbg -f sc.bin -d                       # dump self-modified/decoded memory">copy</button><pre><code># scdbg dumps the decoded buffer and unpacks the second stage for x86 Windows
+scdbg -f sc.bin -s -1                     # -s -1 lifts the step limit (default 2M)
+scdbg -f sc.bin -d                       # dump self-modified/decoded memory</code></pre></div>
+<h2 id="windows-api-resolution-by-hash">Windows API Resolution by Hash</h2>
 <p>Shellcode has no imports, so it walks the loaded-module list and resolves APIs by a hash of their names. Recognizing this is often the whole analysis.</p>
 <ul>
 <li><strong>PEB walk.</strong> <code>fs:[0x30]</code> (x86) or <code>gs:[0x60]</code> (x64) loads the PEB, then</li>
@@ -153,7 +190,17 @@ scdbg -f sc.bin -d                       # dump self-modified/decoded memory</co
 <li><strong>Map hashes back to names.</strong> Precompute the hash over every export in the</li>
 </ul>
 <p>system DLLs and look up the constants you see:</p>
-<pre><code># Reproduce Metasploit block_api ror13 — the constant is hash(module)+hash(name)
+<div class="codeblk cx"><button class="copy" data-copy="# Reproduce Metasploit block_api ror13 — the constant is hash(module)+hash(name)
+python3 - &lt;&lt;&#x27;PY&#x27;
+def ror13(b):
+    h=0
+    for c in b:
+        h=((h&gt;&gt;13)|(h&lt;&lt;19))&amp;0xffffffff; h=(h+c)&amp;0xffffffff
+    return h
+mod=ror13(&quot;KERNEL32.DLL\0&quot;.encode(&#x27;utf-16le&#x27;))   # module: UTF-16LE, uppercased
+for api in (&quot;LoadLibraryA&quot;,&quot;GetProcAddress&quot;,&quot;WinExec&quot;,&quot;VirtualAlloc&quot;):
+    print(hex((ror13((api+&quot;\0&quot;).encode(&#x27;ascii&#x27;))+mod)&amp;0xffffffff), api)
+PY">copy</button><pre><code># Reproduce Metasploit block_api ror13 — the constant is hash(module)+hash(name)
 python3 - &lt;&lt;'PY'
 def ror13(b):
     h=0
@@ -163,18 +210,25 @@ def ror13(b):
 mod=ror13("KERNEL32.DLL\0".encode('utf-16le'))   # module: UTF-16LE, uppercased
 for api in ("LoadLibraryA","GetProcAddress","WinExec","VirtualAlloc"):
     print(hex((ror13((api+"\0").encode('ascii'))+mod)&amp;0xffffffff), api)
-PY</code></pre>
+PY</code></pre></div>
 <p>Tools: <code>scdbg</code> prints resolved API calls with arguments as it emulates; <code>jmp2it</code>/<code>blob_runner</code> under a debugger let you break at the resolver; export tables come from <code>dllexp</code> or <code>rabin2 -E kernel32.dll</code>. When the hash algorithm is custom, lift it into the Python harness and brute the export lists.</p>
-<h2>Emulation Is the Fast Path</h2>
+<h2 id="emulation-is-the-fast-path">Emulation Is the Fast Path</h2>
 <p>For Windows x86 shellcode, emulation resolves the APIs, decodes the stages, and prints the behavior in seconds — reach for it before manual tracing.</p>
-<pre><code># scdbg — emulates x86 Windows shellcode, reports API calls, C2, and stages
+<div class="codeblk cx"><button class="copy" data-copy="# scdbg — emulates x86 Windows shellcode, reports API calls, C2, and stages
 scdbg -f sc.bin                          # default trace of resolved API calls
 scdbg -f sc.bin /findsc                  # brute-force the correct start offset
 scdbg -f sc.bin -foff 0x1a               # force entry at a known offset
 
 # speakeasy — emulate x86/x64 shellcode or a raw module
 speakeasy -t sc.bin --raw --arch x86     # --raw shellcode, --arch x86|amd64
-speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
+speakeasy -t sc.bin --raw --arch amd64 -o report.json">copy</button><pre><code># scdbg — emulates x86 Windows shellcode, reports API calls, C2, and stages
+scdbg -f sc.bin                          # default trace of resolved API calls
+scdbg -f sc.bin /findsc                  # brute-force the correct start offset
+scdbg -f sc.bin -foff 0x1a               # force entry at a known offset
+
+# speakeasy — emulate x86/x64 shellcode or a raw module
+speakeasy -t sc.bin --raw --arch x86     # --raw shellcode, --arch x86|amd64
+speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre></div>
 <p>For custom logic or non-Windows targets, build a harness:</p>
 <ul>
 <li><strong>Unicorn</strong> — map memory, set the registers, hook <code>code</code>/<code>mem</code> events, run,</li>
@@ -188,7 +242,7 @@ speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
 <li><strong>Run under a debugger.</strong> <code>blob_runner</code>, <code>shellcode2exe</code>, or <code>jmp2it</code> wrap the</li>
 </ul>
 <p>blob into a loadable stub; open it in <strong>x32dbg/x64dbg</strong>, set EIP/RIP to the entry, and single-step through the decoder to the live stage.</p>
-<h2>Identify the Stage and Family</h2>
+<h2 id="identify-the-stage-and-family">Identify the Stage and Family</h2>
 <ul>
 <li><strong>Metasploit stagers.</strong> <code>reverse_tcp</code> builds a socket then <code>recv</code>s a second</li>
 </ul>
@@ -205,7 +259,7 @@ speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
 <li><strong>Compare against known decoders.</strong> shikata, <code>call4_dword_xor</code>, <code>alpha_mixed</code>,</li>
 </ul>
 <p>and the <code>block_api</code> resolver have recognizable shapes; matching one names the toolkit and tells you what the following bytes must be.</p>
-<h2>Safe Execution Discipline</h2>
+<h2 id="safe-execution-discipline">Safe Execution Discipline</h2>
 <p>Emulation is safe; actually running the shellcode is detonation. Apply the same containment <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> requires.</p>
 <ul>
 <li>Isolated VM, snapshot taken before execution, reverted after.</li>
@@ -216,7 +270,7 @@ speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
 <li>Never let a stager reach the real C2 on an active incident — the callback</li>
 </ul>
 <p>tells the operator you are looking, and a second-stage download is a disclosure of your analysis.</p>
-<h2>Pull IOCs and Hand Off</h2>
+<h2 id="pull-iocs-and-hand-off">Pull IOCs and Hand Off</h2>
 <p>Collect the durable indicators as you decode: C2 host/IP, port, request URI and user-agent, mutex names, the decoder key or hash constants, and the egg tag. Rank them as <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> does — behavior and config outlive rotating hosts.</p>
 <p>Then route the work:</p>
 <ul>
@@ -228,7 +282,7 @@ speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
 <li>Sustained disassembly of a large decoded stage → <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
 <li>Writing up the finding → <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a></li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"objdump showed garbage, so it's encrypted."</em> More likely you disassembled</li>
 </ul>
@@ -257,7 +311,7 @@ speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
 <li><em>"The disassembler auto-analyzed it, so the listing is right."</em> On a headerless</li>
 </ul>
 <p>blob the analyzer guesses the entry and treats data as code. Define the real entry and processor, or the whole listing is misaligned.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Defense Evasion</strong> (TA0005)</p>
 <ul>
@@ -266,7 +320,7 @@ speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1620/">T1620</a> Reflective Code Loading — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — disassembler workflow for the decoded stage</li>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — sample triage, containment, family ID, and the dropped stage</li>
@@ -277,5 +331,8 @@ speakeasy -t sc.bin --raw --arch amd64 -o report.json</code></pre>
 <li>scdbg, speakeasy, Unicorn, Qiling for emulation</li>
 <li>radare2/rizin (<code>rasm2</code>/<code>pd</code>), Cutter for static disassembly of raw blobs</li>
 <li>x64dbg/x32dbg with blob_runner / shellcode2exe / jmp2it to run under a debugger</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#get-the-bytes-first">Get the Bytes First</a><a href="#first-look-triage">First-Look Triage</a><a href="#static-disassembly-at-the-right-base">Static Disassembly at the Right Base</a><a href="#decode-self-decoders">Decode Self-Decoders</a><a href="#windows-api-resolution-by-hash">Windows API Resolution by Hash</a><a href="#emulation-is-the-fast-path">Emulation Is the Fast Path</a><a href="#identify-the-stage-and-family">Identify the Stage and Family</a><a href="#safe-execution-discipline">Safe Execution Discipline</a><a href="#pull-iocs-and-hand-off">Pull IOCs and Hand Off</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-26</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

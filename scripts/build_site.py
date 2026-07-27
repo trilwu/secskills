@@ -90,6 +90,11 @@ def load_skills() -> list[dict]:
 
 # ------------------------------------------------------------ minimal markdown
 
+def slugify(text: str) -> str:
+    t = re.sub(r"[`*_]", "", text)
+    return re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-") or "section"
+
+
 def inline(text: str, names: set[str], current: str) -> str:
     text = html.escape(text, quote=False)
     codes: list[str] = []
@@ -129,7 +134,10 @@ def md_to_html(md: str, names: set[str], current: str) -> str:
             while i < n and not lines[i].startswith("```"):
                 code.append(lines[i]); i += 1
             i += 1
-            out.append("<pre><code>" + html.escape("\n".join(code), quote=False) + "</code></pre>")
+            raw = "\n".join(code)
+            out.append('<div class="codeblk cx">'
+                       f'<button class="copy" data-copy="{html.escape(raw, quote=True)}">copy</button>'
+                       "<pre><code>" + html.escape(raw, quote=False) + "</code></pre></div>")
             continue
         # table
         if ln.lstrip().startswith("|") and i + 1 < n and re.match(r"^\s*\|[\s:|-]+\|\s*$", lines[i + 1]):
@@ -154,8 +162,12 @@ def md_to_html(md: str, names: set[str], current: str) -> str:
             lvl = len(m.group(1))
             if lvl == 1:  # page already has the H1
                 i += 1; continue
-            tag = "h2" if lvl == 2 else "h3" if lvl == 3 else "h4"
-            out.append(f"<{tag}>{inline(m.group(2), names, current)}</{tag}>")
+            txt = inline(m.group(2), names, current)
+            if lvl == 2:
+                out.append(f'<h2 id="{slugify(m.group(2))}">{txt}</h2>')
+            else:
+                tag = "h3" if lvl == 3 else "h4"
+                out.append(f"<{tag}>{txt}</{tag}>")
             i += 1; continue
         # blockquote
         if ln.startswith(">"):
@@ -197,15 +209,15 @@ def md_to_html(md: str, names: set[str], current: str) -> str:
 # --------------------------------------------------------------------- styling
 
 CSS = """
-:root{--bg:#fff;--surface:#fafafa;--text:#17181c;--muted:#5f636e;--faint:#8b8f9a;
+:root{--bg:#fff;--surface:#fafafa;--text:#17181c;--muted:#5f636e;--faint:#6d717c;
 --border:#e7e8ec;--border2:#d9dbe0;--accent:#0a8f5f;--off:#b0605f;--def:#5a7bb0;--core:#87799f;
 --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
 --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;--maxw:1040px}
 @media (prefers-color-scheme:dark){:root{--bg:#0c0d10;--surface:#131519;--text:#e9eaee;--muted:#979aa4;
---faint:#6a6d77;--border:#22242b;--border2:#2e313a;--accent:#34d399;--off:#d17b7a;--def:#7ea0d6;--core:#a698c4}}
-:root[data-theme="light"]{--bg:#fff;--surface:#fafafa;--text:#17181c;--muted:#5f636e;--faint:#8b8f9a;
+--faint:#868a97;--border:#22242b;--border2:#2e313a;--accent:#34d399;--off:#d17b7a;--def:#7ea0d6;--core:#a698c4}}
+:root[data-theme="light"]{--bg:#fff;--surface:#fafafa;--text:#17181c;--muted:#5f636e;--faint:#6d717c;
 --border:#e7e8ec;--border2:#d9dbe0;--accent:#0a8f5f;--off:#b0605f;--def:#5a7bb0;--core:#87799f}
-:root[data-theme="dark"]{--bg:#0c0d10;--surface:#131519;--text:#e9eaee;--muted:#979aa4;--faint:#6a6d77;
+:root[data-theme="dark"]{--bg:#0c0d10;--surface:#131519;--text:#e9eaee;--muted:#979aa4;--faint:#868a97;
 --border:#22242b;--border2:#2e313a;--accent:#34d399;--off:#d17b7a;--def:#7ea0d6;--core:#a698c4}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;
@@ -229,13 +241,37 @@ backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
 section{padding:60px 0;border-top:1px solid var(--border)}
 h2.title{font-size:clamp(20px,2.6vw,26px);font-weight:620}.sub{color:var(--muted);margin:8px 0 0;max-width:62ch}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+footer{border-top:1px solid var(--border);padding:38px 0;font-size:13px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
+footer .mono{font-size:12.5px;color:var(--faint)}
+.copy{position:absolute;top:9px;right:9px;font-family:var(--mono);font-size:11px;color:var(--muted);
+background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer;
+opacity:0;transition:opacity .15s,color .15s,border-color .15s;z-index:2}
+.copy:hover{color:var(--text);border-color:var(--border2)}.copy.ok{color:var(--accent);border-color:var(--accent)}
+.cx:hover .copy,.copy:focus-visible{opacity:1}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text);
+color:var(--bg);font-family:var(--mono);font-size:12.5px;padding:9px 16px;border-radius:8px;opacity:0;
+pointer-events:none;transition:opacity .18s,transform .18s;z-index:60}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (hover:none){.copy{opacity:1}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.copy,.toast{transition:none}}
+@media (max-width:640px){.hide-sm{display:none}.top .wrap{gap:14px}.top nav{gap:14px}}
 """.strip()
 
 THEME_JS = ("<script>var r=document.documentElement,b=document.getElementById('tbtn');"
             "b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||"
             "(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');"
             "r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script>")
+
+COPY_JS = ("<script>(function(){var t=document.createElement('div');t.className='toast';"
+           "t.setAttribute('role','status');document.body.appendChild(t);var tm;"
+           "function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);"
+           "tm=setTimeout(function(){t.classList.remove('on')},1500);}"
+           "document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;"
+           "var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){"
+           "toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){"
+           "var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){"
+           "b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script>")
 
 CHECK = '<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>'
 
@@ -246,13 +282,15 @@ def page(title, css_href, body, extra_head=""):
             f"<title>{html.escape(title)}</title>"
             f"<link rel=\"icon\" href=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
             f"viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E\">"
-            f"<link rel=\"stylesheet\" href=\"{css_href}\">{extra_head}</head><body>{body}{THEME_JS}</body></html>")
+            f"<link rel=\"stylesheet\" href=\"{css_href}\">{extra_head}</head><body>{body}{THEME_JS}{COPY_JS}</body></html>")
 
 
 # ------------------------------------------------------------------- rendering
 
 def render_skill_page(s: dict, names: set[str]) -> str:
     body_html = md_to_html(s["body"], names, s["name"])
+    heads = [(slugify(t), re.sub(r"[`*_]", "", t).strip())
+             for t in re.findall(r"^## (.+)$", s["body"], re.M)]
     css = """
     .shead{padding:56px 0 34px}
     .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
@@ -260,11 +298,20 @@ def render_skill_page(s: dict, names: set[str]) -> str:
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -272,17 +319,30 @@ def render_skill_page(s: dict, names: set[str]) -> str:
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     """
-    inst_line = (f'<span class="p">$ </span>/plugin install secskills-{s["plugin"]}'
-                 + ('' if s["plugin"] == "core" else
-                    '\n<span class="p">$ </span>/plugin install secskills-core'))
+    inst_cmds = ([f"/plugin install secskills-{s['plugin']}"]
+                 + ([] if s["plugin"] == "core" else ["/plugin install secskills-core"]))
+    inst_line = "\n".join(f'<span class="p">$ </span>{c}' for c in inst_cmds)
+    inst_copy = html.escape("\n".join(inst_cmds), quote=True)
+    toc = ""
+    if heads:
+        links = "".join(f'<a href="#{sid}">{html.escape(label)}</a>' for sid, label in heads)
+        toc = f'<aside class="toc"><div class="tl">On this page</div><nav>{links}</nav></aside>'
+    spy = ("<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));"
+           "if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById("
+           "a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;"
+           "for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}"
+           "ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}"
+           "addEventListener('scroll',on,{passive:true});on();})();</script>") if heads else ""
     body = f"""
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -295,9 +355,12 @@ def render_skill_page(s: dict, names: set[str]) -> str:
     <span class="v">{CHECK} verified {s['verified']}</span>
   </div>
   <p class="sdesc">{html.escape(s['desc'])}</p>
-  <div class="inst">{inst_line}</div>
+  <div class="inst cx"><button class="copy" data-copy="{inst_copy}">copy</button>{inst_line}</div>
 </div></header>
-<article><div class="wrap">{body_html}</div></article>
+<div class="wrap slayout"><article>{body_html}</article>{toc}</div>
+<footer><div class="wrap"><div class="mono">secskills · {s['plugin']} · verified {s['verified']}</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+{spy}
 """
     return page(f"{s['name']} — SecSkills", "style.css", body,
                 extra_head=f"<style>{css}</style>")
@@ -314,7 +377,7 @@ def render_index(skills: list[dict], names: set[str]) -> str:
     .lede b{color:var(--text);font-weight:600}
     .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;font-family:var(--mono);font-size:13px;color:var(--muted);align-items:center}
     .meta .ok{color:var(--accent)}.meta .sep{color:var(--faint)}
-    .code{margin-top:34px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .code{position:relative;margin-top:34px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:18px 20px;font-family:var(--mono);font-size:13px;line-height:2;overflow-x:auto;max-width:640px}
     .code .c{color:var(--faint)}.code .p{color:var(--muted);user-select:none}
     .steps{margin-top:34px;display:grid;gap:26px;max-width:74ch}
@@ -328,8 +391,12 @@ def render_index(skills: list[dict], names: set[str]) -> str:
     .uccard{background:var(--bg);padding:20px 22px}
     .uccard .who{font-family:var(--mono);font-size:11px;color:var(--faint)}
     .uccard .pr{font-family:var(--mono);font-size:13px;color:var(--text);margin:9px 0 12px;line-height:1.5}
+    .uccard .ucf{display:flex;justify-content:space-between;align-items:center;gap:12px}
     .uccard .to{font-size:12.5px;color:var(--muted)}
     .uccard .to a{color:var(--accent)}
+    .copy2{font-family:var(--mono);font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);
+    border-radius:6px;padding:4px 9px;cursor:pointer;flex:none;transition:color .15s,border-color .15s}
+    .copy2:hover{color:var(--text);border-color:var(--border2)}.copy2.ok{color:var(--accent);border-color:var(--accent)}
     .roles{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:34px;background:var(--border);
     border:1px solid var(--border);border-radius:10px;overflow:hidden}
     .role{background:var(--bg);padding:24px 26px}.role .r{font-family:var(--mono);font-size:12px;color:var(--muted)}
@@ -346,21 +413,23 @@ def render_index(skills: list[dict], names: set[str]) -> str:
     border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;gap:7px}
     .chip:hover{color:var(--text)}.chip[aria-pressed="true"]{color:var(--text);border-color:var(--text)}
     .cnt{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin:16px 0}
+    .ghead{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin:28px 0 11px}
+    .ghead:first-child{margin-top:0}.ghead .n{color:var(--faint)}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1px;background:var(--border);
     border:1px solid var(--border);border-radius:10px;overflow:hidden}
     .card{background:var(--bg);padding:16px 18px;min-height:92px;display:block;color:inherit}
     .card:hover{background:var(--surface);text-decoration:none}
     .card .h{display:flex;align-items:center;gap:8px;margin-bottom:7px}
     .card .name{font-family:var(--mono);font-size:13px;font-weight:600}
-    .card .vv{margin-left:auto}.card .desc{font-size:13px;color:var(--muted);line-height:1.5}
-    .empty{grid-column:1/-1;background:var(--bg);text-align:center;color:var(--faint);font-family:var(--mono);font-size:13px;padding:48px 0}
+    .card .arw{margin-left:auto;font-family:var(--mono);color:var(--faint);opacity:0;transform:translateX(-4px);
+    transition:opacity .15s,transform .15s}
+    .card:hover .arw{opacity:1;transform:translateX(0)}
+    .card .desc{font-size:13px;color:var(--muted);line-height:1.5}
+    .empty{background:var(--bg);text-align:center;color:var(--faint);font-family:var(--mono);font-size:13px;padding:48px 0}
     .stats{display:flex;flex-wrap:wrap;gap:36px 56px;margin-top:30px}
     .stat .n{font-family:var(--mono);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
     .stat .n.ok{color:var(--accent)}.stat .l{font-size:13px;color:var(--muted);margin-top:2px}
-    footer{border-top:1px solid var(--border);padding:38px 0;font-size:13px;color:var(--muted)}
-    footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
-    footer .mono{font-size:12.5px;color:var(--faint)}
-    @media (max-width:760px){.roles,.cards2{grid-template-columns:1fr}.top nav{display:none}}
+    @media (max-width:760px){.roles,.cards2{grid-template-columns:1fr}}
     """
 
     def role(r, h, inst, p):
@@ -381,13 +450,15 @@ def render_index(skills: list[dict], names: set[str]) -> str:
         for who, prompt, skill in items:
             uc_html += (f'<div class="uccard"><div class="who">{html.escape(who)}</div>'
                         f'<div class="pr">"{html.escape(prompt)}"</div>'
-                        f'<div class="to">→ <a href="skills/{skill}.html">{skill}</a></div></div>')
+                        f'<div class="ucf"><span class="to">→ <a href="skills/{skill}.html">{skill}</a></span>'
+                        f'<button class="copy2" data-copy="{html.escape(prompt, quote=True)}">copy prompt</button>'
+                        f'</div></div>')
         uc_html += "</div>"
 
     body = f"""
 <div class="top"><div class="wrap"><span class="brand">secskills</span>
-<nav><a href="#how">how it works</a><a href="#use">use cases</a><a href="#catalog">catalog</a>
-<a href="#verify">verification</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<nav><a class="hide-sm" href="#how">how it works</a><a class="hide-sm" href="#use">use cases</a><a href="#catalog">catalog</a>
+<a class="hide-sm" href="#verify">verification</a><a href="https://github.com/trilwu/secskills">github</a></nav>
 <button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
 
 <header class="hero"><div class="wrap">
@@ -396,7 +467,10 @@ def render_index(skills: list[dict], names: set[str]) -> str:
   <p class="lede">Claude knows the commands. What these encode is the discipline — <b>trace impact before you report it, preserve before you remediate, spot the honeypot before you touch it</b>. Every skill fact-checked against primary sources.</p>
   <div class="meta"><span class="ok">✓ {len(skills)} / {len(skills)} verified</span><span class="sep">·</span>
   <span>offense {counts['offense']}</span><span>defense {counts['defense']}</span><span>core {counts['core']}</span></div>
-  <div class="code"><span class="c"># add the marketplace</span>
+  <div class="code cx"><button class="copy" data-copy="/plugin marketplace add trilwu/secskills
+/plugin install secskills-offense
+/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="c"># add the marketplace</span>
 <span class="p">$ </span>/plugin marketplace add trilwu/secskills
 <span class="c"># offensive — red team / pentest</span>
 <span class="p">$ </span>/plugin install secskills-offense
@@ -435,7 +509,7 @@ def render_index(skills: list[dict], names: set[str]) -> str:
 <button class="chip" data-f="offense"><span class="dot dot-offense"></span>offense</button>
 <button class="chip" data-f="defense"><span class="dot dot-defense"></span>defense</button>
 <button class="chip" data-f="core"><span class="dot dot-core"></span>core</button></div>
-<div class="cnt" id="cnt"></div><div class="grid" id="grid"></div></div></section>
+<div class="cnt" id="cnt"></div><div id="grid"></div></div></section>
 
 <section id="verify"><div class="wrap"><div class="lbl">verification</div>
 <h2 class="title">Every skill checked against primary sources</h2>
@@ -454,12 +528,18 @@ def render_index(skills: list[dict], names: set[str]) -> str:
 <script>
 const SKILLS={data};
 const grid=document.getElementById('grid'),q=document.getElementById('q'),cnt=document.getElementById('cnt');
-let filter='all';const ck='{CHECK}';
+let filter='all';
+function card(s){{return `<a class="card" href="skills/${{s.n}}.html">
+<div class="h"><span class="dot dot-${{s.p}}"></span><span class="name">${{s.n}}</span><span class="arw">→</span></div>
+<div class="desc">${{s.t}}</div></a>`;}}
 function render(){{const t=q.value.trim().toLowerCase();
 const rows=SKILLS.filter(s=>(filter==='all'||s.p===filter)&&(!t||s.n.includes(t)||s.t.toLowerCase().includes(t)));
-grid.innerHTML=rows.length?rows.map(s=>`<a class="card" href="skills/${{s.n}}.html">
-<div class="h"><span class="dot dot-${{s.p}}"></span><span class="name">${{s.n}}</span><span class="vv v" title="verified">${{ck}}</span></div>
-<div class="desc">${{s.t}}</div></a>`).join(''):`<div class="empty">no skills match "${{t}}"</div>`;
+if(!rows.length){{grid.innerHTML=`<div class="grid"><div class="empty">no skills match "${{t}}"</div></div>`;}}
+else if(filter==='all'&&!t){{grid.innerHTML=['offense','defense','core'].map(p=>{{
+const g=rows.filter(s=>s.p===p);if(!g.length)return '';
+return `<div class="ghead"><span class="dot dot-${{p}}"></span>${{p}} <span class="n">· ${{g.length}}</span></div>
+<div class="grid">${{g.map(card).join('')}}</div>`;}}).join('');}}
+else{{grid.innerHTML=`<div class="grid">${{rows.map(card).join('')}}</div>`;}}
 cnt.textContent=`${{rows.length}} skill${{rows.length===1?'':'s'}}`+(filter!=='all'?` · ${{filter}}`:'')+(t?` · "${{t}}"`:'');}}
 q.addEventListener('input',render);
 document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{{

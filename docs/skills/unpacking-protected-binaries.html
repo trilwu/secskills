@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Unpack and dump protected executables — UPX and commodity packers, custom crypters, commercial protectors like Themida and VMProtect, and .NET packers — by finding the original entry point, dumping from memory, and rebuilding the import table with Scylla, pe-sieve, or x64dbg. Use when a binary has high entropy, few imports, unnamed sections, or when analysis tools show almost no code.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Static unpacking is a trap for anything beyond UPX. The reliable method is to let the program unpack itself, then take the result out of memory. Almost every protector, however sophisticated, must eventually produce executable code in a readable page — that moment is what you are waiting for.</p>
+<div class="wrap slayout"><article><p>Static unpacking is a trap for anything beyond UPX. The reliable method is to let the program unpack itself, then take the result out of memory. Almost every protector, however sophisticated, must eventually produce executable code in a readable page — that moment is what you are waiting for.</p>
 <p>Run protected samples only in a contained environment; see <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li><code>binwalk -E</code> shows uniformly high entropy across most of the file</li>
 <li>The import table has a handful of entries (<code>LoadLibrary</code>, <code>GetProcAddress</code>)</li>
@@ -48,7 +59,7 @@
 <li>Disassembly shows a small stub and one large data blob</li>
 <li>A tool reports the file is packed, or analysis finds essentially no code</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>The wider malware workflow</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for containment,</li>
 </ul>
@@ -65,27 +76,39 @@
 <li><strong>Firmware images</strong> — <code>binwalk -Me</code> extraction is a different job; see</li>
 </ul>
 <p><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></p>
-<h2>Identify the Protector First</h2>
+<h2 id="identify-the-protector-first">Identify the Protector First</h2>
 <p>The response differs enormously between a commodity packer and a commercial protector, so spend a minute here.</p>
-<pre><code>diec target.exe                     # Detect It Easy — the best single identifier
+<div class="codeblk cx"><button class="copy" data-copy="diec target.exe                     # Detect It Easy — the best single identifier
+rg -a -o &#x27;UPX|MPRESS|Themida|VMProtect|ASPack|Enigma|Obsidium|PECompact&#x27; target.exe
+binwalk -E target.exe               # entropy profile">copy</button><pre><code>diec target.exe                     # Detect It Easy — the best single identifier
 rg -a -o 'UPX|MPRESS|Themida|VMProtect|ASPack|Enigma|Obsidium|PECompact' target.exe
-binwalk -E target.exe               # entropy profile</code></pre>
-<pre><code># Structural tells
+binwalk -E target.exe               # entropy profile</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="# Structural tells
 readpe target.exe                   # or: rabin2 -S target.exe
 #   raw size ≈ 0 with large virtual size   → section unpacked at runtime
 #   section marked writable AND executable → self-modifying
 #   entry point outside the first section  → stub in a later section
-#   TLS callbacks present                  → code runs BEFORE the entry point</code></pre>
+#   TLS callbacks present                  → code runs BEFORE the entry point">copy</button><pre><code># Structural tells
+readpe target.exe                   # or: rabin2 -S target.exe
+#   raw size ≈ 0 with large virtual size   → section unpacked at runtime
+#   section marked writable AND executable → self-modifying
+#   entry point outside the first section  → stub in a later section
+#   TLS callbacks present                  → code runs BEFORE the entry point</code></pre></div>
 <p><strong>TLS callbacks matter.</strong> They execute before the entry point, so a debugger set to break at the EP has already run the protector's anti-debug checks. Set the debugger to break on TLS callbacks, not on the entry point.</p>
 <div class="tw"><table><thead><tr><th>Identified as</th><th>Approach</th></tr></thead><tbody><tr><td>UPX (unmodified)</td><td><code>upx -d</code> — takes seconds</td></tr><tr><td>UPX (modified header)</td><td>Repair the magic, or unpack dynamically</td></tr><tr><td>Commodity crypter, custom stub</td><td>Dynamic dump at OEP</td></tr><tr><td>Themida, VMProtect, Enigma</td><td>Dump plus heavy import repair; expect virtualized functions to stay virtualized</td></tr><tr><td>.NET packer</td><td><a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a></td></tr></tbody></table></div>
-<pre><code>upx -d target.exe -o unpacked.exe          # try first, costs nothing</code></pre>
-<h2>The Dynamic Unpacking Loop</h2>
-<pre><code>1. Break before the stub runs (TLS callbacks, or the EP if none)
+<div class="codeblk cx"><button class="copy" data-copy="upx -d target.exe -o unpacked.exe          # try first, costs nothing">copy</button><pre><code>upx -d target.exe -o unpacked.exe          # try first, costs nothing</code></pre></div>
+<h2 id="the-dynamic-unpacking-loop">The Dynamic Unpacking Loop</h2>
+<div class="codeblk cx"><button class="copy" data-copy="1. Break before the stub runs (TLS callbacks, or the EP if none)
 2. Run until the unpacked code exists in memory
 3. Find the OEP — the original entry point of the real program
 4. Dump the process image
 5. Rebuild the import table
-6. Fix the PE headers and verify the dump loads</code></pre>
+6. Fix the PE headers and verify the dump loads">copy</button><pre><code>1. Break before the stub runs (TLS callbacks, or the EP if none)
+2. Run until the unpacked code exists in memory
+3. Find the OEP — the original entry point of the real program
+4. Dump the process image
+5. Rebuild the import table
+6. Fix the PE headers and verify the dump loads</code></pre></div>
 <p><strong>Finding the OEP</strong> is the part that takes judgment. Reliable signals:</p>
 <ul>
 <li><strong>Memory write-then-execute.</strong> Set a hardware breakpoint on execute over the</li>
@@ -102,19 +125,29 @@ readpe target.exe                   # or: rabin2 -S target.exe
 <ul>
 <li><strong><code>GetCommandLine</code> / <code>GetModuleHandle</code> calls</strong> early in the real program.</li>
 </ul>
-<pre><code>x64dbg workflow:
+<div class="codeblk cx"><button class="copy" data-copy="x64dbg workflow:
+  Options → Events → break on TLS callbacks and on system breakpoint
+  Run, then in the Memory Map set &quot;Break on execute&quot; for the target section
+  When it breaks, confirm the code looks compiler-generated → that is the OEP">copy</button><pre><code>x64dbg workflow:
   Options → Events → break on TLS callbacks and on system breakpoint
   Run, then in the Memory Map set "Break on execute" for the target section
-  When it breaks, confirm the code looks compiler-generated → that is the OEP</code></pre>
-<h2>Dumping and Import Repair</h2>
-<pre><code># Dump from the debugger at OEP: Scylla (built into x64dbg)
+  When it breaks, confirm the code looks compiler-generated → that is the OEP</code></pre></div>
+<h2 id="dumping-and-import-repair">Dumping and Import Repair</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Dump from the debugger at OEP: Scylla (built into x64dbg)
 #   1. Attach / already broken at OEP
 #   2. Scylla → set OEP → IAT Autosearch → Get Imports
 #   3. Fix invalid/unresolved entries, then Dump + Fix Dump
 
 # Or dump externally
 pe-sieve /pid &lt;pid&gt; /dmode 3        # dumps and repairs; good for automation
-# hollows_hunter for scanning a whole system for unpacked/injected modules</code></pre>
+# hollows_hunter for scanning a whole system for unpacked/injected modules">copy</button><pre><code># Dump from the debugger at OEP: Scylla (built into x64dbg)
+#   1. Attach / already broken at OEP
+#   2. Scylla → set OEP → IAT Autosearch → Get Imports
+#   3. Fix invalid/unresolved entries, then Dump + Fix Dump
+
+# Or dump externally
+pe-sieve /pid &lt;pid&gt; /dmode 3        # dumps and repairs; good for automation
+# hollows_hunter for scanning a whole system for unpacked/injected modules</code></pre></div>
 <p><strong>Import repair is where most dumps fail.</strong> Packers replace the import table with a runtime-resolved stub, so a raw dump has API calls pointing into the packer's own thunk area. Scylla's IAT search finds the resolved table; when it returns unresolved entries, that usually means:</p>
 <ul>
 <li>The dump was taken before the imports were fully resolved — run further</li>
@@ -125,10 +158,12 @@ pe-sieve /pid &lt;pid&gt; /dmode 3        # dumps and repairs; good for automati
 <li>The API is resolved lazily on first call — trigger the functionality, then dump</li>
 </ul>
 <p>Verify the dump before analyzing it:</p>
-<pre><code>readpe dumped.exe | head -30          # sane headers, correct EP
+<div class="codeblk cx"><button class="copy" data-copy="readpe dumped.exe | head -30          # sane headers, correct EP
 rabin2 -i dumped.exe | head -20       # imports resolve to real API names
-# The strongest test: does it run, or does a decompiler produce sane output?</code></pre>
-<h2>Commercial Protectors</h2>
+# The strongest test: does it run, or does a decompiler produce sane output?">copy</button><pre><code>readpe dumped.exe | head -30          # sane headers, correct EP
+rabin2 -i dumped.exe | head -20       # imports resolve to real API names
+# The strongest test: does it run, or does a decompiler produce sane output?</code></pre></div>
+<h2 id="commercial-protectors">Commercial Protectors</h2>
 <p>Themida, VMProtect, Enigma, and similar do more than pack. Expect:</p>
 <ul>
 <li><strong>Virtualized functions.</strong> Selected functions are converted to bytecode for a</li>
@@ -142,7 +177,7 @@ rabin2 -i dumped.exe | head -20       # imports resolve to real API names
 <li><strong>Multiple unpacking stages</strong> with re-encryption of earlier stages.</li>
 </ul>
 <p>The practical decision: if only a few functions are virtualized, dump and analyze everything else, then handle those functions <strong>dynamically</strong> — hook their inputs and outputs rather than reading their logic. That answers "what does it do" without defeating the VM.</p>
-<h2>When Dumping Is Not Available</h2>
+<h2 id="when-dumping-is-not-available">When Dumping Is Not Available</h2>
 <p>Some samples never fully unpack in one place: they decrypt individual functions on demand and re-encrypt after use, or they run entirely from a JIT-style buffer.</p>
 <ul>
 <li><strong>Trace-based recovery.</strong> Record execution with an instrumentation framework</li>
@@ -155,7 +190,7 @@ rabin2 -i dumped.exe | head -20       # imports resolve to real API names
 <ul>
 <li><strong>Frida/Pin/DynamoRIO</strong> for the instrumentation.</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"<code>upx -d</code> failed, so it isn't UPX."</em> Modified UPX headers are the most</li>
 </ul>
@@ -181,11 +216,14 @@ rabin2 -i dumped.exe | head -20       # imports resolve to real API names
 <li><em>"Nothing happened when I ran it."</em> Anti-VM or anti-debug fired. Handle</li>
 </ul>
 <p>detection before unpacking.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment, capability model, IOCs; the workflow this fits into</li>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — post-unpacking analysis and anti-analysis handling</li>
 <li><a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a> — .NET packers and managed dumping</li>
 <li>Detect It Easy, x64dbg + Scylla + ScyllaHide, pe-sieve, hollows_hunter, UPX</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#identify-the-protector-first">Identify the Protector First</a><a href="#the-dynamic-unpacking-loop">The Dynamic Unpacking Loop</a><a href="#dumping-and-import-repair">Dumping and Import Repair</a><a href="#commercial-protectors">Commercial Protectors</a><a href="#when-dumping-is-not-available">When Dumping Is Not Available</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

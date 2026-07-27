@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Audit software supply chain risk — dependency and transitive package review, typosquatting and dependency confusion, lockfile and SBOM analysis, CI/CD pipeline and GitHub Actions security, build provenance, and secrets exposure. Use when assessing third-party package risk, reviewing a build pipeline, investigating a malicious package, or hardening release infrastructure.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Your build pipeline runs more untrusted code than your application does. A single unpinned action, a postinstall script, or a workflow with a writable token is a path from a stranger's commit to your production artifacts and your signing keys.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Your build pipeline runs more untrusted code than your application does. A single unpinned action, a postinstall script, or a workflow with a writable token is a path from a stranger's commit to your production artifacts and your signing keys.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Assessing risk from third-party dependencies in an application</li>
 <li>Reviewing CI/CD pipelines, GitHub Actions, and release automation</li>
@@ -48,7 +59,7 @@
 <li>Hardening build provenance and artifact signing</li>
 <li>Responding to a disclosed upstream compromise</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Vulnerabilities in first-party code</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
 <li><strong>Model and dataset provenance</strong> — use <a class="xref" href="securing-ai-systems.html"><code>securing-ai-systems</code></a></li>
@@ -60,12 +71,12 @@
 <li><strong>Prioritizing which of many dependency CVEs to fix first</strong> — use</li>
 </ul>
 <p><a class="xref" href="managing-vulnerabilities.html"><code>managing-vulnerabilities</code></a>; reachability analysis here feeds its ranking</p>
-<h2>Two Different Risks</h2>
+<h2 id="two-different-risks">Two Different Risks</h2>
 <p>Keep them separate; they need different responses.</p>
 <div class="tw"><table><thead><tr><th></th><th><strong>Known-vulnerable dependency</strong></th><th><strong>Malicious dependency</strong></th></tr></thead><tbody><tr><td>Detection</td><td>CVE databases, <code>npm audit</code>, <code>osv-scanner</code></td><td>Behavioural review, install scripts, publisher anomalies</td></tr><tr><td>Signal</td><td>Loud and well-tooled</td><td>Quiet; scanners usually miss it</td></tr><tr><td>Response</td><td>Patch, or justify the risk</td><td>Incident — assume credentials on the build host are burned</td></tr><tr><td>Time pressure</td><td>Days to weeks</td><td>Hours</td></tr></tbody></table></div>
 <p>Most programs handle the first and are blind to the second. Give the second explicit attention.</p>
-<h2>Dependency Review</h2>
-<pre><code># Known vulnerabilities, ecosystem-agnostic
+<h2 id="dependency-review">Dependency Review</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Known vulnerabilities, ecosystem-agnostic
 osv-scanner --lockfile=package-lock.json --lockfile=go.sum --lockfile=Cargo.lock
 trivy fs --scanners vuln,secret,misconfig .
 grype dir:.
@@ -75,27 +86,48 @@ npm audit --omit=dev &amp;&amp; npm ls --all --depth=99 | wc -l   # count transi
 pip-audit -r requirements.txt
 cargo audit
 govulncheck ./...    # reachability-aware: only reports vulns you actually call
-mvn dependency-check:check</code></pre>
+mvn dependency-check:check">copy</button><pre><code># Known vulnerabilities, ecosystem-agnostic
+osv-scanner --lockfile=package-lock.json --lockfile=go.sum --lockfile=Cargo.lock
+trivy fs --scanners vuln,secret,misconfig .
+grype dir:.
+
+# Ecosystem-native
+npm audit --omit=dev &amp;&amp; npm ls --all --depth=99 | wc -l   # count transitives
+pip-audit -r requirements.txt
+cargo audit
+govulncheck ./...    # reachability-aware: only reports vulns you actually call
+mvn dependency-check:check</code></pre></div>
 <p><code>govulncheck</code>-style reachability analysis matters: a vulnerability in a code path you never execute is a patching task, not a risk. Prioritize by reachability plus exposure, not by CVSS alone.</p>
 <p><strong>Transitive depth is the real surface.</strong> Direct dependencies are chosen and reviewed; transitive ones are inherited. Count them, and know which maintainers you are implicitly trusting.</p>
-<h2>Detecting Malicious Packages</h2>
+<h2 id="detecting-malicious-packages">Detecting Malicious Packages</h2>
 <p>Triage signals, roughly in order of how strongly they indicate malice:</p>
 <div class="tw"><table><thead><tr><th>Signal</th><th>How to check</th></tr></thead><tbody><tr><td>Install-time script execution</td><td><code>postinstall</code>/<code>preinstall</code> in package.json; <code>setup.py</code> with network or exec calls; <code>build.rs</code></td></tr><tr><td>Obfuscated or minified source in a non-minified package</td><td>Read the published tarball, not the repo — they differ</td></tr><tr><td>Network calls at import/require time</td><td>Static grep for HTTP/DNS in module top-level</td></tr><tr><td>Environment and credential access</td><td>Reads of <code>~/.aws</code>, <code>.npmrc</code>, <code>.git-credentials</code>, <code>process.env</code> dumps</td></tr><tr><td>New maintainer or a version published from a new account</td><td>Registry metadata, publish history</td></tr><tr><td>Name close to a popular package</td><td>Levenshtein distance against top-N package list</td></tr><tr><td>Published artifact ≠ repository source</td><td>Compare the tarball to the tagged commit</td></tr><tr><td>Version jump with no corresponding commits</td><td>Registry vs VCS history</td></tr></tbody></table></div>
-<pre><code># Review what actually ships, not what the repo shows
+<div class="codeblk cx"><button class="copy" data-copy="# Review what actually ships, not what the repo shows
+npm pack &lt;pkg&gt; &amp;&amp; tar -xzf &lt;pkg&gt;.tgz &amp;&amp; rg -n &#x27;child_process|eval\(|Buffer\.from\(.*base64|https?://&#x27; package/
+pip download --no-deps --no-binary :all: &lt;pkg&gt; &amp;&amp; tar -xzf &lt;pkg&gt;.tar.gz
+rg -n &#x27;os\.system|subprocess|urllib|requests|__import__|exec\(&#x27; &lt;pkg&gt;/setup.py
+
+# Block install scripts by default in CI
+npm ci --ignore-scripts
+pip install --require-hashes -r requirements.txt">copy</button><pre><code># Review what actually ships, not what the repo shows
 npm pack &lt;pkg&gt; &amp;&amp; tar -xzf &lt;pkg&gt;.tgz &amp;&amp; rg -n 'child_process|eval\(|Buffer\.from\(.*base64|https?://' package/
 pip download --no-deps --no-binary :all: &lt;pkg&gt; &amp;&amp; tar -xzf &lt;pkg&gt;.tar.gz
 rg -n 'os\.system|subprocess|urllib|requests|__import__|exec\(' &lt;pkg&gt;/setup.py
 
 # Block install scripts by default in CI
 npm ci --ignore-scripts
-pip install --require-hashes -r requirements.txt</code></pre>
+pip install --require-hashes -r requirements.txt</code></pre></div>
 <p><strong>Dependency confusion</strong>: if an internal package name is not also registered (or reserved) on the public registry, and the resolver can reach the public registry, an attacker can publish a higher version and win resolution.</p>
-<pre><code># Enumerate internal-looking names and check public availability
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate internal-looking names and check public availability
+rg -o &#x27;&quot;@?[a-z0-9-]+/[a-z0-9-]+&quot;&#x27; package.json | sort -u
+# Fix: scoped registries with strict scope→registry mapping, and
+# `.npmrc` / `pip.conf` that never falls back to the public index for
+# internal scopes">copy</button><pre><code># Enumerate internal-looking names and check public availability
 rg -o '"@?[a-z0-9-]+/[a-z0-9-]+"' package.json | sort -u
 # Fix: scoped registries with strict scope→registry mapping, and
 # `.npmrc` / `pip.conf` that never falls back to the public index for
-# internal scopes</code></pre>
-<h2>Lockfiles and Pinning</h2>
+# internal scopes</code></pre></div>
+<h2 id="lockfiles-and-pinning">Lockfiles and Pinning</h2>
 <ul>
 <li>Lockfiles must be committed, reviewed in PRs, and CI must install <strong>from</strong></li>
 </ul>
@@ -108,10 +140,18 @@ rg -o '"@?[a-z0-9-]+/[a-z0-9-]+"' package.json | sort -u
 <li>Pin by integrity hash where the ecosystem supports it. Version pinning alone</li>
 </ul>
 <p>does not protect against a re-published version in registries that permit it.</p>
-<h2>CI/CD Pipeline Security</h2>
+<h2 id="ci-cd-pipeline-security">CI/CD Pipeline Security</h2>
 <p>This is where the highest-impact findings usually are.</p>
 <h3>GitHub Actions</h3>
-<pre><code># Unpinned third-party actions — anyone who controls the tag controls your CI
+<div class="codeblk cx"><button class="copy" data-copy="# Unpinned third-party actions — anyone who controls the tag controls your CI
+rg -n &#x27;uses:\s+(?!actions/)[^@]+@(?!v?[0-9a-f]{40})&#x27; .github/workflows/
+
+# The dangerous trigger: pull_request_target runs with repo secrets and
+# write-capable tokens, in the base repo context
+rg -n &#x27;pull_request_target|workflow_run&#x27; -A15 .github/workflows/
+
+# Script injection: untrusted event data interpolated directly into a shell
+rg -n &#x27;\$\{\{\s*github\.event\.(issue|pull_request|comment|head_commit)&#x27; .github/workflows/">copy</button><pre><code># Unpinned third-party actions — anyone who controls the tag controls your CI
 rg -n 'uses:\s+(?!actions/)[^@]+@(?!v?[0-9a-f]{40})' .github/workflows/
 
 # The dangerous trigger: pull_request_target runs with repo secrets and
@@ -119,7 +159,7 @@ rg -n 'uses:\s+(?!actions/)[^@]+@(?!v?[0-9a-f]{40})' .github/workflows/
 rg -n 'pull_request_target|workflow_run' -A15 .github/workflows/
 
 # Script injection: untrusted event data interpolated directly into a shell
-rg -n '\$\{\{\s*github\.event\.(issue|pull_request|comment|head_commit)' .github/workflows/</code></pre>
+rg -n '\$\{\{\s*github\.event\.(issue|pull_request|comment|head_commit)' .github/workflows/</code></pre></div>
 <p>Three findings to check for on every repository:</p>
 <ol>
 <li><strong><code>pull_request_target</code> + checkout of the PR head.</strong> This executes a</li>
@@ -135,29 +175,51 @@ rg -n '\$\{\{\s*github\.event\.(issue|pull_request|comment|head_commit)' .github
 <p><code>contents: read</code>, elevated per-job only where needed. Check for <code>permissions: write-all</code> and for the absence of any <code>permissions:</code> block.</p>
 <p>Also review: self-hosted runners on public repos (persistent compromise, no isolation between jobs), secrets available to fork-triggered workflows, cache poisoning across branches, and artifact upload of build directories that contain credentials.</p>
 <h3>General pipeline</h3>
-<pre><code># Secrets in history, not just in the tree
+<div class="codeblk cx"><button class="copy" data-copy="# Secrets in history, not just in the tree
 gitleaks detect --source . --redact
 trufflehog git file://. --only-verified
 
 # IaC and container config
 trivy config . &amp;&amp; checkov -d .
-hadolint Dockerfile</code></pre>
+hadolint Dockerfile">copy</button><pre><code># Secrets in history, not just in the tree
+gitleaks detect --source . --redact
+trufflehog git file://. --only-verified
+
+# IaC and container config
+trivy config . &amp;&amp; checkov -d .
+hadolint Dockerfile</code></pre></div>
 <p>Check: who can trigger a deploy, whether deploy credentials are scoped per environment, whether the build is reproducible, whether artifacts are signed, and whether anyone can push directly to the release branch.</p>
-<h2>SBOM and Provenance</h2>
-<pre><code># Generate — from the build, not from the source tree, so it reflects reality
+<h2 id="sbom-and-provenance">SBOM and Provenance</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Generate — from the build, not from the source tree, so it reflects reality
 syft dir:. -o cyclonedx-json=sbom.json
 cdxgen -o sbom.json
 
 # Consume — an SBOM is only useful if you scan it on a schedule
 grype sbom:sbom.json
-osv-scanner scan source -L sbom.json   # v2 takes SBOMs via -L; --sbom is gone</code></pre>
+osv-scanner scan source -L sbom.json   # v2 takes SBOMs via -L; --sbom is gone">copy</button><pre><code># Generate — from the build, not from the source tree, so it reflects reality
+syft dir:. -o cyclonedx-json=sbom.json
+cdxgen -o sbom.json
+
+# Consume — an SBOM is only useful if you scan it on a schedule
+grype sbom:sbom.json
+osv-scanner scan source -L sbom.json   # v2 takes SBOMs via -L; --sbom is gone</code></pre></div>
 <p>An SBOM produced once for a compliance checkbox has no security value. The value is in re-scanning existing SBOMs when a new vulnerability lands, which answers "are we affected" in minutes instead of days.</p>
 <p><strong>Provenance</strong> (SLSA framing): can you prove which source commit produced a given artifact, on which builder, with which dependencies? Sign artifacts (<code>cosign</code>), record attestations, and verify signatures at deploy time. An unverified signature is decoration.</p>
-<pre><code>cosign sign --key &lt;key&gt; &lt;image&gt;
+<div class="codeblk cx"><button class="copy" data-copy="cosign sign --key &lt;key&gt; &lt;image&gt;
 cosign verify --key &lt;pub&gt; &lt;image&gt;
-cosign verify-attestation --type slsaprovenance &lt;image&gt;</code></pre>
-<h2>Responding to an Upstream Compromise</h2>
-<pre><code>1. Determine exposure: did any build pull the affected version? Check
+cosign verify-attestation --type slsaprovenance &lt;image&gt;">copy</button><pre><code>cosign sign --key &lt;key&gt; &lt;image&gt;
+cosign verify --key &lt;pub&gt; &lt;image&gt;
+cosign verify-attestation --type slsaprovenance &lt;image&gt;</code></pre></div>
+<h2 id="responding-to-an-upstream-compromise">Responding to an Upstream Compromise</h2>
+<div class="codeblk cx"><button class="copy" data-copy="1. Determine exposure: did any build pull the affected version? Check
+   lockfiles across branches AND build logs — the lockfile shows intent, the
+   build log shows what was actually installed.
+2. Assume credential compromise on any host that ran the package&#x27;s install
+   scripts. Rotate: registry tokens, cloud keys, signing keys, SSH keys.
+3. Preserve build logs and runner images before they roll off.
+4. Check outbound network from build hosts for the exfil window.
+5. Pin and rebuild; verify the rebuilt artifact differs only as expected.
+6. Only then publish an advisory.">copy</button><pre><code>1. Determine exposure: did any build pull the affected version? Check
    lockfiles across branches AND build logs — the lockfile shows intent, the
    build log shows what was actually installed.
 2. Assume credential compromise on any host that ran the package's install
@@ -165,9 +227,9 @@ cosign verify-attestation --type slsaprovenance &lt;image&gt;</code></pre>
 3. Preserve build logs and runner images before they roll off.
 4. Check outbound network from build hosts for the exfil window.
 5. Pin and rebuild; verify the rebuilt artifact differs only as expected.
-6. Only then publish an advisory.</code></pre>
+6. Only then publish an advisory.</code></pre></div>
 <p>Rotation is not optional because the package "only ran in CI." CI is where the production credentials live.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"It's a dev dependency."</em> Dev dependencies run on developer laptops and</li>
 </ul>
@@ -195,7 +257,7 @@ cosign verify-attestation --type slsaprovenance &lt;image&gt;</code></pre>
 <ul>
 <li><em>"We generated an SBOM."</em> Generating is not monitoring.</li>
 </ul>
-<h2>Deliverable</h2>
+<h2 id="deliverable">Deliverable</h2>
 <ul>
 <li>Dependency inventory with direct/transitive counts and maintainer</li>
 </ul>
@@ -211,7 +273,7 @@ cosign verify-attestation --type slsaprovenance &lt;image&gt;</code></pre>
 <li>Provenance maturity: pinning, signing, attestation, verification-at-deploy</li>
 <li>Prioritized remediation, separating "patch" from "architectural"</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Initial Access</strong> (TA0001)</p>
 <ul>
@@ -228,12 +290,15 @@ cosign verify-attestation --type slsaprovenance &lt;image&gt;</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1552/">T1552</a> Unsecured Credentials — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a>, <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a>, <a class="xref" href="abusing-ci-cd-oidc.html"><code>abusing-ci-cd-oidc</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — first-party code review</li>
 <li><a class="xref" href="securing-ai-systems.html"><code>securing-ai-systems</code></a> — model and dataset supply chain</li>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — handling a confirmed upstream compromise</li>
 <li>SLSA framework, OpenSSF Scorecard, CycloneDX/SPDX, Sigstore/cosign</li>
 <li><code>osv-scanner</code>, <code>trivy</code>, <code>grype</code>, <code>syft</code>, <code>gitleaks</code>, <code>zizmor</code> (Actions auditing)</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#two-different-risks">Two Different Risks</a><a href="#dependency-review">Dependency Review</a><a href="#detecting-malicious-packages">Detecting Malicious Packages</a><a href="#lockfiles-and-pinning">Lockfiles and Pinning</a><a href="#ci-cd-pipeline-security">CI/CD Pipeline Security</a><a href="#sbom-and-provenance">SBOM and Provenance</a><a href="#responding-to-an-upstream-compromise">Responding to an Upstream Compromise</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#deliverable">Deliverable</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

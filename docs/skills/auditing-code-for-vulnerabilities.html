@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Audit source code for exploitable vulnerabilities using threat-model-driven review, taint tracing, invariant checking, and variant analysis. Use when reviewing a codebase or diff for security bugs, performing a security audit, hunting for vulnerabilities in a target&#x27;s source, or validating whether a suspected finding is real.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Finding real bugs in source code is a different job from running a scanner. A scanner matches patterns; an auditor builds a model of what the code is <em>supposed</em> to guarantee and then hunts for the paths where that guarantee breaks. This skill is the methodology for the second job.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Finding real bugs in source code is a different job from running a scanner. A scanner matches patterns; an auditor builds a model of what the code is <em>supposed</em> to guarantee and then hunts for the paths where that guarantee breaks. This skill is the methodology for the second job.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Auditing a repository, service, or library for security defects</li>
 <li>Reviewing a diff, branch, or pull request for introduced vulnerabilities</li>
@@ -47,7 +58,7 @@
 <li>Validating whether a scanner finding or a reported vulnerability is real</li>
 <li>Building an audit plan and coverage report for a client engagement</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Black-box testing of a running app</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> or <a class="xref" href="testing-apis.html"><code>testing-apis</code></a></li>
 <li><strong>A PHP codebase specifically</strong> (type juggling, unserialize/phar POP chains, php:// wrappers) — this methodology plus <a class="xref" href="auditing-php-applications.html"><code>auditing-php-applications</code></a></li>
@@ -57,27 +68,47 @@
 <li><strong>Cryptographic construction review</strong> — use <a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a></li>
 <li><strong>Writing up finished findings</strong> — use <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a></li>
 </ul>
-<h2>The Loop</h2>
+<h2 id="the-loop">The Loop</h2>
 <p>Auditing is four passes, not one. Do not skip to pass 3.</p>
-<pre><code>1. Context      → what does this system protect, and from whom?
+<div class="codeblk cx"><button class="copy" data-copy="1. Context      → what does this system protect, and from whom?
 2. Attack surface → where does untrusted input enter, and what does it reach?
 3. Hunt          → trace specific bug classes along those paths
-4. Verify        → prove exploitability before you write a word</code></pre>
+4. Verify        → prove exploitability before you write a word">copy</button><pre><code>1. Context      → what does this system protect, and from whom?
+2. Attack surface → where does untrusted input enter, and what does it reach?
+3. Hunt          → trace specific bug classes along those paths
+4. Verify        → prove exploitability before you write a word</code></pre></div>
 <h3>Pass 1: Build context before reading code</h3>
 <p>Do not open files at random. Spend the first block of effort answering:</p>
 <div class="tw"><table><thead><tr><th>Question</th><th>Where to look</th></tr></thead><tbody><tr><td>What are the security-relevant assets?</td><td>README, docs, data models, DB schema</td></tr><tr><td>Who are the actors and trust tiers?</td><td>Auth middleware, role enums, tenant models</td></tr><tr><td>What are the stated invariants?</td><td>Tests, assertions, comments containing "must", "never", "invariant"</td></tr><tr><td>What has already been fixed here?</td><td><code>git log --grep</code> for security keywords, CVE files, SECURITY.md</td></tr><tr><td>What is out of scope?</td><td>Engagement brief, vendor code, generated files</td></tr></tbody></table></div>
-<pre><code># Prior security work is the cheapest source of bug leads
+<div class="codeblk cx"><button class="copy" data-copy="# Prior security work is the cheapest source of bug leads
+git log --oneline --grep=&#x27;security\|CVE\|vuln\|injection\|auth bypass\|overflow&#x27; -i | head -40
+
+# Stated invariants often mark where the author was nervous
+rg -n --stats &#x27;MUST NOT|must never|SECURITY|XXX|HACK|TODO.*(auth|secur|valid)&#x27; -i
+
+# Where does privilege actually get checked?
+rg -n &#x27;is_admin|require_role|authorize|has_permission|@login_required|checkAccess&#x27;">copy</button><pre><code># Prior security work is the cheapest source of bug leads
 git log --oneline --grep='security\|CVE\|vuln\|injection\|auth bypass\|overflow' -i | head -40
 
 # Stated invariants often mark where the author was nervous
 rg -n --stats 'MUST NOT|must never|SECURITY|XXX|HACK|TODO.*(auth|secur|valid)' -i
 
 # Where does privilege actually get checked?
-rg -n 'is_admin|require_role|authorize|has_permission|@login_required|checkAccess'</code></pre>
+rg -n 'is_admin|require_role|authorize|has_permission|@login_required|checkAccess'</code></pre></div>
 <p>Write a short target model before hunting: assets, actors, trust boundaries, and the three invariants whose violation would matter most. Everything after this is a search for counterexamples to those invariants.</p>
 <h3>Pass 2: Map the attack surface</h3>
 <p>Enumerate <em>entry points</em>, then rank them. An entry point matters in proportion to how far it reaches before it is validated.</p>
-<pre><code># HTTP/RPC routes
+<div class="codeblk cx"><button class="copy" data-copy="# HTTP/RPC routes
+rg -n &#x27;@(app|router)\.(get|post|put|delete|patch)|app\.(get|post)\(|@RequestMapping|http\.HandleFunc&#x27;
+
+# Deserialization, template rendering, and dynamic execution sinks
+rg -n &#x27;pickle\.loads|yaml\.load\(|Marshal|unserialize|ObjectInputStream|eval\(|new Function|exec\(|Runtime\.getRuntime&#x27;
+
+# Command, SQL, and path sinks
+rg -n &#x27;os\.system|subprocess.*shell\s*=\s*True|child_process\.exec\(|execSync|Statement\.execute|\.raw\(|fmt\.Sprintf.*SELECT&#x27;
+
+# Where authentication is decided rather than enforced
+rg -n &#x27;verify=False|InsecureSkipVerify|jwt\.decode\(.*verify.*False|algorithms=\[.*none&#x27;">copy</button><pre><code># HTTP/RPC routes
 rg -n '@(app|router)\.(get|post|put|delete|patch)|app\.(get|post)\(|@RequestMapping|http\.HandleFunc'
 
 # Deserialization, template rendering, and dynamic execution sinks
@@ -87,7 +118,7 @@ rg -n 'pickle\.loads|yaml\.load\(|Marshal|unserialize|ObjectInputStream|eval\(|n
 rg -n 'os\.system|subprocess.*shell\s*=\s*True|child_process\.exec\(|execSync|Statement\.execute|\.raw\(|fmt\.Sprintf.*SELECT'
 
 # Where authentication is decided rather than enforced
-rg -n 'verify=False|InsecureSkipVerify|jwt\.decode\(.*verify.*False|algorithms=\[.*none'</code></pre>
+rg -n 'verify=False|InsecureSkipVerify|jwt\.decode\(.*verify.*False|algorithms=\[.*none'</code></pre></div>
 <p>Rank entry points by: reachable without authentication &gt; reachable by a low privilege tier &gt; reachable only by an admin. Then follow the highest-ranked ones inward. Depth beats breadth — one fully traced path is worth twenty grep hits.</p>
 <h3>Pass 3: Hunt bug classes along the traced paths</h3>
 <p>For each promising path, trace taint from source to sink and ask what the code assumes. The high-yield classes, in rough order of how often they survive to production:</p>
@@ -100,10 +131,11 @@ rg -n 'verify=False|InsecureSkipVerify|jwt\.decode\(.*verify.*False|algorithms=\
 <p><strong>Secrets and cryptographic misuse.</strong> Hardcoded keys, non-constant-time comparison of tokens, predictable IDs from <code>Math.random</code>/<code>rand()</code>, missing signature verification. Deep crypto review belongs in <a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a>.</p>
 <h3>Pass 4: Variant analysis</h3>
 <p>A bug is a template, not an incident. When you confirm one, immediately search for its siblings — the same mistake made by the same author, the same copied block, the same missing check on a neighbouring route.</p>
-<pre><code># You found one unscoped lookup. Find every other one.
-rg -n 'find_by_id|findOne\(\{ *_id|get_object_or_404' -A3 | rg -v 'tenant|owner|user_id'</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="# You found one unscoped lookup. Find every other one.
+rg -n &#x27;find_by_id|findOne\(\{ *_id|get_object_or_404&#x27; -A3 | rg -v &#x27;tenant|owner|user_id&#x27;">copy</button><pre><code># You found one unscoped lookup. Find every other one.
+rg -n 'find_by_id|findOne\(\{ *_id|get_object_or_404' -A3 | rg -v 'tenant|owner|user_id'</code></pre></div>
 <p>Variant analysis is where audits produce disproportionate value. Budget time for it explicitly — roughly one unit of variant search per confirmed finding.</p>
-<h2>Verification Before Reporting</h2>
+<h2 id="verification-before-reporting">Verification Before Reporting</h2>
 <p>A finding you cannot demonstrate is a hypothesis. Before it goes in the report, answer all four:</p>
 <ol>
 <li><strong>Reachability</strong> — name the concrete entry point and the caller privilege</li>
@@ -119,7 +151,7 @@ rg -n 'find_by_id|findOne\(\{ *_id|get_object_or_404' -A3 | rg -v 'tenant|owner|
 </ol>
 <p>middleware, a DB constraint, or a caller that already sanitizes.</p>
 <p>If a proof of concept is in scope, write the smallest one that proves control of the sink — not a weaponized exploit.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <p>These are the thoughts that turn an audit into a formality. Each one is wrong.</p>
 <ul>
 <li><em>"It's probably validated upstream."</em> Then go read upstream. Unverified</li>
@@ -146,9 +178,9 @@ rg -n 'find_by_id|findOne\(\{ *_id|get_object_or_404' -A3 | rg -v 'tenant|owner|
 <li><em>"I've reviewed enough files."</em> Coverage is measured against the attack</li>
 </ul>
 <p>surface you mapped in Pass 2, not against file count.</p>
-<h2>Tool Assist, Not Tool Substitute</h2>
+<h2 id="tool-assist-not-tool-substitute">Tool Assist, Not Tool Substitute</h2>
 <p>Static analysis is for coverage and for variant search after you know the pattern. Write a rule once you have a confirmed bug, and let it find the rest.</p>
-<pre><code># Semgrep: broad pass, then a rule you write for your specific finding
+<div class="codeblk cx"><button class="copy" data-copy="# Semgrep: broad pass, then a rule you write for your specific finding
 semgrep --config=auto --severity=ERROR --json -o semgrep.json .
 semgrep --config=./rules/my-variant-rule.yaml .
 
@@ -159,11 +191,22 @@ codeql database create db --language=&lt;lang&gt; &amp;&amp; codeql database ana
 bandit -r . -f json            # Python
 gosec -fmt=json ./...          # Go
 cargo audit &amp;&amp; cargo geiger    # Rust deps + unsafe surface
-npm audit --json               # JS deps</code></pre>
+npm audit --json               # JS deps">copy</button><pre><code># Semgrep: broad pass, then a rule you write for your specific finding
+semgrep --config=auto --severity=ERROR --json -o semgrep.json .
+semgrep --config=./rules/my-variant-rule.yaml .
+
+# CodeQL for dataflow questions grep cannot answer
+codeql database create db --language=&lt;lang&gt; &amp;&amp; codeql database analyze db --format=sarif-latest -o out.sarif
+
+# Language-specific
+bandit -r . -f json            # Python
+gosec -fmt=json ./...          # Go
+cargo audit &amp;&amp; cargo geiger    # Rust deps + unsafe surface
+npm audit --json               # JS deps</code></pre></div>
 <p>Triage every tool finding through the four verification questions above. A report of unverified scanner output is worse than no report — it burns the reader's trust and buries the real bugs.</p>
-<h2>Audit Deliverable</h2>
+<h2 id="audit-deliverable">Audit Deliverable</h2>
 <p>Track coverage as you go, and state it honestly:</p>
-<pre><code>## Coverage
+<div class="codeblk cx"><button class="copy" data-copy="## Coverage
 | Component | Files | Depth      | Notes                          |
 |-----------|-------|------------|--------------------------------|
 | auth/     | 12    | Full trace | All routes traced to sinks     |
@@ -171,13 +214,24 @@ npm audit --json               # JS deps</code></pre>
 | vendor/   | -     | Excluded   | Out of scope per brief         |
 
 ## Findings
-F1. [High] Tenant isolation bypass in GET /api/reports/:id — &lt;impact&gt; — &lt;repro&gt;</code></pre>
+F1. [High] Tenant isolation bypass in GET /api/reports/:id — &lt;impact&gt; — &lt;repro&gt;">copy</button><pre><code>## Coverage
+| Component | Files | Depth      | Notes                          |
+|-----------|-------|------------|--------------------------------|
+| auth/     | 12    | Full trace | All routes traced to sinks     |
+| billing/  | 30    | Partial    | Webhook handlers only          |
+| vendor/   | -     | Excluded   | Out of scope per brief         |
+
+## Findings
+F1. [High] Tenant isolation bypass in GET /api/reports/:id — &lt;impact&gt; — &lt;repro&gt;</code></pre></div>
 <p>Say what you did <strong>not</strong> cover. An audit that claims full coverage it did not achieve is the most damaging artifact you can produce.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><code>references/bug-class-checklist.md</code> — per-language hunting checklists</li>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity scoring and write-up format</li>
 <li>OWASP Application Security Verification Standard (ASVS) for requirement-driven review</li>
 <li>CWE Top 25 and the CWE hierarchy for classification</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#the-loop">The Loop</a><a href="#verification-before-reporting">Verification Before Reporting</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#tool-assist-not-tool-substitute">Tool Assist, Not Tool Substitute</a><a href="#audit-deliverable">Audit Deliverable</a><a href="#coverage">Coverage</a><a href="#findings">Findings</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

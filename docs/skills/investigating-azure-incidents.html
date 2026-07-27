@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
   </div>
   <p class="sdesc">Investigate security incidents in Microsoft Azure (resource and subscription control plane) -- reconstruct attacker activity from the Azure Activity Log and resource/data-plane diagnostic logs, anchor the investigation on the identity that made the calls (a user, service principal, or managed identity), trace privilege escalation through role assignments, hunt managed-identity token abuse and VM run-command code execution, and detect storage or Key Vault data theft while correlating back to Entra sign-in logs. Use when responding to a suspected Azure resource compromise, anomalous Azure Activity Log entries, a Microsoft Defender for Cloud alert, managed-identity or service-principal abuse, a crypto-mining VM, or storage-account exfiltration.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>In Azure the control plane logs almost everything through Azure Resource Manager, so an incident is reconstructed from the Activity Log and the resource/data-plane logs, anchored on the identity that made the calls -- a user, a service principal, or a managed identity. The recurring trap is that identity lives in Entra while the damage lives in the subscription: you must correlate across both planes, because the Activity Log tells you <em>what</em> was done to a resource but the Entra sign-in log tells you <em>who</em> held the token and from where.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>In Azure the control plane logs almost everything through Azure Resource Manager, so an incident is reconstructed from the Activity Log and the resource/data-plane logs, anchored on the identity that made the calls -- a user, a service principal, or a managed identity. The recurring trap is that identity lives in Entra while the damage lives in the subscription: you must correlate across both planes, because the Activity Log tells you <em>what</em> was done to a resource but the Entra sign-in log tells you <em>who</em> held the token and from where.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Suspected Azure resource compromise -- a subscription, resource group, or VM behaving as though someone else controls it</li>
 <li>Anomalous Azure Activity Log entries -- writes from unfamiliar callers, IPs, or regions, or an <code>AccessDenied</code> storm that looks like enumeration</li>
@@ -49,7 +61,7 @@
 <li>A crypto-mining VM -- an unexpected spend spike, GPU/large SKUs, or new deployments in regions you do not operate in</li>
 <li>Storage-account or Key Vault exfiltration -- key regeneration, SAS-token minting, public-access changes, disk-snapshot sharing, or secret dumps</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>The compromise is Entra identity / M365 mailbox, not Azure resources</strong> (though you will often need both) -- use <a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a></li>
 <li><strong>The incident is in AWS</strong> -- use <a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a></li>
@@ -58,30 +70,41 @@
 <li><strong>The pivot is specifically into AKS / Kubernetes</strong> -- use <a class="xref" href="attacking-eks-gke-aks.html"><code>attacking-eks-gke-aks</code></a>; for defending the cluster, <a class="xref" href="defending-kubernetes.html"><code>defending-kubernetes</code></a></li>
 <li><strong>The general IR process and host-level response</strong> -- use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
 </ul>
-<h2>Log Sources and Where They Live</h2>
+<h2 id="log-sources-and-where-they-live">Log Sources and Where They Live</h2>
 <p>Establish what you have before you query. Missing logs are a finding, not a reason to skip the question.</p>
 <div class="tw"><table><thead><tr><th>Source</th><th>Scope</th><th>Retention (default)</th><th>What it holds</th></tr></thead><tbody><tr><td>Azure Activity Log</td><td>Subscription control plane</td><td>90 days unless exported</td><td>Every ARM write/action/delete: <code>roleAssignments</code>, <code>runCommand</code>, <code>listKeys</code>, deployments</td></tr><tr><td>Resource / diagnostic logs</td><td>Per-resource data plane</td><td>None until enabled</td><td>Blob reads, Key Vault <code>SecretGet</code>, NSG flow -- only if a diagnostic setting ships them to a workspace</td></tr><tr><td>Log Analytics workspace</td><td>Wherever logs are shipped</td><td>Workspace-configured</td><td><code>AzureActivity</code>, <code>AzureDiagnostics</code>, <code>StorageBlobLogs</code>, <code>AZKVAuditLogs</code> tables</td></tr><tr><td>Entra sign-in / audit logs</td><td>Tenant identity plane</td><td>30 days (export for more)</td><td>Who authenticated the SP/MI, from where, CA/MFA context, credential adds</td></tr><tr><td>Microsoft Sentinel</td><td>Whatever it ingests</td><td>Per-table</td><td>Correlated hunting across all of the above, incidents, watchlists</td></tr></tbody></table></div>
 <p><strong>The trap:</strong> the Activity Log is a <em>control-plane</em> record. Data-plane operations -- reading a blob, fetching a Key Vault secret, querying a Cosmos DB -- are <strong>not</strong> in the Activity Log at all. They exist only if a diagnostic setting was configured on that resource <em>before</em> the incident. Absence in the Activity Log is never evidence that data was untouched (see Rationalizations).</p>
 <p>Confirm what is actually being logged before you trust a gap: <code>az monitor diagnostic-settings subscription list</code> (is the Activity Log exported beyond 90 days?) and <code>az monitor diagnostic-settings list --resource &amp;lt;id&amp;gt;</code> (does this storage account / vault ship data-plane logs anywhere?).</p>
-<h2>First-Hour Triage</h2>
+<h2 id="first-hour-triage">First-Hour Triage</h2>
 <p>Three moves, in order: scope the caller identity, pull its recent activity, preserve before you contain.</p>
 <p><strong>Scope the caller identity.</strong> Resolve the report -- a Defender alert, a billing spike, a suspicious deployment -- to the identity in the <code>caller</code> / <code>identity</code> fields of the Activity Log. That principal (a UPN, or a service principal / managed identity object ID) is the anchor for everything else.</p>
-<pre><code># Everything a specific caller did across the subscription control plane
+<div class="codeblk cx"><button class="copy" data-copy="# Everything a specific caller did across the subscription control plane
 az monitor activity-log list --caller attacker@contoso.com \
   --start-time 2026-07-01T00:00:00Z -o json
 
 # Who holds what right now -- role assignments are the escalation surface
 az role assignment list --all --include-inherited \
-  --query "[?roleDefinitionName=='Owner' || roleDefinitionName=='User Access Administrator']" -o table</code></pre>
+  --query &quot;[?roleDefinitionName==&#x27;Owner&#x27; || roleDefinitionName==&#x27;User Access Administrator&#x27;]&quot; -o table">copy</button><pre><code># Everything a specific caller did across the subscription control plane
+az monitor activity-log list --caller attacker@contoso.com \
+  --start-time 2026-07-01T00:00:00Z -o json
+
+# Who holds what right now -- role assignments are the escalation surface
+az role assignment list --all --include-inherited \
+  --query "[?roleDefinitionName=='Owner' || roleDefinitionName=='User Access Administrator']" -o table</code></pre></div>
 <p><strong>Pull recent activity from KQL</strong> if a Log Analytics workspace exists -- it is faster and richer than the CLI once you are past the first look:</p>
-<pre><code>AzureActivity
+<div class="codeblk cx"><button class="copy" data-copy="AzureActivity
+| where TimeGenerated &gt; ago(7d)
+| where Caller == &quot;attacker@contoso.com&quot;
+| project TimeGenerated, OperationNameValue, ActivityStatusValue,
+    CallerIpAddress, ResourceProviderValue, ResourceId, CorrelationId
+| order by TimeGenerated asc">copy</button><pre><code>AzureActivity
 | where TimeGenerated &gt; ago(7d)
 | where Caller == "attacker@contoso.com"
 | project TimeGenerated, OperationNameValue, ActivityStatusValue,
     CallerIpAddress, ResourceProviderValue, ResourceId, CorrelationId
-| order by TimeGenerated asc</code></pre>
+| order by TimeGenerated asc</code></pre></div>
 <p><strong>Preserve, then contain.</strong> An attacker who sees a role assignment revoked mid-operation will burn persistence you have not found. For anything but active, ongoing damage: snapshot disks, export the relevant logs, map persistence, then contain everything at once. Live mining or active exfil is the exception -- stop the damage and accept the trade.</p>
-<h2>Activity Log Deep-Dive (KQL)</h2>
+<h2 id="activity-log-deep-dive-kql">Activity Log Deep-Dive (KQL)</h2>
 <p>The <code>AzureActivity</code> table is the authoritative control-plane record. Learn its fields:</p>
 <ul>
 <li><strong><code>OperationNameValue</code></strong> -- the ARM operation, e.g.</li>
@@ -104,7 +127,18 @@ az role assignment list --all --include-inherited \
 <li><strong><code>CorrelationId</code></strong> -- ties the sub-operations of one logical action together;</li>
 </ul>
 <p>pivot on it to expand a single suspicious event into its full sequence.</p>
-<pre><code>// Enumeration storm -- authorization failures by operation
+<div class="codeblk cx"><button class="copy" data-copy="// Enumeration storm -- authorization failures by operation
+AzureActivity
+| where TimeGenerated &gt; ago(7d)
+| where ActivityStatusValue == &quot;Failure&quot;
+| summarize n = count() by Caller, OperationNameValue, CallerIpAddress
+| order by n desc
+
+// Expand one event&#x27;s full correlated sequence
+AzureActivity
+| where CorrelationId == &quot;&lt;correlation-id&gt;&quot;
+| project TimeGenerated, OperationNameValue, ActivityStatusValue, ResourceId
+| order by TimeGenerated asc">copy</button><pre><code>// Enumeration storm -- authorization failures by operation
 AzureActivity
 | where TimeGenerated &gt; ago(7d)
 | where ActivityStatusValue == "Failure"
@@ -115,8 +149,8 @@ AzureActivity
 AzureActivity
 | where CorrelationId == "&lt;correlation-id&gt;"
 | project TimeGenerated, OperationNameValue, ActivityStatusValue, ResourceId
-| order by TimeGenerated asc</code></pre>
-<h2>Canonical Attacker Operations to Hunt</h2>
+| order by TimeGenerated asc</code></pre></div>
+<h2 id="canonical-attacker-operations-to-hunt">Canonical Attacker Operations to Hunt</h2>
 <p>Grep the timeline for these <code>OperationNameValue</code> patterns -- they are the shape of nearly every Azure intrusion.</p>
 <ul>
 <li><strong>Privilege escalation via role assignment</strong> --</li>
@@ -142,17 +176,35 @@ AzureActivity
 <li><strong>Resource-level RBAC backdoors</strong> -- a role assignment scoped to a single</li>
 </ul>
 <p>storage account or vault rather than the subscription, easy to miss in a top-level review.</p>
-<pre><code>AzureActivity
+<div class="codeblk cx"><button class="copy" data-copy="AzureActivity
+| where TimeGenerated &gt; ago(14d)
+| where OperationNameValue has_any (
+    &quot;roleAssignments/write&quot;, &quot;roleDefinitions/write&quot;,
+    &quot;runCommand/action&quot;, &quot;virtualMachines/extensions/write&quot;)
+| project TimeGenerated, Caller, CallerIpAddress, OperationNameValue, ResourceId
+| order by TimeGenerated asc">copy</button><pre><code>AzureActivity
 | where TimeGenerated &gt; ago(14d)
 | where OperationNameValue has_any (
     "roleAssignments/write", "roleDefinitions/write",
     "runCommand/action", "virtualMachines/extensions/write")
 | project TimeGenerated, Caller, CallerIpAddress, OperationNameValue, ResourceId
-| order by TimeGenerated asc</code></pre>
+| order by TimeGenerated asc</code></pre></div>
 <p>The CLI equivalent filters the same operations: <code>az monitor activity-log list --start-time &amp;lt;t&amp;gt; --query "[?contains(operationName.value,'roleAssignments/write')]"</code>.</p>
-<h2>Identity-Plane Correlation</h2>
+<h2 id="identity-plane-correlation">Identity-Plane Correlation</h2>
 <p>The Activity Log names the principal but not the human behind it. Map the service principal or managed identity <strong>object ID</strong> back to Entra to see the authentication context -- this is the cross-plane step, and it usually means opening <a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a>.</p>
-<pre><code>// Where did this service principal / managed identity actually sign in from?
+<div class="codeblk cx"><button class="copy" data-copy="// Where did this service principal / managed identity actually sign in from?
+AADServicePrincipalSignInLogs
+| where ServicePrincipalId == &quot;&lt;sp-or-mi-object-id&gt;&quot;
+| where TimeGenerated &gt; ago(30d)
+| project TimeGenerated, AppId, ServicePrincipalName, IPAddress,
+    ResourceDisplayName, ResultType
+| order by TimeGenerated asc
+
+// For an interactive user: sign-ins around the abusive Activity Log calls
+SigninLogs
+| where UserPrincipalName == &quot;attacker@contoso.com&quot;
+| project TimeGenerated, IPAddress, Location, AppDisplayName,
+    ConditionalAccessStatus, AuthenticationRequirement, ResultType">copy</button><pre><code>// Where did this service principal / managed identity actually sign in from?
 AADServicePrincipalSignInLogs
 | where ServicePrincipalId == "&lt;sp-or-mi-object-id&gt;"
 | where TimeGenerated &gt; ago(30d)
@@ -164,25 +216,30 @@ AADServicePrincipalSignInLogs
 SigninLogs
 | where UserPrincipalName == "attacker@contoso.com"
 | project TimeGenerated, IPAddress, Location, AppDisplayName,
-    ConditionalAccessStatus, AuthenticationRequirement, ResultType</code></pre>
+    ConditionalAccessStatus, AuthenticationRequirement, ResultType</code></pre></div>
 <p>Check conditional-access status and whether MFA was actually satisfied -- a service principal bypasses interactive CA entirely, which is exactly why attackers pivot to SP/MI credentials.</p>
-<h2>Managed-Identity and SSRF Credential Theft</h2>
+<h2 id="managed-identity-and-ssrf-credential-theft">Managed-Identity and SSRF Credential Theft</h2>
 <p>The Azure analogue of AWS IMDS theft: an SSRF or foothold on a VM / App Service reads the Instance Metadata Service to lift the managed identity's token, then uses it elsewhere.</p>
-<pre><code>http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/">copy</button><pre><code>http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/</code></pre></div>
 <p>The signature is unmistakable: the managed identity's calls appear in <code>AzureActivity</code> from a <code>CallerIpAddress</code> that is <strong>not</strong> the resource's own outbound IP. The token is minted for that resource, so any call from an unrelated or external IP means the token left the box.</p>
-<pre><code>AzureActivity
+<div class="codeblk cx"><button class="copy" data-copy="AzureActivity
+| where TimeGenerated &gt; ago(7d)
+| where Caller == &quot;&lt;managed-identity-object-id&gt;&quot;
+| summarize ops = count() by CallerIpAddress, OperationNameValue
+| order by ops desc     // flag IPs that are not the VM&#x27;s egress">copy</button><pre><code>AzureActivity
 | where TimeGenerated &gt; ago(7d)
 | where Caller == "&lt;managed-identity-object-id&gt;"
 | summarize ops = count() by CallerIpAddress, OperationNameValue
-| order by ops desc     // flag IPs that are not the VM's egress</code></pre>
+| order by ops desc     // flag IPs that are not the VM's egress</code></pre></div>
 <p>Correlate the theft window with NSG flow logs (if enabled) for the outbound SSRF and the reuse source. On App Service the token endpoint uses <code>IDENTITY_ENDPOINT</code> with a header secret rather than 169.254.169.254 -- the same off-resource-use logic applies.</p>
-<h2>Defender for Cloud Alert Triage</h2>
+<h2 id="defender-for-cloud-alert-triage">Defender for Cloud Alert Triage</h2>
 <p>Defender for Cloud is a starting pistol, not the investigation. Each alert maps to a hypothesis you confirm in the Activity Log and diagnostic logs.</p>
 <div class="tw"><table><thead><tr><th>Alert (representative)</th><th>Implication</th></tr></thead><tbody><tr><td>Crypto-mining / <code>Digital currency mining</code> behavior</td><td>A VM is talking to a mining pool -- a principal with deploy rights was compromised.</td></tr><tr><td>Anomalous resource deployment / unusual <code>RunInstances</code>-equivalent</td><td>Attacker spinning up compute, often in an unused region.</td></tr><tr><td>Suspicious sign-in / access from a Tor or known-malicious IP</td><td>The stolen principal called from attacker infrastructure.</td></tr><tr><td>Managed identity / metadata credential exfiltration</td><td>The IMDS theft above -- confirm off-resource token use.</td></tr><tr><td>Access from anomalous location on a storage account / Key Vault</td><td>Data-plane access from an unexpected geography.</td></tr></tbody></table></div>
-<pre><code>az security alert list -o table
-az security alert show --location &lt;loc&gt; -n &lt;alert-name&gt; -g &lt;rg&gt;</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="az security alert list -o table
+az security alert show --location &lt;loc&gt; -n &lt;alert-name&gt; -g &lt;rg&gt;">copy</button><pre><code>az security alert list -o table
+az security alert show --location &lt;loc&gt; -n &lt;alert-name&gt; -g &lt;rg&gt;</code></pre></div>
 <p>An alert older than the 90-day Activity Log window still carries the principal and IPs -- pivot on those even after the raw events have aged out.</p>
-<h2>Data-Theft Detection</h2>
+<h2 id="data-theft-detection">Data-Theft Detection</h2>
 <ul>
 <li><strong>Storage account key regeneration</strong> --</li>
 </ul>
@@ -207,7 +264,20 @@ az security alert show --location &lt;loc&gt; -n &lt;alert-name&gt; -g &lt;rg&gt
 <li><strong>Key Vault secret dumps</strong> -- <code>Microsoft.KeyVault/vaults/read</code> (<code>VaultGet</code>)</li>
 </ul>
 <p>to enumerate, then data-plane <code>SecretGet</code> reads (in <code>AzureDiagnostics</code> / <code>AZKVAuditLogs</code>, only if logging was enabled).</p>
-<pre><code>// Control-plane data-theft indicators
+<div class="codeblk cx"><button class="copy" data-copy="// Control-plane data-theft indicators
+AzureActivity
+| where TimeGenerated &gt; ago(14d)
+| where OperationNameValue has_any (
+    &quot;storageAccounts/listKeys&quot;, &quot;storageAccounts/regenerateKey&quot;,
+    &quot;listAccountSas&quot;, &quot;listServiceSas&quot;,
+    &quot;snapshots/write&quot;, &quot;snapshots/beginGetAccess&quot;)
+| project TimeGenerated, Caller, CallerIpAddress, OperationNameValue, ResourceId
+
+// Key Vault data-plane reads -- only present if diagnostics were on beforehand
+AzureDiagnostics
+| where ResourceProvider == &quot;MICROSOFT.KEYVAULT&quot;
+| where OperationName in (&quot;SecretGet&quot;, &quot;KeyGet&quot;, &quot;VaultGet&quot;)
+| project TimeGenerated, CallerIPAddress, identity_claim_upn_s, OperationName, id_s">copy</button><pre><code>// Control-plane data-theft indicators
 AzureActivity
 | where TimeGenerated &gt; ago(14d)
 | where OperationNameValue has_any (
@@ -220,8 +290,8 @@ AzureActivity
 AzureDiagnostics
 | where ResourceProvider == "MICROSOFT.KEYVAULT"
 | where OperationName in ("SecretGet", "KeyGet", "VaultGet")
-| project TimeGenerated, CallerIPAddress, identity_claim_upn_s, OperationName, id_s</code></pre>
-<h2>Anti-Forensics the Attacker Attempts</h2>
+| project TimeGenerated, CallerIPAddress, identity_claim_upn_s, OperationName, id_s</code></pre></div>
+<h2 id="anti-forensics-the-attacker-attempts">Anti-Forensics the Attacker Attempts</h2>
 <p>A capable attacker tries to blind you. The key operations to hunt -- and their defeat:</p>
 <ul>
 <li><strong>Diagnostic-setting deletion</strong> --</li>
@@ -236,12 +306,16 @@ AzureDiagnostics
 </ul>
 <p>destroy the artifact and its logs.</p>
 <p>The defeat is the same shape as an AWS org trail: a <strong>tenant-level export to a central, locked destination</strong> the compromised principal cannot reach -- immutable-storage (WORM/legal-hold) blob export, or Sentinel ingestion in a segregated workspace with delete protection and resource locks. When export is immutable, the attacker's own <code>diagnosticSettings/delete</code> call is logged there before it takes effect, so cleanup becomes evidence rather than a gap. If you lack it, record the blind window as a scoping limitation.</p>
-<pre><code>AzureActivity
+<div class="codeblk cx"><button class="copy" data-copy="AzureActivity
+| where TimeGenerated &gt; ago(14d)
+| where OperationNameValue has_any (
+    &quot;diagnosticSettings/delete&quot;, &quot;Microsoft.Insights/diagnosticSettings/write&quot;)
+| project TimeGenerated, Caller, CallerIpAddress, OperationNameValue, ResourceId">copy</button><pre><code>AzureActivity
 | where TimeGenerated &gt; ago(14d)
 | where OperationNameValue has_any (
     "diagnosticSettings/delete", "Microsoft.Insights/diagnosticSettings/write")
-| project TimeGenerated, Caller, CallerIpAddress, OperationNameValue, ResourceId</code></pre>
-<h2>Evidence Preservation</h2>
+| project TimeGenerated, Caller, CallerIpAddress, OperationNameValue, ResourceId</code></pre></div>
+<h2 id="evidence-preservation">Evidence Preservation</h2>
 <ul>
 <li><strong>Snapshot the involved VMs' disks</strong> before touching them, and lock the</li>
 </ul>
@@ -255,7 +329,7 @@ AzureDiagnostics
 <li><strong>Apply resource locks / legal hold</strong> to evidence artifacts, and involve legal</li>
 </ul>
 <p>before collection if the incident may become a regulatory or litigation matter.</p>
-<h2>Containment</h2>
+<h2 id="containment">Containment</h2>
 <p>Do it all at once, after scoping. Partial containment alerts the attacker.</p>
 <ul>
 <li><strong>Disable or rotate the compromised principal.</strong> For a service principal /</li>
@@ -285,7 +359,7 @@ AzureDiagnostics
 </ul>
 <p>Automation runbooks, custom roles, and resource-scoped role assignments -- only after they are documented.</p>
 <p>Reach for <strong>Azure CLI</strong> and <strong>KQL in Log Analytics / Sentinel</strong> for the investigation itself; <strong>MicroBurst</strong> and <strong>ROADtools</strong> for understanding the TTPs an attacker would run (and what each leaves behind); and Microsoft's Unified Audit correlation when the Azure story crosses into M365.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The Activity Log shows nothing, so no data was touched."</em> The Activity Log</li>
 </ul>
@@ -314,7 +388,7 @@ AzureDiagnostics
 <li><em>"Logs only go back 90 days, so the compromise started within 90 days."</em> That</li>
 </ul>
 <p>is the Activity Log's default retention, your visibility limit -- not the attacker's timeline. Record it as a scoping gap and check the workspace / immutable export for longer retention.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a> -- the sibling identity-plane skill; open it to correlate the SP/MI back to Entra sign-ins and audit</li>
 <li><a class="xref" href="investigating-aws-incidents.html"><code>investigating-aws-incidents</code></a> -- the sibling cloud-IR skill when the incident is in AWS</li>
@@ -326,5 +400,8 @@ AzureDiagnostics
 <li>KQL in Log Analytics / Microsoft Sentinel -- query <code>AzureActivity</code>, <code>AzureDiagnostics</code>, and sign-in tables</li>
 <li>Microsoft Defender for Cloud -- alert source and finding-type reference</li>
 <li>MicroBurst and ROADtools -- emulate and understand Azure/Entra attack TTPs and what each leaves in the logs</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#log-sources-and-where-they-live">Log Sources and Where They Live</a><a href="#first-hour-triage">First-Hour Triage</a><a href="#activity-log-deep-dive-kql">Activity Log Deep-Dive (KQL)</a><a href="#canonical-attacker-operations-to-hunt">Canonical Attacker Operations to Hunt</a><a href="#identity-plane-correlation">Identity-Plane Correlation</a><a href="#managed-identity-and-ssrf-credential-theft">Managed-Identity and SSRF Credential Theft</a><a href="#defender-for-cloud-alert-triage">Defender for Cloud Alert Triage</a><a href="#data-theft-detection">Data-Theft Detection</a><a href="#anti-forensics-the-attacker-attempts">Anti-Forensics the Attacker Attempts</a><a href="#evidence-preservation">Evidence Preservation</a><a href="#containment">Containment</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-26</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

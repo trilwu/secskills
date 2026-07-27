@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
   </div>
   <p class="sdesc">Triage and forensically analyze reported phishing safely — extract the raw message, read the Received chain, verify SPF/DKIM/DMARC, detect display-name and lookalike spoofing, unwrap redirects and SafeLinks/URLDefense, decode quishing QR codes, triage attachments, and pull IOCs for hunting. Use when handed a reported phishing email, a suspicious .eml or .msg file, a set of email headers to analyze, a malicious attachment or link to triage, or a business email compromise or spoofing case.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>An email is a stack of claims — who sent it, where it came from, that its links are safe — and phishing analysis is checking each claim against evidence the sender could not forge: the Received chain, the authentication results, and the true destination of every link and attachment. The From header is a display, not a fact. Anyone can type any address into it; your job is to find the evidence that agrees or disagrees.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>An email is a stack of claims — who sent it, where it came from, that its links are safe — and phishing analysis is checking each claim against evidence the sender could not forge: the Received chain, the authentication results, and the true destination of every link and attachment. The From header is a display, not a fact. Anyone can type any address into it; your job is to find the evidence that agrees or disagrees.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>A user reports a suspicious email and you need a verdict and IOCs</li>
 <li>You have a <code>.eml</code> or <code>.msg</code> file to analyze offline</li>
@@ -49,7 +61,7 @@
 <li>A business email compromise, invoice-fraud, or vendor-impersonation case</li>
 <li>Confirming whether a domain or brand was spoofed against your users</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>You extracted an attachment and need to detonate it</strong> — come here first to</li>
 </ul>
@@ -67,7 +79,7 @@
 <li><strong>Analyzing the callback traffic from a detonated payload</strong> — use</li>
 </ul>
 <p><a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></p>
-<h2>Safe Handling — Do This First</h2>
+<h2 id="safe-handling-do-this-first">Safe Handling — Do This First</h2>
 <p>Treat every reported message as live. The failure mode is not misreading a header; it is clicking a link in a production mail client or double-clicking an attachment on your own host.</p>
 <ul>
 <li>Never open the message in a live client. Attacker-controlled remote images</li>
@@ -85,7 +97,7 @@
 <li>Extract and detonate only in an isolated VM with no host sharing and</li>
 </ul>
 <p>simulated or monitored egress — see <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for the build.</p>
-<h2>Getting the Raw Message</h2>
+<h2 id="getting-the-raw-message">Getting the Raw Message</h2>
 <p>The visible email is a rendering. You need the source with all headers.</p>
 <ul>
 <li><strong>Outlook/Exchange</strong>: save as <code>.msg</code>, or in OWA use "View message source".</li>
@@ -99,12 +111,15 @@
 </ul>
 <p>into Message Header Analyzer (MHA) / Google's <code>mha</code> / MXToolbox Header Analyzer for a parsed hop table.</p>
 <p>Keep the original file hashed and untouched; work on copies.</p>
-<h2>The Received Chain</h2>
+<h2 id="the-received-chain">The Received Chain</h2>
 <p>The <code>Received:</code> headers are added by each mail server the message passes through, newest at the top. Read them <strong>bottom-up</strong>: the bottom-most <code>Received</code> is the originating server — the earliest, least-forgeable hop.</p>
-<pre><code>Received: from mail.contoso.com (mail.contoso.com [203.0.113.9])
+<div class="codeblk cx"><button class="copy" data-copy="Received: from mail.contoso.com (mail.contoso.com [203.0.113.9])
     by mx.recipient.com ... ; Tue, 21 Jul 2026 09:14:02 +0000   &lt;- final hop
 Received: from smtp.sketchy-vps.ru ([185.220.101.5])
-    by mail.contoso.com ...   ; Tue, 21 Jul 2026 09:13:58 +0000  &lt;- origin</code></pre>
+    by mail.contoso.com ...   ; Tue, 21 Jul 2026 09:13:58 +0000  &lt;- origin">copy</button><pre><code>Received: from mail.contoso.com (mail.contoso.com [203.0.113.9])
+    by mx.recipient.com ... ; Tue, 21 Jul 2026 09:14:02 +0000   &lt;- final hop
+Received: from smtp.sketchy-vps.ru ([185.220.101.5])
+    by mail.contoso.com ...   ; Tue, 21 Jul 2026 09:13:58 +0000  &lt;- origin</code></pre></div>
 <ul>
 <li><strong>Trace the originating IP</strong>: the bottom hop's <code>[bracketed IP]</code>. Geolocate</li>
 </ul>
@@ -121,12 +136,15 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li><strong>Reconcile with the claimed sender</strong>: the origin domain, its PTR/rDNS, and</li>
 </ul>
 <p>the <code>From</code> domain should tell one coherent story. They usually do not in a phish.</p>
-<h2>Authentication Results</h2>
+<h2 id="authentication-results">Authentication Results</h2>
 <p>SPF, DKIM, and DMARC are the forgery-resistant checks. The receiving server records them in <code>Authentication-Results</code>. Read it, and re-verify rather than trusting a summary.</p>
-<pre><code>Authentication-Results: mx.recipient.com;
+<div class="codeblk cx"><button class="copy" data-copy="Authentication-Results: mx.recipient.com;
   spf=pass (sender IP is 185.220.101.5) smtp.mailfrom=bounce.sketchy-vps.ru;
   dkim=pass header.d=sketchy-vps.ru header.s=selector1;
-  dmarc=fail (p=reject sp=reject dis=none) header.from=contoso.com</code></pre>
+  dmarc=fail (p=reject sp=reject dis=none) header.from=contoso.com">copy</button><pre><code>Authentication-Results: mx.recipient.com;
+  spf=pass (sender IP is 185.220.101.5) smtp.mailfrom=bounce.sketchy-vps.ru;
+  dkim=pass header.d=sketchy-vps.ru header.s=selector1;
+  dmarc=fail (p=reject sp=reject dis=none) header.from=contoso.com</code></pre></div>
 <ul>
 <li><strong>SPF</strong> authenticates the <em>envelope</em> sender (<code>Return-Path</code> / <code>smtp.mailfrom</code></li>
 </ul>
@@ -147,7 +165,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li><strong>Envelope vs header From</strong>: <code>Return-Path</code>/envelope-from is what bounces go to</li>
 </ul>
 <p>and what SPF checks; the header <code>From:</code> is what the user sees. Phishers make them differ — a benign-looking <code>From</code> with a throwaway envelope domain that happens to pass SPF is the classic pattern.</p>
-<h2>Display-Name and Lookalike Spoofing</h2>
+<h2 id="display-name-and-lookalike-spoofing">Display-Name and Lookalike Spoofing</h2>
 <p>Much phishing passes authentication because it comes from a <em>real</em> mailbox on a <em>lookalike</em> domain. The auth checks pass for that domain; the deception is visual.</p>
 <ul>
 <li><strong>Display-name spoofing</strong>: <code>From: "IT Helpdesk" &amp;lt;random@gmail.com&amp;gt;</code>. The name</li>
@@ -169,7 +187,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li><strong>BEC with no payload</strong>: pure text asking for a wire transfer, gift cards, or</li>
 </ul>
 <p>W-2 data. No link, no attachment, nothing to sandbox. The signal is entirely in the headers (Reply-To, origin, auth) and the pretext.</p>
-<h2>Header Forensics</h2>
+<h2 id="header-forensics">Header Forensics</h2>
 <ul>
 <li><strong><code>Message-ID</code> sanity</strong>: format is <code>&amp;lt;unique@sending-domain&amp;gt;</code>. The domain</li>
 </ul>
@@ -186,7 +204,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li><strong>Mailer fingerprints</strong>: legitimate bulk senders (SendGrid, Amazon SES,</li>
 </ul>
 <p>Mailchimp) add characteristic <code>X-</code> headers and <code>Received</code> paths. Their presence on a "personal" note from your CEO is a contradiction.</p>
-<h2>URL Analysis</h2>
+<h2 id="url-analysis">URL Analysis</h2>
 <p>Every link is a claim about where it goes. Resolve it without visiting it.</p>
 <ul>
 <li><strong>Unwrap redirects and shorteners</strong>: expand <code>bit.ly</code>/<code>t.co</code> with</li>
@@ -217,7 +235,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li><strong>Detonate safely</strong>: submit the URL to <strong>urlscan.io</strong> (use unlisted/private</li>
 </ul>
 <p>scans for targeted phish so you don't tip the actor) or a sandbox, and pull the real landing page, screenshot, and served content. Extract the landing page and any kit files for the IOC set.</p>
-<h2>Attachment Analysis</h2>
+<h2 id="attachment-analysis">Attachment Analysis</h2>
 <p>Identify and defang before anything executes.</p>
 <ul>
 <li><strong>Hash and identify</strong>: <code>sha256sum att.ext &amp;amp;&amp;amp; file att.ext</code>. Extract with</li>
@@ -235,7 +253,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li>Once identified, <strong>hand the live payload to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></strong> for</li>
 </ul>
 <p>sandboxed detonation, unpacking, and C2 extraction. This skill's job is safe extraction and triage, not detonation.</p>
-<h2>Pulling and Packaging IOCs</h2>
+<h2 id="pulling-and-packaging-iocs">Pulling and Packaging IOCs</h2>
 <p>Extract a clean, defanged indicator set for blocking and hunting:</p>
 <ul>
 <li><strong>Sender infrastructure</strong>: originating IP, envelope-from domain, <code>From</code>/cousin</li>
@@ -251,7 +269,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 </ul>
 <p>fingerprints to search the mail gateway and other mailboxes.</p>
 <p>Package these for <a class="xref" href="producing-threat-intelligence.html"><code>producing-threat-intelligence</code></a> when the phish is part of a tracked campaign, and for <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> for the writeup.</p>
-<h2>Scoping the Campaign</h2>
+<h2 id="scoping-the-campaign">Scoping the Campaign</h2>
 <p>One report is rarely the only recipient. Find the rest before you close.</p>
 <ul>
 <li><strong>M365</strong>: <code>Search-UnifiedAuditLog</code> and Content Search / <code>New-ComplianceSearch</code></li>
@@ -265,7 +283,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li>If any recipient interacted, the phish may have succeeded — pivot to</li>
 </ul>
 <p><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a> for tenant-side hunting (sign-ins, inbox rules, OAuth grants) and to <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> for the broader response.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"SPF passed, so it's legitimate."</em> SPF authenticates the envelope domain,</li>
 </ul>
@@ -294,7 +312,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li><em>"The gateway let it through, so it's clean."</em> Gateways miss lookalike</li>
 </ul>
 <p>domains, freshly registered infrastructure, HTML smuggling, and password- protected archives by design. A delivered message is not a vetted one.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Reconnaissance</strong> (TA0043)</p>
 <ul>
@@ -307,7 +325,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <li><a href="https://attack.mitre.org/techniques/T1566/002/">T1566.002</a> Spearphishing Link — see also <a class="xref" href="performing-social-engineering.html"><code>performing-social-engineering</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — sandboxed detonation and C2 extraction of attachments</li>
 <li><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a> — tenant-side hunting when the phish succeeded</li>
@@ -325,5 +343,8 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <ul>
 <li>urlscan.io and VirusTotal for URL/file detonation and reputation</li>
 <li>PhishTool for guided end-to-end phishing analysis and reporting</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#safe-handling-do-this-first">Safe Handling — Do This First</a><a href="#getting-the-raw-message">Getting the Raw Message</a><a href="#the-received-chain">The Received Chain</a><a href="#authentication-results">Authentication Results</a><a href="#display-name-and-lookalike-spoofing">Display-Name and Lookalike Spoofing</a><a href="#header-forensics">Header Forensics</a><a href="#url-analysis">URL Analysis</a><a href="#attachment-analysis">Attachment Analysis</a><a href="#pulling-and-packaging-iocs">Pulling and Packaging IOCs</a><a href="#scoping-the-campaign">Scoping the Campaign</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-26</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Reverse engineer .NET assemblies and executables with dnSpyEx, ILSpy, and de4dot — identifying and unwrapping obfuscators and packers, deobfuscating control flow and string encryption, handling single-file and NativeAOT publishes, and patching IL. Use when a binary is a managed PE, when ILSpy shows mangled names or empty method bodies, or when analyzing .NET malware, a loader, or a Windows application.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>.NET compiles to IL with full metadata, so an unobfuscated assembly decompiles to near-original C#. That makes the interesting question not "how do I read this" but "what is in the way" — a packer, an obfuscator, a runtime loader, or a publish mode that hides the managed code inside a native host.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>.NET compiles to IL with full metadata, so an unobfuscated assembly decompiles to near-original C#. That makes the interesting question not "how do I read this" but "what is in the way" — a packer, an obfuscator, a runtime loader, or a publish mode that hides the managed code inside a native host.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li><code>file</code> reports a PE and the binary contains a CLR header or <code>mscoree.dll</code></li>
 <li>ILSpy or dnSpy opens the assembly but names are mangled or bodies are empty</li>
@@ -47,7 +58,7 @@
 <li>Reviewing a Windows desktop or service application without source</li>
 <li>Recovering logic from a PowerShell or C# in-memory loader</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Unity IL2CPP</strong> — use <a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a>; the C# is compiled to native</li>
 <li><strong>Xamarin/MAUI mobile</strong> — use <a class="xref" href="reversing-xamarin-maui.html"><code>reversing-xamarin-maui</code></a> for the container</li>
@@ -57,49 +68,72 @@
 <li><strong>Suspected malware, before containment</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> first</li>
 <li><strong>Go or Rust binaries</strong> — use the matching skill</li>
 </ul>
-<h2>Confirm It Is Managed</h2>
-<pre><code># Linux
+<h2 id="confirm-it-is-managed">Confirm It Is Managed</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Linux
+file target.exe                                 # &quot;Mono/.Net assembly&quot;
+rg -a -o &#x27;BSJB|mscoree\.dll|System\.Private\.CoreLib&#x27; target.exe | head
+
+# Windows
+dotnet-tool: ildasm /text target.exe | head
+# CLR header presence in the optional header data directory 14 is the real test">copy</button><pre><code># Linux
 file target.exe                                 # "Mono/.Net assembly"
 rg -a -o 'BSJB|mscoree\.dll|System\.Private\.CoreLib' target.exe | head
 
 # Windows
 dotnet-tool: ildasm /text target.exe | head
-# CLR header presence in the optional header data directory 14 is the real test</code></pre>
+# CLR header presence in the optional header data directory 14 is the real test</code></pre></div>
 <div class="tw"><table><thead><tr><th>What you find</th><th>Publish mode</th><th>Approach</th></tr></thead><tbody><tr><td>Managed PE, references <code>mscorlib</code>/<code>System.Private.CoreLib</code></td><td>Framework-dependent</td><td>Decompile directly</td></tr><tr><td>Native PE containing an embedded managed bundle</td><td>Single-file publish</td><td>Extract the bundle first</td></tr><tr><td>Native PE, no IL metadata at all</td><td>NativeAOT</td><td>Not .NET RE — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></td></tr><tr><td><code>.dll</code> with no entry point</td><td>Library</td><td>Decompile; find callers elsewhere</td></tr></tbody></table></div>
-<pre><code># Single-file publish: the managed assemblies are appended as a bundle
+<div class="codeblk cx"><button class="copy" data-copy="# Single-file publish: the managed assemblies are appended as a bundle
 # Extract with a bundle extractor, or carve on the manifest header
-ilspycmd --list-bundle target.exe 2&gt;/dev/null || binwalk -Me target.exe</code></pre>
-<h2>Decompile</h2>
-<pre><code>ilspycmd target.dll -o ./decompiled -p       # -p writes a project structure
+ilspycmd --list-bundle target.exe 2&gt;/dev/null || binwalk -Me target.exe">copy</button><pre><code># Single-file publish: the managed assemblies are appended as a bundle
+# Extract with a bundle extractor, or carve on the manifest header
+ilspycmd --list-bundle target.exe 2&gt;/dev/null || binwalk -Me target.exe</code></pre></div>
+<h2 id="decompile">Decompile</h2>
+<div class="codeblk cx"><button class="copy" data-copy="ilspycmd target.dll -o ./decompiled -p       # -p writes a project structure
 # GUI: dnSpyEx (maintained fork), ILSpy, dotPeek
 # dnSpyEx also debugs and edits assemblies, which is why it is the default choice
 
-rg -n 'https?://|ConnectionString|ApiKey|password|Convert\.FromBase64String' ./decompiled | head -40</code></pre>
+rg -n &#x27;https?://|ConnectionString|ApiKey|password|Convert\.FromBase64String&#x27; ./decompiled | head -40">copy</button><pre><code>ilspycmd target.dll -o ./decompiled -p       # -p writes a project structure
+# GUI: dnSpyEx (maintained fork), ILSpy, dotPeek
+# dnSpyEx also debugs and edits assemblies, which is why it is the default choice
+
+rg -n 'https?://|ConnectionString|ApiKey|password|Convert\.FromBase64String' ./decompiled | head -40</code></pre></div>
 <p>Read in this order: the entry point, then any type named for the product, then anything referencing networking, crypto, or process APIs. Skip generated types (<code>&amp;lt;&amp;gt;c__DisplayClass</code>, <code>&amp;lt;Module&amp;gt;</code>) unless following a specific closure.</p>
-<h2>Identify the Obfuscator Before Fighting It</h2>
+<h2 id="identify-the-obfuscator-before-fighting-it">Identify the Obfuscator Before Fighting It</h2>
 <p>Deobfuscation is cheap when you name the tool and expensive when you do not.</p>
-<pre><code>detect-it-easy target.exe          # or DIE's CLI: diec
+<div class="codeblk cx"><button class="copy" data-copy="detect-it-easy target.exe          # or DIE&#x27;s CLI: diec
 # Look for: ConfuserEx, .NET Reactor, SmartAssembly, Eazfuscator, Babel,
 #           Dotfuscator, Agile.NET, Obfuscar
-rg -a -o 'ConfuserEx|Reactor|SmartAssembly|Eazfuscator|Babel|DotNetPatcher' target.exe</code></pre>
-<pre><code># de4dot handles the classic obfuscators automatically
+rg -a -o &#x27;ConfuserEx|Reactor|SmartAssembly|Eazfuscator|Babel|DotNetPatcher&#x27; target.exe">copy</button><pre><code>detect-it-easy target.exe          # or DIE's CLI: diec
+# Look for: ConfuserEx, .NET Reactor, SmartAssembly, Eazfuscator, Babel,
+#           Dotfuscator, Agile.NET, Obfuscar
+rg -a -o 'ConfuserEx|Reactor|SmartAssembly|Eazfuscator|Babel|DotNetPatcher' target.exe</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="# de4dot handles the classic obfuscators automatically
+de4dot target.exe -o cleaned.exe
+de4dot -p cr target.exe            # force a specific profile when detection fails
+# ConfuserEx specifically: use a maintained unpacker fork, since de4dot&#x27;s
+# built-in support predates later ConfuserEx versions">copy</button><pre><code># de4dot handles the classic obfuscators automatically
 de4dot target.exe -o cleaned.exe
 de4dot -p cr target.exe            # force a specific profile when detection fails
 # ConfuserEx specifically: use a maintained unpacker fork, since de4dot's
-# built-in support predates later ConfuserEx versions</code></pre>
+# built-in support predates later ConfuserEx versions</code></pre></div>
 <p>What each obfuscation layer looks like, and how to handle it:</p>
 <div class="tw"><table><thead><tr><th>Layer</th><th>Appearance</th><th>Handling</th></tr></thead><tbody><tr><td>Name mangling</td><td><code>Class1.method_3</code>, unicode/invisible names</td><td>Cosmetic — rename as you read; de4dot restores some</td></tr><tr><td>String encryption</td><td><code>&amp;lt;Module&amp;gt;.Decrypt(12345)</code> everywhere</td><td>Run the decryptor: de4dot, or invoke the method dynamically</td></tr><tr><td>Control flow flattening</td><td>Giant <code>switch</code> on a state variable</td><td>de4dot's CFG cleanup, or read dynamically</td></tr><tr><td>Proxy/delegate calls</td><td>Every call goes through a helper</td><td>de4dot devirtualization</td></tr><tr><td>Anti-tamper / anti-debug</td><td>Fails under dnSpy debugger</td><td>Patch the check, or dump after decryption</td></tr><tr><td>Virtualization (Agile.NET, KoiVM)</td><td>No recognizable IL at all</td><td>Devirtualizer (<code>OldRod</code> for KoiVM) or dynamic analysis</td></tr><tr><td>Native stub wrapping IL</td><td>Managed code decrypted at runtime</td><td><strong>Dump from memory</strong> — the reliable answer</td></tr></tbody></table></div>
 <p><strong>Dumping from memory is the general escape hatch.</strong> Whatever the packer, the CLR must eventually hold real IL to execute it. Let it load, then dump:</p>
-<pre><code># MegaDumper / ExtremeDumper / pe-sieve — dump loaded managed modules from a
+<div class="codeblk cx"><button class="copy" data-copy="# MegaDumper / ExtremeDumper / pe-sieve — dump loaded managed modules from a
 # running process, then decompile the dump
-pe-sieve /pid &lt;pid&gt; /dmode 3</code></pre>
+pe-sieve /pid &lt;pid&gt; /dmode 3">copy</button><pre><code># MegaDumper / ExtremeDumper / pe-sieve — dump loaded managed modules from a
+# running process, then decompile the dump
+pe-sieve /pid &lt;pid&gt; /dmode 3</code></pre></div>
 <p>This is the same "let it unpack itself" pattern as packed native malware; see <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for containment before running anything hostile.</p>
-<h2>Debugging and Patching</h2>
-<pre><code># dnSpyEx: set breakpoints in decompiled C#, inspect locals, edit method bodies,
+<h2 id="debugging-and-patching">Debugging and Patching</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# dnSpyEx: set breakpoints in decompiled C#, inspect locals, edit method bodies,
 # and save the modified assembly. This is unusually powerful — you can change a
-# license check or a validation result and immediately re-run.</code></pre>
+# license check or a validation result and immediately re-run.">copy</button><pre><code># dnSpyEx: set breakpoints in decompiled C#, inspect locals, edit method bodies,
+# and save the modified assembly. This is unusually powerful — you can change a
+# license check or a validation result and immediately re-run.</code></pre></div>
 <p>Patching workflow: edit the IL or the decompiled C# in dnSpyEx, save the assembly, and re-run. Strong-name signatures break on save — either remove the strong name requirement, or if the app verifies its own hash, hook the check. For a signed assembly the app itself verifies, patching is usually the wrong tool; hook at runtime instead.</p>
-<h2>.NET Malware Notes</h2>
+<h2 id="net-malware-notes">.NET Malware Notes</h2>
 <p>.NET is heavily used for loaders and commodity RATs, and the artifacts are distinctive:</p>
 <ul>
 <li><strong><code>Assembly.Load(byte[])</code></strong> — a second stage decrypted in memory. Find the</li>
@@ -118,10 +152,11 @@ pe-sieve /pid &lt;pid&gt; /dmode 3</code></pre>
 <li><strong>Resources and satellite assemblies</strong> holding encrypted payloads — always</li>
 </ul>
 <p>enumerate the resource section.</p>
-<pre><code>rg -n 'DllImport|Assembly\.Load|CreateInstance|FromBase64String|RijndaelManaged|AmsiScanBuffer' ./decompiled | head -30
-ilspycmd --list-resources target.dll</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="rg -n &#x27;DllImport|Assembly\.Load|CreateInstance|FromBase64String|RijndaelManaged|AmsiScanBuffer&#x27; ./decompiled | head -30
+ilspycmd --list-resources target.dll">copy</button><pre><code>rg -n 'DllImport|Assembly\.Load|CreateInstance|FromBase64String|RijndaelManaged|AmsiScanBuffer' ./decompiled | head -30
+ilspycmd --list-resources target.dll</code></pre></div>
 <p>Extracted second stages go back through this skill; capability and IOC output goes to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>, detection content to <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The names are meaningless, it's too obfuscated."</em> Name mangling is the</li>
 </ul>
@@ -143,12 +178,15 @@ ilspycmd --list-resources target.dll</code></pre>
 <li><em>"I'll read the flattened control flow manually."</em> Run the cleanup, or debug</li>
 </ul>
 <p>it in dnSpyEx and watch the real path.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment, capability model, and IOCs</li>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — NativeAOT and native stub analysis</li>
 <li><a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a>, <a class="xref" href="reversing-xamarin-maui.html"><code>reversing-xamarin-maui</code></a> — the other .NET containers</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — turning recovered behaviour into rules</li>
 <li>dnSpyEx, ILSpy/ilspycmd, de4dot, Detect It Easy, pe-sieve, OldRod</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#confirm-it-is-managed">Confirm It Is Managed</a><a href="#decompile">Decompile</a><a href="#identify-the-obfuscator-before-fighting-it">Identify the Obfuscator Before Fighting It</a><a href="#debugging-and-patching">Debugging and Patching</a><a href="#net-malware-notes">.NET Malware Notes</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

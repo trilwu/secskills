@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
   </div>
   <p class="sdesc">Investigate security incidents in Amazon Web Services -- reconstruct attacker activity from CloudTrail, VPC Flow Logs, and GuardDuty, anchor the investigation on the compromised principal (access key or role), trace privilege escalation and persistence through IAM API calls, detect data exfiltration and crypto-mining, and contain without destroying evidence or tipping off the attacker. Use when responding to a suspected AWS compromise, exposed access keys, anomalous CloudTrail activity, a GuardDuty finding, unexpected IAM changes, crypto-mining EC2 instances, or S3 data exfiltration.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>In AWS an incident is reconstructed from logs the attacker usually could not delete -- CloudTrail, VPC Flow Logs, and the control plane's own record of every API call. The investigation is therefore a log-correlation exercise anchored on the compromised principal: the access key or assumed role, and the sequence of API calls it made. Find the principal, pull every event it generated, and the rest of the intrusion falls out of the timeline.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>In AWS an incident is reconstructed from logs the attacker usually could not delete -- CloudTrail, VPC Flow Logs, and the control plane's own record of every API call. The investigation is therefore a log-correlation exercise anchored on the compromised principal: the access key or assumed role, and the sequence of API calls it made. Find the principal, pull every event it generated, and the rest of the intrusion falls out of the timeline.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Exposed or leaked AWS access keys -- committed to a repo, in a pastebin, or flagged by AWS abuse</li>
 <li>Anomalous CloudTrail activity -- API calls from unfamiliar regions, IPs, or user agents</li>
@@ -49,7 +61,7 @@
 <li>Crypto-mining EC2 -- a spike in on-demand instances, GPU families, or an unexpected billing alert</li>
 <li>S3 data exfiltration -- GetObject spikes, buckets made public, or shared snapshots</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>The incident is in Microsoft 365 / Entra ID, not AWS</strong> -- use <a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a></li>
 <li><strong>The incident is in Azure resources/subscriptions</strong> -- use <a class="xref" href="investigating-azure-incidents.html"><code>investigating-azure-incidents</code></a></li>
@@ -59,31 +71,46 @@
 <li><strong>The pivot is specifically into Kubernetes on EKS</strong> -- use <a class="xref" href="attacking-eks-gke-aks.html"><code>attacking-eks-gke-aks</code></a></li>
 <li><strong>Proactive hunting with no confirmed incident</strong> -- use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
 </ul>
-<h2>First-Hour Triage</h2>
+<h2 id="first-hour-triage">First-Hour Triage</h2>
 <p>Three actions, in order: identify the principal, pull its recent activity, preserve before you contain.</p>
 <p><strong>Scope the compromised principal.</strong> Whether the report is a leaked key, a GuardDuty finding, or a billing spike, resolve it to a single principal ARN -- an IAM user, a role, or the root account. That ARN is the anchor for everything that follows.</p>
-<pre><code># What is this key/session, and does it still work?
+<div class="codeblk cx"><button class="copy" data-copy="# What is this key/session, and does it still work?
+aws sts get-caller-identity                       # if you hold the suspect creds
+# Resolve an access key ID to its owner
+aws iam get-access-key-last-used --access-key-id AKIA...
+# Enumerate the principal&#x27;s current footprint
+aws iam list-access-keys --user-name &lt;user&gt;
+aws iam list-attached-user-policies --user-name &lt;user&gt;
+aws iam list-user-policies --user-name &lt;user&gt;">copy</button><pre><code># What is this key/session, and does it still work?
 aws sts get-caller-identity                       # if you hold the suspect creds
 # Resolve an access key ID to its owner
 aws iam get-access-key-last-used --access-key-id AKIA...
 # Enumerate the principal's current footprint
 aws iam list-access-keys --user-name &lt;user&gt;
 aws iam list-attached-user-policies --user-name &lt;user&gt;
-aws iam list-user-policies --user-name &lt;user&gt;</code></pre>
+aws iam list-user-policies --user-name &lt;user&gt;</code></pre></div>
 <p><strong>Pull recent activity from the principal.</strong> Event history (below) is the fastest first look; the S3 log bucket is the source of truth.</p>
-<pre><code>aws cloudtrail lookup-events \
+<div class="codeblk cx"><button class="copy" data-copy="aws cloudtrail lookup-events \
   --lookup-attributes AttributeKey=Username,AttributeValue=&lt;user&gt; \
   --start-time 2026-07-01T00:00:00Z --max-results 200
 
 # By access key -- catches role sessions that lookup-by-username misses
 aws cloudtrail lookup-events \
-  --lookup-attributes AttributeKey=AccessKeyId,AttributeValue=AKIA...</code></pre>
+  --lookup-attributes AttributeKey=AccessKeyId,AttributeValue=AKIA...">copy</button><pre><code>aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=Username,AttributeValue=&lt;user&gt; \
+  --start-time 2026-07-01T00:00:00Z --max-results 200
+
+# By access key -- catches role sessions that lookup-by-username misses
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=AccessKeyId,AttributeValue=AKIA...</code></pre></div>
 <p><strong>Isolate without tipping off -- snapshot then contain.</strong> An attacker who sees their key deactivated mid-operation will burn persistence you have not found yet. For anything but active, ongoing damage: preserve evidence first (snapshot volumes, export logs), map persistence, then contain everything at once. If there is live damage -- active mining, active exfil -- stop the damage and accept the trade.</p>
-<h2>CloudTrail Deep-Dive</h2>
+<h2 id="cloudtrail-deep-dive">CloudTrail Deep-Dive</h2>
 <p><strong>Event history vs. the S3 log bucket.</strong> The console Event history is searchable but covers only 90 days of management events and drops data events. The CloudTrail S3 log bucket (or CloudTrail Lake) is the authoritative record and the only place with S3/Lambda data events -- query it, not the console, once you are past the first look. Confirm what is actually logged:</p>
-<pre><code>aws cloudtrail describe-trails
+<div class="codeblk cx"><button class="copy" data-copy="aws cloudtrail describe-trails
 aws cloudtrail get-trail-status --name &lt;trail&gt;          # IsLogging: true?
-aws cloudtrail get-event-selectors --trail-name &lt;trail&gt; # data events on?</code></pre>
+aws cloudtrail get-event-selectors --trail-name &lt;trail&gt; # data events on?">copy</button><pre><code>aws cloudtrail describe-trails
+aws cloudtrail get-trail-status --name &lt;trail&gt;          # IsLogging: true?
+aws cloudtrail get-event-selectors --trail-name &lt;trail&gt; # data events on?</code></pre></div>
 <p><strong><code>userIdentity</code> types</strong> tell you what you are looking at:</p>
 <div class="tw"><table><thead><tr><th><code>type</code></th><th>Meaning</th><th>Investigative note</th></tr></thead><tbody><tr><td><code>IAMUser</code></td><td>Long-lived user credentials</td><td><code>accessKeyId</code> is the pivot. Human or service account?</td></tr><tr><td><code>AssumedRole</code></td><td>Temporary STS creds</td><td>Read <code>sessionContext.sessionIssuer</code> for the source role.</td></tr><tr><td><code>AWSService</code></td><td>An AWS service acting</td><td>Usually benign, but check for spoofed-looking service calls.</td></tr><tr><td><code>Root</code></td><td>Root account</td><td>Almost never legitimate for API calls. Treat as critical.</td></tr><tr><td><code>FederatedUser</code> / <code>WebIdentityUser</code></td><td><code>GetFederationToken</code> broker / OIDC web identity</td><td>Trace to the broker's IAM user, or the IdP session.</td></tr></tbody></table></div>
 <p>For <code>AssumedRole</code>, <code>sessionContext.sessionIssuer.arn</code> names the role and <code>sessionContext.attributes.mfaAuthenticated</code> tells you whether MFA was used.</p>
@@ -104,14 +131,20 @@ aws cloudtrail get-event-selectors --trail-name &lt;trail&gt; # data events on?<
 <li><code>errorCode</code> -- a storm of <code>AccessDenied</code> / <code>UnauthorizedOperation</code> is</li>
 </ul>
 <p>enumeration: the attacker is mapping what the stolen principal can do.</p>
-<pre><code>-- Athena over the CloudTrail S3 bucket: AccessDenied enumeration storm
+<div class="codeblk cx"><button class="copy" data-copy="-- Athena over the CloudTrail S3 bucket: AccessDenied enumeration storm
+SELECT eventname, count(*) AS n
+FROM cloudtrail_logs
+WHERE useridentity.accesskeyid = &#x27;AKIA...&#x27;
+  AND errorcode = &#x27;AccessDenied&#x27;
+  AND eventtime &gt; &#x27;2026-07-01T00:00:00Z&#x27;
+GROUP BY eventname ORDER BY n DESC;">copy</button><pre><code>-- Athena over the CloudTrail S3 bucket: AccessDenied enumeration storm
 SELECT eventname, count(*) AS n
 FROM cloudtrail_logs
 WHERE useridentity.accesskeyid = 'AKIA...'
   AND errorcode = 'AccessDenied'
   AND eventtime &gt; '2026-07-01T00:00:00Z'
-GROUP BY eventname ORDER BY n DESC;</code></pre>
-<h2>Canonical Attacker API Patterns</h2>
+GROUP BY eventname ORDER BY n DESC;</code></pre></div>
+<h2 id="canonical-attacker-api-patterns">Canonical Attacker API Patterns</h2>
 <p>Grep the timeline for this sequence. It is the shape of nearly every stolen-key intrusion:</p>
 <ul>
 <li><strong><code>GetCallerIdentity</code></strong> -- often the very first call. The attacker is</li>
@@ -137,14 +170,20 @@ GROUP BY eventname ORDER BY n DESC;</code></pre>
 <li><strong>STS chaining</strong> -- <code>AssumeRole</code> into a more privileged role, then another,</li>
 </ul>
 <p>building a chain that launders the original stolen key.</p>
-<pre><code># Pull the IAM mutating calls for the window
+<div class="codeblk cx"><button class="copy" data-copy="# Pull the IAM mutating calls for the window
 aws cloudtrail lookup-events \
   --lookup-attributes AttributeKey=EventName,AttributeValue=CreateAccessKey
 # Repeat for: CreateUser, AttachUserPolicy, PutUserPolicy, CreateLoginProfile,
 #             UpdateAssumeRolePolicy, CreateRole, AssumeRole
 # (iam:PassRole is a permission, not an event -- find it in requestParameters of
-#  RunInstances / CreateFunction, not via lookup-by-EventName)</code></pre>
-<h2>Persistence Hunting</h2>
+#  RunInstances / CreateFunction, not via lookup-by-EventName)">copy</button><pre><code># Pull the IAM mutating calls for the window
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=EventName,AttributeValue=CreateAccessKey
+# Repeat for: CreateUser, AttachUserPolicy, PutUserPolicy, CreateLoginProfile,
+#             UpdateAssumeRolePolicy, CreateRole, AssumeRole
+# (iam:PassRole is a permission, not an event -- find it in requestParameters of
+#  RunInstances / CreateFunction, not via lookup-by-EventName)</code></pre></div>
+<h2 id="persistence-hunting">Persistence Hunting</h2>
 <p>Enumerate every mechanism explicitly during eradication -- rotating the one leaked key does nothing about a second one the attacker created.</p>
 <ul>
 <li><strong>New IAM users / keys / roles</strong> created inside the incident window.</li>
@@ -167,7 +206,19 @@ aws cloudtrail lookup-events \
 <li><strong>EventBridge / CloudWatch Events rules</strong> invoking attacker Lambda on a cron.</li>
 <li><strong><code>iam:CreateServiceLinkedRole</code></strong> and other quietly-privileged roles.</li>
 </ul>
-<pre><code># Users and keys created recently
+<div class="codeblk cx"><button class="copy" data-copy="# Users and keys created recently
+aws iam list-users --query &#x27;Users[?CreateDate&gt;=`2026-07-01`].[UserName,CreateDate]&#x27;
+for u in $(aws iam list-users --query &#x27;Users[].UserName&#x27; --output text); do
+  aws iam list-access-keys --user-name &quot;$u&quot; \
+    --query &#x27;AccessKeyMetadata[].[UserName,AccessKeyId,CreateDate]&#x27; --output text
+done
+
+# Roles whose trust policy names an external account
+aws iam list-roles --query &#x27;Roles[].[RoleName,AssumeRolePolicyDocument]&#x27;
+
+# Recently modified Lambda and the EventBridge rules that fire them
+aws lambda list-functions --query &#x27;Functions[].[FunctionName,LastModified]&#x27;
+aws events list-rules --query &#x27;Rules[].[Name,ScheduleExpression,State]&#x27;">copy</button><pre><code># Users and keys created recently
 aws iam list-users --query 'Users[?CreateDate&gt;=`2026-07-01`].[UserName,CreateDate]'
 for u in $(aws iam list-users --query 'Users[].UserName' --output text); do
   aws iam list-access-keys --user-name "$u" \
@@ -179,26 +230,34 @@ aws iam list-roles --query 'Roles[].[RoleName,AssumeRolePolicyDocument]'
 
 # Recently modified Lambda and the EventBridge rules that fire them
 aws lambda list-functions --query 'Functions[].[FunctionName,LastModified]'
-aws events list-rules --query 'Rules[].[Name,ScheduleExpression,State]'</code></pre>
-<h2>IMDS / SSRF Credential Theft Signatures</h2>
+aws events list-rules --query 'Rules[].[Name,ScheduleExpression,State]'</code></pre></div>
+<h2 id="imds-ssrf-credential-theft-signatures">IMDS / SSRF Credential Theft Signatures</h2>
 <p>The classic AWS escalation: an SSRF or foothold on an EC2 instance reads the Instance Metadata Service (<code>http://169.254.169.254/latest/meta-data/iam/...</code>), lifts the instance role's temporary credentials, and uses them elsewhere.</p>
 <p>The signature is unmistakable in CloudTrail: <strong>the instance role's session credentials appear from a <code>sourceIPAddress</code> that is not the instance.</strong> The role is minted for the instance, so any call from an external or unrelated IP means the credentials left the box.</p>
-<pre><code>-- Role session creds used from outside the VPC
+<div class="codeblk cx"><button class="copy" data-copy="-- Role session creds used from outside the VPC
+SELECT eventtime, eventname, sourceipaddress, useragent
+FROM cloudtrail_logs
+WHERE useridentity.arn LIKE &#x27;%assumed-role/&lt;instance-role&gt;%&#x27;
+  AND sourceipaddress NOT LIKE &#x27;10.%&#x27;
+  AND sourceipaddress NOT LIKE &#x27;172.%&#x27;
+ORDER BY eventtime;">copy</button><pre><code>-- Role session creds used from outside the VPC
 SELECT eventtime, eventname, sourceipaddress, useragent
 FROM cloudtrail_logs
 WHERE useridentity.arn LIKE '%assumed-role/&lt;instance-role&gt;%'
   AND sourceipaddress NOT LIKE '10.%'
   AND sourceipaddress NOT LIKE '172.%'
-ORDER BY eventtime;</code></pre>
+ORDER BY eventtime;</code></pre></div>
 <p>IMDSv1 (a simple GET, no session token) makes this trivial and is itself a finding -- confirm whether the instance enforces IMDSv2 (<code>HttpTokens: required</code>) via <code>aws ec2 describe-instances</code>. Correlate the theft window with VPC Flow Logs for the outbound SSRF and the reuse source.</p>
-<h2>GuardDuty Finding Triage</h2>
+<h2 id="guardduty-finding-triage">GuardDuty Finding Triage</h2>
 <p>GuardDuty is a starting pistol, not the investigation. Each finding type maps to a hypothesis you confirm in CloudTrail:</p>
 <div class="tw"><table><thead><tr><th>Finding type</th><th>Implication</th></tr></thead><tbody><tr><td><code>UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.*</code></td><td>Instance role creds used off the instance -- the IMDS theft above.</td></tr><tr><td><code>UnauthorizedAccess:IAMUser/MaliciousIPCaller</code></td><td>A principal called from a known-bad IP.</td></tr><tr><td><code>UnauthorizedAccess:IAMUser/TorIPCaller</code></td><td>API calls via Tor -- almost never a legitimate admin.</td></tr><tr><td><code>CryptoCurrency:EC2/BitcoinTool.B!DNS</code></td><td>An instance talking to a mining pool -- confirmed crypto-mining.</td></tr><tr><td><code>Recon:IAMUser/*</code></td><td>Enumeration -- the <code>AccessDenied</code> storm.</td></tr><tr><td><code>Persistence:IAMUser/*</code>, <code>PrivilegeEscalation:IAMUser/*</code></td><td>IAM mutation matching the escalation patterns above.</td></tr><tr><td><code>Policy:S3/BucketAnonymousAccessGranted</code></td><td>A bucket was made public -- possible exfil staging.</td></tr></tbody></table></div>
-<pre><code>aws guardduty list-findings --detector-id &lt;id&gt; \
+<div class="codeblk cx"><button class="copy" data-copy="aws guardduty list-findings --detector-id &lt;id&gt; \
+  --finding-criteria &#x27;{&quot;Criterion&quot;:{&quot;severity&quot;:{&quot;Gte&quot;:4}}}&#x27;
+aws guardduty get-findings --detector-id &lt;id&gt; --finding-ids &lt;id&gt;">copy</button><pre><code>aws guardduty list-findings --detector-id &lt;id&gt; \
   --finding-criteria '{"Criterion":{"severity":{"Gte":4}}}'
-aws guardduty get-findings --detector-id &lt;id&gt; --finding-ids &lt;id&gt;</code></pre>
+aws guardduty get-findings --detector-id &lt;id&gt; --finding-ids &lt;id&gt;</code></pre></div>
 <p>Findings older than the CloudTrail window still carry the principal and IPs -- pivot on those even when the raw events have aged out of Event history.</p>
-<h2>Data-Theft Detection</h2>
+<h2 id="data-theft-detection">Data-Theft Detection</h2>
 <ul>
 <li><strong>S3 GetObject spikes</strong> -- a jump in <code>GetObject</code> volume/bytes on sensitive</li>
 </ul>
@@ -215,13 +274,18 @@ aws guardduty get-findings --detector-id &lt;id&gt; --finding-ids &lt;id&gt;</co
 <li><strong>RDS exfil</strong> -- <code>ModifyDBSnapshotAttribute</code> sharing a DB snapshot, or</li>
 </ul>
 <p><code>StartExportTask</code> dumping a snapshot to an attacker-controlled S3 bucket.</p>
-<pre><code>SELECT eventname, useridentity.arn, sourceipaddress,
+<div class="codeblk cx"><button class="copy" data-copy="SELECT eventname, useridentity.arn, sourceipaddress,
+       json_extract_scalar(requestparameters, &#x27;$.attributeType&#x27;) AS attr
+FROM cloudtrail_logs
+WHERE eventname IN (&#x27;ModifySnapshotAttribute&#x27;,&#x27;ModifyImageAttribute&#x27;,
+                    &#x27;ModifyDBSnapshotAttribute&#x27;,&#x27;PutBucketPolicy&#x27;,&#x27;PutBucketAcl&#x27;)
+  AND eventtime &gt; &#x27;2026-07-01T00:00:00Z&#x27;;">copy</button><pre><code>SELECT eventname, useridentity.arn, sourceipaddress,
        json_extract_scalar(requestparameters, '$.attributeType') AS attr
 FROM cloudtrail_logs
 WHERE eventname IN ('ModifySnapshotAttribute','ModifyImageAttribute',
                     'ModifyDBSnapshotAttribute','PutBucketPolicy','PutBucketAcl')
-  AND eventtime &gt; '2026-07-01T00:00:00Z';</code></pre>
-<h2>Anti-Forensics the Attacker Attempts</h2>
+  AND eventtime &gt; '2026-07-01T00:00:00Z';</code></pre></div>
+<h2 id="anti-forensics-the-attacker-attempts">Anti-Forensics the Attacker Attempts</h2>
 <p>A capable attacker tries to blind you. Watch for and, crucially, work around:</p>
 <ul>
 <li><strong><code>StopLogging</code> / <code>DeleteTrail</code></strong> -- turning off CloudTrail.</li>
@@ -234,11 +298,14 @@ WHERE eventname IN ('ModifySnapshotAttribute','ModifyImageAttribute',
 </ul>
 <p>GuardDuty.</p>
 <p>The defeat for all of these is a <strong>member-account-independent Organizations-level trail</strong> that logs to a central, locked S3 bucket (MFA delete, Object Lock, separate log-archive account) the compromised principal cannot reach. The very act of <code>StopLogging</code> is itself logged there before it takes effect. If you have an org trail, the attacker's cleanup calls are evidence, not gaps. If you do not, note the blind window as a scoping limitation.</p>
-<pre><code># Was logging tampered with? These calls are the finding.
+<div class="codeblk cx"><button class="copy" data-copy="# Was logging tampered with? These calls are the finding.
 aws cloudtrail lookup-events \
   --lookup-attributes AttributeKey=EventName,AttributeValue=StopLogging
-# Repeat: DeleteTrail, PutEventSelectors, DeleteFlowLogs, DeleteDetector</code></pre>
-<h2>Evidence Preservation</h2>
+# Repeat: DeleteTrail, PutEventSelectors, DeleteFlowLogs, DeleteDetector">copy</button><pre><code># Was logging tampered with? These calls are the finding.
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=EventName,AttributeValue=StopLogging
+# Repeat: DeleteTrail, PutEventSelectors, DeleteFlowLogs, DeleteDetector</code></pre></div>
+<h2 id="evidence-preservation">Evidence Preservation</h2>
 <ul>
 <li><strong>EBS snapshots</strong> of every involved instance's volumes, before you touch the</li>
 </ul>
@@ -256,7 +323,7 @@ aws cloudtrail lookup-events \
 <li><strong>Tagging and legal hold</strong> on all evidence artifacts, and involve legal before</li>
 </ul>
 <p>collection if the incident may become a regulatory or litigation matter.</p>
-<h2>Containment and Eradication</h2>
+<h2 id="containment-and-eradication">Containment and Eradication</h2>
 <p>Do it all at once, after scoping. Partial containment alerts the attacker.</p>
 <ul>
 <li><strong>Deactivate, do not delete, keys</strong> -- deletion destroys the artifact; a</li>
@@ -281,7 +348,7 @@ aws cloudtrail lookup-events \
 <li><strong>Remove attacker persistence</strong> -- delete the created users/keys/roles, revert</li>
 </ul>
 <p>tampered trust policies, remove backdoor Lambda and EventBridge rules -- only after they are documented.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"GuardDuty didn't alert, so nothing happened."</em> GuardDuty covers a subset of</li>
 </ul>
@@ -310,7 +377,7 @@ aws cloudtrail lookup-events \
 <li><em>"Logs only go back 90 days, so the compromise started within 90 days."</em> That</li>
 </ul>
 <p>is your visibility limit, not the attacker's timeline. Record it as a scoping gap and check the org trail / Lake for longer retention.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a> -- the sibling cloud-IR skill for M365 / Entra ID incidents</li>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> -- the general IR process, evidence handling, and host-level response</li>
@@ -324,5 +391,8 @@ aws cloudtrail lookup-events \
 <li>Prowler -- retrospective posture and misconfiguration assessment of the account</li>
 <li><code>stratus-red-team</code> -- emulate AWS attack TTPs to learn what each leaves in CloudTrail</li>
 <li>AWS Security Incident Response Guide; GuardDuty finding-type reference</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#first-hour-triage">First-Hour Triage</a><a href="#cloudtrail-deep-dive">CloudTrail Deep-Dive</a><a href="#canonical-attacker-api-patterns">Canonical Attacker API Patterns</a><a href="#persistence-hunting">Persistence Hunting</a><a href="#imds-ssrf-credential-theft-signatures">IMDS / SSRF Credential Theft Signatures</a><a href="#guardduty-finding-triage">GuardDuty Finding Triage</a><a href="#data-theft-detection">Data-Theft Detection</a><a href="#anti-forensics-the-attacker-attempts">Anti-Forensics the Attacker Attempts</a><a href="#evidence-preservation">Evidence Preservation</a><a href="#containment-and-eradication">Containment and Eradication</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-26</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

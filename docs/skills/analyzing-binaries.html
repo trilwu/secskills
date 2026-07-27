@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Reverse engineer compiled binaries, firmware, and mobile app packages using triage, static disassembly, decompilation, and dynamic instrumentation. Use when analyzing an executable, ELF/PE/Mach-O file, firmware image, or stripped binary, recovering an algorithm or protocol, or working a CTF reversing challenge.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Reverse engineering is hypothesis testing against a program you cannot read. The cost of the job is dominated by how much code you look at, so the whole discipline is about narrowing: triage first, find the interesting few percent, then read that carefully.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Reverse engineering is hypothesis testing against a program you cannot read. The cost of the job is dominated by how much code you look at, so the whole discipline is about narrowing: triage first, find the interesting few percent, then read that carefully.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Understanding what an unknown or undocumented executable does</li>
 <li>Recovering an algorithm, file format, or wire protocol from a binary</li>
@@ -47,7 +58,7 @@
 <li>Firmware analysis for embedded and IoT devices</li>
 <li>Reversing challenges in CTFs</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Live malware with intent to detonate</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>, which</li>
 </ul>
@@ -77,9 +88,20 @@
 <li><strong>A whole firmware image to extract before any RE</strong> — use</li>
 </ul>
 <p><a class="xref" href="analyzing-firmware-images.html"><code>analyzing-firmware-images</code></a> for <code>binwalk</code>, filesystem carving, and cross-architecture emulation; return here for an individual binary inside it</p>
-<h2>Triage First — Never Open a Disassembler Cold</h2>
+<h2 id="triage-first-never-open-a-disassembler-cold">Triage First — Never Open a Disassembler Cold</h2>
 <p>Every minute here saves an hour in the decompiler.</p>
-<pre><code>file target &amp;&amp; du -h target
+<div class="codeblk cx"><button class="copy" data-copy="file target &amp;&amp; du -h target
+# Architecture, endianness, PIE, stripped or not — all decide your tooling
+readelf -hSd target        # ELF: headers, sections, dynamic deps
+rabin2 -I target           # radare2&#x27;s normalized summary of any format
+objdump -p target          # PE/ELF imports and load config
+
+# Protections tell you what the author expected
+checksec --file=target     # NX, canary, RELRO, PIE, Fortify
+
+# Strings, but read them for structure rather than skimming
+strings -n 8 -t x target | less        # ASCII with offsets
+strings -e l -n 8 target               # UTF-16LE, essential on Windows">copy</button><pre><code>file target &amp;&amp; du -h target
 # Architecture, endianness, PIE, stripped or not — all decide your tooling
 readelf -hSd target        # ELF: headers, sections, dynamic deps
 rabin2 -I target           # radare2's normalized summary of any format
@@ -90,21 +112,27 @@ checksec --file=target     # NX, canary, RELRO, PIE, Fortify
 
 # Strings, but read them for structure rather than skimming
 strings -n 8 -t x target | less        # ASCII with offsets
-strings -e l -n 8 target               # UTF-16LE, essential on Windows</code></pre>
+strings -e l -n 8 target               # UTF-16LE, essential on Windows</code></pre></div>
 <p><strong>What triage should answer before you disassemble:</strong></p>
 <div class="tw"><table><thead><tr><th>Question</th><th>Signal</th></tr></thead><tbody><tr><td>What language/toolchain built this?</td><td>Rust/Go runtime strings, <code>libstdc++</code>, <code>__gxx_personality</code>, MSVC RTTI</td></tr><tr><td>Is it packed?</td><td>High entropy, tiny import table, sections named <code>UPX</code>, <code>.themida</code></td></tr><tr><td>What does it talk to?</td><td>Imports of socket/HTTP APIs, embedded URLs, cert blobs</td></tr><tr><td>Where is the interesting logic?</td><td>Imports of crypto/file/registry/process APIs</td></tr><tr><td>Is it stripped?</td><td><code>nm -D</code> empty, no <code>.symtab</code></td></tr></tbody></table></div>
-<pre><code># Entropy scan finds packed or embedded-blob regions
+<div class="codeblk cx"><button class="copy" data-copy="# Entropy scan finds packed or embedded-blob regions
 binwalk -E target
 # Unpack the common case
-upx -d target -o target.unpacked</code></pre>
+upx -d target -o target.unpacked">copy</button><pre><code># Entropy scan finds packed or embedded-blob regions
+binwalk -E target
+# Unpack the common case
+upx -d target -o target.unpacked</code></pre></div>
 <p>Go and Rust binaries are usually not stripped in the ways that matter. Recover symbols before doing anything else — it changes the job from hours to minutes.</p>
-<pre><code># Go: recover function names and types
+<div class="codeblk cx"><button class="copy" data-copy="# Go: recover function names and types
 GoReSym -t -p target &gt; syms.json    # or the redress / IDAGolangHelper plugins
 # Rust: demangle
-nm -C target 2&gt;/dev/null | head</code></pre>
-<h2>Static Analysis Workflow</h2>
+nm -C target 2&gt;/dev/null | head">copy</button><pre><code># Go: recover function names and types
+GoReSym -t -p target &gt; syms.json    # or the redress / IDAGolangHelper plugins
+# Rust: demangle
+nm -C target 2&gt;/dev/null | head</code></pre></div>
+<h2 id="static-analysis-workflow">Static Analysis Workflow</h2>
 <p>Pick one tool and go deep; switching tools mid-analysis loses your annotations.</p>
-<pre><code># Ghidra headless: batch import, auto-analyze, run a script
+<div class="codeblk cx"><button class="copy" data-copy="# Ghidra headless: batch import, auto-analyze, run a script
 analyzeHeadless /proj MyProj -import target -postScript Decompile.java
 
 # radare2 / rizin interactive
@@ -116,7 +144,19 @@ r2 -AA target
 # iz / izz       strings in data / whole binary
 # /x deadbeef    search for a byte pattern
 
-# Binary Ninja / IDA headless equivalents exist; the workflow is identical</code></pre>
+# Binary Ninja / IDA headless equivalents exist; the workflow is identical">copy</button><pre><code># Ghidra headless: batch import, auto-analyze, run a script
+analyzeHeadless /proj MyProj -import target -postScript Decompile.java
+
+# radare2 / rizin interactive
+r2 -AA target
+# aaa            analyze everything
+# afl            list functions, sorted by size — big ones first
+# axt @ sym.f    cross-references TO a function (who calls this?)
+# pdg @ main     decompile with ghidra plugin (r2ghidra)
+# iz / izz       strings in data / whole binary
+# /x deadbeef    search for a byte pattern
+
+# Binary Ninja / IDA headless equivalents exist; the workflow is identical</code></pre></div>
 <p><strong>Navigate by evidence, not by address order.</strong> The three entry points that find the interesting code fastest:</p>
 <ol>
 <li><strong>Strings → xrefs.</strong> Find a message you saw at runtime, cross-reference it,</li>
@@ -131,7 +171,7 @@ r2 -AA target
 </ol>
 <p>MD5 magic) are recognizable; <code>binwalk</code>, <code>findcrypt</code>, and YARA rules locate them.</p>
 <p>Then read outward from that anchor. Rename every function and variable as you work out what it does — a decompiler listing you have annotated is a completely different artifact from a raw one.</p>
-<h2>Recognizing Structure in Decompiler Output</h2>
+<h2 id="recognizing-structure-in-decompiler-output">Recognizing Structure in Decompiler Output</h2>
 <p>The decompiler gives you C-shaped noise. What you are looking for:</p>
 <ul>
 <li><strong>Loop with an index into a byte array and an XOR</strong> — obfuscation or a</li>
@@ -153,9 +193,21 @@ r2 -AA target
 <li><strong>A call through a register right after a table load</strong> — vtable or callback</li>
 </ul>
 <p>dispatch. Recover the table to recover the class.</p>
-<h2>Dynamic Analysis</h2>
+<h2 id="dynamic-analysis">Dynamic Analysis</h2>
 <p>Static tells you what the code can do; dynamic tells you what it does. Run untrusted binaries only in an isolated VM with no host shares and networking under your control — see <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> for the containment procedure.</p>
-<pre><code># Syscall and API-level behaviour
+<div class="codeblk cx"><button class="copy" data-copy="# Syscall and API-level behaviour
+strace -f -e trace=network,file,process -o trace.log ./target
+ltrace -f ./target
+# Windows equivalents: API Monitor, Procmon, drltrace
+
+# Debugging
+gdb -q ./target       # with pwndbg/GEF: `checksec`, `vmmap`, `heap`, `telescope`
+lldb ./target         # macOS
+x64dbg / WinDbg       # Windows
+
+# Instrumentation — the highest-leverage dynamic technique
+frida-trace -f ./target -i &#x27;recv*&#x27; -i &#x27;EVP_*&#x27;
+# then edit the generated JS handlers to dump buffers and patch return values">copy</button><pre><code># Syscall and API-level behaviour
 strace -f -e trace=network,file,process -o trace.log ./target
 ltrace -f ./target
 # Windows equivalents: API Monitor, Procmon, drltrace
@@ -167,14 +219,24 @@ x64dbg / WinDbg       # Windows
 
 # Instrumentation — the highest-leverage dynamic technique
 frida-trace -f ./target -i 'recv*' -i 'EVP_*'
-# then edit the generated JS handlers to dump buffers and patch return values</code></pre>
+# then edit the generated JS handlers to dump buffers and patch return values</code></pre></div>
 <p>Frida is the fastest route through anti-debugging, custom crypto, and license checks: hook the function <em>after</em> decryption rather than defeating the obfuscation that protects it.</p>
 <p><strong>Emulation</strong> for firmware and isolated routines:</p>
-<pre><code>qemu-arm -L /usr/arm-linux-gnueabi ./target      # user-mode
+<div class="codeblk cx"><button class="copy" data-copy="qemu-arm -L /usr/arm-linux-gnueabi ./target      # user-mode
 # Unicorn for a single function: map memory, set registers, run, read result
-# angr for symbolic execution when you need an input that reaches a state</code></pre>
-<h2>Firmware</h2>
-<pre><code>binwalk -Me firmware.bin        # extract recursively
+# angr for symbolic execution when you need an input that reaches a state">copy</button><pre><code>qemu-arm -L /usr/arm-linux-gnueabi ./target      # user-mode
+# Unicorn for a single function: map memory, set registers, run, read result
+# angr for symbolic execution when you need an input that reaches a state</code></pre></div>
+<h2 id="firmware">Firmware</h2>
+<div class="codeblk cx"><button class="copy" data-copy="binwalk -Me firmware.bin        # extract recursively
+# Identify the filesystem before extracting: squashfs, jffs2, cramfs, ubifs
+unsquashfs -d rootfs squashfs-root.bin
+
+# Then treat the rootfs as a Linux system
+rg -n &#x27;password|admin|BEGIN (RSA|OPENSSH) PRIVATE KEY|api[_-]?key&#x27; -i rootfs/
+find rootfs -name &#x27;*.pem&#x27; -o -name &#x27;shadow&#x27; -o -name &#x27;*.conf&#x27;
+# Web interface and startup scripts are where the bugs are
+ls rootfs/etc/init.d rootfs/www rootfs/usr/sbin">copy</button><pre><code>binwalk -Me firmware.bin        # extract recursively
 # Identify the filesystem before extracting: squashfs, jffs2, cramfs, ubifs
 unsquashfs -d rootfs squashfs-root.bin
 
@@ -182,13 +244,13 @@ unsquashfs -d rootfs squashfs-root.bin
 rg -n 'password|admin|BEGIN (RSA|OPENSSH) PRIVATE KEY|api[_-]?key' -i rootfs/
 find rootfs -name '*.pem' -o -name 'shadow' -o -name '*.conf'
 # Web interface and startup scripts are where the bugs are
-ls rootfs/etc/init.d rootfs/www rootfs/usr/sbin</code></pre>
+ls rootfs/etc/init.d rootfs/www rootfs/usr/sbin</code></pre></div>
 <p>For a bootloader or bare-metal image with no filesystem, find the load address (often in the vendor SDK or derivable from absolute-pointer clustering) before disassembling — a wrong base address makes the whole listing meaningless.</p>
-<h2>Anti-Analysis</h2>
+<h2 id="anti-analysis">Anti-Analysis</h2>
 <p>Recognize it, then decide whether to defeat it or route around it.</p>
 <div class="tw"><table><thead><tr><th>Technique</th><th>Recognition</th><th>Response</th></tr></thead><tbody><tr><td>Packing</td><td>High entropy, stub + one big section</td><td>Unpack, or dump from memory after the OEP</td></tr><tr><td>Anti-debug</td><td><code>IsDebuggerPresent</code>, <code>ptrace(PTRACE_TRACEME)</code>, timing checks</td><td>Patch the check, or hook it with Frida</td></tr><tr><td>VM detection</td><td>CPUID checks, MAC OUI, registry artifacts</td><td>Harden the VM, or patch the detector</td></tr><tr><td>String obfuscation</td><td>No readable strings but obvious decode loops</td><td>Emulate the decoder over all call sites</td></tr><tr><td>Control-flow flattening</td><td>Giant switch on a state variable</td><td>Symbolic deobfuscation, or ignore and work dynamically</td></tr></tbody></table></div>
 <p>Routing around is usually cheaper. If a check is defeating you statically, hook the function that consumes its result.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"I'll read the whole binary."</em> You will not. Triage and anchor, or you burn</li>
 </ul>
@@ -209,7 +271,7 @@ ls rootfs/etc/init.d rootfs/www rootfs/usr/sbin</code></pre>
 <li><em>"The strings tell the story."</em> Strings tell you where to look. Attackers</li>
 </ul>
 <p>plant misleading ones.</p>
-<h2>Deliverable</h2>
+<h2 id="deliverable">Deliverable</h2>
 <p>An RE report should let a reader act without repeating your work:</p>
 <ul>
 <li><strong>Identity</strong> — hashes, file type, architecture, compiler, packer</li>
@@ -219,7 +281,7 @@ ls rootfs/etc/init.d rootfs/www rootfs/usr/sbin</code></pre>
 <li><strong>Indicators</strong> — network endpoints, file paths, mutexes, keys, constants</li>
 <li><strong>Open questions</strong> — what you did not resolve, and why</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Defense Evasion</strong> (TA0005)</p>
 <ul>
@@ -230,11 +292,14 @@ ls rootfs/etc/init.d rootfs/www rootfs/usr/sbin</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1622/">T1622</a> Debugger Evasion — see also <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment, detonation, and IOC extraction</li>
 <li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — APK/IPA workflows around native components</li>
 <li>Ghidra, rizin/radare2, Binary Ninja, IDA — pick one and learn it deeply</li>
 <li>Frida, angr, Unicorn, QEMU for dynamic and emulated analysis</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#triage-first-never-open-a-disassembler-cold">Triage First — Never Open a Disassembler Cold</a><a href="#static-analysis-workflow">Static Analysis Workflow</a><a href="#recognizing-structure-in-decompiler-output">Recognizing Structure in Decompiler Output</a><a href="#dynamic-analysis">Dynamic Analysis</a><a href="#firmware">Firmware</a><a href="#anti-analysis">Anti-Analysis</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#deliverable">Deliverable</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

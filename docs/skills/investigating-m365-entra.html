@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Investigate security incidents in Microsoft 365 and Entra ID (Azure AD) -- search the Unified Audit Log, correlate sign-in and audit events, trace illicit OAuth consent grants, analyze mailbox rule manipulation, and contain compromised identities. Use when responding to a BEC incident, investigating Entra ID compromise, analyzing suspicious OAuth app permissions, tracing mail forwarding abuse, or reviewing Azure AD sign-in anomalies.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>M365/Entra investigations differ from on-premises DFIR -- there are no disk images, no memory dumps, and no event logs you can collect yourself. Everything comes from API queries against Microsoft's log stores, several of which require E5 licensing or advanced audit to retain what you need. Knowing which logs exist, which ones are missing, and how long they last is half the investigation.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>M365/Entra investigations differ from on-premises DFIR -- there are no disk images, no memory dumps, and no event logs you can collect yourself. Everything comes from API queries against Microsoft's log stores, several of which require E5 licensing or advanced audit to retain what you need. Knowing which logs exist, which ones are missing, and how long they last is half the investigation.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Business email compromise (BEC) -- unauthorized mailbox access, forwarding, or impersonation</li>
 <li>Entra ID account compromise -- suspicious sign-ins, token replay, credential stuffing</li>
@@ -49,7 +61,7 @@
 <li>Azure AD sign-in anomalies -- impossible travel, legacy auth, anonymizer networks</li>
 <li>Conditional Access or MFA tampering -- policy changes, MFA fatigue attacks</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Broader incident response methodology</strong> -- use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
 <li><strong>Offensive testing of Entra ID</strong> -- use <a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a></li>
@@ -58,14 +70,34 @@
 <li><strong>Other cloud infrastructure (GCP, offensive testing)</strong> -- use <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
 <li><strong>Building detection rules from findings</strong> -- use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
 </ul>
-<h2>Log Landscape and Retention</h2>
+<h2 id="log-landscape-and-retention">Log Landscape and Retention</h2>
 <p>Before you query anything, establish what you have and how far back it goes. Missing logs are a finding, not a reason to skip the question.</p>
 <div class="tw"><table><thead><tr><th>Log source</th><th>Retention (default)</th><th>License gate</th><th>Key operations</th></tr></thead><tbody><tr><td>Unified Audit Log (UAL)</td><td>180d default; 1 year for E5-licensed users</td><td>MailItemsAccessed requires E5</td><td>MailItemsAccessed, New-InboxRule, Set-Mailbox, consent grants</td></tr><tr><td>Entra ID sign-in logs</td><td>30d</td><td>Export to Log Analytics for longer</td><td>Sign-in events, CA evaluation, MFA results</td></tr><tr><td>Entra ID audit logs</td><td>30d</td><td>None</td><td>Role assignments, app registrations, credential changes</td></tr><tr><td>Identity Protection</td><td>30d</td><td>Requires P2</td><td>Risky sign-ins, risk detections</td></tr><tr><td>Defender for Cloud Apps</td><td>180d</td><td>Requires MDCA license</td><td>Activity log, OAuth app inventory</td></tr><tr><td>Mailbox audit log</td><td>90d (on by default)</td><td>MailItemsAccessed requires E5</td><td>Mail access, send-as, delegate ops</td></tr></tbody></table></div>
 <p><strong>Get the retention right before you conclude anything from a gap.</strong> Since 17 October 2023 the Audit (Standard) default is <strong>180 days</strong>, not the 90 days most older material still cites — records generated <em>before</em> that date kept the old 90-day window. One year is the default only for users holding an E5 (or Purview Audit add-on) licence, and even then only for Exchange, SharePoint, OneDrive, and Entra ID. An E3 tenant therefore has 180 days of UAL and no <code>MailItemsAccessed</code>, and cannot extend retention in-product.</p>
 <p>Retention is per-user by licence, not per-tenant: in a mixed tenant the same query can return a year of history for an E5 custodian and 180 days for the E3 account next to them. Confirm the licence on the account you are investigating before you read an empty result as "no activity". State that gap explicitly. Check SIEM or Log Analytics for extended retention.</p>
-<h2>Unified Audit Log (UAL)</h2>
+<h2 id="unified-audit-log-ual">Unified Audit Log (UAL)</h2>
 <p>The UAL is the single richest data source. Every investigation starts here.</p>
-<pre><code>Connect-ExchangeOnline -UserPrincipalName admin@tenant.onmicrosoft.com
+<div class="codeblk cx"><button class="copy" data-copy="Connect-ExchangeOnline -UserPrincipalName admin@tenant.onmicrosoft.com
+
+# Basic search -- always constrain by date and user
+Search-UnifiedAuditLog -StartDate &quot;2026-07-01&quot; -EndDate &quot;2026-07-20&quot; `
+  -UserIds compromised@contoso.com -ResultSize 5000
+
+# Search specific operations
+Search-UnifiedAuditLog -StartDate &quot;2026-07-01&quot; -EndDate &quot;2026-07-20&quot; `
+  -Operations &quot;New-InboxRule&quot;,&quot;Set-InboxRule&quot;,&quot;Set-Mailbox&quot;,&quot;Add-MailboxPermission&quot; `
+  -ResultSize 5000
+
+# MailItemsAccessed (E5 only)
+Search-UnifiedAuditLog -StartDate &quot;2026-07-01&quot; -EndDate &quot;2026-07-20&quot; `
+  -Operations MailItemsAccessed -UserIds compromised@contoso.com -ResultSize 5000
+
+# Export -- AuditData field is JSON, expand it
+Search-UnifiedAuditLog -StartDate &quot;2026-07-01&quot; -EndDate &quot;2026-07-20&quot; `
+  -UserIds compromised@contoso.com -ResultSize 5000 |
+  Select-Object CreationDate, UserIds, Operations,
+    @{N=&#x27;AuditData&#x27;;E={$_.AuditData | ConvertFrom-Json | ConvertTo-Json -Depth 10}} |
+  Export-Csv -Path .\ual_export.csv -NoTypeInformation">copy</button><pre><code>Connect-ExchangeOnline -UserPrincipalName admin@tenant.onmicrosoft.com
 
 # Basic search -- always constrain by date and user
 Search-UnifiedAuditLog -StartDate "2026-07-01" -EndDate "2026-07-20" `
@@ -85,11 +117,11 @@ Search-UnifiedAuditLog -StartDate "2026-07-01" -EndDate "2026-07-20" `
   -UserIds compromised@contoso.com -ResultSize 5000 |
   Select-Object CreationDate, UserIds, Operations,
     @{N='AuditData';E={$_.AuditData | ConvertFrom-Json | ConvertTo-Json -Depth 10}} |
-  Export-Csv -Path .\ual_export.csv -NoTypeInformation</code></pre>
+  Export-Csv -Path .\ual_export.csv -NoTypeInformation</code></pre></div>
 <h3>Key UAL operations</h3>
 <div class="tw"><table><thead><tr><th>Operation</th><th>Significance</th></tr></thead><tbody><tr><td>MailItemsAccessed</td><td>Bind = single item read, Sync = bulk download. Bulk sync is the BEC exfiltration indicator.</td></tr><tr><td>New-InboxRule / Set-InboxRule</td><td>Rules hiding replies or forwarding. Check for keyword targets: "invoice", "payment", "security".</td></tr><tr><td>Set-Mailbox</td><td>ForwardingSMTPAddress or ForwardingAddress changed -- silent external forwarding.</td></tr><tr><td>Add-MailboxPermission</td><td>FullAccess or SendAs delegation -- persistence.</td></tr><tr><td>Consent to application</td><td>OAuth grant. AuditData contains the permissions.</td></tr><tr><td>Add service principal credentials</td><td>New secret/certificate on an app registration.</td></tr><tr><td>HardDelete / SoftDelete</td><td>Evidence destruction -- attacker deleting sent items.</td></tr></tbody></table></div>
 <p>The UAL caps at 50,000 results per query. Narrow the date range if you hit it.</p>
-<h2>Entra ID Sign-In Analysis</h2>
+<h2 id="entra-id-sign-in-analysis">Entra ID Sign-In Analysis</h2>
 <p>Query sign-in logs and look for:</p>
 <ul>
 <li><strong>Impossible travel</strong> -- distant locations within an impossible timeframe</li>
@@ -98,7 +130,20 @@ Search-UnifiedAuditLog -StartDate "2026-07-01" -EndDate "2026-07-20" `
 <li><strong>Token replay</strong> -- same correlation ID from different source IPs</li>
 <li><strong>Anomalous user agents</strong> -- Python requests, PowerShell hitting OWA or Graph</li>
 </ul>
-<pre><code>// Sign-ins from the compromised account
+<div class="codeblk cx"><button class="copy" data-copy="// Sign-ins from the compromised account
+SigninLogs
+| where UserPrincipalName == &quot;compromised@contoso.com&quot;
+| where TimeGenerated &gt; ago(30d)
+| project TimeGenerated, AppDisplayName, IPAddress, Location,
+    ClientAppUsed, ResultType, AuthenticationRequirement, MfaDetail, RiskState
+| order by TimeGenerated asc
+
+// Legacy auth sign-ins that bypass MFA
+SigninLogs
+| where ClientAppUsed in (&quot;IMAP4&quot;, &quot;POP3&quot;, &quot;SMTP&quot;, &quot;Exchange ActiveSync&quot;,
+    &quot;MAPI Over HTTP&quot;, &quot;Outlook Anywhere&quot;, &quot;Exchange Web Services&quot;)
+| where ResultType == 0
+| summarize count() by UserPrincipalName, ClientAppUsed, IPAddress">copy</button><pre><code>// Sign-ins from the compromised account
 SigninLogs
 | where UserPrincipalName == "compromised@contoso.com"
 | where TimeGenerated &gt; ago(30d)
@@ -111,7 +156,7 @@ SigninLogs
 | where ClientAppUsed in ("IMAP4", "POP3", "SMTP", "Exchange ActiveSync",
     "MAPI Over HTTP", "Outlook Anywhere", "Exchange Web Services")
 | where ResultType == 0
-| summarize count() by UserPrincipalName, ClientAppUsed, IPAddress</code></pre>
+| summarize count() by UserPrincipalName, ClientAppUsed, IPAddress</code></pre></div>
 <h3>MFA analysis</h3>
 <ul>
 <li><strong>ResultType 50074</strong> -- MFA required, not completed</li>
@@ -119,9 +164,22 @@ SigninLogs
 <li><strong>AuthenticationRequirement = singleFactorAuthentication</strong> -- MFA not required (CA gap)</li>
 <li>Check <code>MfaDetail</code> -- push acceptance after repeated prompts = MFA fatigue</li>
 </ul>
-<h2>OAuth and Consent Grant Investigation</h2>
+<h2 id="oauth-and-consent-grant-investigation">OAuth and Consent Grant Investigation</h2>
 <p>Illicit consent grants are the most-missed persistence in M365 compromise.</p>
-<pre><code>Connect-MgGraph -Scopes "Application.Read.All","Directory.Read.All"
+<div class="codeblk cx"><button class="copy" data-copy="Connect-MgGraph -Scopes &quot;Application.Read.All&quot;,&quot;Directory.Read.All&quot;
+
+# Delegated permission grants -- look for Mail.Read, Files.ReadWrite, etc.
+Get-MgOauth2PermissionGrant -All | Where-Object {
+    $_.Scope -match &quot;Mail.Read|Mail.ReadWrite|Files.ReadWrite|User.Read.All&quot;
+} | Format-Table ClientId, ConsentType, Scope, PrincipalId
+
+# Application permission assignments
+Get-MgServicePrincipal -All | ForEach-Object {
+    $sp = $_
+    Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $sp.Id -ErrorAction SilentlyContinue |
+    Select-Object @{N=&#x27;AppName&#x27;;E={$sp.DisplayName}}, @{N=&#x27;AppId&#x27;;E={$sp.AppId}},
+                  PrincipalDisplayName, @{N=&#x27;Created&#x27;;E={$_.CreatedDateTime}}
+}">copy</button><pre><code>Connect-MgGraph -Scopes "Application.Read.All","Directory.Read.All"
 
 # Delegated permission grants -- look for Mail.Read, Files.ReadWrite, etc.
 Get-MgOauth2PermissionGrant -All | Where-Object {
@@ -134,12 +192,12 @@ Get-MgServicePrincipal -All | ForEach-Object {
     Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $sp.Id -ErrorAction SilentlyContinue |
     Select-Object @{N='AppName';E={$sp.DisplayName}}, @{N='AppId';E={$sp.AppId}},
                   PrincipalDisplayName, @{N='Created';E={$_.CreatedDateTime}}
-}</code></pre>
+}</code></pre></div>
 <div class="tw"><table><thead><tr><th>Permission</th><th>Risk</th></tr></thead><tbody><tr><td>Mail.Read / Mail.ReadWrite</td><td>Email exfiltration. Suspicious on unknown apps.</td></tr><tr><td>Files.ReadWrite.All</td><td>Full SharePoint/OneDrive access.</td></tr><tr><td>Directory.ReadWrite.All</td><td>Can modify users, groups, roles.</td></tr><tr><td>full_access_as_app</td><td>Exchange app-level mailbox access -- almost never legitimate for third parties.</td></tr></tbody></table></div>
 <p>Distinguish delegated consent (one user's data) from admin consent (tenant-wide). Admin consent to a malicious app exposes every user.</p>
-<h2>Mailbox Rule Forensics</h2>
+<h2 id="mailbox-rule-forensics">Mailbox Rule Forensics</h2>
 <p>Inbox rules persist after password resets. Always check them.</p>
-<pre><code># Inbox rules
+<div class="codeblk cx"><button class="copy" data-copy="# Inbox rules
 Get-InboxRule -Mailbox compromised@contoso.com |
   Select-Object Name, Enabled, MoveToFolder, DeleteMessage, ForwardTo,
     RedirectTo, MarkAsRead | Format-List
@@ -159,10 +217,39 @@ Get-TransportRule | Where-Object { $_.RedirectMessageTo -or $_.BlindCopyTo } |
 
 # Delegate access
 Get-MailboxPermission -Identity compromised@contoso.com |
-  Where-Object { $_.User -ne "NT AUTHORITY\SELF" -and -not $_.IsInherited }</code></pre>
+  Where-Object { $_.User -ne &quot;NT AUTHORITY\SELF&quot; -and -not $_.IsInherited }">copy</button><pre><code># Inbox rules
+Get-InboxRule -Mailbox compromised@contoso.com |
+  Select-Object Name, Enabled, MoveToFolder, DeleteMessage, ForwardTo,
+    RedirectTo, MarkAsRead | Format-List
+
+# Mailbox-level forwarding
+Get-Mailbox -Identity compromised@contoso.com |
+  Select-Object ForwardingSMTPAddress, ForwardingAddress, DeliverToMailboxAndForward
+
+# All mailboxes with external forwarding
+Get-Mailbox -ResultSize Unlimited |
+  Where-Object { $_.ForwardingSMTPAddress -ne $null } |
+  Select-Object UserPrincipalName, ForwardingSMTPAddress
+
+# Transport rules
+Get-TransportRule | Where-Object { $_.RedirectMessageTo -or $_.BlindCopyTo } |
+  Select-Object Name, State, RedirectMessageTo, BlindCopyTo
+
+# Delegate access
+Get-MailboxPermission -Identity compromised@contoso.com |
+  Where-Object { $_.User -ne "NT AUTHORITY\SELF" -and -not $_.IsInherited }</code></pre></div>
 <p>Red flags: rules targeting keywords ("security", "password", "MFA"), rules deleting or moving to RSS Feeds / Conversation History, blank-named rules, forwarding to free email providers, rules created after the first suspicious sign-in.</p>
-<h2>eDiscovery and Content Search</h2>
-<pre><code>Connect-IPPSSession -UserPrincipalName admin@tenant.onmicrosoft.com
+<h2 id="ediscovery-and-content-search">eDiscovery and Content Search</h2>
+<div class="codeblk cx"><button class="copy" data-copy="Connect-IPPSSession -UserPrincipalName admin@tenant.onmicrosoft.com
+
+# Preserve mailbox content -- do this early
+Set-Mailbox -Identity compromised@contoso.com -LitigationHoldEnabled $true
+
+# Search outbound mail from compromised account
+New-ComplianceSearch -Name &quot;IR-2026-042 Outbound&quot; `
+  -ExchangeLocation compromised@contoso.com `
+  -ContentMatchQuery &quot;sent&gt;=2026-07-01 AND sent&lt;=2026-07-20&quot;
+Start-ComplianceSearch -Identity &quot;IR-2026-042 Outbound&quot;">copy</button><pre><code>Connect-IPPSSession -UserPrincipalName admin@tenant.onmicrosoft.com
 
 # Preserve mailbox content -- do this early
 Set-Mailbox -Identity compromised@contoso.com -LitigationHoldEnabled $true
@@ -171,10 +258,32 @@ Set-Mailbox -Identity compromised@contoso.com -LitigationHoldEnabled $true
 New-ComplianceSearch -Name "IR-2026-042 Outbound" `
   -ExchangeLocation compromised@contoso.com `
   -ContentMatchQuery "sent&gt;=2026-07-01 AND sent&lt;=2026-07-20"
-Start-ComplianceSearch -Identity "IR-2026-042 Outbound"</code></pre>
+Start-ComplianceSearch -Identity "IR-2026-042 Outbound"</code></pre></div>
 <p>Place litigation holds before retention policies or the attacker can purge evidence.</p>
-<h2>Azure AD Audit Log Analysis</h2>
-<pre><code>// Role assignments
+<h2 id="azure-ad-audit-log-analysis">Azure AD Audit Log Analysis</h2>
+<div class="codeblk cx"><button class="copy" data-copy="// Role assignments
+AuditLogs
+| where OperationName == &quot;Add member to role&quot;
+| extend TargetUser = tostring(TargetResources[0].userPrincipalName),
+         RoleName = tostring(TargetResources[0].modifiedProperties[1].newValue)
+| project TimeGenerated, InitiatedBy, TargetUser, RoleName
+
+// Service principal credential changes (persistence)
+AuditLogs
+| where OperationName in (&quot;Add service principal credentials&quot;,
+    &quot;Update application - Certificates and secrets management&quot;)
+| project TimeGenerated, InitiatedBy, TargetResources
+
+// Conditional Access policy changes
+AuditLogs
+| where OperationName has &quot;conditional access&quot;
+| project TimeGenerated, OperationName, InitiatedBy, Result
+
+// MFA method changes (attacker registering their own factor)
+AuditLogs
+| where OperationName in (&quot;User registered security info&quot;,
+    &quot;Admin registered security info&quot;, &quot;User deleted security info&quot;)
+| project TimeGenerated, OperationName, InitiatedBy, TargetResources">copy</button><pre><code>// Role assignments
 AuditLogs
 | where OperationName == "Add member to role"
 | extend TargetUser = tostring(TargetResources[0].userPrincipalName),
@@ -196,36 +305,78 @@ AuditLogs
 AuditLogs
 | where OperationName in ("User registered security info",
     "Admin registered security info", "User deleted security info")
-| project TimeGenerated, OperationName, InitiatedBy, TargetResources</code></pre>
+| project TimeGenerated, OperationName, InitiatedBy, TargetResources</code></pre></div>
 <p>Attackers with Application Admin or Global Admin can add credentials to existing app registrations for persistent, MFA-independent access:</p>
-<pre><code>Get-MgApplication -All | ForEach-Object {
+<div class="codeblk cx"><button class="copy" data-copy="Get-MgApplication -All | ForEach-Object {
+    $app = $_
+    $app.PasswordCredentials + $app.KeyCredentials | Where-Object {
+        $_.StartDateTime -gt (Get-Date).AddDays(-30)
+    } | Select-Object @{N=&#x27;App&#x27;;E={$app.DisplayName}}, @{N=&#x27;AppId&#x27;;E={$app.AppId}},
+                      StartDateTime, EndDateTime
+}">copy</button><pre><code>Get-MgApplication -All | ForEach-Object {
     $app = $_
     $app.PasswordCredentials + $app.KeyCredentials | Where-Object {
         $_.StartDateTime -gt (Get-Date).AddDays(-30)
     } | Select-Object @{N='App';E={$app.DisplayName}}, @{N='AppId';E={$app.AppId}},
                       StartDateTime, EndDateTime
-}</code></pre>
-<h2>Timeline Construction</h2>
+}</code></pre></div>
+<h2 id="timeline-construction">Timeline Construction</h2>
 <p>Correlate across the three primary log sources:</p>
-<pre><code>Sign-in logs  --&gt;  When and where the attacker authenticated
+<div class="codeblk cx"><button class="copy" data-copy="Sign-in logs  --&gt;  When and where the attacker authenticated
 Audit logs    --&gt;  Configuration changes they made
-UAL           --&gt;  Data they accessed or modified</code></pre>
+UAL           --&gt;  Data they accessed or modified">copy</button><pre><code>Sign-in logs  --&gt;  When and where the attacker authenticated
+Audit logs    --&gt;  Configuration changes they made
+UAL           --&gt;  Data they accessed or modified</code></pre></div>
 <ol>
 <li>Anchor on the earliest suspicious sign-in</li>
 <li>Pull sign-in, UAL, and audit events for that user +/- 7 days</li>
 <li>Merge into a single UTC timeline</li>
 <li>Look for the pattern: sign-in, reconnaissance, persistence (rule/forwarding/OAuth), action on objectives</li>
 </ol>
-<pre><code>UTC Timestamp        | Source  | Event                                    | Detail
+<div class="codeblk cx"><button class="copy" data-copy="UTC Timestamp        | Source  | Event                                    | Detail
+2026-07-12 08:41:22  | SignIn  | Sign-in from 198.51.x.x                  | Nigeria, no MFA
+2026-07-12 08:42:05  | UAL     | MailItemsAccessed (Sync)                 | 847 items via Graph
+2026-07-12 08:43:18  | UAL     | New-InboxRule &quot;.&quot;                        | Delete &quot;security alert&quot;
+2026-07-12 08:44:01  | UAL     | Set-Mailbox                              | ForwardingSMTPAddress set
+2026-07-12 08:45:33  | UAL     | Consent to application                   | Mail.Read, Mail.Send
+2026-07-12 09:12:44  | UAL     | Send (SendAs)                            | Invoice redirect to vendor">copy</button><pre><code>UTC Timestamp        | Source  | Event                                    | Detail
 2026-07-12 08:41:22  | SignIn  | Sign-in from 198.51.x.x                  | Nigeria, no MFA
 2026-07-12 08:42:05  | UAL     | MailItemsAccessed (Sync)                 | 847 items via Graph
 2026-07-12 08:43:18  | UAL     | New-InboxRule "."                        | Delete "security alert"
 2026-07-12 08:44:01  | UAL     | Set-Mailbox                              | ForwardingSMTPAddress set
 2026-07-12 08:45:33  | UAL     | Consent to application                   | Mail.Read, Mail.Send
-2026-07-12 09:12:44  | UAL     | Send (SendAs)                            | Invoice redirect to vendor</code></pre>
-<h2>Containment</h2>
+2026-07-12 09:12:44  | UAL     | Send (SendAs)                            | Invoice redirect to vendor</code></pre></div>
+<h2 id="containment">Containment</h2>
 <p>Execute simultaneously once scoping is complete. Partial containment alerts the attacker.</p>
-<pre><code># Revoke sessions and reset credentials
+<div class="codeblk cx"><button class="copy" data-copy="# Revoke sessions and reset credentials
+Revoke-MgUserSignInSession -UserId compromised@contoso.com
+Update-MgUser -UserId compromised@contoso.com -PasswordProfile @{
+    Password = (New-Guid).Guid + &quot;!Aa1&quot;; ForceChangePasswordNextSignIn = $true }
+
+# Disable account if active compromise is ongoing
+Update-MgUser -UserId compromised@contoso.com -AccountEnabled:$false
+
+# Remove attacker inbox rules
+Get-InboxRule -Mailbox compromised@contoso.com |
+  Where-Object { $_.Name -match &quot;^\.$|^$&quot; -or $_.DeleteMessage -eq $true } |
+  Remove-InboxRule -Confirm:$false
+
+# Remove forwarding
+Set-Mailbox -Identity compromised@contoso.com `
+  -ForwardingSMTPAddress $null -ForwardingAddress $null `
+  -DeliverToMailboxAndForward $false
+
+# Remove unauthorized delegate access
+Get-MailboxPermission -Identity compromised@contoso.com |
+  Where-Object { $_.User -ne &quot;NT AUTHORITY\SELF&quot; -and -not $_.IsInherited } |
+  ForEach-Object { Remove-MailboxPermission -Identity compromised@contoso.com `
+    -User $_.User -AccessRights $_.AccessRights -Confirm:$false }
+
+# Block malicious OAuth app
+$sp = Get-MgServicePrincipal -Filter &quot;appId eq &#x27;&lt;malicious-app-id&gt;&#x27;&quot;
+Update-MgServicePrincipal -ServicePrincipalId $sp.Id -AccountEnabled:$false
+Get-MgOauth2PermissionGrant -Filter &quot;clientId eq &#x27;$($sp.Id)&#x27;&quot; |
+  Remove-MgOauth2PermissionGrant">copy</button><pre><code># Revoke sessions and reset credentials
 Revoke-MgUserSignInSession -UserId compromised@contoso.com
 Update-MgUser -UserId compromised@contoso.com -PasswordProfile @{
     Password = (New-Guid).Guid + "!Aa1"; ForceChangePasswordNextSignIn = $true }
@@ -253,9 +404,9 @@ Get-MailboxPermission -Identity compromised@contoso.com |
 $sp = Get-MgServicePrincipal -Filter "appId eq '&lt;malicious-app-id&gt;'"
 Update-MgServicePrincipal -ServicePrincipalId $sp.Id -AccountEnabled:$false
 Get-MgOauth2PermissionGrant -Filter "clientId eq '$($sp.Id)'" |
-  Remove-MgOauth2PermissionGrant</code></pre>
+  Remove-MgOauth2PermissionGrant</code></pre></div>
 <p>Session revocation alone is insufficient -- tokens may remain valid up to one hour. Disable the account for immediate lockout. After containment, verify: no forwarding remains, no unknown delegates, no unknown OAuth grants, no attacker-registered MFA methods, no service principal credentials from the compromise window.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"We reset the password, so the account is secure."</em> Refresh tokens, OAuth</li>
 </ul>
@@ -284,12 +435,15 @@ Get-MgOauth2PermissionGrant -Filter "clientId eq '$($sp.Id)'" |
 <li><em>"Logs only go back 30 days, so the compromise started within that window."</em></li>
 </ul>
 <p>That is your visibility limit, not the attacker's timeline. Document the limitation and check SIEM for extended retention.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> -- broader IR methodology and evidence handling</li>
 <li><a class="xref" href="attacking-entra-id.html"><code>attacking-entra-id</code></a> -- offensive Entra ID techniques, useful for understanding attacker methods</li>
 <li><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> -- cloud infrastructure attacks beyond M365</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- building detection rules from investigation findings</li>
 <li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> -- proactive hunting in M365 and Entra ID telemetry</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#log-landscape-and-retention">Log Landscape and Retention</a><a href="#unified-audit-log-ual">Unified Audit Log (UAL)</a><a href="#entra-id-sign-in-analysis">Entra ID Sign-In Analysis</a><a href="#oauth-and-consent-grant-investigation">OAuth and Consent Grant Investigation</a><a href="#mailbox-rule-forensics">Mailbox Rule Forensics</a><a href="#ediscovery-and-content-search">eDiscovery and Content Search</a><a href="#azure-ad-audit-log-analysis">Azure AD Audit Log Analysis</a><a href="#timeline-construction">Timeline Construction</a><a href="#containment">Containment</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

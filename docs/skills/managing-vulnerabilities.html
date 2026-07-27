@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,12 +47,13 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Prioritize and drive remediation of a vulnerability backlog by real risk, not raw CVSS — combining severity with exploitation signals (EPSS, CISA KEV), asset exposure and business context, using SSVC-style decisions, distinguishing reachable from merely present, and tracking remediation and exceptions. Use when triaging scanner output, deciding what to patch first, building a risk-based vulnerability management process, or explaining why a critical CVE is not the top priority.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>A scanner returns ten thousand findings, most rated High or Critical, and the team can patch a few hundred a month. Vulnerability management is the function that decides <em>which</em> few hundred — and the default of "sort by CVSS descending" is close to the worst possible order, because CVSS measures theoretical severity, not the probability that this vulnerability, on this asset, gets exploited.</p>
+<div class="wrap slayout"><article><p>A scanner returns ten thousand findings, most rated High or Critical, and the team can patch a few hundred a month. Vulnerability management is the function that decides <em>which</em> few hundred — and the default of "sort by CVSS descending" is close to the worst possible order, because CVSS measures theoretical severity, not the probability that this vulnerability, on this asset, gets exploited.</p>
 <p>The whole discipline is turning an undifferentiated backlog into a defensible order of operations that a limited team can actually execute.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Triaging vulnerability scanner output into a remediation order</li>
 <li>Deciding what to patch first under a fixed remediation budget</li>
@@ -49,7 +61,7 @@
 <li>Explaining why a CVSS 9.8 is not this week's top priority</li>
 <li>Deciding whether a finding warrants an exception rather than a fix</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li>**Working a security <em>alert</em> queue** (EDR/SIEM detections) — use</li>
 </ul>
@@ -65,10 +77,10 @@
 <ul>
 <li><strong>Exploiting a vulnerability to prove it</strong> — use the relevant offensive skill</li>
 </ul>
-<h2>CVSS Is Severity, Not Priority</h2>
+<h2 id="cvss-is-severity-not-priority">CVSS Is Severity, Not Priority</h2>
 <p>CVSS base score answers "how bad is this if exploited, in the abstract?" It does not answer "will it be exploited here?" — which is the question remediation order actually turns on. The evidence is stark: the large majority of CVEs are never exploited in the wild, yet most are scored High or Critical. Sorting by CVSS spends the team's finite capacity on vulnerabilities that will never be attacked while genuinely exploited ones wait behind them.</p>
 <p>Use CVSS 4.0 as one input — the severity term — and combine it with signals that speak to <em>probability</em> and <em>impact-here</em>.</p>
-<h2>The Three Signals to Combine</h2>
+<h2 id="the-three-signals-to-combine">The Three Signals to Combine</h2>
 <h3>1. Is it being exploited? — EPSS and KEV</h3>
 <ul>
 <li><strong>CISA KEV (Known Exploited Vulnerabilities).</strong> A curated catalog of CVEs</li>
@@ -100,10 +112,10 @@
 <p>An internet-facing, unauthenticated, KEV-listed RCE and an internal, authenticated, same-CVSS bug are not the same priority, whatever the score says.</p>
 <h3>3. What does it protect? — asset value</h3>
 <p>The same vulnerability on a domain controller, a crown-jewel database, and a developer's throwaway VM warrants three different urgencies. Tie the finding to asset criticality; a vulnerability management programme without an asset inventory is ranking blind.</p>
-<h2>Decide with SSVC, Not a Single Number</h2>
+<h2 id="decide-with-ssvc-not-a-single-number">Decide with SSVC, Not a Single Number</h2>
 <p>Rather than collapsing everything into one score, a decision-tree approach (SSVC — Stakeholder-Specific Vulnerability Categorization) asks the questions above in order and lands on an action: **exploitation status → exposure → automatable → impact → {track / track\* / attend / act}.** The value is that each decision is <em>explainable</em> to the team doing the work and to the risk owner signing the exceptions, in a way "it scored 8.7" never is.</p>
 <p>Whatever the framing, the output must be an <strong>ordered, executable list with owners and dates</strong>, not a risk score. The programme's product is patched systems, not a dashboard.</p>
-<h2>Track Remediation and Exceptions Honestly</h2>
+<h2 id="track-remediation-and-exceptions-honestly">Track Remediation and Exceptions Honestly</h2>
 <ul>
 <li><strong>A finding is open until verified fixed</strong>, not until a ticket is closed.</li>
 </ul>
@@ -116,7 +128,7 @@
 <li><strong>Recurrence is a process finding.</strong> The same vulnerability returning after a</li>
 </ul>
 <p>fix means the base image, the golden template, or the pipeline is reintroducing it — fix the source, not the instance, the same way cloud guardrails beat point-fixes.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"It's a 9.8, so it's top priority."</em> CVSS is severity, not probability of</li>
 </ul>
@@ -145,7 +157,7 @@
 <li><em>"It's an accepted risk."</em> Accepted by whom, reviewed when? An exception with</li>
 </ul>
 <p>no owner and no expiry is an unmanaged vulnerability wearing a label.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="triaging-security-alerts.html"><code>triaging-security-alerts</code></a> — the detected-activity counterpart to this</li>
 </ul>
@@ -160,5 +172,8 @@
 <p>software CVEs</p>
 <ul>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — communicating prioritized risk to owners</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#cvss-is-severity-not-priority">CVSS Is Severity, Not Priority</a><a href="#the-three-signals-to-combine">The Three Signals to Combine</a><a href="#decide-with-ssvc-not-a-single-number">Decide with SSVC, Not a Single Number</a><a href="#track-remediation-and-exceptions-honestly">Track Remediation and Exceptions Honestly</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

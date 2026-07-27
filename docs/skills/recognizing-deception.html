@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,13 +47,14 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Recognize defensive deception during an engagement — honeypots, honeytokens and canary tokens, decoy AD accounts and shares, canary files, and deceptive cloud credentials — before interacting with them, and handle a suspected decoy without burning the engagement. Use when a target is unexpectedly easy, when credentials or a service appear in an implausible place, when a privileged account has no logon history, when a file or bucket looks like bait, or when deciding whether to use credentials of unknown provenance.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Every other skill in this collection assumes the environment is telling you the truth. Deception technology exists specifically to break that assumption, and it is the failure mode an automated or semi-automated tester is least equipped to catch.</p>
+<div class="wrap slayout"><article><p>Every other skill in this collection assumes the environment is telling you the truth. Deception technology exists specifically to break that assumption, and it is the failure mode an automated or semi-automated tester is least equipped to catch.</p>
 <p>The distinction that matters: careful evidence-handling protects you against conclusions <em>you</em> invented. It does nothing against a false belief the environment deliberately planted. A honeypot presenting a convincingly vulnerable service produces real banners, real responses, and real artifacts. Every verification step you would normally run confirms it, because the evidence is genuine — it was manufactured to be.</p>
 <p>Assume competent defenders have planted something. Your job is to notice before you touch it, because <strong>most deception fires on first use, and first use cannot be undone.</strong></p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Anything is markedly easier than the rest of the environment</li>
 <li>Credentials turn up somewhere convenient — a share, a wiki, a config, a</li>
@@ -58,7 +70,7 @@
 <ul>
 <li>Before authenticating with anything recovered from an unexpected location</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Evading detection generally</strong> — that is engagement OPSEC, not deception</li>
 </ul>
@@ -75,11 +87,11 @@
 <li><strong>A finding that is merely surprising</strong> — real environments contain real</li>
 </ul>
 <p>misconfigurations; see the base-rate discussion below before crying honeypot</p>
-<h2>The Economics Are Against You</h2>
+<h2 id="the-economics-are-against-you">The Economics Are Against You</h2>
 <p>Deception is cheap to deploy and expensive to trip:</p>
 <div class="tw"><table><thead><tr><th></th><th>Attacker cost</th><th>Defender benefit</th></tr></thead><tbody><tr><td>Canary token in a document</td><td>One click to trigger</td><td>High-fidelity alert, near-zero false positives</td></tr><tr><td>Honeyuser in AD</td><td>One Kerberoast</td><td>Alert plus a cracked-password timeline</td></tr><tr><td>Decoy AWS key</td><td>One <code>sts get-caller-identity</code></td><td>Alert with your source IP and user agent</td></tr><tr><td>Honeypot service</td><td>One connection</td><td>Full interaction capture, your tooling fingerprinted</td></tr></tbody></table></div>
 <p>A canary alert is one of the very few signals a SOC treats as automatically true. There is no benign explanation to hide behind, and the alert carries your source address and often your tooling's fingerprint. Tripping one typically ends the covert phase of an engagement immediately.</p>
-<h2>Signals, By Type</h2>
+<h2 id="signals-by-type">Signals, By Type</h2>
 <h3>Honeytokens and canary tokens</h3>
 <p>The highest-frequency class, and the one that fires on <em>use</em> rather than on discovery. Common forms: AWS keys, Office documents with a callback, DNS tokens, URL tokens, cloned-website tokens, SQL Server rows, Windows directories, Kubeconfig files.</p>
 <p>Signals:</p>
@@ -136,7 +148,7 @@
 <li>IAM users with permissive-looking policies and no CloudTrail history</li>
 <li>Resources tagged inconsistently with the rest of the account</li>
 </ul>
-<h2>Base Rates Cut Both Ways</h2>
+<h2 id="base-rates-cut-both-ways">Base Rates Cut Both Ways</h2>
 <p>Real environments are genuinely bad. Credentials really do sit in shares, service accounts really are Kerberoastable, and buckets really are public. If you label every finding a honeypot you will report nothing and miss the actual compromise path.</p>
 <p>The discriminator is <strong>supporting context, not attractiveness</strong>:</p>
 <ul>
@@ -147,7 +159,7 @@
 <li>A decoy is <em>isolated</em>. It exists to be found and nothing else uses it.</li>
 </ul>
 <p>So the question is never "is this too good to be true?" It is: <strong>what else in this environment depends on this thing existing?</strong> If the answer is nothing, slow down.</p>
-<h2>What To Do With a Suspected Decoy</h2>
+<h2 id="what-to-do-with-a-suspected-decoy">What To Do With a Suspected Decoy</h2>
 <ol>
 <li><strong>Do not authenticate, connect, or call the API.</strong> Discovery is usually</li>
 </ol>
@@ -169,7 +181,7 @@
 </ol>
 <p>known, declared cause is an engagement note. The same alert investigated as a live intrusion burns the client's IR capacity and your credibility. Concealing it is the actual serious mistake.</p>
 <p>Deception in the environment is a <strong>positive finding</strong> worth reporting: it means the defenders invested in high-fidelity detection. Say so.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"It was in scope, so using it was fine."</em> Scope governs authorization, not</li>
 </ul>
@@ -198,7 +210,7 @@
 <li><em>"Reporting that I tripped it makes me look bad."</em> Tripping deception is a</li>
 </ul>
 <p>normal engagement event. Hiding it and letting the SOC chase a phantom intrusion is a professional failure.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="maintaining-engagement-state.html"><code>maintaining-engagement-state</code></a> — recording provenance, which is what makes</li>
 </ul>
@@ -211,5 +223,8 @@
 <ul>
 <li><a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a> — canary files and folders are commonly placed</li>
 </ul>
-<p>where persistence is written</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>where persistence is written</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#the-economics-are-against-you">The Economics Are Against You</a><a href="#signals-by-type">Signals, By Type</a><a href="#base-rates-cut-both-ways">Base Rates Cut Both Ways</a><a href="#what-to-do-with-a-suspected-decoy">What To Do With a Suspected Decoy</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

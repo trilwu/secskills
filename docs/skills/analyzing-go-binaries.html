@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Reverse engineer Go binaries by recovering function names and types from pclntab and moduledata using GoReSym, redress, and IDA/Ghidra Go plugins, and by reading Go&#x27;s non-standard calling convention, interface dispatch, and string layout. Use when a binary contains Go runtime strings, when strings show runtime.main or go:buildid, when a stripped binary is unexpectedly large, or when analyzing Go malware or a Go-based service.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Go binaries look hostile — statically linked, tens of megabytes, no imports you recognize, and "stripped" in a way that makes tools show thousands of <code>sub_</code> functions. They are not. Go ships its own symbol table for runtime reflection and panic traces, and <code>strip</code> does not remove it. Recover it and the binary becomes one of the easiest targets there is.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Go binaries look hostile — statically linked, tens of megabytes, no imports you recognize, and "stripped" in a way that makes tools show thousands of <code>sub_</code> functions. They are not. Go ships its own symbol table for runtime reflection and panic traces, and <code>strip</code> does not remove it. Recover it and the binary becomes one of the easiest targets there is.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li><code>strings</code> shows <code>runtime.main</code>, <code>go:buildid</code>, <code>go.buildinfo</code>, or</li>
 </ul>
@@ -49,7 +60,7 @@
 <li>The disassembler shows thousands of unnamed functions and unreadable strings</li>
 <li>Analyzing Go malware, a Go CLI tool, or a compiled Go service</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Rust binaries</strong> — use <a class="xref" href="analyzing-rust-binaries.html"><code>analyzing-rust-binaries</code></a>; the symbol recovery is</li>
 </ul>
@@ -62,14 +73,16 @@
 <ul>
 <li><strong>General native RE</strong> — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></li>
 </ul>
-<h2>Confirm It Is Go, and Which Version</h2>
-<pre><code>strings -n 6 target | rg -m5 'go1\.[0-9]+|go:buildid|runtime\.main|GOROOT'
+<h2 id="confirm-it-is-go-and-which-version">Confirm It Is Go, and Which Version</h2>
+<div class="codeblk cx"><button class="copy" data-copy="strings -n 6 target | rg -m5 &#x27;go1\.[0-9]+|go:buildid|runtime\.main|GOROOT&#x27;
 go version target                     # works on unstripped and many stripped builds
-go version -m target                  # module list and build settings — free SBOM</code></pre>
+go version -m target                  # module list and build settings — free SBOM">copy</button><pre><code>strings -n 6 target | rg -m5 'go1\.[0-9]+|go:buildid|runtime\.main|GOROOT'
+go version target                     # works on unstripped and many stripped builds
+go version -m target                  # module list and build settings — free SBOM</code></pre></div>
 <p><code>go version -m</code> is the highest-value first command. It prints the module dependency graph with versions, which gives you the third-party libraries in use before you disassemble anything — often answering the question outright (which HTTP library, which crypto, which C2 framework).</p>
 <p>The Go version matters because <code>pclntab</code> layout changed at 1.2, 1.16, 1.18, and 1.20. Tooling that fails is usually version mismatch, not a hardened binary.</p>
-<h2>Recover Symbols</h2>
-<pre><code># GoReSym — extracts pclntab, moduledata, types, and build info
+<h2 id="recover-symbols">Recover Symbols</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# GoReSym — extracts pclntab, moduledata, types, and build info
 GoReSym -t -d -p target &gt; syms.json
 #   -t  user type metadata
 #   -d  include standard library
@@ -83,21 +96,36 @@ redress types target
 # Load into the disassembler
 #   IDA:    AlphaGolang, golang_loader_assist, or the GoReSym IDA script
 #   Ghidra: GolangAnalyzerExtension, or gotools
-#   Binja:  the Golang loader plugin</code></pre>
+#   Binja:  the Golang loader plugin">copy</button><pre><code># GoReSym — extracts pclntab, moduledata, types, and build info
+GoReSym -t -d -p target &gt; syms.json
+#   -t  user type metadata
+#   -d  include standard library
+#   -p  paths
+
+# redress — Go-aware analysis, works well when GoReSym struggles
+redress info target
+redress symbols target
+redress types target
+
+# Load into the disassembler
+#   IDA:    AlphaGolang, golang_loader_assist, or the GoReSym IDA script
+#   Ghidra: GolangAnalyzerExtension, or gotools
+#   Binja:  the Golang loader plugin</code></pre></div>
 <p>After applying symbols, functions carry their real names — <code>main.processRequest</code>, <code>crypto/tls.(*Conn).Handshake</code>, <code>github.com/vendor/pkg.Function</code>. <strong>Filter to <code>main.*</code> and to third-party module paths.</strong> Everything under <code>runtime.</code>, <code>internal/</code>, and the standard library is stock and is 90%+ of the function count.</p>
-<pre><code>jq -r '.UserFunctions[].FunctionName' syms.json | rg -v '^(runtime|internal|reflect|sync)\.' | head -40</code></pre>
-<h2>Reading Go Code in a Disassembler</h2>
+<div class="codeblk cx"><button class="copy" data-copy="jq -r &#x27;.UserFunctions[].FunctionName&#x27; syms.json | rg -v &#x27;^(runtime|internal|reflect|sync)\.&#x27; | head -40">copy</button><pre><code>jq -r '.UserFunctions[].FunctionName' syms.json | rg -v '^(runtime|internal|reflect|sync)\.' | head -40</code></pre></div>
+<h2 id="reading-go-code-in-a-disassembler">Reading Go Code in a Disassembler</h2>
 <p>Four things make Go listings confusing until you know them:</p>
 <p><strong>Strings have no terminator.</strong> Go strings are a pointer plus a length, so <code>strings</code> output runs adjacent literals together and the disassembler shows a pointer load followed by a length constant. Look for the pair — the constant next to the pointer is the length, and that is how you slice the correct substring out of the blob.</p>
 <p><strong>Calling convention.</strong> Before Go 1.17 all arguments and return values went on the stack, not in registers. From 1.17 a register ABI applies on amd64/arm64. A decompiler configured for the C convention will show wrong arguments; Go-aware plugins fix this, and it is the main reason decompiler output looks nonsensical.</p>
 <p><strong>Interface dispatch.</strong> Calls through an interface go via an <code>itab</code> — a table holding the concrete type and its method pointers. To resolve a call target, find the <code>itab</code> being loaded, then read the concrete type. Type recovery tools name these, which turns an indirect call into a readable one.</p>
 <p><strong>Goroutines and defers.</strong> <code>go f()</code> compiles to <code>runtime.newproc</code> with <code>f</code> as an argument, so concurrent logic does not appear as a direct call. <code>defer</code> becomes <code>runtime.deferproc</code>/<code>deferreturn</code>, which scatters cleanup code away from where it was written. When following control flow, check <code>newproc</code> call sites for work you would otherwise miss entirely.</p>
-<h2>Type Recovery</h2>
+<h2 id="type-recovery">Type Recovery</h2>
 <p>Go embeds full type descriptors for reflection. That means struct field names and layouts are recoverable — including the JSON tags that map straight to a wire protocol.</p>
-<pre><code>redress types target | rg -A10 'type main\.'
-# Struct tags like `json:"api_key"` recover the exact protocol field names</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="redress types target | rg -A10 &#x27;type main\.&#x27;
+# Struct tags like `json:&quot;api_key&quot;` recover the exact protocol field names">copy</button><pre><code>redress types target | rg -A10 'type main\.'
+# Struct tags like `json:"api_key"` recover the exact protocol field names</code></pre></div>
 <p>This is the fastest route to a Go service's API surface or a Go implant's C2 message format: recover the request and response structs, and you have the protocol without reading a single instruction.</p>
-<h2>Go-Specific Security Review</h2>
+<h2 id="go-specific-security-review">Go-Specific Security Review</h2>
 <p>If the job is finding bugs rather than understanding behaviour, the Go-specific classes worth targeting:</p>
 <ul>
 <li><strong>Ignored errors.</strong> <code>_ =</code> on a function returning an error, especially</li>
@@ -117,7 +145,7 @@ redress types target
 <li><strong><code>os/exec</code> with a shell</strong>, or with an argument built from input.</li>
 </ul>
 <p>With source available, use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> and <code>govulncheck</code>; the above is for when you only have the binary.</p>
-<h2>Go Malware Notes</h2>
+<h2 id="go-malware-notes">Go Malware Notes</h2>
 <p>Go is common in cross-platform implants, and it leaves useful artifacts:</p>
 <ul>
 <li><strong>Module list from <code>go version -m</code></strong> identifies the frameworks used —</li>
@@ -136,7 +164,7 @@ redress types target
 </ul>
 <p><code>moduledata</code>. When GoReSym and redress both fail on a sample that is otherwise clearly Go, treat that as an evasion indicator worth reporting — and fall back to scanning for the type descriptors directly.</p>
 <p>Hand IOC and detection output to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> and <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"It's stripped, so there are no symbols."</em> <code>strip</code> does not remove</li>
 </ul>
@@ -161,11 +189,14 @@ redress types target
 <li><em>"I need to trace every goroutine."</em> Find <code>runtime.newproc</code> call sites and</li>
 </ul>
 <p>read the function passed to them.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — general triage and dynamic analysis around this</li>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment and IOC extraction for Go samples</li>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the Go bug-class checklist when source exists</li>
 <li>GoReSym, redress, AlphaGolang, GolangAnalyzerExtension, <code>go version -m</code></li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#confirm-it-is-go-and-which-version">Confirm It Is Go, and Which Version</a><a href="#recover-symbols">Recover Symbols</a><a href="#reading-go-code-in-a-disassembler">Reading Go Code in a Disassembler</a><a href="#type-recovery">Type Recovery</a><a href="#go-specific-security-review">Go-Specific Security Review</a><a href="#go-malware-notes">Go Malware Notes</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

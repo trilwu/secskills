@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
   </div>
   <p class="sdesc">Investigate a compromised or suspicious Windows host from on-disk artifacts -- triage collection, evidence of execution (Prefetch, Amcache, Shimcache, SRUM, UserAssist, BAM), the event-log workhorses by ID (Security 4624/4688/4720/7045/1102, Sysmon, PowerShell 4104, RDP, WMI), persistence hunting across every autostart, lateral-movement traces, $MFT/USN filesystem forensics, anti-forensics detection, and building a super-timeline with the Eric Zimmerman suite, Chainsaw, Hayabusa, and Plaso. Use when triaging a compromised or suspicious Windows host, working through EVTX/Sysmon logs, reconstructing what executed on a Windows machine, hunting persistence and lateral-movement traces, or analyzing a KAPE/triage collection.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Windows records execution, persistence, and access in dozens of artifacts the attacker rarely cleans completely. The event logs are only the surface -- the registry, prefetch, amcache, and the file-system journals corroborate or contradict them. The investigation is cross-referencing independent artifacts into one timeline that no single cleared log can defeat.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Windows records execution, persistence, and access in dozens of artifacts the attacker rarely cleans completely. The event logs are only the surface -- the registry, prefetch, amcache, and the file-system journals corroborate or contradict them. The investigation is cross-referencing independent artifacts into one timeline that no single cleared log can defeat.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Triaging a compromised or suspicious Windows host, live or from an image</li>
 <li>Working through a KAPE, Velociraptor, or EDR triage collection</li>
@@ -49,7 +61,7 @@
 <li>Hunting persistence and lateral-movement traces across the endpoint</li>
 <li>Detecting timestomping, log clears, and other on-host anti-forensics</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>The host is Linux</strong> -- use <a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a></li>
 <li><strong>You need the overall IR process and multi-host coordination</strong> -- use</li>
@@ -71,10 +83,10 @@
 <li><strong>You are the attacker on the host, not the responder</strong> -- use</li>
 </ul>
 <p><a class="xref" href="escalating-windows-privileges.html"><code>escalating-windows-privileges</code></a></p>
-<h2>Triage Collection First</h2>
+<h2 id="triage-collection-first">Triage Collection First</h2>
 <p>Do not analyze the live disk in place. Collect a triage set, hash it, and work on the copy. For most incidents a targeted triage collection answers the question faster than a full image; image only the hosts that matter.</p>
 <p><strong>Dead vs. live acquisition.</strong> A powered-off host or a mounted disk image is a dead acquisition -- consistent, but you lose running processes, network state, and unflushed logs. A live host lets you capture volatile state (memory, <code>netstat -anob</code>, <code>Get-NetTCPConnection</code>, <code>tasklist /svc</code>) but every action mutates the disk; record what you touch. Capture memory first if the host is live and "are they still here" is open, then hand it to <a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a>.</p>
-<pre><code>:: KAPE targeted triage -- the fastest way to a defensible artifact set
+<div class="codeblk cx"><button class="copy" data-copy=":: KAPE targeted triage -- the fastest way to a defensible artifact set
 kape.exe --tsource C: --target !SANS_Triage --tdest E:\out\host01 --vhdx host01
 :: Broader coverage: registry hives, event logs, $MFT/$J, browser, prefetch
 kape.exe --tsource C: --target KapeTriage,RegistryHives,EventLogs,FileSystem ^
@@ -82,10 +94,18 @@ kape.exe --tsource C: --target KapeTriage,RegistryHives,EventLogs,FileSystem ^
 
 :: Then run the parsers (Modules) over what you collected
 kape.exe --msource E:\out\host01 --mdest E:\out\host01\parsed ^
-  --module !EZParser</code></pre>
+  --module !EZParser">copy</button><pre><code>:: KAPE targeted triage -- the fastest way to a defensible artifact set
+kape.exe --tsource C: --target !SANS_Triage --tdest E:\out\host01 --vhdx host01
+:: Broader coverage: registry hives, event logs, $MFT/$J, browser, prefetch
+kape.exe --tsource C: --target KapeTriage,RegistryHives,EventLogs,FileSystem ^
+  --tdest E:\out\host01
+
+:: Then run the parsers (Modules) over what you collected
+kape.exe --msource E:\out\host01 --mdest E:\out\host01\parsed ^
+  --module !EZParser</code></pre></div>
 <p>Velociraptor (<code>Windows.KapeFiles.Targets</code>) collects the same set at fleet scale over an agent. Whatever the tool, verify hashes before and after every copy.</p>
 <p><strong>Key artifact directories</strong> to make sure your collection contains:</p>
-<pre><code>C:\Windows\System32\winevt\Logs\          Event logs (.evtx)
+<div class="codeblk cx"><button class="copy" data-copy="C:\Windows\System32\winevt\Logs\          Event logs (.evtx)
 C:\Windows\System32\config\               Registry hives: SYSTEM, SOFTWARE, SAM, SECURITY
 C:\Users\&lt;u&gt;\NTUSER.DAT                    Per-user registry hive
 C:\Users\&lt;u&gt;\AppData\Local\Microsoft\Windows\UsrClass.dat   Shellbags, COM
@@ -94,10 +114,34 @@ C:\Windows\appcompat\Programs\Amcache.hve  Amcache
 C:\Windows\System32\sru\SRUDB.dat          SRUM
 C:\Windows\System32\Tasks\                 Scheduled task XML
 C:\$MFT  C:\$Extend\$UsnJrnl  C:\$LogFile  Filesystem journals
-C:\$Recycle.Bin\                           Deleted-file $I records</code></pre>
-<h2>Evidence of Execution</h2>
+C:\$Recycle.Bin\                           Deleted-file $I records">copy</button><pre><code>C:\Windows\System32\winevt\Logs\          Event logs (.evtx)
+C:\Windows\System32\config\               Registry hives: SYSTEM, SOFTWARE, SAM, SECURITY
+C:\Users\&lt;u&gt;\NTUSER.DAT                    Per-user registry hive
+C:\Users\&lt;u&gt;\AppData\Local\Microsoft\Windows\UsrClass.dat   Shellbags, COM
+C:\Windows\Prefetch\                       *.pf execution evidence
+C:\Windows\appcompat\Programs\Amcache.hve  Amcache
+C:\Windows\System32\sru\SRUDB.dat          SRUM
+C:\Windows\System32\Tasks\                 Scheduled task XML
+C:\$MFT  C:\$Extend\$UsnJrnl  C:\$LogFile  Filesystem journals
+C:\$Recycle.Bin\                           Deleted-file $I records</code></pre></div>
+<h2 id="evidence-of-execution">Evidence of Execution</h2>
 <p>Multiple independent artifacts record that a binary ran. Cross-reference them -- agreement raises confidence, disagreement is itself a finding.</p>
-<pre><code>:: Prefetch -- run count, first/last run, files/dirs the binary touched.
+<div class="codeblk cx"><button class="copy" data-copy=":: Prefetch -- run count, first/last run, files/dirs the binary touched.
+:: Absent on most Servers; disabled on SSD-only systems -- note that, don&#x27;t assume.
+PECmd.exe -d C:\Windows\Prefetch --csv E:\out\parsed -q
+
+:: Amcache -- SHA-1 of executed/present binaries, compile times, driver load
+AmcacheParser.exe -f C:\Windows\appcompat\Programs\Amcache.hve ^
+  --csv E:\out\parsed -i
+
+:: Shimcache / AppCompatCache (SYSTEM hive) -- path + last-modified; presence
+:: means the file was seen, NOT necessarily executed. Order is roughly LRU.
+AppCompatCacheParser.exe -f C:\Windows\System32\config\SYSTEM --csv E:\out\parsed
+
+:: SRUM -- per-process bytes sent/received and CPU over 30-60 days.
+:: Ties an executable to network volume even when netflow is gone.
+SrumECmd.exe -f C:\Windows\System32\sru\SRUDB.dat ^
+  -r C:\Windows\System32\config\SOFTWARE --csv E:\out\parsed">copy</button><pre><code>:: Prefetch -- run count, first/last run, files/dirs the binary touched.
 :: Absent on most Servers; disabled on SSD-only systems -- note that, don't assume.
 PECmd.exe -d C:\Windows\Prefetch --csv E:\out\parsed -q
 
@@ -112,12 +156,15 @@ AppCompatCacheParser.exe -f C:\Windows\System32\config\SYSTEM --csv E:\out\parse
 :: SRUM -- per-process bytes sent/received and CPU over 30-60 days.
 :: Ties an executable to network volume even when netflow is gone.
 SrumECmd.exe -f C:\Windows\System32\sru\SRUDB.dat ^
-  -r C:\Windows\System32\config\SOFTWARE --csv E:\out\parsed</code></pre>
+  -r C:\Windows\System32\config\SOFTWARE --csv E:\out\parsed</code></pre></div>
 <p>From the user (NTUSER.DAT / UsrClass.dat) hives, parse GUI-execution and file-access evidence with <code>RECmd</code>:</p>
-<pre><code>:: UserAssist (GUI program launches, run count, focus time),
+<div class="codeblk cx"><button class="copy" data-copy=":: UserAssist (GUI program launches, run count, focus time),
 :: BAM/DAM (background/desktop activity moderator: last-run per exe per SID),
 :: RecentDocs, and RunMRU in one pass with the bundled batch file
-RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed</code></pre>
+RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed">copy</button><pre><code>:: UserAssist (GUI program launches, run count, focus time),
+:: BAM/DAM (background/desktop activity moderator: last-run per exe per SID),
+:: RecentDocs, and RunMRU in one pass with the bundled batch file
+RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed</code></pre></div>
 <ul>
 <li><strong>Jump Lists</strong> (<code>...\Recent\AutomaticDestinations\*.automaticDestinations-ms</code>)</li>
 </ul>
@@ -125,7 +172,7 @@ RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed</c
 <ul>
 <li><strong>RecentDocs</strong> and shellbags (below) show what folders and files were opened.</li>
 </ul>
-<h2>The Event-Log Workhorses</h2>
+<h2 id="the-event-log-workhorses">The Event-Log Workhorses</h2>
 <p>Parse EVTX first with a triage engine (Chainsaw / Hayabusa, below), then pivot into specific channels. The IDs that carry the most weight:</p>
 <p><strong>Security</strong> (<code>Security.evtx</code>):</p>
 <ul>
@@ -172,7 +219,7 @@ RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed</c
 <p>Switching, not a fresh logon -- that is 4624). <strong>1149</strong> in <code>TerminalServices-RemoteConnectionManager</code> (auth succeeded -- user + source IP). <strong>21/22/25</strong> in <code>TerminalServices-LocalSessionManager</code> (logon, shell start, reconnect).</p>
 <p><strong>WMI</strong> (<code>Microsoft-Windows-WMI-Activity/Operational</code>): <strong>5857</strong> provider loaded, <strong>5858</strong> operation error, <strong>5859-5861</strong> permanent event-subscription registration -- WMI persistence.</p>
 <p><strong>Task Scheduler</strong> (<code>Microsoft-Windows-TaskScheduler/Operational</code>): <strong>106</strong> task registered, <strong>140</strong> updated, <strong>141</strong> deleted, <strong>200/201</strong> action executed/completed -- corroborates Security 4698.</p>
-<h2>Persistence Hunting</h2>
+<h2 id="persistence-hunting">Persistence Hunting</h2>
 <p>Sweep every autostart, not the handful your tool checks by default. This is the defensive mirror of <a class="xref" href="establishing-persistence.html"><code>establishing-persistence</code></a> -- read that skill for how each mechanism is planted, then hunt for the traces here.</p>
 <ul>
 <li><strong>Run keys</strong> -- <code>...\Software\Microsoft\Windows\CurrentVersion\Run</code> and</li>
@@ -211,11 +258,14 @@ RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed</c
 <li><strong>BITS jobs</strong> -- <code>bitsadmin /list /allusers /verbose</code> or parse</li>
 </ul>
 <p><code>...\Microsoft\Network\Downloader\qmgr*.dat</code> for download-and-execute jobs.</p>
-<pre><code>:: Autoruns from Sysinternals, offline against a mounted image, VirusTotal + verify
+<div class="codeblk cx"><button class="copy" data-copy=":: Autoruns from Sysinternals, offline against a mounted image, VirusTotal + verify
+autorunsc.exe -accepteula -a * -h -s -c -o autoruns.csv &quot;\\?\E:\mount&quot;
+:: RECmd has batch files that dump every autostart location from the hives
+RECmd.exe -d E:\out\host01 --bn BatchExamples\RegistryASEPs.reb --csv E:\out\parsed">copy</button><pre><code>:: Autoruns from Sysinternals, offline against a mounted image, VirusTotal + verify
 autorunsc.exe -accepteula -a * -h -s -c -o autoruns.csv "\\?\E:\mount"
 :: RECmd has batch files that dump every autostart location from the hives
-RECmd.exe -d E:\out\host01 --bn BatchExamples\RegistryASEPs.reb --csv E:\out\parsed</code></pre>
-<h2>Lateral-Movement Traces</h2>
+RECmd.exe -d E:\out\host01 --bn BatchExamples\RegistryASEPs.reb --csv E:\out\parsed</code></pre></div>
+<h2 id="lateral-movement-traces">Lateral-Movement Traces</h2>
 <p>Movement leaves paired artifacts on source and destination. Correlate by time, account, and source IP.</p>
 <ul>
 <li><strong>Network logons</strong> -- destination Security <strong>4624 Type 3</strong> (SMB/admin</li>
@@ -237,13 +287,17 @@ RECmd.exe -d E:\out\host01 --bn BatchExamples\RegistryASEPs.reb --csv E:\out\par
 <li><strong>SMB / file staging</strong> -- 5140/5145 and <code>$MFT</code> entries for tools dropped to</li>
 </ul>
 <p>the destination.</p>
-<h2>Filesystem Forensics</h2>
+<h2 id="filesystem-forensics">Filesystem Forensics</h2>
 <p>The NTFS metadata files are the ground truth the attacker is least likely to scrub, and the timestomp check that no cleared log defeats.</p>
-<pre><code>:: $MFT -- every file's four SI + four FN timestamps, parent, size, resident data
+<div class="codeblk cx"><button class="copy" data-copy=":: $MFT -- every file&#x27;s four SI + four FN timestamps, parent, size, resident data
+MFTECmd.exe -f &quot;E:\out\host01\$MFT&quot; --csv E:\out\parsed
+:: USN change journal -- creates/deletes/renames even after the file is gone
+MFTECmd.exe -f &quot;E:\out\host01\$Extend\$J&quot; --csv E:\out\parsed
+:: $LogFile -- transactional, can recover changes the USN rolled past">copy</button><pre><code>:: $MFT -- every file's four SI + four FN timestamps, parent, size, resident data
 MFTECmd.exe -f "E:\out\host01\$MFT" --csv E:\out\parsed
 :: USN change journal -- creates/deletes/renames even after the file is gone
 MFTECmd.exe -f "E:\out\host01\$Extend\$J" --csv E:\out\parsed
-:: $LogFile -- transactional, can recover changes the USN rolled past</code></pre>
+:: $LogFile -- transactional, can recover changes the USN rolled past</code></pre></div>
 <ul>
 <li><strong>Timestomp detection.</strong> <code>$STANDARD_INFORMATION</code> times are settable from</li>
 </ul>
@@ -264,7 +318,7 @@ MFTECmd.exe -f "E:\out\host01\$Extend\$J" --csv E:\out\parsed
 <li><strong>Alternate Data Streams</strong> -- <code>dir /r</code>, <code>Get-Item -Stream *</code>;</li>
 </ul>
 <p><code>Zone.Identifier</code> marks downloaded files (mark-of-the-web) and named streams hide payloads.</p>
-<h2>Browser and Account Artifacts</h2>
+<h2 id="browser-and-account-artifacts">Browser and Account Artifacts</h2>
 <ul>
 <li><strong>Browser history / downloads</strong> -- Chrome/Edge <code>History</code> (SQLite,</li>
 </ul>
@@ -277,7 +331,7 @@ MFTECmd.exe -f "E:\out\host01\$Extend\$J" --csv E:\out\parsed
 <li><strong>RDP cache / bitmaps</strong> (<code>...\Terminal Server Client\Cache\*.bmc</code>) can</li>
 </ul>
 <p>reconstruct what an interactive intruder saw.</p>
-<h2>Anti-Forensics Detection</h2>
+<h2 id="anti-forensics-detection">Anti-Forensics Detection</h2>
 <p>Cleanup is signal, not silence. Hunt the traces of it:</p>
 <ul>
 <li><strong>Log clears</strong> -- Security <strong>1102</strong> (Security log cleared) and System <strong>104</strong></li>
@@ -294,20 +348,28 @@ MFTECmd.exe -f "E:\out\host01\$Extend\$J" --csv E:\out\parsed
 </ul>
 <p>config change, or a v2 PowerShell downgrade to dodge script-block logging.</p>
 <p>State every such gap explicitly in the timeline as a limitation -- never let a cleared log become an implicit "nothing happened."</p>
-<h2>Building the Super-Timeline</h2>
+<h2 id="building-the-super-timeline">Building the Super-Timeline</h2>
 <p>Fast triage first, then the full timeline. Normalize everything to <strong>UTC</strong>, cite the source artifact on every row, and separate observed from inferred.</p>
-<pre><code>:: Chainsaw -- fast EVTX triage with built-in + Sigma rules, minutes not hours
+<div class="codeblk cx"><button class="copy" data-copy=":: Chainsaw -- fast EVTX triage with built-in + Sigma rules, minutes not hours
 chainsaw hunt E:\out\host01\...\winevt\Logs -s sigma\ ^
   --mapping mappings\sigma-event-logs-all.yml -r rules\ --csv -o chainsaw_out
 
 :: Hayabusa -- EVTX -&gt; single timeline scored by severity, Sigma-backed
-hayabusa.exe csv-timeline -d E:\out\host01\...\winevt\Logs -o hayabusa.csv -p verbose</code></pre>
-<pre><code># Plaso -- ingest the whole triage set (or image) into one storage file...
+hayabusa.exe csv-timeline -d E:\out\host01\...\winevt\Logs -o hayabusa.csv -p verbose">copy</button><pre><code>:: Chainsaw -- fast EVTX triage with built-in + Sigma rules, minutes not hours
+chainsaw hunt E:\out\host01\...\winevt\Logs -s sigma\ ^
+  --mapping mappings\sigma-event-logs-all.yml -r rules\ --csv -o chainsaw_out
+
+:: Hayabusa -- EVTX -&gt; single timeline scored by severity, Sigma-backed
+hayabusa.exe csv-timeline -d E:\out\host01\...\winevt\Logs -o hayabusa.csv -p verbose</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="# Plaso -- ingest the whole triage set (or image) into one storage file...
 log2timeline.py --storage-file plaso.db E:\out\host01
 # ...then filter and export the super-timeline
-psort.py -o l2tcsv -w super.csv plaso.db "date &gt; '2026-07-01 00:00:00'"</code></pre>
+psort.py -o l2tcsv -w super.csv plaso.db &quot;date &gt; &#x27;2026-07-01 00:00:00&#x27;&quot;">copy</button><pre><code># Plaso -- ingest the whole triage set (or image) into one storage file...
+log2timeline.py --storage-file plaso.db E:\out\host01
+# ...then filter and export the super-timeline
+psort.py -o l2tcsv -w super.csv plaso.db "date &gt; '2026-07-01 00:00:00'"</code></pre></div>
 <p>Load the parsed CSVs (EZ Tools output, Chainsaw, psort) into <strong>Timeline Explorer</strong> to pivot, tag, and color across artifacts in one grid. The Eric Zimmerman suite -- <strong>PECmd, AmcacheParser, AppCompatCacheParser, SrumECmd, MFTECmd, RECmd, SBECmd, JLECmd, LECmd, RBCmd</strong> -- plus <strong>Chainsaw / Hayabusa</strong> for EVTX and <strong>Plaso</strong> for the union timeline is the core toolchain. Write detections for what you find with <a class="xref" href="writing-sigma-rules.html"><code>writing-sigma-rules</code></a>; hand the narrative to <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a>.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The Security log was cleared, so we're blind."</em> Sysmon, Prefetch, Amcache,</li>
 </ul>
@@ -336,7 +398,7 @@ psort.py -o l2tcsv -w super.csv plaso.db "date &gt; '2026-07-01 00:00:00'"</code
 <li><em>"PowerShell was obfuscated, so we can't read it."</em> Script-block logging</li>
 </ul>
 <p>(4104) records the <em>deobfuscated</em> content Windows actually executed. If 4104 is missing, that gap points to a v2 downgrade -- itself a finding.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a> -- the same host-forensic sweep for Linux</li>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> -- the IR process and multi-host coordination this</li>
@@ -358,5 +420,8 @@ psort.py -o l2tcsv -w super.csv plaso.db "date &gt; '2026-07-01 00:00:00'"</code
 <li>Plaso / log2timeline -- super-timeline generation</li>
 <li>Autoruns (Sysinternals) -- autostart enumeration</li>
 <li>Velociraptor -- endpoint triage collection at scale</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#triage-collection-first">Triage Collection First</a><a href="#evidence-of-execution">Evidence of Execution</a><a href="#the-event-log-workhorses">The Event-Log Workhorses</a><a href="#persistence-hunting">Persistence Hunting</a><a href="#lateral-movement-traces">Lateral-Movement Traces</a><a href="#filesystem-forensics">Filesystem Forensics</a><a href="#browser-and-account-artifacts">Browser and Account Artifacts</a><a href="#anti-forensics-detection">Anti-Forensics Detection</a><a href="#building-the-super-timeline">Building the Super-Timeline</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-26</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

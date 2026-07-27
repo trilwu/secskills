@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Reverse engineer Xamarin and .NET MAUI mobile apps by extracting assemblies.blob and XALZ-compressed DLLs with pyxamstore, then decompiling with dnSpy or ILSpy. Use when an APK contains libmonodroid.so, libmonosgen, assemblies.blob, assemblies/*.dll, or libxamarin-app.so, when an IPA contains Mono assemblies, or when jadx shows only Xamarin bootstrap classes.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Xamarin apps hide a complete .NET application inside an Android package. Once you extract and decompress the assemblies you get near-source-quality C#, which makes this one of the highest-return reversing jobs — but only if you get past the container format, which changed twice and defeats naive unzipping.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Xamarin apps hide a complete .NET application inside an Android package. Once you extract and decompress the assemblies you get near-source-quality C#, which makes this one of the highest-return reversing jobs — but only if you get past the container format, which changed twice and defeats naive unzipping.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>The APK contains <code>lib/*/libmonodroid.so</code>, <code>libmonosgen-2.0.so</code>, or</li>
 </ul>
@@ -50,7 +61,7 @@
 <li>An IPA contains <code>.dll</code> files or a <code>Frameworks/Mono*</code> layout</li>
 <li>The target is described as Xamarin, Xamarin.Forms, or .NET MAUI</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Unity</strong> (<code>global-metadata.dat</code>, <code>libil2cpp.so</code>) — use <a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a>;</li>
 </ul>
@@ -63,16 +74,35 @@
 <li><strong>TLS interception problems</strong> — use <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a></li>
 <li><strong>The wider assessment</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
 </ul>
-<h2>Identify the Packaging Generation</h2>
+<h2 id="identify-the-packaging-generation">Identify the Packaging Generation</h2>
 <p>Three formats shipped over the product's life, and the extraction differs.</p>
-<pre><code>unzip -l target.apk | rg 'assemblies|libmonodroid|libxamarin|libmonosgen'</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="unzip -l target.apk | rg &#x27;assemblies|libmonodroid|libxamarin|libmonosgen&#x27;">copy</button><pre><code>unzip -l target.apk | rg 'assemblies|libmonodroid|libxamarin|libmonosgen'</code></pre></div>
 <div class="tw"><table><thead><tr><th>What you see</th><th>Generation</th><th>Extraction</th></tr></thead><tbody><tr><td><code>assemblies/*.dll</code>, readable PE headers (<code>MZ</code>)</td><td>Classic, uncompressed</td><td>Unzip and decompile directly</td></tr><tr><td><code>assemblies/*.dll</code> starting with <code>XALZ</code></td><td>Classic, LZ4-compressed</td><td>Decompress the XALZ wrapper first</td></tr><tr><td><code>assemblies/assemblies.blob</code> + <code>.manifest</code></td><td>AssemblyStore</td><td><code>pyxamstore</code> to unpack</td></tr><tr><td><code>lib/*/libxamarin-app.so</code> with no <code>assemblies/</code></td><td>.NET 6+ / MAUI, assemblies in the ELF</td><td>Extract from the shared library</td></tr><tr><td>No managed assemblies anywhere</td><td>NativeAOT</td><td>Not .NET reversing — use <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a></td></tr></tbody></table></div>
-<pre><code># Which one is it? Check the first four bytes of an assembly
+<div class="codeblk cx"><button class="copy" data-copy="# Which one is it? Check the first four bytes of an assembly
+unzip -p target.apk &#x27;assemblies/Mono.Android.dll&#x27; 2&gt;/dev/null | xxd | head -1
+# 4d5a...  → MZ, a plain .NET PE, decompile now
+# 58414c5a → &quot;XALZ&quot;, LZ4-compressed, decompress first">copy</button><pre><code># Which one is it? Check the first four bytes of an assembly
 unzip -p target.apk 'assemblies/Mono.Android.dll' 2&gt;/dev/null | xxd | head -1
 # 4d5a...  → MZ, a plain .NET PE, decompile now
-# 58414c5a → "XALZ", LZ4-compressed, decompress first</code></pre>
-<h2>Extraction</h2>
-<pre><code># AssemblyStore (assemblies.blob)
+# 58414c5a → "XALZ", LZ4-compressed, decompress first</code></pre></div>
+<h2 id="extraction">Extraction</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# AssemblyStore (assemblies.blob)
+pyxamstore unpack -d ./out target.apk
+# produces the individual .dll files under ./out
+
+# XALZ-compressed individual DLLs
+# The header is: magic &quot;XALZ&quot; | descriptor index | uncompressed size | LZ4 block
+python3 -c &quot;
+import lz4.block, struct, sys
+d = open(sys.argv[1],&#x27;rb&#x27;).read()
+assert d[:4] == b&#x27;XALZ&#x27;
+size = struct.unpack(&#x27;&lt;I&#x27;, d[8:12])[0]
+open(sys.argv[2],&#x27;wb&#x27;).write(lz4.block.decompress(d[12:], uncompressed_size=size))
+&quot; Mono.Android.dll Mono.Android.decompressed.dll
+
+# MAUI / .NET 6+ assemblies embedded in libxamarin-app.so
+# They are stored as sections; carve by MZ header or use pyxamstore&#x27;s newer modes
+unzip -j target.apk &#x27;lib/arm64-v8a/*&#x27; -d libs &amp;&amp; binwalk -Me libs/libxamarin-app.so">copy</button><pre><code># AssemblyStore (assemblies.blob)
 pyxamstore unpack -d ./out target.apk
 # produces the individual .dll files under ./out
 
@@ -88,26 +118,34 @@ open(sys.argv[2],'wb').write(lz4.block.decompress(d[12:], uncompressed_size=size
 
 # MAUI / .NET 6+ assemblies embedded in libxamarin-app.so
 # They are stored as sections; carve by MZ header or use pyxamstore's newer modes
-unzip -j target.apk 'lib/arm64-v8a/*' -d libs &amp;&amp; binwalk -Me libs/libxamarin-app.so</code></pre>
+unzip -j target.apk 'lib/arm64-v8a/*' -d libs &amp;&amp; binwalk -Me libs/libxamarin-app.so</code></pre></div>
 <p>Once you have plain <code>.dll</code> files it is ordinary .NET work:</p>
-<pre><code>ilspycmd ./out/YourApp.dll -o ./decompiled     # or dnSpy / dnSpyEx / dotPeek
-rg -n 'https?://|ApiKey|ConnectionString|Bearer|password' ./decompiled | head -40</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="ilspycmd ./out/YourApp.dll -o ./decompiled     # or dnSpy / dnSpyEx / dotPeek
+rg -n &#x27;https?://|ApiKey|ConnectionString|Bearer|password&#x27; ./decompiled | head -40">copy</button><pre><code>ilspycmd ./out/YourApp.dll -o ./decompiled     # or dnSpy / dnSpyEx / dotPeek
+rg -n 'https?://|ApiKey|ConnectionString|Bearer|password' ./decompiled | head -40</code></pre></div>
 <p><strong>Start with the app's own assembly</strong>, not the framework ones. It is usually named after the product; <code>Mono.Android.dll</code>, <code>System.*</code>, and <code>Xamarin.*</code> are stock and waste your time.</p>
-<h2>Runtime Hooking</h2>
+<h2 id="runtime-hooking">Runtime Hooking</h2>
 <p>Frida's Java bridge does not see Mono methods — the app's logic is not in the JVM. You need Mono-aware instrumentation.</p>
-<pre><code># Enumerate the Mono runtime and its loaded assemblies
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate the Mono runtime and its loaded assemblies
 frida -U -f com.target.app -l frida-mono-api.js
 # Fridax targets Xamarin specifically; also useful:
 #   mono_get_root_domain, mono_assembly_foreach, mono_class_get_methods,
 #   mono_compile_method  → resolve a managed method to a native address, then
-#   Interceptor.attach at that address</code></pre>
+#   Interceptor.attach at that address">copy</button><pre><code># Enumerate the Mono runtime and its loaded assemblies
+frida -U -f com.target.app -l frida-mono-api.js
+# Fridax targets Xamarin specifically; also useful:
+#   mono_get_root_domain, mono_assembly_foreach, mono_class_get_methods,
+#   mono_compile_method  → resolve a managed method to a native address, then
+#   Interceptor.attach at that address</code></pre></div>
 <p>The practical route: decompile first, find the exact class and method you want, then resolve it through the Mono API and attach. Blind hooking of Mono is far slower than reading the C# you already recovered.</p>
 <p><strong>Certificate validation in Xamarin lives in managed code</strong>, which is why generic Android pinning bypasses miss it entirely:</p>
-<pre><code>// The two hook targets, both in the managed layer
+<div class="codeblk cx"><button class="copy" data-copy="// The two hook targets, both in the managed layer
 ServicePointManager.ServerCertificateValidationCallback
-HttpClientHandler.ServerCertificateCustomValidationCallback</code></pre>
+HttpClientHandler.ServerCertificateCustomValidationCallback">copy</button><pre><code>// The two hook targets, both in the managed layer
+ServicePointManager.ServerCertificateValidationCallback
+HttpClientHandler.ServerCertificateCustomValidationCallback</code></pre></div>
 <p>Force these to return <code>true</code> via Mono hooking, or patch the assembly and repack. See <a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> for the surrounding diagnosis.</p>
-<h2>Where the Findings Are</h2>
+<h2 id="where-the-findings-are">Where the Findings Are</h2>
 <p>Xamarin apps concentrate risk in ways that are easy to spot once decompiled:</p>
 <ul>
 <li><strong>Hardcoded secrets in C#.</strong> Developers treat compiled assemblies as opaque;</li>
@@ -128,12 +166,14 @@ HttpClientHandler.ServerCertificateCustomValidationCallback</code></pre>
 <ul>
 <li><strong>Embedded SQLite</strong> with credentials or full offline datasets.</li>
 </ul>
-<h2>Patching and Repacking</h2>
-<pre><code># Edit IL directly in dnSpy, save the assembly, then rebuild the container
+<h2 id="patching-and-repacking">Patching and Repacking</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Edit IL directly in dnSpy, save the assembly, then rebuild the container
 pyxamstore pack -d ./out          # rebuild assemblies.blob
-apktool b target -o patched.apk &amp;&amp; apksigner sign --ks debug.keystore patched.apk</code></pre>
+apktool b target -o patched.apk &amp;&amp; apksigner sign --ks debug.keystore patched.apk">copy</button><pre><code># Edit IL directly in dnSpy, save the assembly, then rebuild the container
+pyxamstore pack -d ./out          # rebuild assemblies.blob
+apktool b target -o patched.apk &amp;&amp; apksigner sign --ks debug.keystore patched.apk</code></pre></div>
 <p>Repacking must reproduce the original container format exactly — an uncompressed DLL where the loader expects XALZ, or a mis-sized blob, fails at startup with an unhelpful native crash. Prefer runtime hooking when you only need to observe.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"jadx found nothing, so it's obfuscated."</em> There is nothing in the dex. The</li>
 </ul>
@@ -158,12 +198,15 @@ apktool b target -o patched.apk &amp;&amp; apksigner sign --ks debug.keystore pa
 <li><em>"There are hundreds of assemblies."</em> Most are stock framework. Read the one</li>
 </ul>
 <p>named after the product.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the wider assessment and platform storage</li>
 <li><a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> — diagnosing the interception failure around this</li>
 <li><a class="xref" href="reversing-unity-il2cpp.html"><code>reversing-unity-il2cpp</code></a> — the other .NET-based mobile framework</li>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — NativeAOT builds with no managed assemblies</li>
 <li>pyxamstore, dnSpy/dnSpyEx, ILSpy, Fridax, frida-mono-api</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#identify-the-packaging-generation">Identify the Packaging Generation</a><a href="#extraction">Extraction</a><a href="#runtime-hooking">Runtime Hooking</a><a href="#where-the-findings-are">Where the Findings Are</a><a href="#patching-and-repacking">Patching and Repacking</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

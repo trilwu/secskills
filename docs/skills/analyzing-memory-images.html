@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Analyze volatile memory images (RAM dumps) using Volatility 3 — process enumeration, injected code detection, credential extraction, network artifacts, rootkit analysis, and timeline construction from memory-resident data. Use when examining a memory capture from a compromised host, hunting for injected code or hollowed processes, extracting credentials or network state from RAM, or detecting kernel-level rootkits.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Memory is the only place certain artifacts exist — injected code, decrypted payloads, credential material, and network connections from processes that have already exited. Disk forensics misses all of these. The work is getting the image before it is lost, then asking the right questions in the right order.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Memory is the only place certain artifacts exist — injected code, decrypted payloads, credential material, and network connections from processes that have already exited. Disk forensics misses all of these. The work is getting the image before it is lost, then asking the right questions in the right order.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>You have a memory dump (raw, LiME, EWF, crash dump, or VM snapshot) to analyze</li>
 <li>Investigating a compromised host and need artifacts that exist only in RAM</li>
@@ -49,7 +61,7 @@
 <li>Identifying network connections and listening ports from a point-in-time capture</li>
 <li>Detecting kernel-level rootkits — SSDT hooks, DKOM, hidden drivers</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Broader incident response methodology</strong> — use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
 <li><strong>You have an acquired disk image, not a RAM capture</strong> — use <a class="xref" href="analyzing-disk-images.html"><code>analyzing-disk-images</code></a></li>
@@ -57,9 +69,33 @@
 <li><strong>Analyzing a known malware sample on disk</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
 <li><strong>Writing detection rules from your memory findings</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
 </ul>
-<h2>Acquisition</h2>
+<h2 id="acquisition">Acquisition</h2>
 <p>Acquire memory before doing anything else on a live system. Every command you run on the box changes what is in memory. Image first, triage second.</p>
-<pre><code># Linux — LiME (kernel module, minimal footprint)
+<div class="codeblk cx"><button class="copy" data-copy="# Linux — LiME (kernel module, minimal footprint)
+sudo insmod lime-$(uname -r).ko &quot;path=/evidence/mem.lime format=lime&quot;
+# Alternative: AVML (no kernel module needed, userspace)
+sudo ./avml /evidence/mem.lime
+
+# Windows — WinPMem (signed driver)
+winpmem_mini_x64.exe mem.raw
+# Alternative: DumpIt (single executable, click-to-run for non-technical staff)
+DumpIt.exe /OUTPUT mem.raw /QUIET
+
+# macOS — osxpmem is dead (Rekall archived, last release 2017, Intel-only, and
+# blocked by SIP/kext restrictions on Big Sur+ and all Apple Silicon). Full-RAM
+# capture on a modern Mac needs commercial tooling with Apple entitlements
+# (e.g. Volexity Surge Collect); otherwise take process-scoped dumps and
+# record that physical memory was not obtainable. See responding-to-incidents.
+
+# VM snapshots — no agent needed
+# VMware:   .vmem file alongside the .vmx (suspend the VM first for consistency)
+# Hyper-V:  checkpoint creates .bin and .vsv in the snapshot directory
+# KVM/QEMU: virsh dump &lt;domain&gt; mem.raw --memory-only
+# VirtualBox: VBoxManage debugvm &lt;name&gt; dumpvmcore --filename mem.elf
+
+# Crash dumps — partial but sometimes all you have
+# Windows:  %SystemRoot%\MEMORY.DMP (complete dump), or minidumps
+# Linux:    /var/crash/, kdump output, /proc/kcore (live, pseudo-file)">copy</button><pre><code># Linux — LiME (kernel module, minimal footprint)
 sudo insmod lime-$(uname -r).ko "path=/evidence/mem.lime format=lime"
 # Alternative: AVML (no kernel module needed, userspace)
 sudo ./avml /evidence/mem.lime
@@ -83,18 +119,21 @@ DumpIt.exe /OUTPUT mem.raw /QUIET
 
 # Crash dumps — partial but sometimes all you have
 # Windows:  %SystemRoot%\MEMORY.DMP (complete dump), or minidumps
-# Linux:    /var/crash/, kdump output, /proc/kcore (live, pseudo-file)</code></pre>
+# Linux:    /var/crash/, kdump output, /proc/kcore (live, pseudo-file)</code></pre></div>
 <p><strong>Hash immediately after acquisition.</strong> Record SHA-256, source host, timestamp (UTC), collection tool and version, and analyst name. If the image will be used in legal or regulatory proceedings, maintain chain of custody from this point.</p>
-<h2>Volatility 3 Workflow</h2>
+<h2 id="volatility-3-workflow">Volatility 3 Workflow</h2>
 <p>Start with orientation, then follow the evidence. Do not run every plugin blindly — each question has a plugin that answers it.</p>
 <h3>Orientation</h3>
-<pre><code># Identify the OS profile and confirm the image is valid
+<div class="codeblk cx"><button class="copy" data-copy="# Identify the OS profile and confirm the image is valid
 vol -f mem.raw windows.info
 vol -f mem.lime linux.bash
-vol -f mem.raw banners.Banners    # fallback for unknown images</code></pre>
+vol -f mem.raw banners.Banners    # fallback for unknown images">copy</button><pre><code># Identify the OS profile and confirm the image is valid
+vol -f mem.raw windows.info
+vol -f mem.lime linux.bash
+vol -f mem.raw banners.Banners    # fallback for unknown images</code></pre></div>
 <p><code>windows.info</code> gives you the OS version, build number, and kernel base address. If this fails, the image may be corrupt, the wrong format, or require a custom symbol table. For Linux, you need the matching ISF (Intermediate Symbol Format) file — generate it from the kernel debug symbols of the exact kernel version.</p>
 <h3>Process Analysis</h3>
-<pre><code># Process listing — what was running
+<div class="codeblk cx"><button class="copy" data-copy="# Process listing — what was running
 vol -f mem.raw windows.pslist     # walks the ActiveProcessLinks list
 vol -f mem.raw windows.psscan     # scans for EPROCESS structures
                                           # (finds hidden/unlinked processes)
@@ -102,7 +141,15 @@ vol -f mem.raw windows.pstree     # parent-child relationships
 
 # Compare pslist vs psscan: processes in psscan but not pslist were
 # unlinked from the active list — this is DKOM or a terminated process
-# that has not been fully cleaned up. Either is worth investigating.</code></pre>
+# that has not been fully cleaned up. Either is worth investigating.">copy</button><pre><code># Process listing — what was running
+vol -f mem.raw windows.pslist     # walks the ActiveProcessLinks list
+vol -f mem.raw windows.psscan     # scans for EPROCESS structures
+                                          # (finds hidden/unlinked processes)
+vol -f mem.raw windows.pstree     # parent-child relationships
+
+# Compare pslist vs psscan: processes in psscan but not pslist were
+# unlinked from the active list — this is DKOM or a terminated process
+# that has not been fully cleaned up. Either is worth investigating.</code></pre></div>
 <p><strong>What to look for in the process list:</strong></p>
 <ul>
 <li>Processes with unusual parents (<code>svchost.exe</code> not under <code>services.exe</code>)</li>
@@ -111,17 +158,24 @@ vol -f mem.raw windows.pstree     # parent-child relationships
 <li>Unexpected processes running as SYSTEM</li>
 <li>Processes with creation times that cluster around the suspected compromise</li>
 </ul>
-<pre><code># DLL listing — what each process loaded
+<div class="codeblk cx"><button class="copy" data-copy="# DLL listing — what each process loaded
 vol -f mem.raw windows.dlllist --pid &lt;PID&gt;
 # Look for DLLs loaded from unusual paths (Temp, AppData, user-writable dirs)
 
 # Handles — files, registry keys, mutexes, events
 vol -f mem.raw windows.handles --pid &lt;PID&gt;
 # Mutexes are especially useful: malware families often use characteristic
-# mutex names to prevent re-infection</code></pre>
+# mutex names to prevent re-infection">copy</button><pre><code># DLL listing — what each process loaded
+vol -f mem.raw windows.dlllist --pid &lt;PID&gt;
+# Look for DLLs loaded from unusual paths (Temp, AppData, user-writable dirs)
+
+# Handles — files, registry keys, mutexes, events
+vol -f mem.raw windows.handles --pid &lt;PID&gt;
+# Mutexes are especially useful: malware families often use characteristic
+# mutex names to prevent re-infection</code></pre></div>
 <h3>Injected Code Detection</h3>
 <p>This is where memory analysis earns its keep. Disk-based forensics cannot see code that was never written to a file.</p>
-<pre><code># VAD-based detection — finds memory regions with suspicious protections
+<div class="codeblk cx"><button class="copy" data-copy="# VAD-based detection — finds memory regions with suspicious protections
 vol -f mem.raw windows.malfind
 # Reports regions that are:
 #   - Committed, private memory with PAGE_EXECUTE_READWRITE
@@ -129,7 +183,15 @@ vol -f mem.raw windows.malfind
 #   - Tagged as VadS (private) rather than VadF (file-mapped)
 
 # Dump suspicious regions for further analysis
-vol -f mem.raw windows.malfind --dump --pid &lt;PID&gt;</code></pre>
+vol -f mem.raw windows.malfind --dump --pid &lt;PID&gt;">copy</button><pre><code># VAD-based detection — finds memory regions with suspicious protections
+vol -f mem.raw windows.malfind
+# Reports regions that are:
+#   - Committed, private memory with PAGE_EXECUTE_READWRITE
+#   - Containing a PE header (MZ magic) in a region not backed by a file
+#   - Tagged as VadS (private) rather than VadF (file-mapped)
+
+# Dump suspicious regions for further analysis
+vol -f mem.raw windows.malfind --dump --pid &lt;PID&gt;</code></pre></div>
 <p><strong>Interpreting malfind results:</strong></p>
 <ul>
 <li>Not every RWX region is malicious — JIT compilers (.NET CLR, Java, Chrome V8)</li>
@@ -141,7 +203,7 @@ vol -f mem.raw windows.malfind --dump --pid &lt;PID&gt;</code></pre>
 </ul>
 <p>(<code>cld</code> instruction), <code>0x60</code> (<code>pushad</code>), or <code>call</code> + <code>pop</code> sequences at the start of the region.</p>
 <p><strong>Hollow process detection:</strong></p>
-<pre><code># Compare on-disk PE headers with in-memory PE headers
+<div class="codeblk cx"><button class="copy" data-copy="# Compare on-disk PE headers with in-memory PE headers
 vol -f mem.raw windows.pslist --dump   # dump process executables
 # Then compare each dumped image against the on-disk original:
 #   - Different PE header = process hollowing
@@ -149,10 +211,18 @@ vol -f mem.raw windows.pslist --dump   # dump process executables
 #   - Entry point outside the main module = hijacked execution
 
 # Look for processes where the PEB ImageBaseAddress does not match the
-# VAD entry for the main executable — a sign of hollowing or replacement</code></pre>
+# VAD entry for the main executable — a sign of hollowing or replacement">copy</button><pre><code># Compare on-disk PE headers with in-memory PE headers
+vol -f mem.raw windows.pslist --dump   # dump process executables
+# Then compare each dumped image against the on-disk original:
+#   - Different PE header = process hollowing
+#   - SizeOfImage mismatch = section unmapping/remapping
+#   - Entry point outside the main module = hijacked execution
+
+# Look for processes where the PEB ImageBaseAddress does not match the
+# VAD entry for the main executable — a sign of hollowing or replacement</code></pre></div>
 <h3>Credential Extraction</h3>
 <p>Memory contains credentials in forms that disk forensics cannot recover — plaintext passwords (pre-Windows 10 1607 with WDigest), NTLM hashes, Kerberos tickets, and cached domain credentials.</p>
-<pre><code># SAM hashes (local accounts)
+<div class="codeblk cx"><button class="copy" data-copy="# SAM hashes (local accounts)
 vol -f mem.raw windows.hashdump
 
 # LSA secrets (service account passwords, auto-logon credentials, VPN)
@@ -165,10 +235,32 @@ vol -f mem.raw windows.cachedump
 vol -f mem.raw windows.memmap --pid &lt;lsass_pid&gt; --dump
 pypykatz lsa minidump &lt;dumped_lsass_file&gt;
 # Yields: NTLM hashes, Kerberos TGTs and service tickets, WDigest
-# plaintext (if enabled), DPAPI master keys</code></pre>
+# plaintext (if enabled), DPAPI master keys">copy</button><pre><code># SAM hashes (local accounts)
+vol -f mem.raw windows.hashdump
+
+# LSA secrets (service account passwords, auto-logon credentials, VPN)
+vol -f mem.raw windows.lsadump
+
+# Cached domain credentials (mscash2 format — crackable but slow)
+vol -f mem.raw windows.cachedump
+
+# For Kerberos tickets, dump lsass.exe memory and use mimikatz/pypykatz:
+vol -f mem.raw windows.memmap --pid &lt;lsass_pid&gt; --dump
+pypykatz lsa minidump &lt;dumped_lsass_file&gt;
+# Yields: NTLM hashes, Kerberos TGTs and service tickets, WDigest
+# plaintext (if enabled), DPAPI master keys</code></pre></div>
 <p><strong>Every credential found expands the blast radius.</strong> Each hash or ticket represents a lateral movement path the attacker had available. Feed these into scoping during <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
 <h3>Network Artifacts</h3>
-<pre><code># Active and recently closed connections, listening ports
+<div class="codeblk cx"><button class="copy" data-copy="# Active and recently closed connections, listening ports
+vol -f mem.raw windows.netscan
+# Fields: protocol, local/remote address:port, state, PID, owner process
+
+# DNS cache: Volatility 3 has no built-in Windows DNS-cache plugin. Recover
+# resolved names from process memory instead, or use a third-party plugin.
+vol -f mem.raw windows.memmap --pid &lt;PID&gt; --dump &amp;&amp; strings -a pid.*.dmp | grep -iE &#x27;\.(com|net|org|ru|cn)\b&#x27;
+
+# Linux equivalent
+vol -f mem.lime linux.sockstat">copy</button><pre><code># Active and recently closed connections, listening ports
 vol -f mem.raw windows.netscan
 # Fields: protocol, local/remote address:port, state, PID, owner process
 
@@ -177,7 +269,7 @@ vol -f mem.raw windows.netscan
 vol -f mem.raw windows.memmap --pid &lt;PID&gt; --dump &amp;&amp; strings -a pid.*.dmp | grep -iE '\.(com|net|org|ru|cn)\b'
 
 # Linux equivalent
-vol -f mem.lime linux.sockstat</code></pre>
+vol -f mem.lime linux.sockstat</code></pre></div>
 <p><strong>What to look for:</strong></p>
 <ul>
 <li>Connections to external IPs from unexpected processes (especially</li>
@@ -192,7 +284,7 @@ vol -f mem.lime linux.sockstat</code></pre>
 <li>Correlate remote IPs against threat intel feeds immediately</li>
 </ul>
 <h3>Command History and Console Output</h3>
-<pre><code># Command-line arguments for every process
+<div class="codeblk cx"><button class="copy" data-copy="# Command-line arguments for every process
 vol -f mem.raw windows.cmdline
 # Reveals encoded PowerShell commands, lateral movement tool arguments,
 # reconnaissance commands, and data staging operations
@@ -202,22 +294,38 @@ vol -f mem.raw windows.consoles
 # Can recover full command history and output even after the window is closed
 
 # Linux shell history from memory (survives history -c)
-vol -f mem.lime linux.bash</code></pre>
+vol -f mem.lime linux.bash">copy</button><pre><code># Command-line arguments for every process
+vol -f mem.raw windows.cmdline
+# Reveals encoded PowerShell commands, lateral movement tool arguments,
+# reconnaissance commands, and data staging operations
+
+# Console input/output buffers (cmd.exe sessions)
+vol -f mem.raw windows.consoles
+# Can recover full command history and output even after the window is closed
+
+# Linux shell history from memory (survives history -c)
+vol -f mem.lime linux.bash</code></pre></div>
 <p>Encoded PowerShell is common. Decode <code>-EncodedCommand</code> arguments:</p>
-<pre><code>echo "&lt;base64_string&gt;" | base64 -d | iconv -f UTF-16LE -t UTF-8</code></pre>
-<h2>Timeline Construction from Memory</h2>
+<div class="codeblk cx"><button class="copy" data-copy="echo &quot;&lt;base64_string&gt;&quot; | base64 -d | iconv -f UTF-16LE -t UTF-8">copy</button><pre><code>echo "&lt;base64_string&gt;" | base64 -d | iconv -f UTF-16LE -t UTF-8</code></pre></div>
+<h2 id="timeline-construction-from-memory">Timeline Construction from Memory</h2>
 <p>Combine process creation times, network connections, and handle timestamps to build a memory-only timeline. This timeline captures events that never touched disk.</p>
-<pre><code>UTC Timestamp        | Artifact        | Detail                          | PID
+<div class="codeblk cx"><button class="copy" data-copy="UTC Timestamp        | Artifact        | Detail                          | PID
 2026-07-10 02:14:02  | Process create  | cmd.exe via explorer.exe        | 4812
 2026-07-10 02:14:08  | Process create  | powershell.exe via cmd.exe      | 5104
 2026-07-10 02:14:09  | Network conn    | 5104 -&gt; 203.0.113.50:443 EST   | 5104
 2026-07-10 02:14:15  | Process create  | rundll32.exe (no DLL in cmdline)| 6220
 2026-07-10 02:14:15  | malfind hit     | RWX region with PE header       | 6220
-2026-07-10 02:14:22  | Network conn    | 6220 -&gt; 198.51.100.10:8443 EST | 6220</code></pre>
+2026-07-10 02:14:22  | Network conn    | 6220 -&gt; 198.51.100.10:8443 EST | 6220">copy</button><pre><code>UTC Timestamp        | Artifact        | Detail                          | PID
+2026-07-10 02:14:02  | Process create  | cmd.exe via explorer.exe        | 4812
+2026-07-10 02:14:08  | Process create  | powershell.exe via cmd.exe      | 5104
+2026-07-10 02:14:09  | Network conn    | 5104 -&gt; 203.0.113.50:443 EST   | 5104
+2026-07-10 02:14:15  | Process create  | rundll32.exe (no DLL in cmdline)| 6220
+2026-07-10 02:14:15  | malfind hit     | RWX region with PE header       | 6220
+2026-07-10 02:14:22  | Network conn    | 6220 -&gt; 198.51.100.10:8443 EST | 6220</code></pre></div>
 <p>Merge this with disk and log timelines from <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> to fill gaps. Memory gives you what ran; disk gives you what persisted; logs give you what was recorded. None of the three is complete alone.</p>
-<h2>Rootkit Detection</h2>
+<h2 id="rootkit-detection">Rootkit Detection</h2>
 <p>Kernel-mode rootkits modify OS structures to hide processes, files, registry keys, and network connections. Memory analysis is the primary detection method because the rootkit cannot hide from a raw memory image.</p>
-<pre><code># SSDT hooking — System Service Descriptor Table
+<div class="codeblk cx"><button class="copy" data-copy="# SSDT hooking — System Service Descriptor Table
 vol -f mem.raw windows.ssdt
 # Entries pointing outside ntoskrnl.exe or win32k.sys are hooked
 
@@ -234,15 +342,32 @@ vol -f mem.raw windows.callbacks
 # Linux only (linux.check_idt); there is no windows.idt. On Windows, IDT hooking
 # is largely a pre-PatchGuard (x86) technique — check SSDT and callbacks above.
 vol -f mem.lime linux.check_idt
-# Handlers pointing to addresses outside known kernel modules are suspicious</code></pre>
+# Handlers pointing to addresses outside known kernel modules are suspicious">copy</button><pre><code># SSDT hooking — System Service Descriptor Table
+vol -f mem.raw windows.ssdt
+# Entries pointing outside ntoskrnl.exe or win32k.sys are hooked
+
+# Driver and module enumeration
+vol -f mem.raw windows.driverscan    # scan for DRIVER_OBJECT
+vol -f mem.raw windows.modules       # loaded kernel modules
+vol -f mem.raw windows.modscan       # scan for unlinked modules
+# Modules in modscan but not modules = hidden drivers
+
+# Callbacks — rootkits register notify routines to intercept operations
+vol -f mem.raw windows.callbacks
+
+# IDT — Interrupt Descriptor Table modifications. Volatility 3 ships this for
+# Linux only (linux.check_idt); there is no windows.idt. On Windows, IDT hooking
+# is largely a pre-PatchGuard (x86) technique — check SSDT and callbacks above.
+vol -f mem.lime linux.check_idt
+# Handlers pointing to addresses outside known kernel modules are suspicious</code></pre></div>
 <p><strong>DKOM (Direct Kernel Object Manipulation):</strong></p>
 <ul>
 <li>Process unlinking: removes EPROCESS from ActiveProcessLinks</li>
 <li>Detected by comparing pslist (walks the list) vs psscan (carves memory)</li>
 <li>The same principle applies to threads, drivers, and other kernel objects</li>
 </ul>
-<h2>Linux-Specific Analysis</h2>
-<pre><code># Process listing
+<h2 id="linux-specific-analysis">Linux-Specific Analysis</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Process listing
 vol -f mem.lime linux.pslist
 vol -f mem.lime linux.pstree
 vol -f mem.lime linux.psaux         # with command-line arguments
@@ -266,11 +391,35 @@ vol -f mem.lime linux.lsof
 vol -f mem.lime linux.sockstat
 
 # Mounted filesystems and their types
-vol -f mem.lime linux.mountinfo</code></pre>
+vol -f mem.lime linux.mountinfo">copy</button><pre><code># Process listing
+vol -f mem.lime linux.pslist
+vol -f mem.lime linux.pstree
+vol -f mem.lime linux.psaux         # with command-line arguments
+
+# Shell history recovered from process memory
+vol -f mem.lime linux.bash
+
+# ELF binaries in memory — find injected shared objects
+vol -f mem.lime linux.elfs
+
+# Syscall table integrity — detect syscall hooking
+vol -f mem.lime linux.check_syscall
+# Entries not pointing to the expected kernel text range are hooked
+
+# Loaded kernel modules and hidden modules
+vol -f mem.lime linux.lsmod
+vol -f mem.lime linux.hidden_modules
+
+# Open files and network connections
+vol -f mem.lime linux.lsof
+vol -f mem.lime linux.sockstat
+
+# Mounted filesystems and their types
+vol -f mem.lime linux.mountinfo</code></pre></div>
 <p><strong>Symbol tables for Linux:</strong> Unlike Windows, Linux has no fixed kernel structures. You must provide an ISF file matching the exact kernel version. Generate it with <code>dwarf2json</code> from the kernel's debug symbols (<code>vmlinux</code> with DWARF info). Without the correct symbols, Volatility will either fail or produce garbage output.</p>
-<h2>Strings and YARA Scanning</h2>
+<h2 id="strings-and-yara-scanning">Strings and YARA Scanning</h2>
 <p>When you do not know what you are looking for, or need to validate a hypothesis across the entire image.</p>
-<pre><code># YARA rules against the full image
+<div class="codeblk cx"><button class="copy" data-copy="# YARA rules against the full image
 vol -f mem.raw yarascan.YaraScan --yara-file rules.yar
 # Scoping to a specific process:
 vol -f mem.raw yarascan.YaraScan --yara-file rules.yar --pid &lt;PID&gt;
@@ -285,9 +434,24 @@ bulk_extractor -o be_output mem.raw
 # Produces: emails, URLs, credit card numbers, domain names, IP addresses,
 # JSON/XML fragments, and other structured data, each in a separate file
 # Use the histogram files (url_histogram.txt, domain_histogram.txt) first —
-# stacking by frequency surfaces C2 domains and unusual patterns</code></pre>
+# stacking by frequency surfaces C2 domains and unusual patterns">copy</button><pre><code># YARA rules against the full image
+vol -f mem.raw yarascan.YaraScan --yara-file rules.yar
+# Scoping to a specific process:
+vol -f mem.raw yarascan.YaraScan --yara-file rules.yar --pid &lt;PID&gt;
+
+# Strings extraction — raw approach, still useful
+strings -a -t d mem.raw &gt; strings_ascii.txt
+strings -a -t d -e l mem.raw &gt; strings_unicode.txt
+# Search for IPs, URLs, commands, known malware strings
+
+# bulk_extractor — automated structured-data carving
+bulk_extractor -o be_output mem.raw
+# Produces: emails, URLs, credit card numbers, domain names, IP addresses,
+# JSON/XML fragments, and other structured data, each in a separate file
+# Use the histogram files (url_histogram.txt, domain_histogram.txt) first —
+# stacking by frequency surfaces C2 domains and unusual patterns</code></pre></div>
 <p><strong>YARA rules for memory analysis should differ from file-based rules.</strong> Packed or encrypted payloads on disk are decrypted in memory, so write rules for the unpacked form. Also target strings that only appear at runtime: mutex names, C2 URLs, API resolution strings, and decrypted configuration blocks.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The disk image is enough."</em> Disk forensics cannot see injected code,</li>
 </ul>
@@ -316,11 +480,14 @@ bulk_extractor -o be_output mem.raw
 <li><em>"Strings output is too noisy to be useful."</em> Use bulk_extractor histograms,</li>
 </ul>
 <p>YARA rules, or grep for specific indicators. Raw strings is a last resort, not a first step.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — broader IR methodology and evidence handling</li>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — deep analysis of samples extracted from memory</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — writing rules from TTPs discovered in memory</li>
 <li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — proactive search using indicators found in memory analysis</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#acquisition">Acquisition</a><a href="#volatility-3-workflow">Volatility 3 Workflow</a><a href="#timeline-construction-from-memory">Timeline Construction from Memory</a><a href="#rootkit-detection">Rootkit Detection</a><a href="#linux-specific-analysis">Linux-Specific Analysis</a><a href="#strings-and-yara-scanning">Strings and YARA Scanning</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

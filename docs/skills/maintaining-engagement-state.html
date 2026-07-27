@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,12 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Keep the durable record that outlives a session — credential provenance, access inventory, artifacts left on target for cleanup, findings with evidence, and a dead-end log — so work spanning days or analysts does not restart or contradict itself. Use when an engagement or investigation runs longer than one sitting, when resuming work after a gap, when handing off to another analyst, before a context window rolls over, or when you cannot say where a credential or access came from.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>An engagement lasts weeks. A session does not. The gap between those two facts is where work gets repeated, findings lose their evidence, credentials become unattributable, and artifacts get left on production because nobody wrote down that they were placed.</p>
+<div class="wrap slayout"><article><p>An engagement lasts weeks. A session does not. The gap between those two facts is where work gets repeated, findings lose their evidence, credentials become unattributable, and artifacts get left on production because nobody wrote down that they were placed.</p>
 <p>This is not administrative overhead bolted onto the real work. <strong>Provenance is what makes a finding reportable, and the artifact register is what makes cleanup possible.</strong> Neither can be reconstructed afterwards from terminal scrollback.</p>
 <p>Assume everything not written to the record is lost: not merely forgotten, but <em>silently</em> lost, so the next session confidently redoes it or contradicts it.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Any engagement or investigation continuing past a single sitting</li>
 <li>Resuming after a break, or picking up someone else's work</li>
@@ -50,7 +61,7 @@
 <li>Before running anything that writes to a target</li>
 <li>When you cannot answer "which host did this credential come from?"</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Writing the client-facing deliverable</strong> — use <a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a>;</li>
 </ul>
@@ -67,17 +78,21 @@
 <li><strong>A single self-contained task</strong> finished in one sitting with nothing left</li>
 </ul>
 <p>on target</p>
-<h2>The Six Records</h2>
+<h2 id="the-six-records">The Six Records</h2>
 <p>Keep these in one file, in the repository or case folder, updated as you go — not reconstructed at the end.</p>
 <h3>1. Scope and authorization</h3>
 <p>In-scope targets and explicit exclusions, the testing window, the named contact, and where the authorization letter lives. Copy the exclusions verbatim; paraphrasing scope is how people test the wrong estate.</p>
 <h3>2. Credential provenance</h3>
 <p>For every credential, hash, token, or key: <strong>what it is, where it came from, how it was obtained, and what it has been used against.</strong></p>
-<pre><code>cred-04  | svc_backup NTLM hash
+<div class="codeblk cx"><button class="copy" data-copy="cred-04  | svc_backup NTLM hash
          | source: SAM dump, WS-014 (10.2.3.14), local admin via CVE-2021-XXXX
          | obtained: 2026-07-27 14:02
          | used on: FS-02 (success), DC-01 (failed, no local admin)
-         | provenance: CONFIRMED</code></pre>
+         | provenance: CONFIRMED">copy</button><pre><code>cred-04  | svc_backup NTLM hash
+         | source: SAM dump, WS-014 (10.2.3.14), local admin via CVE-2021-XXXX
+         | obtained: 2026-07-27 14:02
+         | used on: FS-02 (success), DC-01 (failed, no local admin)
+         | provenance: CONFIRMED</code></pre></div>
 <p>Provenance is not bookkeeping. It answers three questions you will be asked:</p>
 <ul>
 <li><strong>Is it real?</strong> Credentials of unknown origin may be planted — see</li>
@@ -96,20 +111,24 @@
 <p>Each access obtained: host, account, privilege level, the method, and whether it still works. Access decays — sessions die, passwords rotate, hosts reboot. A list of what you <em>had</em> is not a list of what you <em>have</em>.</p>
 <h3>4. Artifact register — the cleanup list</h3>
 <p><strong>Every write to a target, recorded at the moment you make it.</strong> Files dropped, services or tasks created, accounts added, registry keys, shares, firewall rules, cloud resources, config edits.</p>
-<pre><code>art-07 | WS-014 | C:\Windows\Temp\c2.exe        | dropped 14:02 | REMOVED 18:40
+<div class="codeblk cx"><button class="copy" data-copy="art-07 | WS-014 | C:\Windows\Temp\c2.exe        | dropped 14:02 | REMOVED 18:40
+art-08 | DC-01  | scheduled task &quot;WinUpdateSvc&quot; | created 15:10 | PENDING
+art-09 | AWS    | IAM user &quot;svc-audit-tmp&quot;      | created 16:22 | PENDING">copy</button><pre><code>art-07 | WS-014 | C:\Windows\Temp\c2.exe        | dropped 14:02 | REMOVED 18:40
 art-08 | DC-01  | scheduled task "WinUpdateSvc" | created 15:10 | PENDING
-art-09 | AWS    | IAM user "svc-audit-tmp"      | created 16:22 | PENDING</code></pre>
+art-09 | AWS    | IAM user "svc-audit-tmp"      | created 16:22 | PENDING</code></pre></div>
 <p>Written afterwards from memory, this list is always incomplete, and what it omits is left on the client's production estate. Two independent parties need it: you, to clean up; and the client's blue team, to distinguish your artifacts from a real intrusion — during and after the engagement.</p>
 <p>For an incident investigation the same register covers what <em>you</em> touched on evidence systems, so your activity is separable from the adversary's.</p>
 <h3>5. Findings with evidence</h3>
 <p>Each finding: what, where, the reproduction steps, the evidence captured, and the impact demonstrated. Capture evidence <strong>when you see it</strong> — the state that proved it will not survive remediation, a reboot, or a rotated credential.</p>
 <h3>6. Dead ends</h3>
 <p>The record most often skipped and most valuable across sessions: what was tried, against what, and why it failed.</p>
-<pre><code>dead-03 | Kerberoast svc_sql | hash cracked? NO after 6h, 14M candidates
+<div class="codeblk cx"><button class="copy" data-copy="dead-03 | Kerberoast svc_sql | hash cracked? NO after 6h, 14M candidates
 dead-04 | SMB signing DC-02  | enforced -- relay not viable
-dead-05 | /admin on portal   | 403 from all tested source ranges</code></pre>
+dead-05 | /admin on portal   | 403 from all tested source ranges">copy</button><pre><code>dead-03 | Kerberoast svc_sql | hash cracked? NO after 6h, 14M candidates
+dead-04 | SMB signing DC-02  | enforced -- relay not viable
+dead-05 | /admin on portal   | 403 from all tested source ranges</code></pre></div>
 <p>Without this, the next session re-runs the six-hour crack. Recording negative results is also the difference between "we found nothing there" and "we did not look" in the final report.</p>
-<h2>Session Boundary Discipline</h2>
+<h2 id="session-boundary-discipline">Session Boundary Discipline</h2>
 <p>Before a session ends — planned or not — the record must answer:</p>
 <ol>
 <li>What access do I currently hold, and does it still work?</li>
@@ -118,9 +137,9 @@ dead-05 | /admin on portal   | 403 from all tested source ranges</code></pre>
 <li>What did I rule out, so nobody repeats it?</li>
 </ol>
 <p>Write these down <em>as you work</em>, not at the end. The session that ends unexpectedly is precisely the one whose state was never captured, and an engagement can lose its context without warning.</p>
-<h2>Handoff</h2>
+<h2 id="handoff">Handoff</h2>
 <p>A handoff is the same record plus three additions: current position, the immediate next action, and anything time-sensitive (a running crack, an expiring token, a scheduled task that fires at 02:00). If the receiving analyst has to ask "what were you doing?", the handoff failed.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"I'll remember where that came from."</em> You will not, and neither will the</li>
 </ul>
@@ -149,7 +168,7 @@ dead-05 | /admin on portal   | 403 from all tested source ranges</code></pre>
 <li><em>"Recording failures makes the engagement look weak."</em> An engagement with no</li>
 </ul>
 <p>recorded negatives looks unmethodical, not successful. Coverage is a finding.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — consumes this record to produce the</li>
 </ul>
@@ -161,5 +180,8 @@ dead-05 | /admin on portal   | 403 from all tested source ranges</code></pre>
 <ul>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — the investigation-side equivalent, including</li>
 </ul>
-<p>formal evidence handling</p></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+<p>formal evidence handling</p></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#the-six-records">The Six Records</a><a href="#session-boundary-discipline">Session Boundary Discipline</a><a href="#handoff">Handoff</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

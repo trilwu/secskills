@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Run digital forensics and incident response — triage, evidence acquisition with chain of custody, host and cloud artifact analysis, timeline reconstruction, scoping, containment, eradication, and postmortem. Use during a suspected compromise, when analyzing a disk or memory image, reconstructing an attacker timeline, or answering how far an intrusion spread.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Two questions drive every incident: <strong>how far did they get</strong>, and <strong>are they still here</strong>. Everything else — the malware, the CVE, the root cause — is supporting detail. Answer those two in order and the response follows.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Two questions drive every incident: <strong>how far did they get</strong>, and <strong>are they still here</strong>. Everything else — the malware, the CVE, the root cause — is supporting detail. Answer those two in order and the response follows.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Suspected or confirmed compromise of a host, account, or cloud tenant</li>
 <li>Forensic analysis of a disk image, memory capture, or log set</li>
@@ -48,7 +60,7 @@
 <li>Scoping blast radius and deciding containment</li>
 <li>Writing a postmortem or a regulator/customer-facing incident narrative</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Deep analysis of a recovered sample</strong> — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a></li>
 <li><strong>Proactive searching with no known incident</strong> — use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
@@ -64,27 +76,35 @@
 <li><strong>You have a packet capture to work through</strong> — use <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a></li>
 <li><strong>Service outages with no security dimension</strong> — this is a security IR skill</li>
 </ul>
-<h2>Route to a Depth Skill</h2>
+<h2 id="route-to-a-depth-skill">Route to a Depth Skill</h2>
 <p>Specific evidence types have their own procedure skill. This skill sets scope and order; reach for these when a single artifact type becomes the focus.</p>
 <div class="tw"><table><thead><tr><th>Artifact / focus</th><th>Skill</th></tr></thead><tbody><tr><td>A RAM capture to work through with Volatility (injected code, in-memory creds, dead-process connections)</td><td><a class="xref" href="analyzing-memory-images.html"><code>analyzing-memory-images</code></a></td></tr><tr><td>A Microsoft 365 / Entra ID compromise: no disk or memory, only cloud logs (UAL, sign-ins, OAuth grants)</td><td><a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a></td></tr><tr><td>Finding how an attacker persisted on a Linux host — the systematic sweep across every init path</td><td><a class="xref" href="analyzing-linux-persistence.html"><code>analyzing-linux-persistence</code></a></td></tr></tbody></table></div>
-<h2>The Order That Matters</h2>
-<pre><code>Preparation → Detection &amp; Analysis → Containment → Eradication → Recovery → Lessons Learned
+<h2 id="the-order-that-matters">The Order That Matters</h2>
+<div class="codeblk cx"><button class="copy" data-copy="Preparation → Detection &amp; Analysis → Containment → Eradication → Recovery → Lessons Learned
                       ↑__________________|
-                    (re-scope after every new finding)</code></pre>
+                    (re-scope after every new finding)">copy</button><pre><code>Preparation → Detection &amp; Analysis → Containment → Eradication → Recovery → Lessons Learned
+                      ↑__________________|
+                    (re-scope after every new finding)</code></pre></div>
 <p>Two rules that are violated constantly and cost the most:</p>
 <p><strong>Preserve before you remediate.</strong> Rebooting, reimaging, or "just cleaning it up" destroys memory, running process state, and unflushed logs. Once gone, you cannot answer the scoping question, and you will be guessing about whether you got them out.</p>
 <p><strong>Do not contain half of it.</strong> Partial containment tells the attacker you have noticed and gives them time to re-establish access from the parts you missed. Scope first, then contain everything at once — unless there is active, ongoing damage, in which case stop the damage and accept the trade.</p>
-<h2>Evidence Acquisition</h2>
+<h2 id="evidence-acquisition">Evidence Acquisition</h2>
 <p><strong>Order of volatility</strong> (RFC 3227 §2.1) — collect top to bottom:</p>
-<pre><code>registers, cache
+<div class="codeblk cx"><button class="copy" data-copy="registers, cache
 routing table, arp cache, process table, kernel statistics, memory
 temporary file systems            ← tmpfs, /dev/shm: staging lives here
 disk
 remote logging and monitoring data relevant to the system
 physical configuration, network topology
-archival media</code></pre>
+archival media">copy</button><pre><code>registers, cache
+routing table, arp cache, process table, kernel statistics, memory
+temporary file systems            ← tmpfs, /dev/shm: staging lives here
+disk
+remote logging and monitoring data relevant to the system
+physical configuration, network topology
+archival media</code></pre></div>
 <p>Note that the RFC places memory, the process table, and network state in the <strong>same</strong> tier rather than ordering them against each other. Modern practice refines that: capture memory <em>first</em>, because the commands you would run to enumerate processes and sockets execute on the box and perturb the memory you have not captured yet. Do not skip the temporary filesystems tier — <code>/dev/shm</code> and tmpfs are ordinary staging locations and they do not survive the reboot that someone will inevitably suggest.</p>
-<pre><code># Memory first, always, on a live suspect host
+<div class="codeblk cx"><button class="copy" data-copy="# Memory first, always, on a live suspect host
 # Linux
 sudo ./avml mem.lime                 # or LiME
 # Windows
@@ -107,14 +127,38 @@ Get-NetTCPConnection | Where State -eq Established
 sudo dd if=/dev/sda bs=4M conv=noerror,sync status=progress | tee image.dd | sha256sum
 sudo ewfacquire /dev/sda             # E01 with built-in hashing, preferred
 # Mount read-only, always via a write blocker or loop with `ro`
-sudo mount -o ro,noexec,noload,loop image.dd /mnt/evidence</code></pre>
+sudo mount -o ro,noexec,noload,loop image.dd /mnt/evidence">copy</button><pre><code># Memory first, always, on a live suspect host
+# Linux
+sudo ./avml mem.lime                 # or LiME
+# Windows
+DumpIt.exe /OUTPUT mem.raw           # or winpmem
+# macOS — do NOT reach for osxpmem. Rekall is archived, its last release was
+# 2017 and Intel-only, and its kext-based approach is blocked by SIP and
+# kext restrictions on Big Sur and later, and on all Apple Silicon. Full-RAM
+# capture on a modern Mac realistically needs commercial tooling with the
+# required Apple entitlements (e.g. Volexity Surge Collect). If none is
+# available, do not stall the response: take process-scoped dumps and a
+# comprehensive live-triage collection instead, and record in the incident
+# log that full physical memory was not obtainable and why.
+
+# Volatile state before you touch the disk
+ps auxwwf; ss -tunap; lsof -n; last -Faiw; w
+netstat -anob                        # Windows
+Get-NetTCPConnection | Where State -eq Established
+
+# Disk: image, do not analyze in place
+sudo dd if=/dev/sda bs=4M conv=noerror,sync status=progress | tee image.dd | sha256sum
+sudo ewfacquire /dev/sda             # E01 with built-in hashing, preferred
+# Mount read-only, always via a write blocker or loop with `ro`
+sudo mount -o ro,noexec,noload,loop image.dd /mnt/evidence</code></pre></div>
 <p><strong>Chain of custody is not paperwork you add later.</strong> Record at collection time:</p>
-<pre><code>Evidence ID | Source host/serial | Collected by | UTC timestamp | Method/tool+version
-SHA-256 at acquisition | SHA-256 at each transfer | Custodian at each handoff | Storage location</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="Evidence ID | Source host/serial | Collected by | UTC timestamp | Method/tool+version
+SHA-256 at acquisition | SHA-256 at each transfer | Custodian at each handoff | Storage location">copy</button><pre><code>Evidence ID | Source host/serial | Collected by | UTC timestamp | Method/tool+version
+SHA-256 at acquisition | SHA-256 at each transfer | Custodian at each handoff | Storage location</code></pre></div>
 <p>Hash immediately, verify after every copy, and never work on the original. If the incident may become litigation or a regulatory matter, involve legal before collection, not after.</p>
-<h2>Triage Collection</h2>
+<h2 id="triage-collection">Triage Collection</h2>
 <p>For most incidents, a full disk image per host is too slow. Use targeted collection at scale, then image only the hosts that matter.</p>
-<pre><code># Windows: KAPE with the SANS triage target set
+<div class="codeblk cx"><button class="copy" data-copy="# Windows: KAPE with the SANS triage target set
 kape.exe --tsource C: --target !SANS_Triage --tdest E:\out --vhdx host01
 
 # Linux/macOS: UAC or a scripted collection
@@ -123,11 +167,20 @@ kape.exe --tsource C: --target !SANS_Triage --tdest E:\out --vhdx host01
 # Cloud/EDR: pull the equivalent via API
 # - EDR raw telemetry for the window ±7 days
 # - Snapshot the volume before terminating any instance
-aws ec2 create-snapshot --volume-id vol-xxx --description "IR-&lt;case&gt; preserve"</code></pre>
-<h2>Artifact Analysis by Question</h2>
+aws ec2 create-snapshot --volume-id vol-xxx --description &quot;IR-&lt;case&gt; preserve&quot;">copy</button><pre><code># Windows: KAPE with the SANS triage target set
+kape.exe --tsource C: --target !SANS_Triage --tdest E:\out --vhdx host01
+
+# Linux/macOS: UAC or a scripted collection
+./uac -p full /evidence/host01
+
+# Cloud/EDR: pull the equivalent via API
+# - EDR raw telemetry for the window ±7 days
+# - Snapshot the volume before terminating any instance
+aws ec2 create-snapshot --volume-id vol-xxx --description "IR-&lt;case&gt; preserve"</code></pre></div>
+<h2 id="artifact-analysis-by-question">Artifact Analysis by Question</h2>
 <p>Go to the artifact that answers your question rather than processing everything.</p>
 <div class="tw"><table><thead><tr><th>Question</th><th>Windows</th><th>Linux</th><th>macOS</th></tr></thead><tbody><tr><td>What executed?</td><td>Prefetch, Amcache, ShimCache, SRUM, Sysmon E1</td><td><code>auditd</code>, shell history, <code>/var/log/*</code>, systemd journal</td><td>ExecPolicy DB, <code>/var/db/</code>, unified log</td></tr><tr><td>Persistence?</td><td>Run keys, Services, Scheduled Tasks, WMI subs, startup folder</td><td>cron, systemd units, <code>.bashrc</code>, <code>ld.so.preload</code>, init</td><td>LaunchAgents/Daemons, login items, profiles</td></tr><tr><td>Lateral movement?</td><td>4624 type 3/10, 4648, 4672, RDP logs, SMB shares</td><td><code>auth.log</code>, <code>wtmp</code>, <code>.ssh/authorized_keys</code>, known_hosts</td><td>Same as Linux plus ARD logs</td></tr><tr><td>Credential access?</td><td>LSASS handles (Sysmon E10), 4688 with <code>procdump</code></td><td><code>/etc/shadow</code> reads, <code>ptrace</code>, memory of <code>sshd</code></td><td>Keychain access logs</td></tr><tr><td>Data staged/exfiltrated?</td><td>Recycle bin, <code>$MFT</code> timestamps, archive creation, USN journal</td><td><code>find -newermt</code>, large tmp files, <code>tar</code>/<code>zip</code> in history</td><td>Same</td></tr><tr><td>Files accessed?</td><td><code>$MFT</code>, <code>$UsnJrnl</code>, LNK, JumpLists, shellbags</td><td>atime (if enabled), <code>auditd</code></td><td>FSEvents</td></tr><tr><td>Browser/download?</td><td>History DBs, <code>Zone.Identifier</code> ADS</td><td>Browser profile DBs</td><td>Quarantine DB (<code>LSQuarantine</code>)</td></tr></tbody></table></div>
-<pre><code># Memory analysis — where "are they still here" usually gets answered
+<div class="codeblk cx"><button class="copy" data-copy="# Memory analysis — where &quot;are they still here&quot; usually gets answered
 vol -f mem.raw windows.pstree
 vol -f mem.raw windows.malfind          # injected RWX regions
 vol -f mem.raw windows.netscan
@@ -136,10 +189,30 @@ vol -f mem.raw linux.bash               # recovered shell history
 
 # Filesystem timeline
 fls -r -m / image.dd &gt; body.txt &amp;&amp; mactime -b body.txt -d &gt; timeline.csv
-log2timeline.py --storage-file plaso.db image.dd &amp;&amp; psort.py -o dynamic plaso.db &gt; super.csv</code></pre>
-<h2>Cloud and Identity Incidents</h2>
+log2timeline.py --storage-file plaso.db image.dd &amp;&amp; psort.py -o dynamic plaso.db &gt; super.csv">copy</button><pre><code># Memory analysis — where "are they still here" usually gets answered
+vol -f mem.raw windows.pstree
+vol -f mem.raw windows.malfind          # injected RWX regions
+vol -f mem.raw windows.netscan
+vol -f mem.raw windows.cmdline
+vol -f mem.raw linux.bash               # recovered shell history
+
+# Filesystem timeline
+fls -r -m / image.dd &gt; body.txt &amp;&amp; mactime -b body.txt -d &gt; timeline.csv
+log2timeline.py --storage-file plaso.db image.dd &amp;&amp; psort.py -o dynamic plaso.db &gt; super.csv</code></pre></div>
+<h2 id="cloud-and-identity-incidents">Cloud and Identity Incidents</h2>
 <p>Most modern intrusions run through identity, not malware. Do not stop at the host.</p>
-<pre><code># AWS
+<div class="codeblk cx"><button class="copy" data-copy="# AWS
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,AttributeValue=&lt;user&gt;
+# Look for: CreateAccessKey, AttachUserPolicy, AssumeRole chains, ConsoleLogin
+# without MFA, GetSecretValue, CreateTrail/StopLogging (anti-forensics)
+
+# Azure / Entra ID
+# SigninLogs: impossible travel, legacy auth, unfamiliar device
+# AuditLogs: &quot;Add service principal credentials&quot;, &quot;Consent to application&quot;,
+#            &quot;Update conditional access policy&quot;, role assignments
+
+# Google Workspace / GCP
+# Admin audit: OAuth token grants, mail forwarding rules, delegation changes">copy</button><pre><code># AWS
 aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,AttributeValue=&lt;user&gt;
 # Look for: CreateAccessKey, AttachUserPolicy, AssumeRole chains, ConsoleLogin
 # without MFA, GetSecretValue, CreateTrail/StopLogging (anti-forensics)
@@ -150,9 +223,9 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,Attribute
 #            "Update conditional access policy", role assignments
 
 # Google Workspace / GCP
-# Admin audit: OAuth token grants, mail forwarding rules, delegation changes</code></pre>
+# Admin audit: OAuth token grants, mail forwarding rules, delegation changes</code></pre></div>
 <p>Attacker-created OAuth applications, service principal credentials, and mail forwarding rules are the most-missed persistence in cloud incidents. Enumerate them explicitly during eradication.</p>
-<h2>Timeline Reconstruction</h2>
+<h2 id="timeline-reconstruction">Timeline Reconstruction</h2>
 <p>The timeline is the deliverable that everything else supports.</p>
 <ul>
 <li><strong>UTC everywhere.</strong> Normalize on ingest and record the source timezone.</li>
@@ -171,11 +244,14 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,Attribute
 <li><strong>Establish the earliest evidence of compromise, then look earlier.</strong> The</li>
 </ul>
 <p>first thing you find is almost never the first thing that happened.</p>
-<pre><code>UTC Timestamp        | Host    | Event                                  | Source            | O/I
+<div class="codeblk cx"><button class="copy" data-copy="UTC Timestamp        | Host    | Event                                  | Source            | O/I
 2026-07-12 03:14:02  | WEB01   | POST /upload.aspx 200, 1.2MB, IP x.x.x.x| IIS log           | O
 2026-07-12 03:14:40  | WEB01   | w3wp.exe → cmd.exe → whoami            | Sysmon E1         | O
-2026-07-12 03:15:05  | WEB01   | Initial access via upload vuln          | correlation       | I</code></pre>
-<h2>Scoping</h2>
+2026-07-12 03:15:05  | WEB01   | Initial access via upload vuln          | correlation       | I">copy</button><pre><code>UTC Timestamp        | Host    | Event                                  | Source            | O/I
+2026-07-12 03:14:02  | WEB01   | POST /upload.aspx 200, 1.2MB, IP x.x.x.x| IIS log           | O
+2026-07-12 03:14:40  | WEB01   | w3wp.exe → cmd.exe → whoami            | Sysmon E1         | O
+2026-07-12 03:15:05  | WEB01   | Initial access via upload vuln          | correlation       | I</code></pre></div>
+<h2 id="scoping">Scoping</h2>
 <p>Do not contain until you have answered these, or you will contain the wrong subset:</p>
 <ol>
 <li><strong>Patient zero</strong> — first host/account, and initial access vector</li>
@@ -191,8 +267,8 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,Attribute
 <li><strong>Data exposure</strong> — what was accessible, what was accessed, what left</li>
 </ol>
 <p>Scoping expands. When a new host appears, restart step 2 for it.</p>
-<h2>Containment and Eradication</h2>
-<pre><code># Contain without destroying evidence
+<h2 id="containment-and-eradication">Containment and Eradication</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Contain without destroying evidence
 # - Network-isolate via EDR rather than powering off (preserves memory)
 # - Revoke sessions and tokens, not just passwords: OAuth grants, refresh
 #   tokens, Kerberos TGTs, API keys, SSH keys
@@ -200,10 +276,18 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,Attribute
 
 # Eradication checklist, per compromised identity
 #   password reset, MFA re-enrollment, session/token revocation, key rotation
-# For AD-wide compromise: krbtgt reset twice, ~10h apart</code></pre>
+# For AD-wide compromise: krbtgt reset twice, ~10h apart">copy</button><pre><code># Contain without destroying evidence
+# - Network-isolate via EDR rather than powering off (preserves memory)
+# - Revoke sessions and tokens, not just passwords: OAuth grants, refresh
+#   tokens, Kerberos TGTs, API keys, SSH keys
+# - Disable rather than delete accounts, so the artifacts survive
+
+# Eradication checklist, per compromised identity
+#   password reset, MFA re-enrollment, session/token revocation, key rotation
+# For AD-wide compromise: krbtgt reset twice, ~10h apart</code></pre></div>
 <p>Reimage rather than clean when the attacker had SYSTEM/root. You cannot prove removal of an implant on a host you do not fully understand, and the cost of being wrong is the whole investigation repeating.</p>
 <p><strong>Recovery gates</strong> — do not restore until: initial access vector is closed, all identified persistence is removed, credentials are rotated, and detection exists for the observed TTPs. Monitor restored systems at elevated sensitivity for at least a full business cycle.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"Let's reimage it now and investigate later."</em> Reimaging is the end of the</li>
 </ul>
@@ -232,7 +316,7 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,Attribute
 <li><em>"Let's not write it down until we're sure."</em> Contemporaneous notes are the</li>
 </ul>
 <p>evidence. Record uncertainty explicitly instead of delaying.</p>
-<h2>Deliverable</h2>
+<h2 id="deliverable">Deliverable</h2>
 <ul>
 <li><strong>Executive summary</strong> — what happened, impact, current status, in plain language</li>
 <li><strong>Timeline</strong> — UTC, sourced, observed vs inferred</li>
@@ -247,7 +331,7 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,Attribute
 <li><strong>Recommendations</strong> — prioritized, each tied to a specific failure in the narrative</li>
 </ul>
 <p>Postmortems are blameless: they analyze the control and process failures, not the person who clicked. A postmortem that names an individual as the cause produces silence in the next incident.</p>
-<h2>ATT&amp;CK Coverage</h2>
+<h2 id="att-ck-coverage">ATT&amp;CK Coverage</h2>
 <p><em>Generated from <code>secskills-core/ttp-index.json</code> — edit that file, then run <code>python3 scripts/sync_attack.py --write</code>. Re-verify IDs against the current ATT&amp;CK release before citing them in a report.</em></p>
 <p><strong>Persistence</strong> (TA0003)</p>
 <ul>
@@ -274,12 +358,15 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,Attribute
 <li><a href="https://attack.mitre.org/techniques/T1490/">T1490</a> Inhibit System Recovery — see also <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
 </ul>
 <p>Detection content for any of these: <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a>. Proactive search: <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a>. Post-compromise: <code>responding-to-incidents</code>.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — sample analysis feeding scoping and IOCs</li>
 <li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — proactive search using the TTPs found here</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — closing the detection gap this incident exposed</li>
 <li>NIST SP 800-61r3 (incident handling), SP 800-86 (forensic techniques), RFC 3227</li>
 <li>Volatility 3, Plaso/log2timeline, KAPE, Velociraptor, TheHive as core tooling</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#route-to-a-depth-skill">Route to a Depth Skill</a><a href="#the-order-that-matters">The Order That Matters</a><a href="#evidence-acquisition">Evidence Acquisition</a><a href="#triage-collection">Triage Collection</a><a href="#artifact-analysis-by-question">Artifact Analysis by Question</a><a href="#cloud-and-identity-incidents">Cloud and Identity Incidents</a><a href="#timeline-reconstruction">Timeline Reconstruction</a><a href="#scoping">Scoping</a><a href="#containment-and-eradication">Containment and Eradication</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#deliverable">Deliverable</a><a href="#att-ck-coverage">ATT&amp;CK Coverage</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

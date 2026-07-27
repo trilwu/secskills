@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Analyze iOS applications at the binary level — decrypting FairPlay-protected IPAs with frida-ios-dump or bagbak, inspecting Mach-O load commands, recovering Objective-C headers with class-dump, and reading Swift metadata. Use when working with an IPA or .app bundle, when a downloaded App Store binary shows cryptid=1, when class-dump returns nothing, or when analyzing iOS frameworks and app extensions.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>App Store binaries are encrypted at rest and decrypted by the kernel at load time, so every static tool fails on a downloaded IPA until you dump the decrypted image from memory. That single step gates everything else, and it is the reason most iOS analysis stalls before it starts.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>App Store binaries are encrypted at rest and decrypted by the kernel at load time, so every static tool fails on a downloaded IPA until you dump the decrypted image from memory. That single step gates everything else, and it is the reason most iOS analysis stalls before it starts.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>You have an IPA or <code>.app</code> bundle and need to read the binary</li>
 <li><code>class-dump</code> returns nothing or garbage</li>
@@ -47,7 +58,7 @@
 <li>You need to enumerate Objective-C classes, Swift types, or exported symbols</li>
 <li>Analyzing embedded frameworks, app extensions, or dynamic libraries</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Android targets</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> or the relevant</li>
 </ul>
@@ -65,21 +76,41 @@
 <li><strong>Cross-platform frameworks</strong> — Flutter, Unity, and Xamarin have their own</li>
 </ul>
 <p>skills; use them for the managed layer and this one for the native shell</p>
-<h2>Check Encryption First</h2>
-<pre><code>otool -l TargetApp | grep -A5 LC_ENCRYPTION_INFO
+<h2 id="check-encryption-first">Check Encryption First</h2>
+<div class="codeblk cx"><button class="copy" data-copy="otool -l TargetApp | grep -A5 LC_ENCRYPTION_INFO
 # cryptid 1  → FairPlay-encrypted, decrypt before anything else
-# cryptid 0  → already decrypted (dev build, or you already dumped it)</code></pre>
+# cryptid 0  → already decrypted (dev build, or you already dumped it)">copy</button><pre><code>otool -l TargetApp | grep -A5 LC_ENCRYPTION_INFO
+# cryptid 1  → FairPlay-encrypted, decrypt before anything else
+# cryptid 0  → already decrypted (dev build, or you already dumped it)</code></pre></div>
 <p>Everything downstream is meaningless on an encrypted binary. <code>class-dump</code> returning nothing is almost always this, not obfuscation.</p>
-<pre><code># Decrypt on a jailbroken device by dumping the loaded image
+<div class="codeblk cx"><button class="copy" data-copy="# Decrypt on a jailbroken device by dumping the loaded image
 frida-ios-dump -l                 # list installed apps
 frida-ios-dump com.target.app     # produces a decrypted IPA
 bagbak com.target.app             # alternative, handles extensions/frameworks well
 
 # Rootless jailbreaks and TrollStore installs work with the same tools
-# Older devices: Clutch, flexdecrypt</code></pre>
+# Older devices: Clutch, flexdecrypt">copy</button><pre><code># Decrypt on a jailbroken device by dumping the loaded image
+frida-ios-dump -l                 # list installed apps
+frida-ios-dump com.target.app     # produces a decrypted IPA
+bagbak com.target.app             # alternative, handles extensions/frameworks well
+
+# Rootless jailbreaks and TrollStore installs work with the same tools
+# Older devices: Clutch, flexdecrypt</code></pre></div>
 <p>Dump <strong>frameworks and extensions too</strong>, not just the main binary. <code>PlugIns/</code> (share sheets, widgets, keyboards) and <code>Frameworks/</code> carry their own encrypted Mach-Os, and app extensions frequently hold the interesting entitlements and a weaker security posture than the main app.</p>
-<h2>Mach-O Structure and Protections</h2>
-<pre><code>file TargetApp                       # thin or fat/universal
+<h2 id="mach-o-structure-and-protections">Mach-O Structure and Protections</h2>
+<div class="codeblk cx"><button class="copy" data-copy="file TargetApp                       # thin or fat/universal
+lipo -info TargetApp                 # architectures present
+lipo -thin arm64 TargetApp -o app64  # extract one before analysis
+
+otool -hv app64                      # header flags: PIE
+otool -l app64 | rg &#x27;LC_LOAD_DYLIB|LC_RPATH|LC_CODE_SIGNATURE|LC_ENCRYPTION&#x27;
+otool -Iv app64 | head               # indirect symbols
+nm -m app64 | rg -v &#x27; U &#x27; | head     # defined symbols
+
+# Protections at a glance
+otool -hv app64 | rg PIE             # ASLR
+otool -Iv app64 | rg stack_chk       # stack canaries
+otool -Iv app64 | rg objc_release    # ARC in use">copy</button><pre><code>file TargetApp                       # thin or fat/universal
 lipo -info TargetApp                 # architectures present
 lipo -thin arm64 TargetApp -o app64  # extract one before analysis
 
@@ -91,43 +122,63 @@ nm -m app64 | rg -v ' U ' | head     # defined symbols
 # Protections at a glance
 otool -hv app64 | rg PIE             # ASLR
 otool -Iv app64 | rg stack_chk       # stack canaries
-otool -Iv app64 | rg objc_release    # ARC in use</code></pre>
+otool -Iv app64 | rg objc_release    # ARC in use</code></pre></div>
 <p>Extract the entitlements — they define what the app is allowed to do and often reveal the interesting attack surface:</p>
-<pre><code>codesign -d --entitlements :- TargetApp.app
+<div class="codeblk cx"><button class="copy" data-copy="codesign -d --entitlements :- TargetApp.app
 # Look for: keychain-access-groups, App Groups, associated-domains,
-# get-task-allow (debuggable!), custom URL scheme claims</code></pre>
+# get-task-allow (debuggable!), custom URL scheme claims">copy</button><pre><code>codesign -d --entitlements :- TargetApp.app
+# Look for: keychain-access-groups, App Groups, associated-domains,
+# get-task-allow (debuggable!), custom URL scheme claims</code></pre></div>
 <p><code>get-task-allow</code> set to true on a production build means the app is debuggable and is a finding on its own.</p>
-<h2>Objective-C</h2>
+<h2 id="objective-c">Objective-C</h2>
 <p>Objective-C keeps its full class metadata in the binary, so recovery is excellent — method names, selectors, class hierarchy, ivars.</p>
-<pre><code>class-dump -H app64 -o ./headers        # classic
+<div class="codeblk cx"><button class="copy" data-copy="class-dump -H app64 -o ./headers        # classic
 class-dump-dyld                          # for dyld shared cache resident classes
 dsdump --objc --color app64              # modern alternative, handles Swift too
 
 # Then read the type map
-rg -l 'Manager|Service|API|Auth|Crypto|Keychain|Payment' ./headers | head -20</code></pre>
+rg -l &#x27;Manager|Service|API|Auth|Crypto|Keychain|Payment&#x27; ./headers | head -20">copy</button><pre><code>class-dump -H app64 -o ./headers        # classic
+class-dump-dyld                          # for dyld shared cache resident classes
+dsdump --objc --color app64              # modern alternative, handles Swift too
+
+# Then read the type map
+rg -l 'Manager|Service|API|Auth|Crypto|Keychain|Payment' ./headers | head -20</code></pre></div>
 <p>In a disassembler, Objective-C calls go through <code>objc_msgSend</code>, so the callee is a selector string in a register rather than a direct branch. Both IDA and Ghidra have plugins that resolve this; without them the call graph is largely useless.</p>
-<h2>Swift</h2>
+<h2 id="swift">Swift</h2>
 <p>Swift is harder. Names are mangled, and method dispatch is often static or through witness tables rather than <code>objc_msgSend</code>.</p>
-<pre><code># Demangle what you find
+<div class="codeblk cx"><button class="copy" data-copy="# Demangle what you find
+nm app64 | swift demangle
+xcrun swift-demangle &#x27;$s10TargetApp11AuthManagerC5loginyyF&#x27;
+
+# Swift type metadata lives in dedicated sections
+otool -l app64 | rg &#x27;__swift5_types|__swift5_proto|__swift5_reflstr&#x27;
+dsdump --swift app64">copy</button><pre><code># Demangle what you find
 nm app64 | swift demangle
 xcrun swift-demangle '$s10TargetApp11AuthManagerC5loginyyF'
 
 # Swift type metadata lives in dedicated sections
 otool -l app64 | rg '__swift5_types|__swift5_proto|__swift5_reflstr'
-dsdump --swift app64</code></pre>
+dsdump --swift app64</code></pre></div>
 <p>Practical approach for Swift-heavy apps: <code>@objc</code> and <code>@objcMembers</code> members still appear in the Objective-C metadata, so class-dump gives you a partial map. For the rest, work from string references and the reflection sections rather than trying to recover a full class list. Runtime enumeration with Frida is usually faster than static recovery:</p>
-<pre><code>frida -U -f com.target.app -l enumerate-swift-classes.js</code></pre>
-<h2>Runtime Analysis</h2>
-<pre><code># Enumerate everything the runtime knows
+<div class="codeblk cx"><button class="copy" data-copy="frida -U -f com.target.app -l enumerate-swift-classes.js">copy</button><pre><code>frida -U -f com.target.app -l enumerate-swift-classes.js</code></pre></div>
+<h2 id="runtime-analysis">Runtime Analysis</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Enumerate everything the runtime knows
+objection -g com.target.app explore
+#   ios hooking list classes
+#   ios hooking search methods &lt;keyword&gt;
+#   ios hooking watch method &quot;-[AuthManager login:]&quot; --dump-args --dump-return
+
+# Direct Frida for anything objection does not cover
+frida -U -f com.target.app -l hooks.js">copy</button><pre><code># Enumerate everything the runtime knows
 objection -g com.target.app explore
 #   ios hooking list classes
 #   ios hooking search methods &lt;keyword&gt;
 #   ios hooking watch method "-[AuthManager login:]" --dump-args --dump-return
 
 # Direct Frida for anything objection does not cover
-frida -U -f com.target.app -l hooks.js</code></pre>
+frida -U -f com.target.app -l hooks.js</code></pre></div>
 <p>Runtime beats static on iOS more often than on other platforms: the Objective-C runtime is introspectable, so listing classes and watching methods gets you to the logic faster than reading a disassembly of <code>objc_msgSend</code> dispatch.</p>
-<h2>What to Look For</h2>
+<h2 id="what-to-look-for">What to Look For</h2>
 <ul>
 <li><strong>Entitlements over-provisioned</strong> — App Groups shared with less-trusted</li>
 </ul>
@@ -147,7 +198,7 @@ frida -U -f com.target.app -l hooks.js</code></pre>
 <li><strong>Third-party SDKs</strong> with their own network stacks and their own pinning</li>
 </ul>
 <p>behaviour; enumerate <code>Frameworks/</code> and check each</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"class-dump returned nothing, the app is obfuscated."</em> Check <code>cryptid</code></li>
 </ul>
@@ -172,12 +223,15 @@ frida -U -f com.target.app -l hooks.js</code></pre>
 <li><em>"I can't jailbreak, so I can't analyze."</em> You can still read the bundle,</li>
 </ul>
 <p>plists, entitlements, and assets, and repackage with a Frida gadget for sideloading. Say what the constraint cost you in the report.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — storage, keychain, IPC, and the wider iOS test</li>
 <li><a class="xref" href="bypassing-root-jailbreak-detection.html"><code>bypassing-root-jailbreak-detection</code></a> — when detection blocks your tooling</li>
 <li><a class="xref" href="bypassing-mobile-pinning.html"><code>bypassing-mobile-pinning</code></a> — TLS interception on iOS stacks</li>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — deeper native RE of the same Mach-O</li>
 <li>frida-ios-dump, bagbak, class-dump, dsdump, objection, Hopper/IDA/Ghidra</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#check-encryption-first">Check Encryption First</a><a href="#mach-o-structure-and-protections">Mach-O Structure and Protections</a><a href="#objective-c">Objective-C</a><a href="#swift">Swift</a><a href="#runtime-analysis">Runtime Analysis</a><a href="#what-to-look-for">What to Look For</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

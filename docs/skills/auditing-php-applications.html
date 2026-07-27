@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,18 +47,18 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Audit PHP web application source for critical vulnerabilities using PHP&#x27;s specific sink and footgun catalog — object injection via unserialize and phar:// POP chains, type-juggling and magic-hash auth bypass, LFI/RFI through php:// and phar:// wrappers, dynamic includes and extract()/superglobal trust, SQL injection in string-built and legacy mysql_* queries, command-execution sinks, and SSRF. Use when reviewing a PHP codebase, a WordPress/Magento/Laravel app, or a plugin for exploitable bugs. Defers general audit methodology to auditing-code-for-vulnerabilities.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>This is the PHP-specific layer on top of <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>. Take the methodology from that skill — context → attack surface → bug-class hunt → variant analysis → the four-question verification gate — and apply the PHP sink catalog below to it. This skill exists because PHP has footguns no language-agnostic methodology carries: features that turn a file read into remote code execution, and comparison rules that turn <code>==</code> into an auth bypass.</p>
+<div class="wrap slayout"><article><p>This is the PHP-specific layer on top of <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>. Take the methodology from that skill — context → attack surface → bug-class hunt → variant analysis → the four-question verification gate — and apply the PHP sink catalog below to it. This skill exists because PHP has footguns no language-agnostic methodology carries: features that turn a file read into remote code execution, and comparison rules that turn <code>==</code> into an auth bypass.</p>
 <p>The collection deliberately has no per-language audit skills except this one. PHP earns the exception because it dominates the legacy-web and WordPress/Magento space where critical bugs actually live, and because its dynamic features fail in ways a reviewer must be primed for specifically.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Reviewing a PHP codebase or plugin for exploitable vulnerabilities</li>
 <li>Auditing a WordPress, Magento, Joomla, or Laravel application's source</li>
 <li>Tracing a suspected RCE, LFI, SQLi, or object-injection path in PHP</li>
 <li>Deciding whether a <code>unserialize</code>, <code>include</code>, or <code>==</code> on user input is exploitable</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>General audit methodology, or a non-PHP language</strong> — use</li>
 </ul>
@@ -64,7 +75,7 @@
 <li><strong>Black-box testing a running app</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
 <li><strong>Reviewing only the diff of a change</strong> — use <a class="xref" href="reviewing-code-changes.html"><code>reviewing-code-changes</code></a></li>
 </ul>
-<h2>Sinks by Bug Class</h2>
+<h2 id="sinks-by-bug-class">Sinks by Bug Class</h2>
 <p>Trace user input (superglobals, headers, uploaded filenames, DB values that were once user input) to each of these. A sink is only a bug when a source reaches it.</p>
 <h3>Remote code execution</h3>
 <ul>
@@ -143,7 +154,7 @@
 <li>Uploads: check the destination is outside the web root, the extension is not</li>
 </ul>
 <p>attacker-chosen (double extensions, <code>.phtml</code>, <code>.php5</code>, null bytes on old PHP), and the server will not execute the type. A validated MIME with an attacker-controlled extension in a web-served directory is RCE.</p>
-<h2>Ecosystem Context</h2>
+<h2 id="ecosystem-context">Ecosystem Context</h2>
 <ul>
 <li><strong>WordPress:</strong> nonces are <strong>CSRF</strong> protection, not authorization — a valid</li>
 </ul>
@@ -156,9 +167,9 @@
 <li><strong>Laravel:</strong> mass assignment (<code>$fillable</code>/<code>$guarded</code>), Blade <code>{!! !!}</code></li>
 </ul>
 <p>(unescaped) vs <code>{{ }}</code> (escaped), and a leaked <code>APP_KEY</code> enabling cookie/<code>decrypt</code> object injection.</p>
-<h2>Verify Before You Report</h2>
+<h2 id="verify-before-you-report">Verify Before You Report</h2>
 <p>Apply <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>' gate: trace the source to the sink, confirm the path is reachable (auth, routing, and — critically — the <strong>PHP version</strong> for juggling and removed-function bugs), and demonstrate impact rather than asserting it. A <code>unserialize</code> with no reachable gadget, or a <code>/e</code> regex on PHP 8, is a hardening note, not a critical finding — say which.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"There's no <code>unserialize</code>, so no object injection."</em> <code>phar://</code> reaches</li>
 </ul>
@@ -187,7 +198,7 @@
 <li><em>"It's a framework class, the gadget isn't here."</em> POP-chain gadgets live in</li>
 </ul>
 <p>dependencies by design. The absence of dangerous code in the vulnerable file is normal, not exculpatory.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the general methodology and gate this</li>
 </ul>
@@ -200,5 +211,8 @@
 <ul>
 <li><a class="xref" href="exploiting-ssrf.html"><code>exploiting-ssrf</code></a> — the exploitation side of a user-controlled URL fetch</li>
 <li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — black-box testing of the running application</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#sinks-by-bug-class">Sinks by Bug Class</a><a href="#ecosystem-context">Ecosystem Context</a><a href="#verify-before-you-report">Verify Before You Report</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

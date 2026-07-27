@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,10 +47,10 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Navigate security work by MITRE ATT&amp;CK tactic and technique — resolve a technique ID or name to the right skill, map a threat intel report or adversary emulation plan to procedures, and run the purple-team loop from technique to detection to validation. Use when a request names an ATT&amp;CK ID like T1003.001, a tactic like lateral movement, an APT group or intel report, or when planning coverage against the matrix.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>ATT&amp;CK is a shared vocabulary, not a methodology. Its value is that offense, detection, and response can name the same behaviour — which makes this skill a router, not a technique catalogue. It resolves a technique to the skill that holds the actual procedure, and it runs the loop that connects the two sides.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>ATT&amp;CK is a shared vocabulary, not a methodology. Its value is that offense, detection, and response can name the same behaviour — which makes this skill a router, not a technique catalogue. It resolves a technique to the skill that holds the actual procedure, and it runs the loop that connects the two sides.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>A request names a technique ID (<code>T1003.001</code>), a technique name</li>
 </ul>
@@ -50,7 +61,7 @@
 <li>Running a purple team exercise: emulate, detect, validate, close the gap</li>
 <li>Choosing which skill applies when a request spans offense and defense</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>A plain-language request</strong> ("dump creds off this host") — the domain skills</li>
 </ul>
@@ -67,9 +78,21 @@
 <li><strong>Mobile targets</strong> — <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a>; the Mobile matrix has its</li>
 </ul>
 <p>own IDs that do not correspond to Enterprise ones</p>
-<h2>The Index</h2>
+<h2 id="the-index">The Index</h2>
 <p><code>secskills-core/ttp-index.json</code> maps techniques to the skills that cover them. Read it directly to resolve a lookup:</p>
-<pre><code># Which skill covers this technique?
+<div class="codeblk cx"><button class="copy" data-copy="# Which skill covers this technique?
+python3 -c &quot;
+import json;d=json.load(open(&#x27;secskills-core/ttp-index.json&#x27;))
+print([r for r in d[&#x27;techniques&#x27;] if r[&#x27;id&#x27;]==&#x27;T1003.001&#x27;])&quot;
+
+# Everything under one tactic
+python3 -c &quot;
+import json;d=json.load(open(&#x27;secskills-core/ttp-index.json&#x27;))
+[print(r[&#x27;id&#x27;], r[&#x27;name&#x27;], &#x27;→&#x27;, &#x27;, &#x27;.join(r[&#x27;skills&#x27;]))
+ for r in d[&#x27;techniques&#x27;] if &#x27;TA0008&#x27; in r[&#x27;tactics&#x27;]]&quot;
+
+# Search by name when you have words, not an ID
+rg -i &#x27;kerberoast|pass the hash&#x27; secskills-core/ttp-index.json">copy</button><pre><code># Which skill covers this technique?
 python3 -c "
 import json;d=json.load(open('secskills-core/ttp-index.json'))
 print([r for r in d['techniques'] if r['id']=='T1003.001'])"
@@ -81,42 +104,60 @@ import json;d=json.load(open('secskills-core/ttp-index.json'))
  for r in d['techniques'] if 'TA0008' in r['tactics']]"
 
 # Search by name when you have words, not an ID
-rg -i 'kerberoast|pass the hash' secskills-core/ttp-index.json</code></pre>
+rg -i 'kerberoast|pass the hash' secskills-core/ttp-index.json</code></pre></div>
 <p>Each skill also carries a generated <code>## ATT&amp;amp;CK Coverage</code> section listing its techniques. That section and the index are kept in sync by <code>scripts/sync_attack.py</code>; the index is the source of truth.</p>
 <p><strong>Three things the index deliberately does not do.</strong> It does not claim coverage of every technique — the <code>_unmapped</code> block names the skills that use a different framework and says which. It does not repeat detection and hunting on every row, because those apply to all of them. And it is hand-curated, so technique IDs drift as ATT&amp;CK releases new versions: re-verify against <a href="https://attack.mitre.org">attack.mitre.org</a> before citing an ID in a report.</p>
-<h2>Resolving a Request</h2>
-<pre><code>Technique ID or name  → look up in the index → load the named skill
+<h2 id="resolving-a-request">Resolving a Request</h2>
+<div class="codeblk cx"><button class="copy" data-copy="Technique ID or name  → look up in the index → load the named skill
+Tactic               → list the tactic&#x27;s techniques → ask which procedure
+Intel report         → extract TTPs (not IOCs) → map each → prioritize by
+                       what your environment actually exposes
+Group / APT name     → pull the group&#x27;s technique list from ATT&amp;CK → intersect
+                       with your attack surface → hunt the intersection">copy</button><pre><code>Technique ID or name  → look up in the index → load the named skill
 Tactic               → list the tactic's techniques → ask which procedure
 Intel report         → extract TTPs (not IOCs) → map each → prioritize by
                        what your environment actually exposes
 Group / APT name     → pull the group's technique list from ATT&amp;CK → intersect
-                       with your attack surface → hunt the intersection</code></pre>
+                       with your attack surface → hunt the intersection</code></pre></div>
 <p><strong>Techniques are not procedures.</strong> T1055 (Process Injection) has a dozen materially different implementations, and a detection for one catches none of the others. When a request arrives as a bare technique ID, the useful next question is <em>which procedure</em> — the specific API sequence, tool, or command variant. Answering "we cover T1055" without naming a procedure is the most common way ATT&amp;CK is used to mislead.</p>
-<h2>The Purple Team Loop</h2>
+<h2 id="the-purple-team-loop">The Purple Team Loop</h2>
 <p>This is what the shared vocabulary is for. Each step hands to a different skill, and the technique ID is what keeps them talking about the same thing.</p>
-<pre><code>1. Select    → pick a technique by threat relevance, not matrix tidiness
+<div class="codeblk cx"><button class="copy" data-copy="1. Select    → pick a technique by threat relevance, not matrix tidiness
 2. Emulate   → run the procedure (offensive skill, or Atomic Red Team)
 3. Observe   → did telemetry capture it? which data source, which fields?
 4. Detect    → write the rule against the behaviour  → engineering-detections
 5. Validate  → re-run the emulation; confirm the alert fires and is triageable
 6. Hunt      → search historically for prior instances → hunting-threats
-7. Record    → tested / untested / no-telemetry, per technique</code></pre>
+7. Record    → tested / untested / no-telemetry, per technique">copy</button><pre><code>1. Select    → pick a technique by threat relevance, not matrix tidiness
+2. Emulate   → run the procedure (offensive skill, or Atomic Red Team)
+3. Observe   → did telemetry capture it? which data source, which fields?
+4. Detect    → write the rule against the behaviour  → engineering-detections
+5. Validate  → re-run the emulation; confirm the alert fires and is triageable
+6. Hunt      → search historically for prior instances → hunting-threats
+7. Record    → tested / untested / no-telemetry, per technique</code></pre></div>
 <p>Step 3 is the one that produces the real finding. A technique that executes with no telemetry at all is a visibility gap, and that outranks a missing rule — you cannot write a detection for data you do not collect.</p>
 <p>Select techniques by relevance: what actors targeting your sector actually use, what your crown-jewel assets are reachable through, and where you already suspect a gap. Working left-to-right across the matrix produces even coverage of things nobody does to you.</p>
-<h2>Coverage Reporting</h2>
+<h2 id="coverage-reporting">Coverage Reporting</h2>
 <p>Report per technique in three states, never as a single percentage:</p>
 <div class="tw"><table><thead><tr><th>State</th><th>Means</th></tr></thead><tbody><tr><td><strong>Tested</strong></td><td>Emulated, telemetry confirmed present fleet-wide, rule fired, triage steps exist</td></tr><tr><td><strong>Untested</strong></td><td>A rule exists but has never been validated against an emulation</td></tr><tr><td><strong>No telemetry</strong></td><td>The data source is not collected, or not on all platforms</td></tr></tbody></table></div>
 <p>A green ATT&amp;CK Navigator layer built from untested rules is the most common self-deception in security programs. If you generate a layer, encode the three states as distinct colours and say in the legend what each means.</p>
-<pre><code># Navigator layer from the index (coverage claimed, not coverage tested)
+<div class="codeblk cx"><button class="copy" data-copy="# Navigator layer from the index (coverage claimed, not coverage tested)
+python3 -c &quot;
+import json;d=json.load(open(&#x27;secskills-core/ttp-index.json&#x27;))
+print(json.dumps({&#x27;name&#x27;:&#x27;SecSkills skill coverage&#x27;,&#x27;versions&#x27;:{&#x27;layer&#x27;:&#x27;4.5&#x27;},
+ &#x27;domain&#x27;:&#x27;enterprise-attack&#x27;,
+ &#x27;description&#x27;:&#x27;Skills that cover each technique. Claimed, not validated.&#x27;,
+ &#x27;techniques&#x27;:[{&#x27;techniqueID&#x27;:r[&#x27;id&#x27;],&#x27;comment&#x27;:&#x27;, &#x27;.join(r[&#x27;skills&#x27;]),&#x27;score&#x27;:1}
+   for r in d[&#x27;techniques&#x27;]]}))&quot; &gt; coverage-layer.json">copy</button><pre><code># Navigator layer from the index (coverage claimed, not coverage tested)
 python3 -c "
 import json;d=json.load(open('secskills-core/ttp-index.json'))
 print(json.dumps({'name':'SecSkills skill coverage','versions':{'layer':'4.5'},
  'domain':'enterprise-attack',
  'description':'Skills that cover each technique. Claimed, not validated.',
  'techniques':[{'techniqueID':r['id'],'comment':', '.join(r['skills']),'score':1}
-   for r in d['techniques']]}))" &gt; coverage-layer.json</code></pre>
+   for r in d['techniques']]}))" &gt; coverage-layer.json</code></pre></div>
 <p>Label any generated layer as <em>claimed</em> coverage. Turning it into <em>tested</em> coverage requires the loop above, one technique at a time.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"We cover that technique."</em> Which procedure, validated how, with which</li>
 </ul>
@@ -141,12 +182,15 @@ print(json.dumps({'name':'SecSkills skill coverage','versions':{'layer':'4.5'},
 <li><em>"We emulated it and nothing alerted, so the rule is broken."</em> Check</li>
 </ul>
 <p>telemetry first. Usually the data was never collected.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — writing and validating the rule for a technique</li>
 <li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> — historical search for a technique in your environment</li>
 <li><a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a> — mapping observed attacker activity to techniques</li>
 <li><code>secskills-core/ttp-index.json</code> — the technique-to-skill index this skill reads</li>
 <li>MITRE ATT&amp;CK, ATT&amp;CK Navigator, Atomic Red Team, CALDERA, MITRE ATLAS (AI)</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#the-index">The Index</a><a href="#resolving-a-request">Resolving a Request</a><a href="#the-purple-team-loop">The Purple Team Loop</a><a href="#coverage-reporting">Coverage Reporting</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

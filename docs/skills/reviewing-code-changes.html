@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,24 +47,24 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Perform a security review of a diff, branch, or pull request — assessing what the change introduces, weakens, or exposes, with a triage-first workflow and false-positive discipline. Use when asked to security review a PR or branch, check a diff before merge or commit, or assess whether a change is safe to ship.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Reviewing a diff is not auditing a codebase in miniature. The diff shows you what changed but hides what the change <em>means</em> — the caller that now receives untrusted data, the check that used to run, the assumption that no longer holds. Reviewing only the added lines is the standard way to miss the bug.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Reviewing a diff is not auditing a codebase in miniature. The diff shows you what changed but hides what the change <em>means</em> — the caller that now receives untrusted data, the check that used to run, the assumption that no longer holds. Reviewing only the added lines is the standard way to miss the bug.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Security review of a pull request, branch, or commit range</li>
 <li>Pre-commit or pre-merge check on your own changes</li>
 <li>Assessing risk of a dependency bump or config change</li>
 <li>Reviewing an AI-generated change before it ships</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Whole-codebase audit</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a></li>
 <li><strong>Runtime testing of the deployed change</strong> — use the relevant testing skill</li>
 <li><strong>Dependency/CI changes as the main subject</strong> — use <a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a></li>
 </ul>
-<h2>Get the Real Diff First</h2>
-<pre><code># Against the actual merge base, not against whatever HEAD happens to be
+<h2 id="get-the-real-diff-first">Get the Real Diff First</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Against the actual merge base, not against whatever HEAD happens to be
 BASE=$(git merge-base HEAD origin/main)
 git diff --stat $BASE...HEAD
 git diff $BASE...HEAD
@@ -62,7 +73,16 @@ git diff $BASE...HEAD
 git diff -M -C -w $BASE...HEAD
 
 # Files changed most, and by whom — where to spend attention
-git diff --numstat $BASE...HEAD | sort -rn | head -20</code></pre>
+git diff --numstat $BASE...HEAD | sort -rn | head -20">copy</button><pre><code># Against the actual merge base, not against whatever HEAD happens to be
+BASE=$(git merge-base HEAD origin/main)
+git diff --stat $BASE...HEAD
+git diff $BASE...HEAD
+
+# Rename and whitespace noise hides real changes
+git diff -M -C -w $BASE...HEAD
+
+# Files changed most, and by whom — where to spend attention
+git diff --numstat $BASE...HEAD | sort -rn | head -20</code></pre></div>
 <p>Three things to establish before reading code:</p>
 <ol>
 <li><strong>What is this change trying to do?</strong> Read the PR description and the</li>
@@ -76,16 +96,18 @@ git diff --numstat $BASE...HEAD | sort -rn | head -20</code></pre>
 <li><strong>What is the change's exposure?</strong> A change to an unauthenticated request</li>
 </ol>
 <p>path deserves an order of magnitude more attention than an internal refactor.</p>
-<h2>Triage: Where to Spend the Review</h2>
+<h2 id="triage-where-to-spend-the-review">Triage: Where to Spend the Review</h2>
 <p>Not all diffs deserve equal time. Rank hunks by what they touch:</p>
 <div class="tw"><table><thead><tr><th>Priority</th><th>Signals</th></tr></thead><tbody><tr><td><strong>Critical</strong></td><td>Auth/authz logic, session handling, crypto, input parsing on an untrusted boundary, SQL/command/template construction, file path handling, deserialization, CI/CD workflows, IAM/security-group config, dependency additions</td></tr><tr><td><strong>High</strong></td><td>New endpoints or routes, new tool/RPC surface, error handling on security paths, logging of user data, tenant scoping, cache keys, rate limits</td></tr><tr><td><strong>Medium</strong></td><td>Business logic that consumes validated input, refactors that move security-relevant code</td></tr><tr><td><strong>Low</strong></td><td>Tests, docs, formatting, comments — but read test <em>deletions</em></td></tr></tbody></table></div>
-<pre><code># Fast triage of a large diff
+<div class="codeblk cx"><button class="copy" data-copy="# Fast triage of a large diff
+git diff $BASE...HEAD --name-only | rg &#x27;auth|login|session|crypto|password|token|admin|permission|\.github/workflows|Dockerfile|terraform|policy&#x27;
+git diff $BASE...HEAD -U10 | rg -n &#x27;^\+.*(eval\(|exec\(|system\(|innerHTML|pickle|yaml\.load|Sprintf.*SELECT|shell=True|verify=False|InsecureSkipVerify)&#x27;">copy</button><pre><code># Fast triage of a large diff
 git diff $BASE...HEAD --name-only | rg 'auth|login|session|crypto|password|token|admin|permission|\.github/workflows|Dockerfile|terraform|policy'
-git diff $BASE...HEAD -U10 | rg -n '^\+.*(eval\(|exec\(|system\(|innerHTML|pickle|yaml\.load|Sprintf.*SELECT|shell=True|verify=False|InsecureSkipVerify)'</code></pre>
-<h2>What to Look For</h2>
+git diff $BASE...HEAD -U10 | rg -n '^\+.*(eval\(|exec\(|system\(|innerHTML|pickle|yaml\.load|Sprintf.*SELECT|shell=True|verify=False|InsecureSkipVerify)'</code></pre></div>
+<h2 id="what-to-look-for">What to Look For</h2>
 <h3>Removals and weakenings — read the minus lines first</h3>
 <p>The most dangerous diffs delete things. Search the removed lines specifically:</p>
-<pre><code>git diff $BASE...HEAD | rg '^-' | rg -i 'auth|verify|valid|check|sanitiz|escape|permission|assert|csrf|limit'</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="git diff $BASE...HEAD | rg &#x27;^-&#x27; | rg -i &#x27;auth|verify|valid|check|sanitiz|escape|permission|assert|csrf|limit&#x27;">copy</button><pre><code>git diff $BASE...HEAD | rg '^-' | rg -i 'auth|verify|valid|check|sanitiz|escape|permission|assert|csrf|limit'</code></pre></div>
 <ul>
 <li>A validation call deleted "because it was redundant"</li>
 <li>An authorization decorator removed during a refactor</li>
@@ -101,13 +123,16 @@ git diff $BASE...HEAD -U10 | rg -n '^\+.*(eval\(|exec\(|system\(|innerHTML|pickl
 <p>Both require reading outside the diff.</p>
 <h3>Context beyond the diff</h3>
 <p>Read the whole function for every non-trivial hunk. Then check callers:</p>
-<pre><code># Who calls the changed function, and do they still satisfy its assumptions?
+<div class="codeblk cx"><button class="copy" data-copy="# Who calls the changed function, and do they still satisfy its assumptions?
+rg -n &#x27;changedFunctionName\s*\(&#x27; --type &lt;lang&gt;
+# What else in the codebase uses the pattern this change introduced?
+git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after">copy</button><pre><code># Who calls the changed function, and do they still satisfy its assumptions?
 rg -n 'changedFunctionName\s*\(' --type &lt;lang&gt;
 # What else in the codebase uses the pattern this change introduced?
-git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after</code></pre>
+git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after</code></pre></div>
 <p>Specifically check whether the change alters an invariant that other code relies on: a function that used to sanitize and now does not, a return value whose meaning flipped, a nullable that became non-null, an ordering guarantee that was dropped.</p>
 <h3>Config, infra, and pipeline changes riding along</h3>
-<pre><code>git diff $BASE...HEAD -- '*.yml' '*.yaml' '*.tf' 'Dockerfile*' '.github/**' '*.json'</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="git diff $BASE...HEAD -- &#x27;*.yml&#x27; &#x27;*.yaml&#x27; &#x27;*.tf&#x27; &#x27;Dockerfile*&#x27; &#x27;.github/**&#x27; &#x27;*.json&#x27;">copy</button><pre><code>git diff $BASE...HEAD -- '*.yml' '*.yaml' '*.tf' 'Dockerfile*' '.github/**' '*.json'</code></pre></div>
 <ul>
 <li>New or bumped dependencies: who maintains them, and does the lockfile change</li>
 </ul>
@@ -120,7 +145,7 @@ git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after</cod
 </ul>
 <h3>AI-generated and large mechanical changes</h3>
 <p>Machine-written diffs fail in characteristic ways: plausible-looking validation that does not actually constrain, error handling that swallows security-relevant failures, invented API usage that silently no-ops, and copied patterns applied where the surrounding assumptions differ. For a large generated diff, sample the security-relevant hunks and verify against the real library behaviour rather than reading for plausibility.</p>
-<h2>Verify Before Reporting</h2>
+<h2 id="verify-before-reporting">Verify Before Reporting</h2>
 <p>Diff review generates false positives faster than any other review mode, because the missing context is exactly what makes a hunk look wrong. Before raising a finding:</p>
 <ol>
 <li><strong>Read the surrounding function and the callers.</strong> The check you think is</li>
@@ -136,9 +161,32 @@ git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after</cod
 </ol>
 <p>everywhere and predates this PR, it is a codebase finding, not a PR blocker — say so, and file it separately.</p>
 <p>Then state the finding with a concrete failure scenario: the input, the path, and the result. "This could be unsafe" is not a review comment; it is a request for someone else to do the analysis.</p>
-<h2>Output</h2>
+<h2 id="output">Output</h2>
 <p>Separate what blocks the merge from what does not:</p>
-<pre><code>## Security review — PR #482
+<div class="codeblk cx"><button class="copy" data-copy="## Security review — PR #482
+
+**Blocking**
+1. `api/reports.go:214` — export handler drops the tenant predicate present on
+   the list path. Any authenticated user can export another tenant&#x27;s report by
+   ID. Add `AND tenant_id = ?` to the lookup.
+
+**Non-blocking, should fix**
+2. `api/reports.go:190` — report IDs are sequential, making enumeration
+   trivial once (1) is fixed. Consider opaque IDs.
+
+**Notes / pre-existing**
+3. The `findByID` pattern without scoping appears in 14 other handlers and
+   predates this PR. Filed as ISSUE-991 rather than blocking here.
+
+**Reviewed but clear**
+- New `/webhooks/stripe` route: signature verified before body parse, replay
+  window enforced. No finding.
+- Dependency bump `lodash 4.17.20 → 4.17.21`: patch for CVE-2021-23337, no
+  API change.
+
+**Not covered**
+- The React changes under `web/` were not reviewed for XSS in depth; the diff
+  touches 40 components.">copy</button><pre><code>## Security review — PR #482
 
 **Blocking**
 1. `api/reports.go:214` — export handler drops the tenant predicate present on
@@ -161,9 +209,9 @@ git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after</cod
 
 **Not covered**
 - The React changes under `web/` were not reviewed for XSS in depth; the diff
-  touches 40 components.</code></pre>
+  touches 40 components.</code></pre></div>
 <p>Stating what you reviewed and found clean is as useful as the findings — it tells the next reviewer where not to spend time, and it makes the coverage of the review honest.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The diff looks fine."</em> You reviewed the added lines. Read the removed ones</li>
 </ul>
@@ -186,11 +234,14 @@ git log -1 --format=%H $BASE  # anchor, then compare behaviour before/after</cod
 <li><em>"I'd need to understand the whole system to be sure."</em> Then say what you</li>
 </ul>
 <p>could not determine. An honest uncertainty is a reviewable statement; silence reads as approval.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — full audit methodology and bug classes</li>
 <li><a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a> — dependency and workflow changes in the diff</li>
 <li><a class="xref" href="securing-ai-systems.html"><code>securing-ai-systems</code></a> — reviewing changes to LLM/agent features</li>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity and write-up when a finding leaves the PR</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#get-the-real-diff-first">Get the Real Diff First</a><a href="#triage-where-to-spend-the-review">Triage: Where to Spend the Review</a><a href="#what-to-look-for">What to Look For</a><a href="#verify-before-reporting">Verify Before Reporting</a><a href="#output">Output</a><a href="#security-review-pr-482">Security review — PR #482</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

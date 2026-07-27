@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Author and maintain Sigma detection rules — structure, logsource taxonomy, detection logic with modifiers, false-positive filtering, backend conversion with pySigma, and offline validation with Hayabusa or Chainsaw. Use when translating threat intel into vendor-agnostic detection logic, building a detection-as-code pipeline around Sigma, reviewing or tuning existing Sigma rules, or converting rules across SIEM backends.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-defense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-defense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-defense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Sigma is the common language for detection logic -- write once, convert to any SIEM. The value is portability and reviewability, but only if the rule is precise: a Sigma rule that matches everything is worse than no rule, because it consumes analyst time and trains the team to ignore alerts. The work is specificity without brittleness.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Sigma is the common language for detection logic -- write once, convert to any SIEM. The value is portability and reviewability, but only if the rule is precise: a Sigma rule that matches everything is worse than no rule, because it consumes analyst time and trains the team to ignore alerts. The work is specificity without brittleness.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Translating a TTP, threat intel report, or incident finding into a portable detection rule</li>
 <li>Writing vendor-agnostic detection logic that converts to multiple SIEM backends</li>
@@ -49,17 +61,42 @@
 <li>Converting Sigma rules between backends (Splunk, Elastic, Sentinel, CrowdStrike, Chronicle)</li>
 <li>Contributing rules upstream to SigmaHQ or maintaining a private rule repository</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Broader detection engineering including YARA, Suricata, and the full detection lifecycle</strong> -- use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
 <li><strong>The signature belongs on files or memory, not log telemetry</strong> -- use <a class="xref" href="writing-yara-rules.html"><code>writing-yara-rules</code></a></li>
 <li><strong>Hypothesis-driven threat hunting, not rule writing</strong> -- use <a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a></li>
 <li><strong>Active incident response, not rule development</strong> -- use <a class="xref" href="responding-to-incidents.html"><code>responding-to-incidents</code></a></li>
 </ul>
-<h2>Sigma Rule Structure</h2>
+<h2 id="sigma-rule-structure">Sigma Rule Structure</h2>
 <p>Every rule is a YAML document with these fields in order:</p>
 <p><strong>The specification requires only three fields:</strong> <code>title</code>, <code>logsource</code>, and <code>detection</code> (which must contain a <code>condition</code>). Everything else is optional <em>to the spec</em>. Do not confuse that with the SigmaHQ rule repository, which requires far more — <code>id</code>, <code>status</code>, <code>description</code>, <code>author</code>, <code>date</code>, <code>level</code>, and ATT&amp;CK <code>tags</code> — before it will accept a contribution. Write to the stricter SigmaHQ convention by default, because a rule without an <code>id</code> or a <code>level</code> is unmanageable in a real pipeline, but know which constraint you are meeting when a converter accepts a rule your reviewer rejects.</p>
-<pre><code>title: Short Descriptive Name              # REQUIRED by spec, max ~100 chars
+<div class="codeblk cx"><button class="copy" data-copy="title: Short Descriptive Name              # REQUIRED by spec, max ~100 chars
+id: a1b2c3d4-0000-4000-8000-000000000001  # optional to spec; UUIDv4, never reuse
+related:                                    # optional, link to predecessor rules
+  - id: &lt;uuid&gt;
+    type: derived | obsoletes | merged | renamed | similar
+status: experimental                        # optional; see lifecycle below
+description: &gt;                              # optional to spec, expected by SigmaHQ
+  Detects X behaviour consistent with Y technique.
+references:                                 # optional, strongly recommended
+  - https://attack.mitre.org/techniques/T1059/001/
+author: Your Name                           # optional to spec
+date: 2026-07-26                            # optional; ISO 8601 YYYY-MM-DD
+modified: 2026-07-26                        # optional; same format, on update
+tags:                                       # optional to spec, expected by SigmaHQ
+  - attack.execution                        #   tactic (lowercase, dotted)
+  - attack.t1059.001                        #   technique (lowercase)
+logsource:                                  # REQUIRED by spec
+  category: process_creation
+  product: windows
+detection:                                  # REQUIRED by spec
+  selection:
+    CommandLine|contains: &#x27;some-indicator&#x27;
+  condition: selection                      # REQUIRED inside detection
+falsepositives:                             # optional to spec
+  - Legitimate admin scripts using the same flag
+level: medium                               # optional; informational|low|medium|high|critical">copy</button><pre><code>title: Short Descriptive Name              # REQUIRED by spec, max ~100 chars
 id: a1b2c3d4-0000-4000-8000-000000000001  # optional to spec; UUIDv4, never reuse
 related:                                    # optional, link to predecessor rules
   - id: &lt;uuid&gt;
@@ -84,19 +121,28 @@ detection:                                  # REQUIRED by spec
   condition: selection                      # REQUIRED inside detection
 falsepositives:                             # optional to spec
   - Legitimate admin scripts using the same flag
-level: medium                               # optional; informational|low|medium|high|critical</code></pre>
+level: medium                               # optional; informational|low|medium|high|critical</code></pre></div>
 <p><strong>Date format.</strong> The spec mandates ISO 8601 with hyphens — <code>YYYY-MM-DD</code>. Older rules and much online material use the legacy <code>YYYY/MM/DD</code>; that form is outdated, and some tooling now rejects it.</p>
 <p><strong>Status lifecycle.</strong> The permitted values are <code>experimental</code>, <code>test</code>, <code>stable</code>, <code>deprecated</code>, and <code>unsupported</code>. In practice: <code>experimental</code> = observation only, no alerting. <code>test</code> = validated against emulation, ready for limited deployment. <code>stable</code> = tuned in production with documented FPs. <code>deprecated</code> = replaced, no longer accurate. <code>unsupported</code> = not usable as written (e.g. depends on homemade fields). Never promote without the corresponding work.</p>
-<h2>Logsource Taxonomy</h2>
+<h2 id="logsource-taxonomy">Logsource Taxonomy</h2>
 <p>The <code>logsource</code> block abstracts the data source. Specify only what is needed.</p>
 <p><strong>Categories:</strong> <code>process_creation</code>, <code>file_event</code>, <code>file_access</code>, <code>network_connection</code>, <code>registry_event</code>, <code>dns_query</code>, <code>image_load</code>, <code>pipe_created</code>, <code>process_access</code>, <code>driver_load</code>, <code>create_remote_thread</code>.</p>
 <p><strong>Product:</strong> <code>windows</code>, <code>linux</code>, <code>macos</code>.</p>
 <p><strong>Service:</strong> <code>sysmon</code>, <code>security</code>, <code>system</code>, <code>powershell</code>, <code>powershell-classic</code>, <code>application</code>, <code>taskscheduler</code>, <code>windefend</code>, <code>firewall-as</code>.</p>
 <p>Use <code>category</code> when you care about the event type regardless of collection method. Use <code>product</code> + <code>service</code> when targeting a specific log channel. Do not combine <code>category</code> and <code>service</code> unless the backend requires it.</p>
-<h2>Detection Logic</h2>
+<h2 id="detection-logic">Detection Logic</h2>
 <h3>Selection and filter pattern</h3>
 <p>Define what to match (<code>selection</code>), what to exclude (<code>filter_*</code>), combine in <code>condition</code>:</p>
-<pre><code>detection:
+<div class="codeblk cx"><button class="copy" data-copy="detection:
+  selection:
+    ParentImage|endswith: &#x27;\explorer.exe&#x27;
+    CommandLine|contains|all:
+      - &#x27;powershell&#x27;
+      - &#x27;-enc&#x27;
+  filter_legitimate:
+    CommandLine|contains: &#x27;company-deploy-script&#x27;
+    User|startswith: &#x27;SVC_&#x27;
+  condition: selection and not filter_legitimate">copy</button><pre><code>detection:
   selection:
     ParentImage|endswith: '\explorer.exe'
     CommandLine|contains|all:
@@ -105,60 +151,91 @@ level: medium                               # optional; informational|low|medium
   filter_legitimate:
     CommandLine|contains: 'company-deploy-script'
     User|startswith: 'SVC_'
-  condition: selection and not filter_legitimate</code></pre>
+  condition: selection and not filter_legitimate</code></pre></div>
 <h3>Condition syntax</h3>
-<pre><code>condition: selection                           # simple match
+<div class="codeblk cx"><button class="copy" data-copy="condition: selection                           # simple match
+condition: selection and not filter            # match minus exclusions
+condition: selection1 or selection2            # either pattern
+condition: (sel1 and sel2) and not (fp1 or fp2)
+condition: all of selection*                   # all blocks starting with &quot;selection&quot;
+condition: 1 of selection*                     # any one block">copy</button><pre><code>condition: selection                           # simple match
 condition: selection and not filter            # match minus exclusions
 condition: selection1 or selection2            # either pattern
 condition: (sel1 and sel2) and not (fp1 or fp2)
 condition: all of selection*                   # all blocks starting with "selection"
-condition: 1 of selection*                     # any one block</code></pre>
+condition: 1 of selection*                     # any one block</code></pre></div>
 <h3>Keywords</h3>
 <p>Match against the full log event (all fields). Blunt instrument -- prefer field-specific selections for production rules:</p>
-<pre><code>detection:
+<div class="codeblk cx"><button class="copy" data-copy="detection:
+  keywords:
+    - &#x27;Invoke-Mimikatz&#x27;
+    - &#x27;sekurlsa::logonpasswords&#x27;
+  condition: keywords">copy</button><pre><code>detection:
   keywords:
     - 'Invoke-Mimikatz'
     - 'sekurlsa::logonpasswords'
-  condition: keywords</code></pre>
+  condition: keywords</code></pre></div>
 <h3>Modifiers</h3>
 <p>Chain with <code>|</code>. Example: <code>CommandLine|contains|all</code>.</p>
 <div class="tw"><table><thead><tr><th>Modifier</th><th>Effect</th></tr></thead><tbody><tr><td><code>contains</code></td><td>Substring match</td></tr><tr><td><code>startswith</code> / <code>endswith</code></td><td>Prefix / suffix match</td></tr><tr><td><code>re</code></td><td>Regular expression (PCRE)</td></tr><tr><td><code>base64offset</code></td><td>Match base64-encoded variants at all three offsets</td></tr><tr><td><code>all</code></td><td>All list values must match (default is any)</td></tr><tr><td><code>cidr</code></td><td>CIDR network range match on IP fields</td></tr><tr><td><code>windash</code></td><td>Match both <code>-</code> and <code>/</code> as argument prefix</td></tr><tr><td><code>expand</code></td><td>Expand environment variables like <code>%SystemRoot%</code></td></tr><tr><td><code>wide</code> / <code>utf16le</code> / <code>utf16be</code> / <code>utf16</code></td><td>Match the wide (UTF-16) encoding of the value; <code>wide</code> is an alias for <code>utf16le</code>. There is no <code>utf8</code> modifier</td></tr><tr><td><code>exists</code></td><td>Field present (true) or absent (false)</td></tr></tbody></table></div>
-<h2>Common Detection Patterns</h2>
+<h2 id="common-detection-patterns">Common Detection Patterns</h2>
 <h3>Process creation -- suspicious command line</h3>
-<pre><code>detection:
+<div class="codeblk cx"><button class="copy" data-copy="detection:
+  selection:
+    CommandLine|contains|windash|all: [&#x27;bypass&#x27;, &#x27;hidden&#x27;, &#x27;noprofile&#x27;]
+  filter_admin:
+    ParentImage|endswith: [&#x27;\sccm.exe&#x27;, &#x27;\intune_agent.exe&#x27;]
+  condition: selection and not filter_admin">copy</button><pre><code>detection:
   selection:
     CommandLine|contains|windash|all: ['bypass', 'hidden', 'noprofile']
   filter_admin:
     ParentImage|endswith: ['\sccm.exe', '\intune_agent.exe']
-  condition: selection and not filter_admin</code></pre>
+  condition: selection and not filter_admin</code></pre></div>
 <h3>Parent-child relationship (Office spawning shell)</h3>
-<pre><code>detection:
+<div class="codeblk cx"><button class="copy" data-copy="detection:
+  selection:
+    ParentImage|endswith: &#x27;\winword.exe&#x27;
+    Image|endswith: [&#x27;\cmd.exe&#x27;, &#x27;\powershell.exe&#x27;, &#x27;\wscript.exe&#x27;, &#x27;\mshta.exe&#x27;]
+  condition: selection">copy</button><pre><code>detection:
   selection:
     ParentImage|endswith: '\winword.exe'
     Image|endswith: ['\cmd.exe', '\powershell.exe', '\wscript.exe', '\mshta.exe']
-  condition: selection</code></pre>
+  condition: selection</code></pre></div>
 <h3>File creation in suspicious paths</h3>
-<pre><code>detection:
+<div class="codeblk cx"><button class="copy" data-copy="detection:
+  selection:
+    TargetFilename|contains: [&#x27;\AppData\Local\Temp\&#x27;, &#x27;\ProgramData\&#x27;, &#x27;\Users\Public\&#x27;]
+    TargetFilename|endswith: [&#x27;.exe&#x27;, &#x27;.dll&#x27;, &#x27;.scr&#x27;, &#x27;.hta&#x27;]
+  condition: selection">copy</button><pre><code>detection:
   selection:
     TargetFilename|contains: ['\AppData\Local\Temp\', '\ProgramData\', '\Users\Public\']
     TargetFilename|endswith: ['.exe', '.dll', '.scr', '.hta']
-  condition: selection</code></pre>
+  condition: selection</code></pre></div>
 <h3>Registry persistence (run keys)</h3>
-<pre><code>detection:
+<div class="codeblk cx"><button class="copy" data-copy="detection:
+  selection:
+    TargetObject|contains: [&#x27;\CurrentVersion\Run\&#x27;, &#x27;\CurrentVersion\RunOnce\&#x27;]
+    EventType: SetValue
+  filter_installers:
+    Image|startswith: &#x27;C:\Windows\Installer\&#x27;
+  condition: selection and not filter_installers">copy</button><pre><code>detection:
   selection:
     TargetObject|contains: ['\CurrentVersion\Run\', '\CurrentVersion\RunOnce\']
     EventType: SetValue
   filter_installers:
     Image|startswith: 'C:\Windows\Installer\'
-  condition: selection and not filter_installers</code></pre>
+  condition: selection and not filter_installers</code></pre></div>
 <h3>Named pipe creation (C2 indicators)</h3>
-<pre><code>detection:
+<div class="codeblk cx"><button class="copy" data-copy="detection:
+  selection:
+    PipeName: [&#x27;\MSSE-*&#x27;, &#x27;\postex_*&#x27;, &#x27;\msagent_*&#x27;, &#x27;\status_*&#x27;]
+  condition: selection">copy</button><pre><code>detection:
   selection:
     PipeName: ['\MSSE-*', '\postex_*', '\msagent_*', '\status_*']
-  condition: selection</code></pre>
+  condition: selection</code></pre></div>
 <h3>WMI event subscription and scheduled task creation</h3>
 <p>WMI: logsource <code>product: windows</code>, <code>service: sysmon</code>, match <code>EventID: 21</code>, <code>Operation: Created</code>. Scheduled tasks: logsource <code>category: process_creation</code>, match <code>Image|endswith: '\schtasks.exe'</code> with <code>CommandLine|contains|all: ['/create', '/sc']</code>, filter on SYSTEM + known management tools.</p>
-<h2>False Positive Handling</h2>
+<h2 id="false-positive-handling">False Positive Handling</h2>
 <h3>The filter pattern</h3>
 <p>Exclusions go in named <code>filter_*</code> blocks, never inline with the selection. Use <code>condition: selection and not 1 of filter_*</code> to apply all filters.</p>
 <h3>Known-good exclusions</h3>
@@ -168,7 +245,7 @@ condition: 1 of selection*                     # any one block</code></pre>
 <p>Set level based on expected TP rate and business impact, not on how dangerous the technique sounds. A noisy <code>critical</code> rule causes more damage than a precise <code>medium</code> one.</p>
 <h3>Correlation rules</h3>
 <p>When a single event is too common to alert on, use Sigma correlation rules that reference other rules by ID, group by a field (e.g., <code>ComputerName</code>), and require a threshold within a time window:</p>
-<pre><code>title: Correlation - Multiple Suspicious Events from Same Host
+<div class="codeblk cx"><button class="copy" data-copy="title: Correlation - Multiple Suspicious Events from Same Host
 type: correlation
 rules:
   - id: &lt;uuid-of-rule-1&gt;
@@ -177,10 +254,19 @@ group-by: [ComputerName]
 timespan: 15m
 condition:
   gte: 2
-level: high</code></pre>
-<h2>Backend Conversion</h2>
+level: high">copy</button><pre><code>title: Correlation - Multiple Suspicious Events from Same Host
+type: correlation
+rules:
+  - id: &lt;uuid-of-rule-1&gt;
+  - id: &lt;uuid-of-rule-2&gt;
+group-by: [ComputerName]
+timespan: 15m
+condition:
+  gte: 2
+level: high</code></pre></div>
+<h2 id="backend-conversion">Backend Conversion</h2>
 <h3>sigma-cli with pySigma</h3>
-<pre><code>pip install sigma-cli pySigma-backend-splunk pySigma-backend-elasticsearch \
+<div class="codeblk cx"><button class="copy" data-copy="pip install sigma-cli pySigma-backend-splunk pySigma-backend-elasticsearch \
   pySigma-backend-kusto pySigma-backend-qradar
 
 sigma convert -t splunk -p sysmon rules/rule.yml
@@ -188,18 +274,28 @@ sigma convert -t elasticsearch -p ecs_windows rules/rule.yml
 sigma convert -t kusto -p microsoft_xdr rules/rule.yml
 sigma convert -t qradar rules/rule.yml
 sigma convert -t splunk -p sysmon rules/                     # entire directory
-sigma convert -t splunk -p sysmon -f savedsearches rules/    # output format</code></pre>
+sigma convert -t splunk -p sysmon -f savedsearches rules/    # output format">copy</button><pre><code>pip install sigma-cli pySigma-backend-splunk pySigma-backend-elasticsearch \
+  pySigma-backend-kusto pySigma-backend-qradar
+
+sigma convert -t splunk -p sysmon rules/rule.yml
+sigma convert -t elasticsearch -p ecs_windows rules/rule.yml
+sigma convert -t kusto -p microsoft_xdr rules/rule.yml
+sigma convert -t qradar rules/rule.yml
+sigma convert -t splunk -p sysmon rules/                     # entire directory
+sigma convert -t splunk -p sysmon -f savedsearches rules/    # output format</code></pre></div>
 <h3>Pipeline selection</h3>
 <div class="tw"><table><thead><tr><th>Backend</th><th>Common pipelines</th></tr></thead><tbody><tr><td>Splunk</td><td><code>sysmon</code>, <code>splunk_windows</code>, <code>splunk_cim</code></td></tr><tr><td>Elastic</td><td><code>ecs_windows</code>, <code>ecs_zeek</code>, <code>filebeat</code></td></tr><tr><td>Sentinel/XDR</td><td><code>microsoft_xdr</code>, <code>azure_monitor</code></td></tr><tr><td>CrowdStrike</td><td><code>crowdstrike</code></td></tr><tr><td>Chronicle</td><td><code>chronicle_default</code></td></tr></tbody></table></div>
 <p>Always verify converted output against your actual field names. Pipeline defaults may not match custom parsing configurations.</p>
-<h2>Testing and Validation</h2>
+<h2 id="testing-and-validation">Testing and Validation</h2>
 <h3>Schema validation</h3>
-<pre><code>sigma check rules/rule.yml       # single rule
-sigma check rules/               # entire directory</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="sigma check rules/rule.yml       # single rule
+sigma check rules/               # entire directory">copy</button><pre><code>sigma check rules/rule.yml       # single rule
+sigma check rules/               # entire directory</code></pre></div>
 <p>Common failures: missing or duplicate <code>id</code>, invalid <code>level</code>, malformed YAML, undefined modifier, empty detection block.</p>
 <h3>Offline validation against EVTX</h3>
-<pre><code>hayabusa csv-timeline -d ./sample_evtx/ -r rules/rule.yml
-chainsaw hunt ./sample_evtx/ -s rules/rule.yml --mapping mappings/sigma-mapping.yml</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="hayabusa csv-timeline -d ./sample_evtx/ -r rules/rule.yml
+chainsaw hunt ./sample_evtx/ -s rules/rule.yml --mapping mappings/sigma-mapping.yml">copy</button><pre><code>hayabusa csv-timeline -d ./sample_evtx/ -r rules/rule.yml
+chainsaw hunt ./sample_evtx/ -s rules/rule.yml --mapping mappings/sigma-mapping.yml</code></pre></div>
 <h3>Testing workflow</h3>
 <ol>
 <li><strong>Collect sample logs.</strong> Run the technique in a lab (Atomic Red Team,</li>
@@ -215,12 +311,12 @@ chainsaw hunt ./sample_evtx/ -s rules/rule.yml --mapping mappings/sigma-mapping.
 <li><strong>Document.</strong> Record TP/FP counts, FP causes, filters added. Update the</li>
 </ol>
 <p>rule's <code>falsepositives</code> field and the PR description.</p>
-<h2>Quality Standards</h2>
+<h2 id="quality-standards">Quality Standards</h2>
 <p><strong>SigmaHQ requirements:</strong> valid UUIDv4 <code>id</code>; <code>status</code> set appropriately (<code>experimental</code> for new); <code>date</code>/<code>modified</code> in <code>YYYY/MM/DD</code>; at least one ATT&amp;CK tag; non-empty <code>falsepositives</code> (even <code>Unknown</code>); <code>level</code> based on TP rate; descriptive <code>description</code>; <code>references</code> linking to source intel.</p>
 <p><strong>YAML formatting:</strong> two-space indent, no tabs; pipe-separated modifiers without spaces (<code>field|contains|all</code>); dash-space lists; single-quoted strings with special characters; folded scalar (<code>&amp;gt;</code>) for long descriptions; one rule per file, snake_case filename matching the title.</p>
 <p><strong>Field naming:</strong> use Sigma standard names (<code>Image</code>, <code>ParentImage</code>, <code>CommandLine</code>, <code>User</code>, <code>TargetFilename</code>, <code>TargetObject</code>, <code>DestinationIp</code>, <code>DestinationPort</code>, <code>SourceIp</code>, <code>PipeName</code>, <code>Hashes</code>). Backend conversion handles translation. Writing backend-specific field names defeats portability.</p>
 <p><strong>Tag compliance:</strong> <code>attack.&amp;lt;tactic&amp;gt;</code> (lowercase, hyphenated) and <code>attack.t&amp;lt;number&amp;gt;</code> (lowercase, dotted sub-technique). Add <code>cve.YYYY.NNNNN</code> when applicable. Verify IDs against the current ATT&amp;CK release -- stale IDs from retired techniques create mapping errors downstream.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"The rule is simple enough, it does not need testing."</em> Simple rules have</li>
 </ul>
@@ -249,11 +345,14 @@ chainsaw hunt ./sample_evtx/ -s rules/rule.yml --mapping mappings/sigma-mapping.
 <li><em>"Set it to critical -- credential dumping is always critical."</em> Severity</li>
 </ul>
 <p>reflects signal quality, not technique category. A noisy critical rule causes more damage than a precise medium one.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> -- the full detection lifecycle including YARA, Suricata, and coverage measurement</li>
 <li><a class="xref" href="hunting-threats.html"><code>hunting-threats</code></a> -- hypothesis-driven hunting that produces the findings rules are built from</li>
 <li><a class="xref" href="mapping-attack-techniques.html"><code>mapping-attack-techniques</code></a> -- ATT&amp;CK technique resolution and the purple-team loop</li>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> -- writing up what the detection found</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#sigma-rule-structure">Sigma Rule Structure</a><a href="#logsource-taxonomy">Logsource Taxonomy</a><a href="#detection-logic">Detection Logic</a><a href="#common-detection-patterns">Common Detection Patterns</a><a href="#false-positive-handling">False Positive Handling</a><a href="#backend-conversion">Backend Conversion</a><a href="#testing-and-validation">Testing and Validation</a><a href="#quality-standards">Quality Standards</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · defense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

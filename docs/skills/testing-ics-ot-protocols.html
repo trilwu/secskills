@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Test Industrial Control Systems and Operational Technology protocols — Modbus, DNP3, OPC UA, BACnet, EtherNet/IP, S7comm, MQTT — with safety-first methodology for SCADA and ICS environments. Use when assessing OT network security, testing ICS protocol authentication, reviewing IT-OT segmentation, or performing authorized ICS penetration testing.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>ICS/OT protocols were designed for reliability in isolated networks, not security on connected ones. Most have no authentication, no encryption, and no integrity checking. The danger is not that they are hard to exploit — it is that exploitation can have physical consequences, which is why safety constraints govern everything you do here.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>ICS/OT protocols were designed for reliability in isolated networks, not security on connected ones. Most have no authentication, no encryption, and no integrity checking. The danger is not that they are hard to exploit — it is that exploitation can have physical consequences, which is why safety constraints govern everything you do here.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Assessing SCADA networks or ICS environments during an authorized engagement</li>
 <li>Testing Modbus, DNP3, OPC UA, BACnet, EtherNet/IP, S7comm, or MQTT devices in scope</li>
@@ -49,13 +61,13 @@
 <li>Evaluating remote access pathways into control system networks</li>
 <li>Inventorying ICS assets and identifying unauthenticated protocol exposure</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Standard IT network scanning</strong> — use <a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a></li>
 <li><strong>HMI web interfaces tested as regular web apps</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a></li>
 <li><strong>Writing ICS-specific detection rules</strong> — use <a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a></li>
 </ul>
-<h2>Safety-First Principles</h2>
+<h2 id="safety-first-principles">Safety-First Principles</h2>
 <p>OT pentesting is not IT pentesting with different ports. The rules of engagement are fundamentally different because the targets control physical processes.</p>
 <p><strong>Why active scanning is dangerous in OT:</strong></p>
 <ul>
@@ -74,12 +86,12 @@
 <li>Have a rollback plan for every write operation. Know the expected state before you change anything.</li>
 <li>Document every interaction with every device, including timestamps and the exact commands sent.</li>
 </ol>
-<h2>Protocol Overview</h2>
+<h2 id="protocol-overview">Protocol Overview</h2>
 <div class="tw"><table><thead><tr><th>Protocol</th><th>Default Port</th><th>Auth by Design</th><th>Encryption</th><th>Notes</th></tr></thead><tbody><tr><td>Modbus TCP</td><td>502</td><td>No</td><td>No</td><td>Most common ICS protocol; any host on the network can read/write</td></tr><tr><td>DNP3</td><td>20000</td><td>Optional (SA)</td><td>No</td><td>SCADA polling; Secure Authentication is rarely deployed</td></tr><tr><td>EtherNet/IP (CIP)</td><td>44818</td><td>No</td><td>No</td><td>Rockwell/Allen-Bradley ecosystem</td></tr><tr><td>OPC UA</td><td>4840</td><td>Yes (multiple modes)</td><td>Optional (TLS)</td><td>Modern; security depends entirely on configuration</td></tr><tr><td>BACnet/IP</td><td>47808 (UDP)</td><td>No</td><td>No</td><td>Building automation — HVAC, lighting, access control</td></tr><tr><td>S7comm</td><td>102</td><td>No</td><td>No</td><td>Siemens S7 PLCs; replaced by S7comm-plus with some protection</td></tr><tr><td>MQTT</td><td>1883 / 8883 (TLS)</td><td>Optional</td><td>Optional (TLS)</td><td>IoT/ICS messaging; brokers often left open</td></tr></tbody></table></div>
-<h2>Passive Reconnaissance</h2>
+<h2 id="passive-reconnaissance">Passive Reconnaissance</h2>
 <p>Start here. Passive observation carries no risk of disrupting devices and provides the asset inventory you need before touching anything.</p>
 <p><strong>Wireshark with ICS dissectors:</strong></p>
-<pre><code># Capture on the OT network interface (mirror/span port or tap)
+<div class="codeblk cx"><button class="copy" data-copy="# Capture on the OT network interface (mirror/span port or tap)
 tcpdump -i eth0 -w ics_capture.pcap -n
 
 # Wireshark filters for ICS protocols
@@ -102,7 +114,30 @@ bacnet
 s7comm
 
 # MQTT
-mqtt</code></pre>
+mqtt">copy</button><pre><code># Capture on the OT network interface (mirror/span port or tap)
+tcpdump -i eth0 -w ics_capture.pcap -n
+
+# Wireshark filters for ICS protocols
+# Modbus
+modbus
+
+# DNP3
+dnp3
+
+# EtherNet/IP
+enip
+
+# OPC UA
+opcua
+
+# BACnet
+bacnet
+
+# S7comm
+s7comm
+
+# MQTT
+mqtt</code></pre></div>
 <p><strong>What to extract from passive captures:</strong></p>
 <ul>
 <li>Device IP addresses and MAC addresses (OUI lookup identifies vendor — Siemens, Rockwell, Schneider, ABB)</li>
@@ -114,10 +149,10 @@ mqtt</code></pre>
 </ul>
 <p><strong>Asset inventory from passive observation:</strong></p>
 <p>Build a table: IP, MAC, vendor (from OUI), protocol(s) observed, role (master/slave/HMI/historian), firmware version if visible. This becomes the basis for active enumeration scope.</p>
-<h2>Active Enumeration (When Authorized)</h2>
+<h2 id="active-enumeration-when-authorized">Active Enumeration (When Authorized)</h2>
 <p>Only proceed after: (1) passive recon is complete, (2) OT engineer has reviewed the asset list and approved active testing, (3) scope explicitly includes active ICS enumeration.</p>
 <p><strong>Safe nmap usage for ICS:</strong></p>
-<pre><code># NEVER use aggressive timing or default scripts against OT devices
+<div class="codeblk cx"><button class="copy" data-copy="# NEVER use aggressive timing or default scripts against OT devices
 # Use slow timing and specific ICS scripts only
 
 # Modbus device discovery
@@ -137,19 +172,60 @@ nmap -Pn -sT -p 4840 --script opcua-endpoints TARGET
 
 # IMPORTANT: Use -Pn (skip host discovery), -sT (full connect, not SYN scan),
 # and NEVER use -A, -sV with high intensity, or broad script categories
-# against OT devices.</code></pre>
+# against OT devices.">copy</button><pre><code># NEVER use aggressive timing or default scripts against OT devices
+# Use slow timing and specific ICS scripts only
+
+# Modbus device discovery
+nmap -Pn -sT -p 502 --script modbus-discover TARGET
+
+# Siemens S7 device info (read-only query)
+nmap -Pn -sT -p 102 --script s7-info TARGET
+
+# BACnet device enumeration
+nmap -Pn -sU -p 47808 --script bacnet-info TARGET
+
+# EtherNet/IP enumeration
+nmap -Pn -sT -p 44818 --script enip-info TARGET
+
+# OPC UA discovery
+nmap -Pn -sT -p 4840 --script opcua-endpoints TARGET
+
+# IMPORTANT: Use -Pn (skip host discovery), -sT (full connect, not SYN scan),
+# and NEVER use -A, -sV with high intensity, or broad script categories
+# against OT devices.</code></pre></div>
 <p><strong>Dedicated ICS scanning tools:</strong></p>
-<pre><code># plcscan — lightweight PLC scanner
+<div class="codeblk cx"><button class="copy" data-copy="# plcscan — lightweight PLC scanner
 plcscan -t TARGET
 
 # Redpoint Nmap scripts (Digital Bond)
 # These are ICS-specific and safer than generic nmap scripts
-nmap --script redpoint/ -p 502,44818,47808,102,20000 TARGET</code></pre>
-<h2>Protocol-Specific Testing</h2>
+nmap --script redpoint/ -p 502,44818,47808,102,20000 TARGET">copy</button><pre><code># plcscan — lightweight PLC scanner
+plcscan -t TARGET
+
+# Redpoint Nmap scripts (Digital Bond)
+# These are ICS-specific and safer than generic nmap scripts
+nmap --script redpoint/ -p 502,44818,47808,102,20000 TARGET</code></pre></div>
+<h2 id="protocol-specific-testing">Protocol-Specific Testing</h2>
 <h3>Modbus TCP (Port 502)</h3>
 <p>Modbus has no authentication. Any host that can reach port 502 can read sensors, write to coils, and control the PLC. This is by design — it was created in 1979 for serial links in isolated environments.</p>
 <p><strong>Reading coils and registers (read-only, lower risk):</strong></p>
-<pre><code># Using modbus-cli
+<div class="codeblk cx"><button class="copy" data-copy="# Using modbus-cli
+modbus read TARGET 0 10          # Read 10 holding registers starting at address 0
+modbus read -s coil TARGET 0 10  # Read 10 coils starting at address 0
+
+# Using mbtget
+mbtget -a 1 -r1 -n 10 TARGET    # Read 10 holding registers, unit ID 1
+mbtget -a 1 -r2 -n 10 TARGET    # Read 10 input registers
+
+# Python with pymodbus
+python3 -c &quot;
+from pymodbus.client import ModbusTcpClient
+client = ModbusTcpClient(&#x27;TARGET&#x27;)
+client.connect()
+result = client.read_holding_registers(0, 10, unit=1)
+print(result.registers)
+client.close()
+&quot;">copy</button><pre><code># Using modbus-cli
 modbus read TARGET 0 10          # Read 10 holding registers starting at address 0
 modbus read -s coil TARGET 0 10  # Read 10 coils starting at address 0
 
@@ -165,9 +241,9 @@ client.connect()
 result = client.read_holding_registers(0, 10, unit=1)
 print(result.registers)
 client.close()
-"</code></pre>
+"</code></pre></div>
 <p><strong>Key Modbus function codes:</strong></p>
-<pre><code>FC 01 - Read Coils (digital outputs)
+<div class="codeblk cx"><button class="copy" data-copy="FC 01 - Read Coils (digital outputs)
 FC 02 - Read Discrete Inputs (digital inputs)
 FC 03 - Read Holding Registers (analog outputs / config)
 FC 04 - Read Input Registers (analog inputs)
@@ -175,12 +251,33 @@ FC 05 - Write Single Coil              ← WRITE — requires explicit approval
 FC 06 - Write Single Register           ← WRITE — requires explicit approval
 FC 15 - Write Multiple Coils            ← WRITE — requires explicit approval
 FC 16 - Write Multiple Registers        ← WRITE — requires explicit approval
-FC 43 - Read Device Identification</code></pre>
+FC 43 - Read Device Identification">copy</button><pre><code>FC 01 - Read Coils (digital outputs)
+FC 02 - Read Discrete Inputs (digital inputs)
+FC 03 - Read Holding Registers (analog outputs / config)
+FC 04 - Read Input Registers (analog inputs)
+FC 05 - Write Single Coil              ← WRITE — requires explicit approval
+FC 06 - Write Single Register           ← WRITE — requires explicit approval
+FC 15 - Write Multiple Coils            ← WRITE — requires explicit approval
+FC 16 - Write Multiple Registers        ← WRITE — requires explicit approval
+FC 43 - Read Device Identification</code></pre></div>
 <p><strong>The finding to report:</strong> If you can reach port 502 from outside the process control network, the control system has no access control. This is almost always Critical — document the network path and what registers you could read.</p>
 <h3>OPC UA (Port 4840)</h3>
 <p>OPC UA is the one ICS protocol that was designed with security in mind. Whether it is actually secure depends on how it is configured.</p>
 <p><strong>Discovery and endpoint enumeration:</strong></p>
-<pre><code># List OPC UA endpoints and their security modes
+<div class="codeblk cx"><button class="copy" data-copy="# List OPC UA endpoints and their security modes
+# Using opcua-client-gui or UaExpert
+
+# Python with opcua library
+python3 -c &quot;
+from opcua import Client
+client = Client(&#x27;opc.tcp://TARGET:4840&#x27;)
+endpoints = client.connect_and_get_server_endpoints()
+for ep in endpoints:
+    print(f&#x27;Endpoint: {ep.EndpointUrl}&#x27;)
+    print(f&#x27;  Security Mode: {ep.SecurityMode}&#x27;)
+    print(f&#x27;  Security Policy: {ep.SecurityPolicyUri}&#x27;)
+    print(f&#x27;  User Token: {[t.TokenType for t in ep.UserIdentityTokens]}&#x27;)
+&quot;">copy</button><pre><code># List OPC UA endpoints and their security modes
 # Using opcua-client-gui or UaExpert
 
 # Python with opcua library
@@ -193,7 +290,7 @@ for ep in endpoints:
     print(f'  Security Mode: {ep.SecurityMode}')
     print(f'  Security Policy: {ep.SecurityPolicyUri}')
     print(f'  User Token: {[t.TokenType for t in ep.UserIdentityTokens]}')
-"</code></pre>
+"</code></pre></div>
 <p><strong>Authentication modes to check:</strong></p>
 <ul>
 <li><strong>Anonymous</strong> — no credentials required. If this endpoint exists and is reachable, report it.</li>
@@ -208,13 +305,26 @@ for ep in endpoints:
 <li>Default credentials on Username/Password endpoints</li>
 </ul>
 <h3>DNP3 (Port 20000)</h3>
-<pre><code># DNP3 enumeration — identify master/outstation roles
+<div class="codeblk cx"><button class="copy" data-copy="# DNP3 enumeration — identify master/outstation roles
 nmap -Pn -sT -p 20000 --script dnp3-info TARGET
 
 # Check for DNP3 Secure Authentication (rarely deployed)
-# Most DNP3 implementations have no authentication at all</code></pre>
+# Most DNP3 implementations have no authentication at all">copy</button><pre><code># DNP3 enumeration — identify master/outstation roles
+nmap -Pn -sT -p 20000 --script dnp3-info TARGET
+
+# Check for DNP3 Secure Authentication (rarely deployed)
+# Most DNP3 implementations have no authentication at all</code></pre></div>
 <h3>BACnet (Port 47808 UDP)</h3>
-<pre><code># BACnet device discovery
+<div class="codeblk cx"><button class="copy" data-copy="# BACnet device discovery
+nmap -Pn -sU -p 47808 --script bacnet-info TARGET
+
+# BACnet enumeration with BAC0
+python3 -c &quot;
+import BAC0
+bacnet = BAC0.lite(ip=&#x27;YOUR_IP/24&#x27;)
+devices = bacnet.whois()
+print(devices)
+&quot;">copy</button><pre><code># BACnet device discovery
 nmap -Pn -sU -p 47808 --script bacnet-info TARGET
 
 # BACnet enumeration with BAC0
@@ -223,14 +333,18 @@ import BAC0
 bacnet = BAC0.lite(ip='YOUR_IP/24')
 devices = bacnet.whois()
 print(devices)
-"</code></pre>
+"</code></pre></div>
 <h3>S7comm (Port 102)</h3>
-<pre><code># Siemens S7 PLC information
+<div class="codeblk cx"><button class="copy" data-copy="# Siemens S7 PLC information
 nmap -Pn -sT -p 102 --script s7-info TARGET
 
 # Identifies: module name, serial number, plant identification,
-# firmware version, hardware version, CPU state</code></pre>
-<h2>Common Findings</h2>
+# firmware version, hardware version, CPU state">copy</button><pre><code># Siemens S7 PLC information
+nmap -Pn -sT -p 102 --script s7-info TARGET
+
+# Identifies: module name, serial number, plant identification,
+# firmware version, hardware version, CPU state</code></pre></div>
+<h2 id="common-findings">Common Findings</h2>
 <p>These appear in the majority of ICS assessments:</p>
 <p><strong>1. Flat networks (IT-OT convergence)</strong> The single most impactful finding. No segmentation between corporate IT and control systems means any compromised workstation can reach PLCs directly. Test by attempting to reach ICS ports from IT network segments.</p>
 <p><strong>2. Default credentials on HMIs and engineering workstations</strong> HMI web interfaces, VNC servers on operator stations, and engineering software often use factory defaults. Check vendor documentation for default credentials before testing.</p>
@@ -239,15 +353,21 @@ nmap -Pn -sT -p 102 --script s7-info TARGET
 <p><strong>5. Remote access gateways with weak controls</strong> VPN concentrators, jump hosts, or cellular modems providing remote access to OT networks. Check for multi-factor authentication, session logging, and access restrictions.</p>
 <p><strong>6. Outdated firmware with known vulnerabilities</strong> ICS devices often run firmware years behind current releases because patching requires downtime. Document versions and map to known CVEs, but do not attempt exploitation without explicit approval.</p>
 <p><strong>7. Historian and data diode misconfigurations</strong> Historians bridging IT and OT should be in a DMZ. Data diodes should enforce unidirectional flow. Verify with traffic analysis.</p>
-<h2>Network Segmentation Review</h2>
+<h2 id="network-segmentation-review">Network Segmentation Review</h2>
 <p>Assess against the Purdue Enterprise Reference Architecture:</p>
-<pre><code>Level 5  Enterprise network (corporate IT)
+<div class="codeblk cx"><button class="copy" data-copy="Level 5  Enterprise network (corporate IT)
 Level 4  Site business planning (ERP, email)
          ─── IT/OT DMZ ───
 Level 3  Site operations (historians, OPC servers)
 Level 2  Area supervisory control (HMI, engineering workstations)
 Level 1  Basic control (PLCs, RTUs, controllers)
-Level 0  Process (sensors, actuators, field devices)</code></pre>
+Level 0  Process (sensors, actuators, field devices)">copy</button><pre><code>Level 5  Enterprise network (corporate IT)
+Level 4  Site business planning (ERP, email)
+         ─── IT/OT DMZ ───
+Level 3  Site operations (historians, OPC servers)
+Level 2  Area supervisory control (HMI, engineering workstations)
+Level 1  Basic control (PLCs, RTUs, controllers)
+Level 0  Process (sensors, actuators, field devices)</code></pre></div>
 <p><strong>What to verify:</strong></p>
 <ul>
 <li>Is there a DMZ between Level 3 and Level 4? Traffic should not flow directly between IT and OT.</li>
@@ -257,7 +377,7 @@ Level 0  Process (sensors, actuators, field devices)</code></pre>
 <li>Is east-west traffic within OT segmented (Level 2 from Level 1, separate process zones)?</li>
 <li>Are firewall rules default-deny with explicit allows, or default-allow?</li>
 </ul>
-<h2>Defensive Review Checklist</h2>
+<h2 id="defensive-review-checklist">Defensive Review Checklist</h2>
 <p>When reviewing ICS security posture rather than attacking:</p>
 <ul>
 <li>[ ] Asset inventory exists and is current (know every device on the OT network)</li>
@@ -272,7 +392,7 @@ Level 0  Process (sensors, actuators, field devices)</code></pre>
 <li>[ ] Incident response plan includes OT-specific scenarios (not just IT playbooks)</li>
 <li>[ ] Safety-instrumented systems (SIS) are on isolated networks, not reachable from process control</li>
 </ul>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"We can just scan it like a normal network."</em> You cannot. A SYN scan can</li>
 </ul>
@@ -301,12 +421,15 @@ Level 0  Process (sensors, actuators, field devices)</code></pre>
 <li><em>"The vendor says the protocol is secure."</em> Vendor claims about proprietary</li>
 </ul>
 <p>protocol security are not evidence. Test it. Many "proprietary" protocols are trivially reverse-engineered or provide security through obscurity only.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="enumerating-network-services.html"><code>enumerating-network-services</code></a> — standard IT network service enumeration</li>
 <li><a class="xref" href="engineering-detections.html"><code>engineering-detections</code></a> — writing detection rules for ICS-specific threats</li>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — structuring ICS findings for maximum impact</li>
 <li>IEC 62443 (industrial automation security); NIST SP 800-82 (guide to ICS security)</li>
 <li>MITRE ATT&amp;CK for ICS: https://attack.mitre.org/techniques/ics/</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#safety-first-principles">Safety-First Principles</a><a href="#protocol-overview">Protocol Overview</a><a href="#passive-reconnaissance">Passive Reconnaissance</a><a href="#active-enumeration-when-authorized">Active Enumeration (When Authorized)</a><a href="#protocol-specific-testing">Protocol-Specific Testing</a><a href="#common-findings">Common Findings</a><a href="#network-segmentation-review">Network Segmentation Review</a><a href="#defensive-review-checklist">Defensive Review Checklist</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

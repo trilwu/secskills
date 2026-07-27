@@ -5,11 +5,20 @@
     h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
     .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
     .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
-    .inst{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
     padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
     .inst .p{color:var(--faint);user-select:none}
-    article{padding:44px 0 72px;border-top:1px solid var(--border)}
-    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
     article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
     article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
     article p{margin:0 0 15px;max-width:74ch}
@@ -17,13 +26,15 @@
     article li{margin:5px 0}article li>ul{margin:5px 0}
     article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
     article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
     article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-    padding:15px 16px;overflow-x:auto;margin:0 0 18px;max-width:100%}
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
     article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
     article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
     .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
     article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
     article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
     </style></head><body>
 <div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
 <nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
@@ -36,17 +47,17 @@
     <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
   </div>
   <p class="sdesc">Reverse engineer Rust binaries — demangling legacy and v0 symbol schemes, recognizing monomorphized generics, Result and Option control flow, trait object vtable dispatch, and panic-site strings that leak source paths and crate names. Use when a binary contains rustc version strings, core::panicking, or _ZN/_R mangled symbols, when a stripped binary is unexpectedly large, or when analyzing Rust malware or a Rust service.</p>
-  <div class="inst"><span class="p">$ </span>/plugin install secskills-core</div>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
-<article><div class="wrap"><p>Rust binaries are large, statically linked, and full of inlined generic code — but they leak more than most people expect. Panic sites embed the source file path and line, symbols carry crate and module structure, and the standard library's formatting machinery is instantly recognizable. The job is knowing which parts are yours and which are the 90% that is <code>core</code>, <code>alloc</code>, and vendored crates.</p>
-<h2>When to Use</h2>
+<div class="wrap slayout"><article><p>Rust binaries are large, statically linked, and full of inlined generic code — but they leak more than most people expect. Panic sites embed the source file path and line, symbols carry crate and module structure, and the standard library's formatting machinery is instantly recognizable. The job is knowing which parts are yours and which are the 90% that is <code>core</code>, <code>alloc</code>, and vendored crates.</p>
+<h2 id="when-to-use">When to Use</h2>
 <ul>
 <li><code>strings</code> shows <code>rustc version</code>, <code>core::panicking</code>, <code>/rustc/&amp;lt;hash&amp;gt;/library/</code></li>
 <li>Symbols begin with <code>_ZN...17h&amp;lt;hex&amp;gt;E</code> (legacy) or <code>_R</code> (v0 mangling)</li>
 <li>A stripped binary is 3–30 MB with minimal dynamic imports</li>
 <li>Analyzing Rust malware, a Rust CLI, or a compiled Rust service</li>
 </ul>
-<h2>When NOT to Use</h2>
+<h2 id="when-not-to-use">When NOT to Use</h2>
 <ul>
 <li><strong>Go binaries</strong> — use <a class="xref" href="analyzing-go-binaries.html"><code>analyzing-go-binaries</code></a>; symbol recovery differs entirely</li>
 <li><strong>.NET or Unity</strong> — use the matching skill</li>
@@ -54,45 +65,60 @@
 <li><strong>Source is available</strong> — use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a>, which has</li>
 </ul>
 <p>the Rust <code>unsafe</code> checklist</p>
-<h2>Confirm and Fingerprint</h2>
-<pre><code>strings -n 8 target | rg -m8 'rustc version|/rustc/[0-9a-f]{40}|core::panicking|cargo/registry'</code></pre>
+<h2 id="confirm-and-fingerprint">Confirm and Fingerprint</h2>
+<div class="codeblk cx"><button class="copy" data-copy="strings -n 8 target | rg -m8 &#x27;rustc version|/rustc/[0-9a-f]{40}|core::panicking|cargo/registry&#x27;">copy</button><pre><code>strings -n 8 target | rg -m8 'rustc version|/rustc/[0-9a-f]{40}|core::panicking|cargo/registry'</code></pre></div>
 <p>Two artifacts do most of the work before you disassemble anything:</p>
 <p><strong>Panic strings leak the source tree.</strong> Rust embeds the file path and line number of every <code>panic!</code>, <code>unwrap()</code>, and bounds check. That gives you the crate layout, the developer's directory structure, and often the project name.</p>
-<pre><code>strings -n 10 target | rg 'src/[a-z_/]+\.rs' | sort -u | head -40
-# → src/main.rs, src/crypto/aes.rs, /home/dev/projects/implant/src/c2.rs</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="strings -n 10 target | rg &#x27;src/[a-z_/]+\.rs&#x27; | sort -u | head -40
+# → src/main.rs, src/crypto/aes.rs, /home/dev/projects/implant/src/c2.rs">copy</button><pre><code>strings -n 10 target | rg 'src/[a-z_/]+\.rs' | sort -u | head -40
+# → src/main.rs, src/crypto/aes.rs, /home/dev/projects/implant/src/c2.rs</code></pre></div>
 <p><strong>Registry paths name the dependencies.</strong> Vendored crates compiled in leave their <code>~/.cargo/registry/src/.../&amp;lt;crate&amp;gt;-&amp;lt;version&amp;gt;/</code> paths in panic sites, which is effectively a dependency list.</p>
-<pre><code>strings target | rg -o 'cargo/registry/src/[^/]+/([a-z0-9_-]+-[0-9.]+)' -r '$1' | sort -u</code></pre>
+<div class="codeblk cx"><button class="copy" data-copy="strings target | rg -o &#x27;cargo/registry/src/[^/]+/([a-z0-9_-]+-[0-9.]+)&#x27; -r &#x27;$1&#x27; | sort -u">copy</button><pre><code>strings target | rg -o 'cargo/registry/src/[^/]+/([a-z0-9_-]+-[0-9.]+)' -r '$1' | sort -u</code></pre></div>
 <p>That combination — module layout plus dependency list — usually tells you what the binary does before a single instruction is read.</p>
-<h2>Demangle</h2>
+<h2 id="demangle">Demangle</h2>
 <p>Rust has two mangling schemes, and tools must handle both.</p>
-<pre><code># Legacy: _ZN4core3fmt5Write9write_fmt17h&lt;16 hex&gt;E
+<div class="codeblk cx"><button class="copy" data-copy="# Legacy: _ZN4core3fmt5Write9write_fmt17h&lt;16 hex&gt;E
 nm -C target | head -30
 rustfilt &lt; symbols.txt
 
 # v0 (RFC 2603): starts with _R, encodes generics and paths properly
 rustfilt      # handles both
 # Ghidra 11+ and IDA 8+ have v0 demanglers; enable Rust demangling in the
-# analyzer options rather than reading raw symbols</code></pre>
-<pre><code># Filter to your target's code. Everything under core::, alloc::, std::, and
+# analyzer options rather than reading raw symbols">copy</button><pre><code># Legacy: _ZN4core3fmt5Write9write_fmt17h&lt;16 hex&gt;E
+nm -C target | head -30
+rustfilt &lt; symbols.txt
+
+# v0 (RFC 2603): starts with _R, encodes generics and paths properly
+rustfilt      # handles both
+# Ghidra 11+ and IDA 8+ have v0 demanglers; enable Rust demangling in the
+# analyzer options rather than reading raw symbols</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="# Filter to your target&#x27;s code. Everything under core::, alloc::, std::, and
 # a registry crate name is stock.
-nm -C target 2&gt;/dev/null | rg -v '^.* (core|alloc|std|hashbrown|serde|tokio)::' | head -40</code></pre>
+nm -C target 2&gt;/dev/null | rg -v &#x27;^.* (core|alloc|std|hashbrown|serde|tokio)::&#x27; | head -40">copy</button><pre><code># Filter to your target's code. Everything under core::, alloc::, std::, and
+# a registry crate name is stock.
+nm -C target 2&gt;/dev/null | rg -v '^.* (core|alloc|std|hashbrown|serde|tokio)::' | head -40</code></pre></div>
 <p>When symbols are fully stripped, fall back to the panic strings: each one is adjacent to the function that contains it, so cross-referencing a panic message with a known source path names the surrounding function.</p>
-<h2>Reading Rust in a Disassembler</h2>
+<h2 id="reading-rust-in-a-disassembler">Reading Rust in a Disassembler</h2>
 <p>Five patterns account for most of the confusion:</p>
 <p><strong>Monomorphization.</strong> A generic function is compiled once per concrete type, so <code>Vec&amp;lt;u8&amp;gt;::push</code> and <code>Vec&amp;lt;String&amp;gt;::push</code> are separate functions with similar bodies. Expect duplicates, and do not assume two near-identical functions are copy-paste.</p>
 <p><strong><code>Result</code> and <code>Option</code> returns.</strong> These are enums returned by value, often in two registers — a discriminant and a payload. A function returning <code>Result&amp;lt;T, E&amp;gt;</code> looks like it returns a struct; the branch immediately after the call testing the first register is the error check. Recognizing this makes error paths readable, and error paths are where the bugs are.</p>
 <p><strong>Bounds checks everywhere.</strong> Every slice index emits a comparison and a conditional branch to a panic site. These clutter the listing; learn to skip them. Their <em>absence</em> is informative — it means <code>unsafe</code> or <code>get_unchecked</code>.</p>
 <p><strong>Trait object dispatch.</strong> <code>dyn Trait</code> calls go through a vtable: a pointer pair (data, vtable), then an indirect call at a fixed vtable offset. Recover the vtable to recover the concrete type, the same way you would for C++.</p>
 <p><strong>String handling.</strong> Rust <code>String</code> and <code>&amp;amp;str</code> are pointer+length with no terminator, exactly like Go. Adjacent literals run together in <code>strings</code> output; find the length constant next to the pointer load.</p>
-<h2>Finding the Interesting Code</h2>
-<pre><code># Panic paths point at your code; use them as anchors
+<h2 id="finding-the-interesting-code">Finding the Interesting Code</h2>
+<div class="codeblk cx"><button class="copy" data-copy="# Panic paths point at your code; use them as anchors
+strings -t x target | rg &#x27;src/&#x27; | head -30      # offsets included
+# Cross-reference an offset in the disassembler to land in the owning function
+
+# Crypto and network crates are recognizable by their panic paths
+strings target | rg -i &#x27;ring-|rustls|openssl|aes-gcm|chacha20|reqwest|hyper|tokio&#x27;">copy</button><pre><code># Panic paths point at your code; use them as anchors
 strings -t x target | rg 'src/' | head -30      # offsets included
 # Cross-reference an offset in the disassembler to land in the owning function
 
 # Crypto and network crates are recognizable by their panic paths
-strings target | rg -i 'ring-|rustls|openssl|aes-gcm|chacha20|reqwest|hyper|tokio'</code></pre>
+strings target | rg -i 'ring-|rustls|openssl|aes-gcm|chacha20|reqwest|hyper|tokio'</code></pre></div>
 <p>For a service or implant, the fastest route is: identify the async runtime (<code>tokio</code> is near-universal), find the request handler or the C2 loop by its panic paths, then read outward.</p>
-<h2>Rust-Specific Security Review</h2>
+<h2 id="rust-specific-security-review">Rust-Specific Security Review</h2>
 <p>If you are hunting bugs rather than behaviour:</p>
 <ul>
 <li><strong><code>unsafe</code> blocks</strong> are where memory-safety bugs live. In a binary, look for</li>
@@ -115,7 +141,7 @@ strings target | rg -i 'ring-|rustls|openssl|aes-gcm|chacha20|reqwest|hyper|toki
 </ul>
 <p>enforces but <code>Deserialize</code> does not.</p>
 <p>With source, use <a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> and <code>cargo geiger</code>.</p>
-<h2>Rust Malware Notes</h2>
+<h2 id="rust-malware-notes">Rust Malware Notes</h2>
 <p>Rust is increasingly used for ransomware and loaders, largely for cross-compilation and analyst friction. What still helps you:</p>
 <ul>
 <li><strong>Panic paths leak the developer's build environment</strong> — usernames, project</li>
@@ -131,7 +157,7 @@ strings target | rg -i 'ring-|rustls|openssl|aes-gcm|chacha20|reqwest|hyper|toki
 </ul>
 <p>compiled with <code>panic=abort</code> and heavy <code>strip</code>; when even those are gone, note it as a deliberate anti-analysis measure.</p>
 <p>Hand containment and IOC work to <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>.</p>
-<h2>Rationalizations to Reject</h2>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <ul>
 <li><em>"It's stripped, nothing to recover."</em> Panic strings survive stripping and</li>
 </ul>
@@ -156,12 +182,15 @@ strings target | rg -i 'ring-|rustls|openssl|aes-gcm|chacha20|reqwest|hyper|toki
 <li><em>"The strings are corrupted."</em> Rust strings are pointer+length, not</li>
 </ul>
 <p>null-terminated.</p>
-<h2>References</h2>
+<h2 id="references">References</h2>
 <ul>
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — general triage, dynamic analysis, anti-analysis</li>
 <li><a class="xref" href="analyzing-go-binaries.html"><code>analyzing-go-binaries</code></a> — the other statically-linked-and-large case</li>
 <li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — containment and IOCs for Rust samples</li>
 <li><a class="xref" href="auditing-code-for-vulnerabilities.html"><code>auditing-code-for-vulnerabilities</code></a> — the Rust <code>unsafe</code> checklist with source</li>
 <li>rustfilt, Ghidra/IDA Rust demanglers, <code>cargo-geiger</code>, Binary Ninja</li>
-</ul></div></article>
-<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script></body></html>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#confirm-and-fingerprint">Confirm and Fingerprint</a><a href="#demangle">Demangle</a><a href="#reading-rust-in-a-disassembler">Reading Rust in a Disassembler</a><a href="#finding-the-interesting-code">Finding the Interesting Code</a><a href="#rust-specific-security-review">Rust-Specific Security Review</a><a href="#rust-malware-notes">Rust Malware Notes</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>
