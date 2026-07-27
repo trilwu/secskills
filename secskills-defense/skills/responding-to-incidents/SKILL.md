@@ -60,12 +60,25 @@ ongoing damage, in which case stop the damage and accept the trade.
 
 ## Evidence Acquisition
 
-**Order of volatility** (RFC 3227) — collect top to bottom:
+**Order of volatility** (RFC 3227 §2.1) — collect top to bottom:
 
 ```
-CPU registers/cache → RAM → network state → running processes → disk
-→ remote logs → physical config → archival media
+registers, cache
+routing table, arp cache, process table, kernel statistics, memory
+temporary file systems            ← tmpfs, /dev/shm: staging lives here
+disk
+remote logging and monitoring data relevant to the system
+physical configuration, network topology
+archival media
 ```
+
+Note that the RFC places memory, the process table, and network state in the
+**same** tier rather than ordering them against each other. Modern practice
+refines that: capture memory *first*, because the commands you would run to
+enumerate processes and sockets execute on the box and perturb the memory you
+have not captured yet. Do not skip the temporary filesystems tier — `/dev/shm`
+and tmpfs are ordinary staging locations and they do not survive the reboot
+that someone will inevitably suggest.
 
 ```bash
 # Memory first, always, on a live suspect host
@@ -73,8 +86,14 @@ CPU registers/cache → RAM → network state → running processes → disk
 sudo ./avml mem.lime                 # or LiME
 # Windows
 DumpIt.exe /OUTPUT mem.raw           # or winpmem
-# macOS
-sudo osxpmem -o mem.aff4
+# macOS — do NOT reach for osxpmem. Rekall is archived, its last release was
+# 2017 and Intel-only, and its kext-based approach is blocked by SIP and
+# kext restrictions on Big Sur and later, and on all Apple Silicon. Full-RAM
+# capture on a modern Mac realistically needs commercial tooling with the
+# required Apple entitlements (e.g. Volexity Surge Collect). If none is
+# available, do not stall the response: take process-scoped dumps and a
+# comprehensive live-triage collection instead, and record in the incident
+# log that full physical memory was not obtainable and why.
 
 # Volatile state before you touch the disk
 ps auxwwf; ss -tunap; lsof -n; last -Faiw; w

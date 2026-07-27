@@ -1,6 +1,7 @@
 ---
 name: hunting-threats
 description: Run hypothesis-driven threat hunts across endpoint, network, cloud, and identity telemetry using stack counting, outlier analysis, and ATT&CK-based hypotheses, with SIEM query patterns for Splunk, KQL, and Elastic. Use when proactively searching for undetected compromise, validating an intel report against your environment, or converting a hunch into a repeatable hunt.
+verified: 2026-07-27
 ---
 
 # Hunting Threats
