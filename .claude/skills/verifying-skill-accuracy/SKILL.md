@@ -103,6 +103,39 @@ Each of these has produced a real error in this repo:
   and Eisenberg's Mango convictions were vacated in May 2025. Memory produced
   a confident claim that was backwards.
 
+## Reading Sources: Fetch Markdown, Not HTML
+
+Pull documentation through **`defuddle.md`**, which strips a page to its main
+content and returns Markdown with YAML frontmatter. Prefix any URL:
+
+```bash
+curl -sL "https://defuddle.md/learn.microsoft.com/en-us/purview/audit-log-retention-policies"
+```
+
+The scheme is optional in the path — `defuddle.md/example.com/x` and
+`defuddle.md/https://example.com/x` both work.
+
+Two reasons, and the second matters more than the first:
+
+1. **It cuts tokens.** Measured against the pages used in this repo's passes:
+   **78%** smaller on a prose doc page (Microsoft Learn), **33%** on a
+   link-heavy API index. Prose collapses hard; link tables less so.
+2. **It returns the full text, deterministically.** You get the whole page as
+   Markdown you can `grep`, instead of a model's summary of the page. That is
+   what makes it safe to draw a *negative* conclusion — see below.
+
+Use it for documentation, specs, vendor KB, and articles. Do **not** use it for:
+
+- **JSON or API responses** — readability extraction mangles structured data.
+  Fetch those raw.
+- **HTTP status probes** — you need the status of the real host, not of a proxy
+  that may return 200 for its own error page.
+- **Anything internal, client-owned, or target-owned.** The URL leaves your
+  machine and goes to a third party. Never route an engagement URL, an internal
+  hostname, or a client's estate through an external extraction service. Public
+  vendor documentation only.
+- **Authenticated or JS-rendered pages** — it fetches as an anonymous client.
+
 ## Programmatic Existence Probes
 
 Where a project publishes one doc page per module, existence is a **status
@@ -150,9 +183,24 @@ The asymmetry that matters:
   truncated, renamed, moved, or paginated away.
 
 So: **never delete or rewrite content on a summarized negative.** Promote every
-negative to a deterministic check — an HTTP status code, an exact-string grep
-of raw source, a direct symbol-page fetch — before you touch the file. If you
-cannot get a deterministic check, leave the content and flag it as unconfirmed.
+negative to a deterministic check before you touch the file.
+
+The cheapest promotion is to stop summarizing. Fetch the page through
+`defuddle.md` and grep the full Markdown yourself — the answer becomes a match
+count rather than a model's recollection:
+
+```bash
+L="volatility3.readthedocs.io/en/latest/volatility3.plugins.linux.html"
+for p in pslist pstree psaux sockstat; do
+  echo "$p: $(curl -sL "https://defuddle.md/$L" | grep -c "linux\.$p module")"
+done
+# pslist: 1   pstree: 1   psaux: 1   sockstat: 1  -- all four present
+```
+
+That is the exact check that refutes the summarizer's "not listed" on all four.
+Where a per-symbol URL exists, the status probe below is stronger still. If you
+can get neither, leave the content alone and flag it unconfirmed — an
+unverified line is recoverable, a confidently deleted correct one is not.
 
 ## Consequence Weighting
 
@@ -181,7 +229,9 @@ that had six months of history available.
 2. **Resolve class-level claims first** (tool name, version, naming scheme).
    Re-scope everything below to what survives.
 3. **Batch-probe every identifier** with a deterministic check.
-4. **Verify remaining claims at tier 1 or 2**, recording the source.
+4. **Verify remaining claims at tier 1 or 2**, recording the source. Pull the
+   pages through `defuddle.md` so you are reading full text cheaply rather than
+   a summary.
 5. **Correct, and say what changed and why** in the commit body — the next
    reader needs to know a claim was checked, not just that a line moved.
 6. **Adversarial second pass.** Re-read your corrections trying to *refute*
@@ -231,6 +281,10 @@ python3 scripts/validate.py --strict   # prints "Fact-checked ...: N/72"
 - **"The docs didn't mention it, so I removed it."** A summarized fetch omits
   content constantly. Promote the negative to a status code or an exact-string
   grep before deleting anything.
+- **"I'll route everything through defuddle, it saves tokens."** It is for
+  public prose. Structured JSON comes back mangled, status probes need the real
+  host, and engagement or client URLs must never be handed to a third-party
+  service to satisfy a token budget.
 - **"It was right when it was written."** Retention windows, licence gates, and
   default paths change under you. Verification is dated for exactly this
   reason; "correct in 2024" is not a defence in 2026.
