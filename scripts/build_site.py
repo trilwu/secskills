@@ -344,11 +344,11 @@ def render_skill_page(s: dict, names: set[str]) -> str:
            "ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}"
            "addEventListener('scroll',on,{passive:true});on();})();</script>") if heads else ""
     body = f"""
-<div class="top"><div class="wrap"><a class="brand" href="index.html">secskills</a>
-<nav><a href="index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<div class="top"><div class="wrap"><a class="brand" href="../index.html">secskills</a>
+<nav><a href="../index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
 <button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
 <header class="shead"><div class="wrap">
-  <div class="crumb"><a href="index.html">secskills</a> / {s['plugin']} / {s['name']}</div>
+  <div class="crumb"><a href="../index.html">secskills</a> / {s['plugin']} / {s['name']}</div>
   <h1 class="sk">{s['name']}</h1>
   <div class="stags">
     <span><span class="dot dot-{s['plugin']}"></span> {s['plugin']}</span>
@@ -359,10 +359,10 @@ def render_skill_page(s: dict, names: set[str]) -> str:
 </div></header>
 <div class="wrap slayout"><article>{body_html}</article>{toc}</div>
 <footer><div class="wrap"><div class="mono">secskills · {s['plugin']} · verified {s['verified']}</div>
-<a class="mono" href="index.html#catalog">← all skills</a></div></footer>
+<a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
 {spy}
 """
-    return page(f"{s['name']} — SecSkills", "style.css", body,
+    return page(f"{s['name']} — SecSkills", "../style.css", body,
                 extra_head=f"<style>{css}</style>")
 
 
