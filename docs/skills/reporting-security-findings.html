@@ -44,7 +44,7 @@
   <h1 class="sk">reporting-security-findings</h1>
   <div class="stags">
     <span><span class="dot dot-core"></span> core</span>
-    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-28</span>
   </div>
   <p class="sdesc">Write security findings and assessment reports — severity scoring with CVSS and business impact, reproducible proof of concept, remediation guidance, executive summaries, and coordinated disclosure. Use when writing up a vulnerability, producing a pentest or audit report, triaging a bug bounty submission, or preparing a disclosure timeline.</p>
   <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
@@ -165,6 +165,10 @@ CWE-639, OWASP API1:2023 Broken Object Level Authorization</code></pre></div>
 <li><strong>Variants listed.</strong> If you found one instance and suspect more, say what you</li>
 </ul>
 <p>checked and what you did not.</p>
+<ul>
+<li><strong>Revalidated against what ships.</strong> Before a finding goes in the report,</li>
+</ul>
+<p>confirm the vulnerable code is not already fixed on a branch you haven't pulled (<code>git log --oneline &amp;lt;checkout&amp;gt;..origin/main -- &amp;lt;file&amp;gt;</code>). One already-patched finding teaches the reader to distrust the rest.</p>
 <h2 id="severity">Severity</h2>
 <p>CVSS is the common currency, but it scores a vulnerability in the abstract. Score with CVSS, then state business impact separately — engineering prioritizes on the second.</p>
 <div class="codeblk cx"><button class="copy" data-copy="CVSS 4.0 base vector example:
@@ -256,6 +260,10 @@ Day 90    Standard public disclosure deadline (adjust for severity and
 </ul>
 <p>evidence you have and state the uncertainty. Silent omission is worse.</p>
 <ul>
+<li><em>"I found it in the code, so it's still there."</em> You may be reading a stale</li>
+</ul>
+<p>checkout. Revalidate against what ships before you file it — a finding fixed three commits ago discredits the whole report.</p>
+<ul>
 <li><em>"The client won't like the limitations section."</em> They will like it less</li>
 </ul>
 <p>after a breach in an area the report implied was covered.</p>
@@ -270,7 +278,7 @@ Day 90    Standard public disclosure deadline (adjust for severity and
 <li>CVSS 4.0 specification; EPSS for exploitation likelihood; CWE for classification</li>
 <li>ISO/IEC 29147 (vulnerability disclosure) and 30111 (handling)</li>
 </ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#anatomy-of-a-finding">Anatomy of a Finding</a><a href="#severity">Severity</a><a href="#proof-of-concept">Proof of Concept</a><a href="#the-report">The Report</a><a href="#writing-for-the-audience">Writing for the Audience</a><a href="#disclosure">Disclosure</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
-<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-28</div>
 <a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
 <script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
 <script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

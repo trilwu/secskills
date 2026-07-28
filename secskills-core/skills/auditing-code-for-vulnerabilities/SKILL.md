@@ -1,7 +1,7 @@
 ---
 name: auditing-code-for-vulnerabilities
 description: Audit source code for exploitable vulnerabilities using threat-model-driven review, taint tracing, invariant checking, and variant analysis. Use when reviewing a codebase or diff for security bugs, performing a security audit, hunting for vulnerabilities in a target's source, or validating whether a suspected finding is real.
-verified: 2026-07-27
+verified: 2026-07-28
 ---
 
 # Auditing Code for Vulnerabilities
@@ -91,6 +91,17 @@ privilege tier > reachable only by an admin. Then follow the highest-ranked
 ones inward. Depth beats breadth — one fully traced path is worth twenty
 grep hits.
 
+**Grep hits are candidates, not findings.** The commands above are a cheap wide
+net; each match is an unresolved lead until you have traced it. Persist the
+candidate set — a worklist of `(file:line, bug class, entry point)` — and drive
+every entry to an explicit verdict: *traced-safe*, *confirmed*, or *needs-PoC*.
+Widen the net cheaply, then spend expensive reasoning per candidate — never the
+reverse. The failure mode is not a missing grep pattern; it is enumerating
+fifty candidates, eyeballing five, and calling the tree clean. On a large
+codebase, fold the project's own conventions into the net — its ORM's raw-query
+escape hatch, its auth decorator's name, its templating call — because the
+highest-yield sinks are the ones generic patterns miss.
+
 ### Pass 3: Hunt bug classes along the traced paths
 
 For each promising path, trace taint from source to sink and ask what the code
@@ -155,6 +166,33 @@ answer all four:
 If a proof of concept is in scope, write the smallest one that proves control
 of the sink — not a weaponized exploit.
 
+### Revalidate to prune false positives
+
+The four checks above confirm a finding; this pass tries to *kill* it. Run it on
+every confirmed candidate before it reaches the report — a report's credibility
+is set by its worst false positive, not its best true finding.
+
+- **Is it already fixed?** The tree you are reading may lag the fix, or the fix
+  may sit on a branch you have not pulled. Confirm the vulnerable code is what
+  actually ships before you file it.
+
+  ```bash
+  git log -S'<dangerous token>' --oneline -- <file>   # when this line changed, and toward what
+  git log --oneline <checkout>..origin/main -- <file> # a fix on main you are not reading
+  git blame -L <line>,<line> <file>                    # the commit that introduced it, for context
+  ```
+
+- **Re-derive it adversarially.** Argue the opposite case: assume the code is
+  safe and go find the control that makes it so — the middleware, the DB
+  constraint, the caller that already sanitizes. A finding that survives a
+  genuine attempt to disprove it is one you can defend.
+- **Confirm the sink still receives your value.** Re-trace the last hop. A
+  refactor often slips a validator or an encoder between source and sink that a
+  first read glides past.
+
+Drop what dies here, and say so in your coverage notes. A candidate you cannot
+revalidate is a note to yourself, not a finding.
+
 ## Rationalizations to Reject
 
 These are the thoughts that turn an audit into a formality. Each one is wrong.
@@ -170,6 +208,9 @@ These are the thoughts that turn an audit into a formality. Each one is wrong.
 - *"It looks intentional."* Intent is not a control. Note the intent, keep
   the finding.
 - *"The scanner didn't flag it."* Scanners find what they have rules for.
+- *"I confirmed it, so it's real."* You confirmed it against one checkout and
+  your own first read. Revalidate it against what actually ships and against a
+  genuine attempt to disprove it before it goes in the report.
 - *"I've reviewed enough files."* Coverage is measured against the attack
   surface you mapped in Pass 2, not against file count.
 

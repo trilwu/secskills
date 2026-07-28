@@ -44,7 +44,7 @@
   <h1 class="sk">auditing-code-for-vulnerabilities</h1>
   <div class="stags">
     <span><span class="dot dot-core"></span> core</span>
-    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-27</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-07-28</span>
   </div>
   <p class="sdesc">Audit source code for exploitable vulnerabilities using threat-model-driven review, taint tracing, invariant checking, and variant analysis. Use when reviewing a codebase or diff for security bugs, performing a security audit, hunting for vulnerabilities in a target&#x27;s source, or validating whether a suspected finding is real.</p>
   <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
@@ -120,6 +120,7 @@ rg -n 'os\.system|subprocess.*shell\s*=\s*True|child_process\.exec\(|execSync|St
 # Where authentication is decided rather than enforced
 rg -n 'verify=False|InsecureSkipVerify|jwt\.decode\(.*verify.*False|algorithms=\[.*none'</code></pre></div>
 <p>Rank entry points by: reachable without authentication &gt; reachable by a low privilege tier &gt; reachable only by an admin. Then follow the highest-ranked ones inward. Depth beats breadth — one fully traced path is worth twenty grep hits.</p>
+<p><strong>Grep hits are candidates, not findings.</strong> The commands above are a cheap wide net; each match is an unresolved lead until you have traced it. Persist the candidate set — a worklist of <code>(file:line, bug class, entry point)</code> — and drive every entry to an explicit verdict: <em>traced-safe</em>, <em>confirmed</em>, or <em>needs-PoC</em>. Widen the net cheaply, then spend expensive reasoning per candidate — never the reverse. The failure mode is not a missing grep pattern; it is enumerating fifty candidates, eyeballing five, and calling the tree clean. On a large codebase, fold the project's own conventions into the net — its ORM's raw-query escape hatch, its auth decorator's name, its templating call — because the highest-yield sinks are the ones generic patterns miss.</p>
 <h3>Pass 3: Hunt bug classes along the traced paths</h3>
 <p>For each promising path, trace taint from source to sink and ask what the code assumes. The high-yield classes, in rough order of how often they survive to production:</p>
 <p><strong>Authorization, not authentication.</strong> Most real breaches are missing object level checks, not broken login. For every handler that takes an ID, ask: is the object scoped to the caller's tenant/user, or only looked up by ID? Check the query, not the decorator.</p>
@@ -151,6 +152,22 @@ rg -n 'find_by_id|findOne\(\{ *_id|get_object_or_404' -A3 | rg -v 'tenant|owner|
 </ol>
 <p>middleware, a DB constraint, or a caller that already sanitizes.</p>
 <p>If a proof of concept is in scope, write the smallest one that proves control of the sink — not a weaponized exploit.</p>
+<h3>Revalidate to prune false positives</h3>
+<p>The four checks above confirm a finding; this pass tries to <em>kill</em> it. Run it on every confirmed candidate before it reaches the report — a report's credibility is set by its worst false positive, not its best true finding.</p>
+<ul>
+<li><strong>Is it already fixed?</strong> The tree you are reading may lag the fix, or the fix</li>
+</ul>
+<p>may sit on a branch you have not pulled. Confirm the vulnerable code is what actually ships before you file it.</p>
+<p>``<code>bash git log -S'&amp;lt;dangerous token&amp;gt;' --oneline -- &amp;lt;file&amp;gt;   # when this line changed, and toward what git log --oneline &amp;lt;checkout&amp;gt;..origin/main -- &amp;lt;file&amp;gt; # a fix on main you are not reading git blame -L &amp;lt;line&amp;gt;,&amp;lt;line&amp;gt; &amp;lt;file&amp;gt;                    # the commit that introduced it, for context </code>``</p>
+<ul>
+<li><strong>Re-derive it adversarially.</strong> Argue the opposite case: assume the code is</li>
+</ul>
+<p>safe and go find the control that makes it so — the middleware, the DB constraint, the caller that already sanitizes. A finding that survives a genuine attempt to disprove it is one you can defend.</p>
+<ul>
+<li><strong>Confirm the sink still receives your value.</strong> Re-trace the last hop. A</li>
+</ul>
+<p>refactor often slips a validator or an encoder between source and sink that a first read glides past.</p>
+<p>Drop what dies here, and say so in your coverage notes. A candidate you cannot revalidate is a note to yourself, not a finding.</p>
 <h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
 <p>These are the thoughts that turn an audit into a formality. Each one is wrong.</p>
 <ul>
@@ -175,6 +192,10 @@ rg -n 'find_by_id|findOne\(\{ *_id|get_object_or_404' -A3 | rg -v 'tenant|owner|
 <p>the finding.</p>
 <ul>
 <li><em>"The scanner didn't flag it."</em> Scanners find what they have rules for.</li>
+<li><em>"I confirmed it, so it's real."</em> You confirmed it against one checkout and</li>
+</ul>
+<p>your own first read. Revalidate it against what actually ships and against a genuine attempt to disprove it before it goes in the report.</p>
+<ul>
 <li><em>"I've reviewed enough files."</em> Coverage is measured against the attack</li>
 </ul>
 <p>surface you mapped in Pass 2, not against file count.</p>
@@ -231,7 +252,7 @@ F1. [High] Tenant isolation bypass in GET /api/reports/:id — &lt;impact&gt; �
 <li>OWASP Application Security Verification Standard (ASVS) for requirement-driven review</li>
 <li>CWE Top 25 and the CWE hierarchy for classification</li>
 </ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#the-loop">The Loop</a><a href="#verification-before-reporting">Verification Before Reporting</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#tool-assist-not-tool-substitute">Tool Assist, Not Tool Substitute</a><a href="#audit-deliverable">Audit Deliverable</a><a href="#coverage">Coverage</a><a href="#findings">Findings</a><a href="#references">References</a></nav></aside></div>
-<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-27</div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-07-28</div>
 <a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
 <script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
 <script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

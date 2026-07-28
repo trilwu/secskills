@@ -1,7 +1,7 @@
 ---
 name: reporting-security-findings
 description: Write security findings and assessment reports — severity scoring with CVSS and business impact, reproducible proof of concept, remediation guidance, executive summaries, and coordinated disclosure. Use when writing up a vulnerability, producing a pentest or audit report, triaging a bug bounty submission, or preparing a disclosure timeline.
-verified: 2026-07-27
+verified: 2026-07-28
 ---
 
 # Reporting Security Findings
@@ -85,6 +85,10 @@ Rules that make findings act-on-able:
 - **Remediation that names the change.** "Validate input" is not remediation.
 - **Variants listed.** If you found one instance and suspect more, say what you
   checked and what you did not.
+- **Revalidated against what ships.** Before a finding goes in the report,
+  confirm the vulnerable code is not already fixed on a branch you haven't
+  pulled (`git log --oneline <checkout>..origin/main -- <file>`). One
+  already-patched finding teaches the reader to distrust the rest.
 
 ## Severity
 
@@ -215,6 +219,9 @@ to justify the payout internally.
   report stops being read.
 - *"I couldn't fully exploit it, so I'll leave it out."* Report it with the
   evidence you have and state the uncertainty. Silent omission is worse.
+- *"I found it in the code, so it's still there."* You may be reading a stale
+  checkout. Revalidate against what ships before you file it — a finding fixed
+  three commits ago discredits the whole report.
 - *"The client won't like the limitations section."* They will like it less
   after a breach in an area the report implied was covered.
 - *"No findings means a bad report."* A report with honest coverage and no
