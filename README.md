@@ -64,7 +64,11 @@ CI/CD auditing, and AI/LLM + MCP security. Language-agnostic by default, with
 **`auditing-php-applications`** for PHP's specific footguns (unserialize/`phar://`
 POP chains, type-juggling auth bypass, `php://` wrappers) and
 **`hunting-web-backdoors`** for planted webshells. Reach into `offense` when you
-need to demonstrate the bug, not just describe it.
+need to demonstrate the bug, not just describe it. And when the target is big
+enough to warrant a campaign, **`orchestrating-vulnerability-research`** runs the
+hunt as an adversarial loop — builders hunt each slice, an independent critic
+tries to *refute* every candidate against the running target, and nothing counts
+until it is proven, not plausible.
 
 ### 🔵 DFIR / incident response → `defense` + `core`
 
@@ -145,6 +149,7 @@ Two honest caveats:
 | Skill | Use it for |
 | --- | --- |
 | `auditing-code-for-vulnerabilities` | Full source audit: context → attack surface → bug-class hunt → variant analysis, with a four-question verification gate |
+| `orchestrating-vulnerability-research` | Run a discovery campaign across a codebase, binary, or live target: split the surface into slices, hunt each with a builder agent, and have a separate critic refute every candidate against the running artifact before it counts |
 | `auditing-php-applications` | PHP-specific bugs: unserialize/`phar://` POP chains, type juggling, `php://` wrappers, superglobal trust, WordPress/Magento/Laravel |
 | `hunting-web-backdoors` | Sweep a web tree for planted webshells: static deobfuscation, append-infections, known shell families as leads |
 | `reviewing-code-changes` | Security review of a diff, branch, or PR — including the lines the change *removed* |
@@ -338,6 +343,20 @@ enabled in advance, so it reports a *visibility gap*, not "no exfiltration."
 Checks whether the lethal trifecta closes — private data, untrusted content, and
 egress in one agent — before any payload, and refuses prompt-level defenses as a
 control.
+
+**Run a discovery campaign (AppSec / Red team)**
+
+```
+"Find previously-unknown bugs in this service — fan out agents, and don't count anything you can't prove."
+```
+
+Splits the attack surface into independent slices and hunts each with its own
+builder agent, then hands every candidate to a *separate* critic that tries to
+refute it against the running target — a reproduced trigger or a live response,
+never the hunter's own writeup. It kills the plausible-but-safe candidate (the
+`subprocess` call that looks injectable but passes an argv list, so nothing
+executes) and confirms the real ones, then reconciles across slices to surface
+the chain no single hunter could see.
 
 ## Where this fits
 
