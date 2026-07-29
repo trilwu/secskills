@@ -28,6 +28,10 @@ breaks. This skill is the methodology for the second job.
 - **Dependency and build-pipeline risk** — use `auditing-supply-chain`
 - **Cryptographic construction review** — use `reviewing-cryptography`
 - **Writing up finished findings** — use `reporting-security-findings`
+- **Running a multi-agent discovery campaign** across a whole target with
+  builder/critic separation and iteration — use
+  `orchestrating-vulnerability-research`, which dispatches *this* skill as the
+  per-slice hunter
 
 ## The Loop
 

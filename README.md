@@ -1,6 +1,6 @@
 # SecSkills
 
-**81 security skills for [Claude Code](https://claude.com/claude-code) that
+**82 security skills for [Claude Code](https://claude.com/claude-code) that
 encode the *judgment* professionals bring — not another wrapper around a
 scanner.** Offense, defense, and the reverse-engineering / code-audit core both
 sides share. Every skill fact-checked against primary sources.
@@ -18,7 +18,7 @@ Three plugins in one marketplace — install only the side you work:
 | --- | --- | --- |
 | **`secskills-offense`** | 37 | Red team, pentest, offensive AppSec |
 | **`secskills-defense`** | 22 | DFIR, SOC, detection engineering, threat intel |
-| **`secskills-core`** | 22 | Reverse engineering, code/crypto audit, AI/MCP security, reporting — shared by both |
+| **`secskills-core`** | 23 | Reverse engineering, code/crypto audit, AI/MCP security, reporting — shared by both |
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -95,7 +95,7 @@ Each skill is a methodology, not a command dump, with three things a cheat
 sheet does not give you:
 
 - **An explicit scope and hand-off.** Every skill says when to use a *different*
-  one, named in backticks. That is how 81 skills compose instead of colliding.
+  one, named in backticks. That is how 82 skills compose instead of colliding.
 - **A `Rationalizations to Reject` section** — the plausible-sounding shortcuts
   that cause missed findings and bad calls, each with why it is wrong. This is
   the highest-value part of most skills; it is the judgment a command list
@@ -108,12 +108,12 @@ sheet does not give you:
 
 ## Every skill is fact-checked — and dated
 
-**All 81 skills have been verified line-by-line against primary sources** —
+**All 82 skills have been verified line-by-line against primary sources** —
 vendor docs, RFCs, tool source — and carry a `verified:` date in frontmatter.
 This is the differentiator: it is the opposite of confidently-wrong AI output.
 
 ```bash
-python3 scripts/validate.py --strict                 # "Fact-checked ...: 81/81"
+python3 scripts/validate.py --strict                 # "Fact-checked ...: 82/82"
 grep -L "^verified:" secskills-*/skills/*/SKILL.md   # unverified skills (none)
 ```
 

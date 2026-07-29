@@ -3,6 +3,33 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [4.4.0] - 2026-07-28
+
+A core methodology skill for running vulnerability discovery as an adversarial,
+multi-agent loop rather than a single self-graded pass — translating the
+"gauntlet loop" pattern (decompose, builder + independent critic, a bar the
+agent can't rationalize around) into security research.
+
+### Added
+
+- **`orchestrating-vulnerability-research`** (core) — decompose a target
+  (codebase, binary, or named live target) into independently-huntable slices,
+  hunt each with a builder agent, and have a separate critic with fresh context
+  refute every candidate against the real artifact (a reproduced crash, a
+  working request, a proven bypass) before it counts. Dispatches
+  `auditing-code-for-vulnerabilities`, `analyzing-binaries`, and
+  `testing-web-applications` as per-slice hunters; hands proven findings to
+  `reporting-security-findings`. Registered `_unmapped` (pre-attack research).
+
+### Changed
+
+- **`auditing-code-for-vulnerabilities`** — candidate-worklist discipline (grep
+  hits are tracked candidates driven to an explicit verdict) and a revalidation
+  pass that tries to kill each confirmed finding, including a git-history
+  already-fixed check. Routing line added to the new orchestration skill.
+- **`reporting-security-findings`** — require revalidation against what actually
+  ships before filing a finding.
+
 ## [4.3.0] - 2026-07-27
 
 Two PHP-focused core skills, split by intent as requested: hunting planted
