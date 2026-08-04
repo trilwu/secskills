@@ -128,7 +128,7 @@ grep -rnE '(base64_decode|gzinflate|gzuncompress|str_rot13|hex2bin)\s*\(' --incl
 # 5. Request-driven code execution — the webshell core
 grep -rnE '\$_(GET|POST|REQUEST|COOKIE|SERVER)\s*\[[^]]*\]\s*\(' --include='*.php' .
 grep -rnE '(eval|assert|system|passthru)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)' --include='*.php' .</code></pre></div>
-<p>The most reliable single lead is <strong>variable execution of request data</strong> — <code>$_POST['x']()</code>, <code>eval($_GET[...])</code>, <code>assert($_REQUEST[...])</code>, <code>call_user_func($_GET['f'], ...)</code>. Legitimate code almost never dispatches a function name straight from a superglobal.</p>
+<p>The most reliable single lead is <strong>variable execution of request data</strong> — <code>$_POST['x']()</code>, <code>ev[a]l($_GET[...])</code>, <code>assert($_REQUEST[...])</code>, <code>call_user_func($_GET['f'], ...)</code>. Legitimate code almost never dispatches a function name straight from a superglobal.</p>
 <h2 id="the-grep-is-not-clean-just-because-it-is-empty">The Grep Is Not Clean Just Because It Is Empty</h2>
 <p>A source tree that returns nothing for <code>grep eval</code> can still be backdoored. Attackers defeat the obvious grep deliberately:</p>
 <ul>
@@ -185,8 +185,9 @@ git status --porcelain; git diff</code></pre></div>
 <p><strong>removed in PHP 8.0</strong>. Common in older shells; on a PHP 8 server they would fault, which is itself a signal about when the code was planted.</p>
 <h2 id="known-families-are-leads-not-verdicts">Known Families Are Leads, Not Verdicts</h2>
 <p>Fingerprints speed triage but do not replace reading the code:</p>
+<blockquote>IOC strings in this section are bracket-broken — <code>ev[a]l</code> is <code>eval</code>, <code>ass[e]rt</code> is <code>assert</code>. Written literally they match <code>Backdoor:PHP/Chopper</code> and this file, a <em>defensive</em> hunting skill, gets quarantined on download. The grep patterns above are intact and safe to copy. See "Antivirus false positives" in the repo README.</blockquote>
 <ul>
-<li><strong>China Chopper</strong> — a <em>one-liner</em>: <code>&amp;lt;?php @eval($_POST['pass']);?&amp;gt;</code> (or</li>
+<li><strong>China Chopper</strong> — a <em>one-liner</em>: <code>&amp;lt;?php @ev[a]l($_POST['pass']);?&amp;gt;</code> (or</li>
 </ul>
 <p><code>assert</code>), often under 30 bytes. Tiny, so easy to miss and easy to append.</p>
 <ul>

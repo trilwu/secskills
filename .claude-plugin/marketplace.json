@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Marketplace for SecSkills - offensive and defensive security skills for Claude Code, split into offense, defense, and a shared core plugin",
-    "version": "4.4.0"
+    "version": "4.4.1"
   },
   "plugins": [
     {
       "name": "secskills-offense",
       "source": "./secskills-offense",
       "description": "Attacker tradecraft with the judgment, not just the commands. 37 offensive security skills for red teams and pentesters: web/API/auth exploitation (JWT, OAuth/OIDC, SAML, XXE, SSRF, deserialization, GraphQL, gRPC), Active Directory and Entra ID, AD CS ESC1-16, Kerberos delegation, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, Web3, reconnaissance, social engineering, persistence, and password cracking — plus deception-spotting and multi-day engagement discipline. Every skill fact-checked against primary sources. Pairs with secskills-core.",
-      "version": "4.3.0",
+      "version": "4.3.1",
       "category": "security",
       "keywords": [
         "security",
@@ -62,7 +62,7 @@
       "name": "secskills-core",
       "source": "./secskills-core",
       "description": "The reverse-engineering and code-audit foundation both sides share. 23 dual-use security skills: native and Go/Rust/.NET/iOS/firmware reverse engineering, packers, and Flutter/React Native/Unity/Xamarin runtimes; source-code auditing with PHP-specific depth; webshell and backdoor hunting; multi-agent vulnerability-research orchestration; supply-chain, cryptography, MCP, and pull-request review; AI/LLM security; ATT&CK technique mapping; engagement-state discipline; and findings reporting. Ships the ttp-index.json ATT&CK map. Every skill fact-checked against primary sources.",
-      "version": "4.4.0",
+      "version": "4.4.1",
       "category": "security",
       "keywords": [
         "security",

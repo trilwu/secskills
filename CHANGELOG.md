@@ -3,6 +3,33 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [4.4.1] - 2026-08-04
+
+Fixes antivirus false positives that were silently quarantining five skill
+files. Reported in [#1](https://github.com/trilwu/secskills/issues/1).
+
+### Fixed
+
+- **Webshell payload strings defanged.** Microsoft Defender matched documented
+  IOCs byte-for-byte and quarantined the files containing them —
+  `Backdoor:PHP/Chopper.B!dha` on `hunting-web-backdoors`, and
+  `Backdoor:PHP/Perhetshell.A!dha`/`.B!dha` on `enumerating-network-services`
+  (and its `database-services.md` reference), `establishing-persistence`, and
+  `testing-web-applications`. AV engines scan content rather than extension, so
+  a Markdown file quoting China Chopper is indistinguishable from a live `.php`
+  webshell. Payload identifiers are now bracket-broken (`syst[e]m`, `ev[a]l`,
+  `$_G[E]T`, `passt[h]ru`, `Runtime.getRunt[i]me`) with a note at each site.
+  Detection regexes and hunting patterns are left intact — breaking those would
+  make the defensive skills wrong.
+- **Quarantine was silent.** Affected installs kept the plugin registered while
+  losing four skills, with no error surfaced. Reinstall on 4.4.1 to restore.
+
+### Added
+
+- **README section on antivirus false positives** — why offensive
+  documentation trips signature scanners, why these detections are benign, and
+  a path-exclusion command for scanners that still flag the files.
+
 ## [4.4.0] - 2026-07-28
 
 A core methodology skill for running vulnerability discovery as an adversarial,

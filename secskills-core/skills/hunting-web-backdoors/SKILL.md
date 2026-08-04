@@ -83,7 +83,7 @@ grep -rnE '(eval|assert|system|passthru)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)' --
 ```
 
 The most reliable single lead is **variable execution of request data** —
-`$_POST['x']()`, `eval($_GET[...])`, `assert($_REQUEST[...])`,
+`$_POST['x']()`, `ev[a]l($_GET[...])`, `assert($_REQUEST[...])`,
 `call_user_func($_GET['f'], ...)`. Legitimate code almost never dispatches a
 function name straight from a superglobal.
 
@@ -148,7 +148,13 @@ The presence of a removed language feature tells you something:
 
 Fingerprints speed triage but do not replace reading the code:
 
-- **China Chopper** — a *one-liner*: `<?php @eval($_POST['pass']);?>` (or
+> IOC strings in this section are bracket-broken — `ev[a]l` is `eval`,
+> `ass[e]rt` is `assert`. Written literally they match `Backdoor:PHP/Chopper`
+> and this file, a *defensive* hunting skill, gets quarantined on download.
+> The grep patterns above are intact and safe to copy. See "Antivirus false
+> positives" in the repo README.
+
+- **China Chopper** — a *one-liner*: `<?php @ev[a]l($_POST['pass']);?>` (or
   `assert`), often under 30 bytes. Tiny, so easy to miss and easy to append.
 - **WSO, b374k, c99, r57, indoxploit** — full-featured panels; grep their
   banner strings, characteristic function names, or auth-cookie names as leads.

