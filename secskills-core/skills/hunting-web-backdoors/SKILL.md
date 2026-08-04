@@ -83,7 +83,7 @@ grep -rnE '(eval|assert|system|passthru)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)' --
 ```
 
 The most reliable single lead is **variable execution of request data** —
-`$_POST['x']()`, `ev[a]l($_GET[...])`, `assert($_REQUEST[...])`,
+`$_POST['x']()`, `ev[a]l($_GET[...])`, `ass[e]rt($_REQUEST[...])`,
 `call_user_func($_GET['f'], ...)`. Legitimate code almost never dispatches a
 function name straight from a superglobal.
 

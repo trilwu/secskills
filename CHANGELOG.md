@@ -23,6 +23,13 @@ files. Reported in [#1](https://github.com/trilwu/secskills/issues/1).
   make the defensive skills wrong.
 - **Quarantine was silent.** Affected installs kept the plugin registered while
   losing four skills, with no error surfaced. Reinstall on 4.4.1 to restore.
+- **Preventive pass over the remaining complete payload artefacts** — the VBA
+  `AutoOpen` downloader, the HTA `Wscript.Shell` shell and the Ducky Script
+  payload in `performing-social-engineering`, and the `rundll32` squiblytwo
+  one-liner in `transferring-files`. None were flagged by Defender, but each is
+  a full copy-pasteable weapon of exactly the shape signature engines target.
+  Plain tool invocations (`certutil`, `bitsadmin`, a bare `IEX` cradle) are
+  left intact — defanging every command would cost more than it protects.
 
 ### Added
 

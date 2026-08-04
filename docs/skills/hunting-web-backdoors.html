@@ -128,7 +128,7 @@ grep -rnE '(base64_decode|gzinflate|gzuncompress|str_rot13|hex2bin)\s*\(' --incl
 # 5. Request-driven code execution — the webshell core
 grep -rnE '\$_(GET|POST|REQUEST|COOKIE|SERVER)\s*\[[^]]*\]\s*\(' --include='*.php' .
 grep -rnE '(eval|assert|system|passthru)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)' --include='*.php' .</code></pre></div>
-<p>The most reliable single lead is <strong>variable execution of request data</strong> — <code>$_POST['x']()</code>, <code>ev[a]l($_GET[...])</code>, <code>assert($_REQUEST[...])</code>, <code>call_user_func($_GET['f'], ...)</code>. Legitimate code almost never dispatches a function name straight from a superglobal.</p>
+<p>The most reliable single lead is <strong>variable execution of request data</strong> — <code>$_POST['x']()</code>, <code>ev[a]l($_GET[...])</code>, <code>ass[e]rt($_REQUEST[...])</code>, <code>call_user_func($_GET['f'], ...)</code>. Legitimate code almost never dispatches a function name straight from a superglobal.</p>
 <h2 id="the-grep-is-not-clean-just-because-it-is-empty">The Grep Is Not Clean Just Because It Is Empty</h2>
 <p>A source tree that returns nothing for <code>grep eval</code> can still be backdoored. Attackers defeat the obvious grep deliberately:</p>
 <ul>

