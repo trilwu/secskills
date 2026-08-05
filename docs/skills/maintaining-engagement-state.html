@@ -82,6 +82,10 @@
 <p>Keep these in one file, in the repository or case folder, updated as you go — not reconstructed at the end.</p>
 <h3>1. Scope and authorization</h3>
 <p>In-scope targets and explicit exclusions, the testing window, the named contact, and where the authorization letter lives. Copy the exclusions verbatim; paraphrasing scope is how people test the wrong estate.</p>
+<p>Record one more field, because "in scope" and "reachable" are different questions. <strong>Egress mode</strong> says what this engagement is allowed to talk to:</p>
+<div class="tw"><table><thead><tr><th>Mode</th><th>Allowed</th><th>Refused</th></tr></thead><tbody><tr><td><code>offline</code></td><td>Static analysis, local samples, emulation</td><td>Any outbound packet</td></tr><tr><td><code>lab_only</code></td><td>Lab and VM ranges you control</td><td>Production, anything routable</td></tr><tr><td><code>authorized_target_only</code></td><td>Assets named in scope</td><td>Everything not on the list</td></tr><tr><td><code>unrestricted_lab</code></td><td>Isolated lab network, in writing</td><td>The public internet</td></tr></tbody></table></div>
+<p>Name the mode before the first command, not after something reaches further than you meant. It is the field that catches the two classic mistakes: a "static-only" malware triage that resolves a C2 domain, and a scoped web test whose scanner follows a redirect off-estate. When a skill in this repo says an action needs an isolated lab, it means <code>lab_only</code> or stricter.</p>
+<p>Authorization is a gate, not a note. If authorization is pending or absent, reading documentation and planning are fine; scanning, hooking, and exploitation are not.</p>
 <h3>2. Credential provenance</h3>
 <p>For every credential, hash, token, or key: <strong>what it is, where it came from, how it was obtained, and what it has been used against.</strong></p>
 <div class="codeblk cx"><button class="copy" data-copy="cred-04  | svc_backup NTLM hash

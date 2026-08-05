@@ -51,6 +51,26 @@ In-scope targets and explicit exclusions, the testing window, the named
 contact, and where the authorization letter lives. Copy the exclusions
 verbatim; paraphrasing scope is how people test the wrong estate.
 
+Record one more field, because "in scope" and "reachable" are different
+questions. **Egress mode** says what this engagement is allowed to talk to:
+
+| Mode | Allowed | Refused |
+| --- | --- | --- |
+| `offline` | Static analysis, local samples, emulation | Any outbound packet |
+| `lab_only` | Lab and VM ranges you control | Production, anything routable |
+| `authorized_target_only` | Assets named in scope | Everything not on the list |
+| `unrestricted_lab` | Isolated lab network, in writing | The public internet |
+
+Name the mode before the first command, not after something reaches further
+than you meant. It is the field that catches the two classic mistakes: a
+"static-only" malware triage that resolves a C2 domain, and a scoped web test
+whose scanner follows a redirect off-estate. When a skill in this repo says an
+action needs an isolated lab, it means `lab_only` or stricter.
+
+Authorization is a gate, not a note. If authorization is pending or absent,
+reading documentation and planning are fine; scanning, hooking, and
+exploitation are not.
+
 ### 2. Credential provenance
 
 For every credential, hash, token, or key: **what it is, where it came from,

@@ -127,6 +127,20 @@ phishing URLs, and C2 must be fetched directly — routing them through a
 third-party extractor breaks the command, leaks engagement URLs, and for live
 adversary infrastructure tips off the operator.
 
+**Order steps by when they happen, and say so.** A skill body that reads as an
+unordered pile of techniques gets sampled, not followed. Mark the first actions
+as immediate, the ones that depend on their output as following, and the ones
+that touch the target as acting — then a reader who loads the skill mid-task
+knows where they are. The ordering also carries the safety property: anything
+in the acting group is gated on authorization being granted, which is only
+legible if the groups are distinguishable.
+
+**A skill is a set of instructions to carry out, not a document to acknowledge.**
+Loading one and replying that it has been read and understood is a failure
+mode worth naming in the body when the first step is easy to skip — a skill
+whose opening move is "record scope before touching anything" is exactly the
+skill a hurried reader will summarise instead of doing.
+
 Write for judgment, not recall:
 
 | Write this | Not this |

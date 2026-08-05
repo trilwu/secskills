@@ -90,6 +90,32 @@ Rules that make findings act-on-able:
   pulled (`git log --oneline <checkout>..origin/main -- <file>`). One
   already-patched finding teaches the reader to distrust the rest.
 
+### Invariants to check before a finding leaves draft
+
+Four of the rules above are mechanical enough to check rather than judge. Run
+them over every finding; each maps to a way reports have actually gone wrong.
+
+1. **Every finding cites at least one piece of evidence** — a command and its
+   output, a request and response, a crash, a screenshot. A finding whose only
+   support is a code reading is a *candidate*, not a finding. Label it so.
+2. **Confirmed status and low confidence cannot coexist.** If you would not bet
+   on it, it is still a candidate. Downgrade the status or say plainly what
+   would settle it. This pair is the single most common way a speculative
+   finding acquires unearned authority on its way into a report.
+3. **Every reproduction runs without asking you a question**, or names the
+   environment it cannot leave — an offline sample, a lab-only target, a
+   credential the reader must supply. An unreproducible finding is not a
+   finding you can defend in a remediation meeting.
+4. **A claim of obtained access or data has evidence of that specific claim.**
+   "Full database read" needs a row you actually read, not an injectable
+   parameter plus an inference about what lies behind it. Reachability is not
+   impact.
+
+When a finding fails one of these, it does not get quietly dropped: it moves to
+the candidate worklist with the reason attached, so a later pass knows what
+would promote it. See `orchestrating-vulnerability-research` for how candidates
+are graded when a separate critic does the promoting.
+
 ## Severity
 
 CVSS is the common currency, but it scores a vulnerability in the abstract.
