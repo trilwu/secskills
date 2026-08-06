@@ -67,7 +67,7 @@ started yet.
   a working exploit.
 - [x] **B3 Patch diffing for 1-day exploitation** — BinDiff/Diaphora workflow
   from patch to reachable primitive.
-- [ ] **B4 Thick-client desktop testing** — local storage, update channel
+- [x] **B4 Thick-client desktop testing** — local storage, update channel
   integrity, IPC, client-side trust boundaries.
 - [ ] **B5 Browser extension reversing** — manifest, background workers,
   content-script boundary, extension-to-page privilege.

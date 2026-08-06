@@ -56,7 +56,8 @@
     "hunting-web-backdoors": "Web-shell hunting maps loosely to T1505.003 (Server Software Component: Web Shell) but this is defensive discovery of planted code, not the adversary technique; kept unmapped like the other audit skills",
     "auditing-php-applications": "Source-code vulnerability audit; CWE-based, not an ATT&CK technique — same rationale as auditing-code-for-vulnerabilities",
     "orchestrating-vulnerability-research": "Pre-attack research orchestration; no ATT&CK technique. Weaknesses it discovers are classified by CWE / OWASP ASVS, and exploited paths map under the specific attack skills it dispatches.",
-    "diffing-binary-patches": "Reverse-engineering craft (binary patch diffing for 1-day analysis). Not an Enterprise technique"
+    "diffing-binary-patches": "Reverse-engineering craft (binary patch diffing for 1-day analysis). Not an Enterprise technique",
+    "testing-thick-clients": "OWASP thick-client testing methodology; a testing method spanning many techniques (T1552 creds, T1005 local data, T1574 hijacking), not one Enterprise technique"
   },
   "tactics": {
     "TA0043": "Reconnaissance",

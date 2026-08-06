@@ -1,0 +1,192 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>testing-thick-clients — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="../index.html">secskills</a>
+<nav><a href="../index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="../index.html">secskills</a> / offense / testing-thick-clients</div>
+  <h1 class="sk">testing-thick-clients</h1>
+  <div class="stags">
+    <span><span class="dot dot-offense"></span> offense</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+  </div>
+  <p class="sdesc">Security-test desktop thick-client applications (.NET/WPF, Java, Electron, native Win32) against their local and network attack surface — proxying non-HTTP traffic, extracting secrets and DB connection strings from config/registry/memory, bypassing client-side trust controls, and reviewing update channels and DLL search order. Use when assessing an installed desktop app that talks to a backend, when Burp sees no traffic from a fat client, or when a two-tier app connects straight to a database.</p>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
+/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-offense
+<span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<div class="wrap slayout"><article><p>A thick client puts part of the application on the tester's own machine, and that is the whole opportunity: the binary, its config, its memory, and its traffic are all reachable. The recurring failure in these apps is trusting the client — enforcing authorization, hiding functionality, or holding secrets on a box the user controls. The job is to enumerate that surface and show where the trust is misplaced.</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul>
+<li>Assessing an installed desktop application (.NET/WPF, Java/Swing, Electron,</li>
+</ul>
+<p>Qt, native Win32) that communicates with a backend</p>
+<ul>
+<li>A fat client where Burp shows nothing because the traffic is not HTTP or not</li>
+</ul>
+<p>proxy-aware</p>
+<ul>
+<li>A two-tier app that connects directly to a database</li>
+<li>Reviewing local storage, IPC, update integrity, and DLL loading of a desktop</li>
+</ul>
+<p>app</p>
+<h2 id="when-not-to-use">When NOT to Use</h2>
+<ul>
+<li><strong>Browser/web apps and their APIs</strong> — use <a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> and</li>
+</ul>
+<p><a class="xref" href="testing-apis.html"><code>testing-apis</code></a>; come here only for an installed desktop client.</p>
+<ul>
+<li><strong>Electron internals as a JS reversing problem</strong> (unpacking <code>app.asar</code>,</li>
+</ul>
+<p>deobfuscating the bundle) lean on <a class="xref" href="reversing-obfuscated-javascript.html"><code>reversing-obfuscated-javascript</code></a> for the code, and this skill for the app's trust surface.</p>
+<ul>
+<li><strong>Pure reverse engineering of the binary</strong> with no security-test goal —</li>
+</ul>
+<p><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a>, or <a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a> for managed code.</p>
+<ul>
+<li><strong>Mobile apps</strong> — <a class="xref" href="testing-mobile-applications.html"><code>testing-mobile-applications</code></a>.</li>
+<li><strong>Turning a memory-corruption crash into an exploit</strong> — that is</li>
+</ul>
+<p><a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a>.</p>
+<h2 id="map-the-architecture-first">Map the Architecture First</h2>
+<p>The single most important question is how many tiers the app has, because it changes what a compromised client gets you:</p>
+<ul>
+<li><strong>Two-tier</strong> (client → database directly): the client must hold database</li>
+</ul>
+<p>credentials, and a connection string in config or memory gives you the same direct database access the app has. This is the highest-value finding in a thick client; look for it first.</p>
+<ul>
+<li><strong>Three-tier</strong> (client → app server → database): the client talks to an API,</li>
+</ul>
+<p>and the surface resembles a web test <em>plus</em> the local attack surface below.</p>
+<p>Then identify the stack — managed (.NET, Java), Electron, or native — because it dictates the tools for every step that follows.</p>
+<h2 id="local-attack-surface">Local Attack Surface</h2>
+<p>Everything the app stores on the tester's machine is readable:</p>
+<ul>
+<li><strong>Config and secrets.</strong> Connection strings, API keys, and encryption keys in</li>
+</ul>
+<p><code>app.config</code>/<code>.exe.config</code>, <code>.ini</code>, JSON, the registry, or <code>%APPDATA%</code>. Watch for secrets "encrypted" with a key that ships in the same binary — recover the key and it is plaintext.</p>
+<ul>
+<li><strong>Filesystem and registry activity.</strong> Run <strong>Procmon</strong> (Sysinternals) while</li>
+</ul>
+<p>exercising the app to see every file and registry key it touches; <strong>Regshot</strong> diffs the registry across an action. Weak ACLs on an install directory or a service enable local privilege escalation.</p>
+<ul>
+<li><strong>Local databases.</strong> SQLite and similar stores often cache data or tokens;</li>
+</ul>
+<p>open them directly.</p>
+<ul>
+<li><strong>Memory.</strong> Secrets decrypted for use sit in the process; <code>strings</code> on a dump,</li>
+</ul>
+<p>or <strong>Process Hacker / System Informer</strong>, recovers them.</p>
+<ul>
+<li><strong>The binary.</strong> Decompile managed code with <strong>dnSpy/ILSpy</strong> (.NET, plus de4dot</li>
+</ul>
+<p>for obfuscation) or a Java decompiler; hardcoded logic, keys, and hidden endpoints fall out.</p>
+<h2 id="intercepting-non-http-traffic">Intercepting Non-HTTP Traffic</h2>
+<p>When the client is not proxy-aware or does not speak HTTP, Burp alone sees nothing:</p>
+<ul>
+<li><strong>HTTP but proxy-unaware</strong> — force it through a proxy (system proxy,</li>
+</ul>
+<p>proxifier-style redirection, or hosts/DNS), and trust the proxy CA. .NET apps often ignore the system proxy until configured.</p>
+<ul>
+<li><strong>Non-HTTP TCP/TLS</strong> — <strong>mitmproxy</strong> in transparent/reverse mode, or an</li>
+</ul>
+<p>invisible-proxy setup, plus <strong>Wireshark</strong> to first understand the protocol. Legacy write-ups mention Echo Mirage; on modern Windows it is unreliable, so prefer runtime hooking.</p>
+<ul>
+<li><strong>Runtime hooking</strong> — <strong>Frida</strong> on the desktop process intercepts the</li>
+</ul>
+<p>send/recv or the TLS routine directly, which beats fighting the network layer when the app pins or wraps its own crypto.</p>
+<h2 id="client-side-trust-the-core-class">Client-Side Trust — the Core Class</h2>
+<p>Assume every control enforced only in the client is bypassable, and prove it:</p>
+<ul>
+<li>**Disabled buttons, hidden menus, and "admin" features gated by a client</li>
+</ul>
+<p>flag** — flip the flag in memory or the decompiled binary; if the server does not re-check, the feature is yours.</p>
+<ul>
+<li><strong>Client-side input validation and business rules</strong> — bypass them at the</li>
+</ul>
+<p>proxy and see whether the server re-validates.</p>
+<ul>
+<li><strong>Authorization decided in the client</strong> — the classic thick-client bug: the</li>
+</ul>
+<p>UI hides what the user may not do, but the backend authorizes on identity alone. Test the action, not the button.</p>
+<h2 id="update-channel-and-dll-loading">Update Channel and DLL Loading</h2>
+<ul>
+<li><strong>Update integrity</strong> — if the app fetches updates over HTTP, or over HTTPS</li>
+</ul>
+<p>without signature verification, the update channel is a code-execution path. Check how the updater validates what it installs.</p>
+<ul>
+<li><strong>DLL search-order hijacking</strong> — a missing DLL loaded from a writable</li>
+</ul>
+<p>directory on the search path is local code execution in the app's context; enumerate the app's imports and load paths.</p>
+<h2 id="scope-and-authorization">Scope and Authorization</h2>
+<p>A thick client's backend is production infrastructure, so the same scope and authorization rules as any network test apply — the local analysis is yours to do freely, but anything the client <em>sends</em> reaches the client's estate.</p>
+<p>The two-tier case needs an explicit call-out to the client: recovering a database connection string yields <strong>direct, often highly privileged database access</strong> that bypasses whatever the application layer would have enforced. Demonstrate the access to prove the finding; do not go rummaging through production data beyond what shows impact, and record it in the engagement's access inventory (<a class="xref" href="maintaining-engagement-state.html"><code>maintaining-engagement-state</code></a>).</p>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
+<ul>
+<li><strong>"Burp shows no traffic, so there's nothing to test."</strong> The client is not</li>
+</ul>
+<p>proxy-aware, or the protocol is not HTTP. Force the proxy or hook the process; the traffic is there.</p>
+<ul>
+<li><strong>"The secret is encrypted in the config."</strong> If the key ships in the binary,</li>
+</ul>
+<p>it is obfuscation, not encryption. Recover the key and read it.</p>
+<ul>
+<li><strong>"The admin feature is greyed out, so it's protected."</strong> Client-side gating</li>
+</ul>
+<p>is not authorization. Flip it and check whether the server re-enforces — that is the finding.</p>
+<ul>
+<li><strong>"It's a desktop app, the backend is out of reach."</strong> A two-tier app hands</li>
+</ul>
+<p>you its database credentials. Look for the connection string before assuming the data tier is safe.</p>
+<ul>
+<li><strong>"Local-only issues are low severity."</strong> Weak install ACLs, DLL hijack, and</li>
+</ul>
+<p>an unsigned updater are local code-execution and privilege-escalation paths, not cosmetic.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — the backend API surface of a three-tier client</li>
+<li><a class="xref" href="analyzing-dotnet-assemblies.html"><code>analyzing-dotnet-assemblies</code></a> — decompiling managed .NET clients</li>
+<li><a class="xref" href="reversing-obfuscated-javascript.html"><code>reversing-obfuscated-javascript</code></a> — Electron app bundles</li>
+<li><a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a> — if a native client has a memory bug</li>
+<li><a class="xref" href="maintaining-engagement-state.html"><code>maintaining-engagement-state</code></a> — recording recovered DB access and credentials</li>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#map-the-architecture-first">Map the Architecture First</a><a href="#local-attack-surface">Local Attack Surface</a><a href="#intercepting-non-http-traffic">Intercepting Non-HTTP Traffic</a><a href="#client-side-trust-the-core-class">Client-Side Trust — the Core Class</a><a href="#update-channel-and-dll-loading">Update Channel and DLL Loading</a><a href="#scope-and-authorization">Scope and Authorization</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified </div>
+<a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>
