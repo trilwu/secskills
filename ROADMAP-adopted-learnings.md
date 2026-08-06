@@ -74,7 +74,7 @@ started yet.
 - [x] **B6 macOS / Mach-O reversing** — codesign, Objective-C and Swift
   recovery, TCC, notarization, Endpoint Security surfaces. Distinct from the
   existing `analyzing-ios-binaries`.
-- [ ] **B7 Custom protocol reversing** — recovering undocumented binary
+- [x] **B7 Custom protocol reversing** — recovering undocumented binary
   protocols from captures and clients.
 - [ ] **B8 Devirtualization** — custom opcode VMs and virtualized obfuscation,
   handed off from `unpacking-protected-binaries`.

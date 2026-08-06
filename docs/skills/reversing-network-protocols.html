@@ -1,0 +1,169 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reversing-network-protocols — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="../index.html">secskills</a>
+<nav><a href="../index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="../index.html">secskills</a> / core / reversing-network-protocols</div>
+  <h1 class="sk">reversing-network-protocols</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+  </div>
+  <p class="sdesc">Reverse engineer undocumented binary network protocols from packet captures and the client that speaks them — recovering framing and field structure, identifying length prefixes, opcodes, checksums and encryption, and building a Wireshark/Kaitai/scapy parser to replay or fuzz. Use when analyzing a proprietary TCP/UDP protocol, a game or IoT or C2 protocol with no spec, or traffic that Wireshark shows only as raw bytes.</p>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<div class="wrap slayout"><article><p>An undocumented binary protocol is reverse-engineered from two sides at once: the wire, which shows you the bytes that actually flow, and the client, which shows you the code that produced them. Neither alone is enough — the capture tells you <em>what</em> varies, the client tells you <em>why</em> — and the deliverable is a parser precise enough to decode, replay, and eventually fuzz the protocol.</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul>
+<li>A proprietary or custom TCP/UDP protocol with no public specification</li>
+<li>Traffic Wireshark displays as raw <code>Data</code> bytes because no dissector matches</li>
+<li>Game, IoT, industrial, or C2 protocols you must decode from captures plus the</li>
+</ul>
+<p>client binary</p>
+<ul>
+<li>Building a Wireshark dissector, a Kaitai Struct spec, or a scapy layer to</li>
+</ul>
+<p>parse and replay a protocol</p>
+<h2 id="when-not-to-use">When NOT to Use</h2>
+<ul>
+<li><strong>A known/structured protocol</strong> — Protobuf or gRPC specifically is</li>
+</ul>
+<p><a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a>; standard protocols have dissectors already.</p>
+<ul>
+<li><strong>Defensive PCAP investigation</strong> — hunting, IOC extraction, incident triage —</li>
+</ul>
+<p>is <a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a>.</p>
+<ul>
+<li><strong>Reversing the client binary itself</strong> (disassembly, decompilation) is</li>
+</ul>
+<p><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a>; do that in service of the protocol, then structure it here.</p>
+<ul>
+<li><strong>Identifying or breaking the crypto</strong> once you find the protocol is encrypted</li>
+</ul>
+<p>— <a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a>.</p>
+<h2 id="work-both-sides">Work Both Sides</h2>
+<p><strong>From the capture</strong>, establish structure by comparing many messages:</p>
+<ul>
+<li><strong>Framing</strong> — how a message knows where it ends: a length prefix (a field that</li>
+</ul>
+<p>tracks payload size across messages), a delimiter, or fixed-size records. Finding the length field is usually the first breakthrough.</p>
+<ul>
+<li><strong>Constants and magic</strong> — bytes identical across every message mark headers,</li>
+</ul>
+<p>version fields, or type tags.</p>
+<ul>
+<li><strong>Opcode / message type</strong> — a small field that correlates with different</li>
+</ul>
+<p>message shapes; group captures by it.</p>
+<ul>
+<li><strong>Counters and sequence numbers</strong> — fields that increment monotonically.</li>
+<li><strong>Checksums</strong> — a trailing field that changes unpredictably with the payload;</li>
+</ul>
+<p>test CRC variants against the message body.</p>
+<ul>
+<li><strong>TLV</strong> — many custom protocols are type-length-value triplets once you see</li>
+</ul>
+<p>the pattern.</p>
+<ul>
+<li><strong>Endianness</strong> — confirm from a known length: does a 260-byte message carry</li>
+</ul>
+<p><code>04 01</code> or <code>01 04</code>?</p>
+<p><strong>From the client</strong>, resolve what the capture cannot:</p>
+<ul>
+<li>Find the serialization/parsing code by reversing the binary (`analyzing-</li>
+</ul>
+<p>binaries`), and read how it builds and consumes a message.</p>
+<ul>
+<li><strong>Hook <code>send</code>/<code>recv</code></strong> (or the app's socket wrapper) with Frida to capture the</li>
+</ul>
+<p>buffer <em>before</em> encryption and <em>after</em> decryption — this is how you read an encrypted protocol without breaking the crypto.</p>
+<ul>
+<li>If the protocol is encrypted, hook the plaintext side; identify the cipher and</li>
+</ul>
+<p>key handling with <a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a> only if you must operate off-client.</p>
+<h2 id="build-a-parser">Build a Parser</h2>
+<p>Turn the recovered structure into something executable, because a parser is both the proof you understood the protocol and the tool for everything after:</p>
+<ul>
+<li><strong>Wireshark dissector</strong> (Lua) to decode live captures field by field — the</li>
+</ul>
+<p>fastest way to validate a hypothesis against more traffic.</p>
+<ul>
+<li><strong>Kaitai Struct</strong> to describe the binary format declaratively and generate</li>
+</ul>
+<p>parsers in several languages.</p>
+<ul>
+<li><strong>scapy</strong> custom layers to both parse and <em>craft</em> messages for replay and</li>
+</ul>
+<p>fuzzing.</p>
+<p>Iterate: decode a batch, find the message that does not parse, refine the spec. The malformed message is where your model is wrong, not noise.</p>
+<h2 id="then-what">Then What</h2>
+<p>A working parser enables the security work: <strong>replay</strong> to test whether the server validates sequence, session, and authentication; <strong>fuzz</strong> individual fields (lengths, type tags, counts) to find parser bugs; and reason about <strong>protocol-level auth</strong> — whether nonces, session tokens, or MACs actually prevent replay and tampering, or are decorative.</p>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
+<ul>
+<li><strong>"Wireshark shows it as raw data, so there's nothing to see."</strong> No dissector</li>
+</ul>
+<p>matched — that is the starting point, not a dead end. Diff messages to find framing and fields, or write a dissector.</p>
+<ul>
+<li><strong>"It's encrypted, so I can't reverse it."</strong> Hook the client's send/recv to</li>
+</ul>
+<p>read plaintext before encryption. You rarely need to break the cipher to understand the protocol.</p>
+<ul>
+<li><strong>"I'll just eyeball the hex."</strong> Structure emerges from <em>comparison</em> across</li>
+</ul>
+<p>many messages — the field that tracks length, the byte that selects type. One message in isolation hides all of it.</p>
+<ul>
+<li><strong>"The parser mostly works, one message fails — close enough."</strong> The failing</li>
+</ul>
+<p>message is the counterexample that corrects your model. Chase it; it is where the real structure is.</p>
+<ul>
+<li><strong>"Replaying it is harmless."</strong> Replay against a live service acts on that</li>
+</ul>
+<p>service. Treat it as testing that needs authorization, and reason about what a replayed message does before sending it.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — reversing the client to read its serialization code</li>
+<li><a class="xref" href="attacking-grpc-protobuf.html"><code>attacking-grpc-protobuf</code></a> — when the protocol is Protobuf/gRPC, not custom</li>
+<li><a class="xref" href="analyzing-network-traffic.html"><code>analyzing-network-traffic</code></a> — defensive PCAP investigation, not protocol RE</li>
+<li><a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a> — identifying and assessing the protocol's crypto</li>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#work-both-sides">Work Both Sides</a><a href="#build-a-parser">Build a Parser</a><a href="#then-what">Then What</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified </div>
+<a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

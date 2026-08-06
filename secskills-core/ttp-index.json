@@ -59,7 +59,8 @@
     "diffing-binary-patches": "Reverse-engineering craft (binary patch diffing for 1-day analysis). Not an Enterprise technique",
     "testing-thick-clients": "OWASP thick-client testing methodology; a testing method spanning many techniques (T1552 creds, T1005 local data, T1574 hijacking), not one Enterprise technique",
     "reversing-browser-extensions": "RE and security-review craft for extensions; the adversary technique it analyzes is T1176.001/002 (Browser Extensions), but this is defensive analysis of the code, kept unmapped like the other reversing skills",
-    "analyzing-macos-binaries": "Procedure skill (macOS Mach-O RE + otool/class-dump/codesign, XPC/TCC/dylib review). Tool-and-artifact scoped, not a technique"
+    "analyzing-macos-binaries": "Procedure skill (macOS Mach-O RE + otool/class-dump/codesign, XPC/TCC/dylib review). Tool-and-artifact scoped, not a technique",
+    "reversing-network-protocols": "Reverse-engineering craft (undocumented binary protocol recovery from captures + client). Not an Enterprise technique"
   },
   "tactics": {
     "TA0043": "Reconnaissance",
