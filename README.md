@@ -1,9 +1,9 @@
 # SecSkills
 
-**82 security skills for [Claude Code](https://claude.com/claude-code) that
-encode the *judgment* professionals bring — not another wrapper around a
-scanner.** Offense, defense, and the reverse-engineering / code-audit core both
-sides share. Every skill fact-checked against primary sources.
+**Security skills for [Claude Code](https://claude.com/claude-code) that encode
+the *judgment* professionals bring, not another wrapper around a scanner.**
+Offense, defense, and the reverse-engineering and code-audit core both sides
+share. Every skill is fact-checked against primary sources.
 
 Claude already knows what `nmap -sV` does. What it does not reliably hold is the
 discipline: trace a finding to demonstrated impact before you report it,
@@ -12,13 +12,13 @@ was never tested against production noise, notice the honeypot before you touch
 it. SecSkills is that discipline, written down and routed to the moment it
 applies.
 
-Three plugins in one marketplace — install only the side you work:
+Three plugins in one marketplace. Install only the side you work:
 
-| Plugin | Skills | For |
-| --- | --- | --- |
-| **`secskills-offense`** | 40 | Red team, pentest, offensive AppSec |
-| **`secskills-defense`** | 22 | DFIR, SOC, detection engineering, threat intel |
-| **`secskills-core`** | 30 | Reverse engineering, code/crypto audit, AI/MCP security, reporting — shared by both |
+| Plugin | For |
+| --- | --- |
+| **`secskills-offense`** | Red team, pentest, offensive AppSec |
+| **`secskills-defense`** | DFIR, SOC, detection engineering, threat intel |
+| **`secskills-core`** | Reverse engineering, code/crypto audit, AI/MCP security, reporting; shared by both |
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -34,8 +34,8 @@ Three plugins in one marketplace — install only the side you work:
 /reload-plugins
 ```
 
-Skills reference their siblings by name across plugins; a hand-off to a skill
-you did not install is an inert mention, so nothing breaks — you get the skills
+Skills reference their siblings by name across plugins. A hand-off to a skill
+you did not install is an inert mention, so nothing breaks. You get the skills
 you have.
 
 ---
@@ -51,7 +51,7 @@ Full attack-chain methodology with the tradecraft judgment that separates a
 finding from a footgun: recon and enumeration, Active Directory and Entra ID
 (Kerberos delegation, AD CS ESC1–16, DCSync), cloud and managed Kubernetes,
 container escapes, mobile, wireless, and web/API/auth exploitation. Plus the
-engagement discipline most collections skip — **`recognizing-deception`**
+engagement discipline most collections skip: **`recognizing-deception`**
 (spot the honeypot/canary before you trip it), **`maintaining-engagement-state`**
 (credential provenance and the cleanup register that survives a context
 window), and **`reporting-security-findings`**.
@@ -66,7 +66,7 @@ POP chains, type-juggling auth bypass, `php://` wrappers) and
 **`hunting-web-backdoors`** for planted webshells. Reach into `offense` when you
 need to demonstrate the bug, not just describe it. And when the target is big
 enough to warrant a campaign, **`orchestrating-vulnerability-research`** runs the
-hunt as an adversarial loop — builders hunt each slice, an independent critic
+hunt as an adversarial loop: builders hunt each slice, an independent critic
 tries to *refute* every candidate against the running target, and nothing counts
 until it is proven, not plausible.
 
@@ -74,7 +74,7 @@ until it is proven, not plausible.
 
 Preserve-first response: memory/disk/network forensics, malware and shellcode
 analysis, Windows endpoint DFIR, Linux persistence hunting, and cross-cloud
-incident investigation for **AWS, Azure, GCP, and M365/Entra** — each built
+incident investigation for **AWS, Azure, GCP, and M365/Entra**. Each is built
 around the audit-log defaults that decide whether a question is even
 answerable. Backed by the RE core (native, Go/Rust/.NET, iOS, firmware,
 packers).
@@ -88,9 +88,9 @@ Sigma/YARA/Suricata with *real* false-positive analysis, hypothesis-driven
 threat hunting, risk-based vulnerability management (KEV + EPSS, not raw CVSS),
 and finished threat intelligence with attribution discipline.
 
-Cloud and Kubernetes are covered from **both** sides — `exploiting-cloud-platforms`
+Cloud and Kubernetes are covered from **both** sides: `exploiting-cloud-platforms`
 / `attacking-eks-gke-aks` for red, `hardening-cloud-posture` / `defending-kubernetes`
-/ `investigating-*-incidents` for blue — so purple-team work stays in one
+/ `investigating-*-incidents` for blue, so purple-team work stays in one
 vocabulary.
 
 ## What makes a skill
@@ -99,22 +99,22 @@ Each skill is a methodology, not a command dump, with three things a cheat
 sheet does not give you:
 
 - **An explicit scope and hand-off.** Every skill says when to use a *different*
-  one, named in backticks. That is how 92 skills compose instead of colliding.
-- **A `Rationalizations to Reject` section** — the plausible-sounding shortcuts
+  one, named in backticks. That is how the skills compose instead of colliding.
+- **A `Rationalizations to Reject` section:** the plausible-sounding shortcuts
   that cause missed findings and bad calls, each with why it is wrong. This is
   the highest-value part of most skills; it is the judgment a command list
   cannot carry.
 - **Two tiers that stay out of your way.** *Domain* skills carry methodology for
   a whole area and trigger on plain-language requests. *Procedure* skills cover
   one exact target-and-toolchain that is rare and unrecoverable from general
-  knowledge — reversing a Flutter app with blutter, say — and load only when
+  knowledge (reversing a Flutter app with blutter, say), and load only when
   their identifying evidence is present. Neither costs context until it applies.
 
-## Every skill is fact-checked — and dated
+## Every skill is fact-checked, and dated
 
-**All 92 skills have been verified line-by-line against primary sources** —
-vendor docs, RFCs, tool source — and carry a `verified:` date in frontmatter.
-This is the differentiator: it is the opposite of confidently-wrong AI output.
+**Every skill has been verified line-by-line against primary sources** (vendor
+docs, RFCs, tool source) and carries a `verified:` date in frontmatter. That is
+the whole point: the opposite of confidently-wrong AI output.
 
 ```bash
 python3 scripts/validate.py --strict                 # "Fact-checked ...: 92/92"
@@ -122,7 +122,7 @@ grep -L "^verified:" secskills-*/skills/*/SKILL.md   # unverified skills (none)
 ```
 
 What that pass caught is why it exists. The first sampled dozen skills held
-**31 factual errors — ~2.6 per skill** — so the whole collection was driven
+**31 factual errors, about 2.6 per skill**, so the whole collection was driven
 through the same pass. Cross-cutting sweeps then found the high-impact ones:
 CrackMapExec archived since 2023 (14 dead invocations → NetExec/`nxc`), the
 retired AzureAD PowerShell module (→ Microsoft Graph), Volatility's entry point
@@ -133,8 +133,8 @@ window as "no activity" when six months of history existed.
 Two honest caveats:
 
 - **`verified:` is dated, not eternal.** Tool flags, CVE version bounds,
-  retention windows, and API paths drift. Trust the methodology — the
-  sequencing, the scope, the *Rationalizations to Reject* — and re-confirm any
+  retention windows, and API paths drift. Trust the methodology (the
+  sequencing, the scope, the *Rationalizations to Reject*) and re-confirm any
   specific before it lands in a deliverable. The re-verification method is
   itself a skill: `.claude/skills/verifying-skill-accuracy`.
 - **CI checks form, not truth.** `validate.py`, `sync_attack.py`, and
@@ -152,7 +152,7 @@ Two honest caveats:
 | `orchestrating-vulnerability-research` | Run a discovery campaign across a codebase, binary, or live target: split the surface into slices, hunt each with a builder agent, and have a separate critic refute every candidate against the running artifact before it counts |
 | `auditing-php-applications` | PHP-specific bugs: unserialize/`phar://` POP chains, type juggling, `php://` wrappers, superglobal trust, WordPress/Magento/Laravel |
 | `hunting-web-backdoors` | Sweep a web tree for planted webshells: static deobfuscation, append-infections, known shell families as leads |
-| `reviewing-code-changes` | Security review of a diff, branch, or PR — including the lines the change *removed* |
+| `reviewing-code-changes` | Security review of a diff, branch, or PR, including the lines the change *removed* |
 | `testing-web-applications` | Black-box web testing: injection, auth, JWT, SSRF, uploads |
 | `testing-apis` | REST and GraphQL: BOLA, mass assignment, rate limits |
 | `reviewing-cryptography` | Crypto misuse: AEAD, nonces, key management, timing, TLS, JWT |
@@ -171,7 +171,7 @@ Two honest caveats:
 | `analyzing-malware` | Containment-first sample analysis, config and C2 extraction, IOC and YARA output |
 | `engineering-detections` | Sigma/YARA/Suricata authoring with real false-positive analysis |
 | `hunting-threats` | Hypothesis-driven hunting with stack counting and outlier analysis |
-| `managing-vulnerabilities` | Risk-based remediation order: KEV + EPSS + reachability + asset value, SSVC — not raw CVSS |
+| `managing-vulnerabilities` | Risk-based remediation order: KEV + EPSS + reachability + asset value, SSVC, not raw CVSS |
 | `producing-threat-intelligence` | Indicator pivoting, actor/campaign tracking, attribution discipline, finished intel products |
 | `reporting-security-findings` | Severity, proof of concept, report structure, disclosure |
 
@@ -213,9 +213,9 @@ Two honest caveats:
 
 ### Binary and runtime procedure skills
 
-`analyzing-binaries` is the native reverse-engineering domain skill —
-triage, disassembly (Ghidra/radare2/IDA), and instrumentation — that the
-language- and framework-specific procedures below hand back to.
+`analyzing-binaries` is the native reverse-engineering domain skill (triage,
+disassembly with Ghidra/radare2/IDA, and instrumentation) that the language-
+and framework-specific procedures below hand back to.
 
 | Skill | Triggers on |
 | --- | --- |
@@ -233,7 +233,7 @@ language- and framework-specific procedures below hand back to.
 
 ### Mobile procedure skills
 
-Narrow by design — each triggers on the artifacts or the symptom that
+Narrow by design: each triggers on the artifacts or the symptom that
 identifies the situation, and hands back to the domain skill when done.
 
 | Skill | Triggers on |
@@ -301,8 +301,8 @@ identifies the situation, and hands back to the domain skill when done.
 Techniques are indexed in [`secskills-core/ttp-index.json`](secskills-core/ttp-index.json)
 (143 mapped, spanning all three plugins), which generates the `## ATT&CK
 Coverage` section in each skill. CI fails if a section drifts from the index,
-and skills that use a different framework — ATLAS for AI, the Mobile matrix,
-CWE for code-level work — are declared as such rather than counted as coverage.
+and skills that use a different framework (ATLAS for AI, the Mobile matrix,
+CWE for code-level work) are declared as such rather than counted as coverage.
 
 ## In practice
 
@@ -312,8 +312,8 @@ CWE for code-level work — are declared as such rather than counted as coverage
 "This WordPress site is redirecting to spam and grep for eval comes back empty."
 ```
 
-Explains that an empty grep is not a clean tree — concatenation and callback
-sinks evade it — then diffs against a pristine copy, checks `functions.php` for
+Explains that an empty grep is not a clean tree (concatenation and callback
+sinks evade it), then diffs against a pristine copy, checks `functions.php` for
 append-infection, and decodes any obfuscation *statically*, never by running it.
 
 **Work an alert (SOC)**
@@ -333,7 +333,7 @@ to detection engineering instead.
 ```
 
 Flags the profile as a probable honeyuser whose Kerberoast raises a
-high-fidelity alert, and routes around it — recording provenance as it goes.
+high-fidelity alert, and routes around it, recording provenance as it goes.
 
 **Investigate GCP (DFIR)**
 
@@ -350,8 +350,8 @@ enabled in advance, so it reports a *visibility gap*, not "no exfiltration."
 "Review this RAG agent for prompt injection."
 ```
 
-Checks whether the lethal trifecta closes — private data, untrusted content, and
-egress in one agent — before any payload, and refuses prompt-level defenses as a
+Checks whether the lethal trifecta closes (private data, untrusted content, and
+egress in one agent) before any payload, and refuses prompt-level defenses as a
 control.
 
 **Run a discovery campaign (AppSec / Red team)**
@@ -362,7 +362,7 @@ control.
 
 Splits the attack surface into independent slices and hunts each with its own
 builder agent, then hands every candidate to a *separate* critic that tries to
-refute it against the running target — a reproduced trigger or a live response,
+refute it against the running target: a reproduced trigger or a live response,
 never the hunter's own writeup. It kills the plausible-but-safe candidate (the
 `subprocess` call that looks injectable but passes an argv list, so nothing
 executes) and confirms the real ones, then reconciles across slices to surface
@@ -401,12 +401,12 @@ quarantined skill files under names like `Backdoor:PHP/Chopper.B!dha` and
 
 These are false positives. Nothing in this repo executes: the files are
 Markdown, there are no binaries, no packed or encoded payloads, and no
-installer. The detections were signature hits on documented indicators —
+installer. The detections were signature hits on documented indicators,
 including, at one point, on `hunting-web-backdoors`, a *defensive* skill
 flagged for containing the IOC it teaches you to hunt.
 
 Where a payload string was getting whole skills quarantined, the identifiers
-are now bracket-broken — `syst[e]m`, `ev[a]l`, `$_G[E]T` — with a note at each
+are now bracket-broken (`syst[e]m`, `ev[a]l`, `$_G[E]T`) with a note at each
 site. Detection regexes and hunting patterns are left intact, since breaking
 those would make the defensive skills wrong.
 
@@ -454,24 +454,24 @@ misuse.
 
 ## Website
 
-A browsable site — role-based prompts, a searchable catalog, and a page per
-skill with its full methodology — is generated from this repo into
+A browsable site (role-based prompts, a searchable catalog, and a page per
+skill with its full methodology) is generated from this repo into
 [`docs/`](docs/) by `scripts/build_site.py` (stdlib only, no drift: CI fails if
 it is stale). Serve it with GitHub Pages → Settings → Pages → Source: `main`
 / `docs`.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
 
 ## Related work
 
 Worth knowing about, and in several cases worth installing alongside this:
 
-- [trailofbits/skills](https://github.com/trailofbits/skills) — deep code-audit
+- [trailofbits/skills](https://github.com/trailofbits/skills): deep code-audit
   workflows, Semgrep/CodeQL rule authoring, verification, and secure contracts
-- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official)
-  — the `security-guidance` and `claude-security` plugins
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official):
+  the `security-guidance` and `claude-security` plugins
 - [OWASP ASVS](https://owasp.org/www-project-application-security-verification-standard/),
   [MITRE ATT&CK](https://attack.mitre.org/),
   [Sigma](https://github.com/SigmaHQ/sigma),
