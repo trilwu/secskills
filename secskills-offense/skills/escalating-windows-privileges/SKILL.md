@@ -419,7 +419,7 @@ current ATT&CK release before citing them in a report._
 **Privilege Escalation** (TA0004)
 
 - [T1055](https://attack.mitre.org/techniques/T1055/) Process Injection _(also Defense Evasion)_ — see also `analyzing-malware`
-- [T1068](https://attack.mitre.org/techniques/T1068/) Exploitation for Privilege Escalation — see also `escalating-linux-privileges`
+- [T1068](https://attack.mitre.org/techniques/T1068/) Exploitation for Privilege Escalation — see also `escalating-linux-privileges`, `exploiting-memory-corruption`
 - [T1134](https://attack.mitre.org/techniques/T1134/) Access Token Manipulation _(also Defense Evasion)_
 - [T1548](https://attack.mitre.org/techniques/T1548/) Abuse Elevation Control Mechanism _(also Defense Evasion)_ — see also `escalating-linux-privileges`
 - [T1548.002](https://attack.mitre.org/techniques/T1548/002/) Bypass User Account Control

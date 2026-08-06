@@ -400,7 +400,8 @@
       ],
       "skills": [
         "performing-social-engineering",
-        "analyzing-malware"
+        "analyzing-malware",
+        "exploiting-memory-corruption"
       ]
     },
     {
@@ -673,7 +674,8 @@
       ],
       "skills": [
         "escalating-linux-privileges",
-        "escalating-windows-privileges"
+        "escalating-windows-privileges",
+        "exploiting-memory-corruption"
       ]
     },
     {
@@ -1367,7 +1369,8 @@
         "TA0008"
       ],
       "skills": [
-        "enumerating-network-services"
+        "enumerating-network-services",
+        "exploiting-memory-corruption"
       ]
     },
     {

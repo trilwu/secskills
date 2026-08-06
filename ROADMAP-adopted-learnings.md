@@ -62,7 +62,7 @@ started yet.
 - [x] **B1 JavaScript / frontend reversing** — signature-chain location in
   obfuscated bundles, webpack and sourcemap recovery, runtime sampling via
   CDP. Largest genuine gap; secskills has nothing on JS reversing today.
-- [ ] **B2 Memory-corruption exploit development** — ROP, heap grooming,
+- [x] **B2 Memory-corruption exploit development** — ROP, heap grooming,
   mitigation bypass. `analyzing-binaries` reverses; nothing turns a crash into
   a working exploit.
 - [ ] **B3 Patch diffing for 1-day exploitation** — BinDiff/Diaphora workflow

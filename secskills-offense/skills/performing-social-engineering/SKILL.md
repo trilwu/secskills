@@ -461,7 +461,7 @@ current ATT&CK release before citing them in a report._
 
 **Execution** (TA0002)
 
-- [T1203](https://attack.mitre.org/techniques/T1203/) Exploitation for Client Execution — see also `analyzing-malware`
+- [T1203](https://attack.mitre.org/techniques/T1203/) Exploitation for Client Execution — see also `analyzing-malware`, `exploiting-memory-corruption`
 - [T1204](https://attack.mitre.org/techniques/T1204/) User Execution
 
 Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.

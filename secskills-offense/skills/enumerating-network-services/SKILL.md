@@ -411,7 +411,7 @@ current ATT&CK release before citing them in a report._
 - [T1021](https://attack.mitre.org/techniques/T1021/) Remote Services — see also `attacking-active-directory`
 - [T1021.002](https://attack.mitre.org/techniques/T1021/002/) SMB/Windows Admin Shares — see also `attacking-active-directory`
 - [T1021.004](https://attack.mitre.org/techniques/T1021/004/) SSH — see also `escalating-linux-privileges`
-- [T1210](https://attack.mitre.org/techniques/T1210/) Exploitation of Remote Services
+- [T1210](https://attack.mitre.org/techniques/T1210/) Exploitation of Remote Services — see also `exploiting-memory-corruption`
 
 Detection content for any of these: `engineering-detections`. Proactive search: `hunting-threats`. Post-compromise: `responding-to-incidents`.
 
