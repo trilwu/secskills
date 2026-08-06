@@ -30,6 +30,7 @@
     "bypassing-mobile-pinning": "Procedure skill (TLS interception + objection/Frida/SSL Kill Switch). Tool-and-artifact scoped, not a technique",
     "reversing-flutter-apps": "Procedure skill (Flutter/Dart + blutter). Tool-and-artifact scoped, not a technique",
     "reversing-react-native-apps": "Procedure skill (React Native/Hermes + hbctool). Tool-and-artifact scoped, not a technique",
+    "reversing-obfuscated-javascript": "Reverse-engineering craft (JS deobfuscation, unbundling, sourcemap recovery). Not an Enterprise technique",
     "reversing-unity-il2cpp": "Procedure skill (Unity IL2CPP + Il2CppDumper). Tool-and-artifact scoped, not a technique",
     "analyzing-memory-images": "Procedure skill (RAM forensics + Volatility 3). Analysis method, not a technique",
     "investigating-m365-entra": "Procedure skill (M365/Entra cloud-log DFIR + UAL/sign-in logs). Investigation method, not a technique",

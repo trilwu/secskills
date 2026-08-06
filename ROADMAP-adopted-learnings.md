@@ -59,7 +59,7 @@ plugin and tier choice, description, required sections, `ttp-index.json`
 registration, eval cases including negative traps, then all validators. None
 started yet.
 
-- [ ] **B1 JavaScript / frontend reversing** — signature-chain location in
+- [x] **B1 JavaScript / frontend reversing** — signature-chain location in
   obfuscated bundles, webpack and sourcemap recovery, runtime sampling via
   CDP. Largest genuine gap; secskills has nothing on JS reversing today.
 - [ ] **B2 Memory-corruption exploit development** — ROP, heap grooming,
