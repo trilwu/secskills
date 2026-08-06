@@ -39,6 +39,7 @@
     "analyzing-firmware-images": "Procedure skill (firmware extraction + binwalk/FirmAE). Tool-and-artifact scoped, not a technique",
     "attacking-bluetooth-nfc": "Procedure skill (BLE/NFC RF + Proxmark3/gatttool). Radio-and-hardware scoped, not an Enterprise technique",
     "auditing-mcp-servers": "MITRE ATLAS and the OWASP Top 10 for LLM / Agentic Applications — pre-attack review, not a technique",
+    "vetting-agent-extensions": "OWASP Agentic Skills / Top 10 for LLM Applications and MITRE ATLAS — a pre-adoption trust decision, not a technique",
     "writing-yara-rules": "Procedure skill (YARA authoring + yarGen/YARA-X). Detection-engineering craft, not a technique",
     "investigating-aws-incidents": "Procedure skill (AWS CloudTrail/GuardDuty cloud-log DFIR). Investigation method, not a technique",
     "investigating-azure-incidents": "Procedure skill (Azure Activity Log/Defender for Cloud DFIR). Investigation method, not a technique",

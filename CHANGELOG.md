@@ -3,6 +3,38 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [4.5.0] - 2026-08-07
+
+Adopts a set of design ideas from evaluating
+[zhaoxuya520/reverse-skill](https://github.com/zhaoxuya520/reverse-skill) (MIT).
+Concepts only — all text written from scratch. The source's auto-merge pipeline,
+public contribute-back flow, and undefanged payload dumps were deliberately not
+adopted; see `docs/ROADMAP-adopted-learnings.md` for the full programme and the
+rejection rationale.
+
+### Added
+
+- **`vetting-agent-extensions`** (secskills-core, skill #24) — deciding whether
+  a third-party agent skill, plugin, or MCP server is safe to install, where its
+  content is loaded into a model's context and its config can run on startup.
+  Fills the gap `oss-intake-triage` explicitly excludes. Ships unverified by
+  design (Step 8 of `authoring-security-skills`); pending a
+  `verifying-skill-accuracy` pass before it earns a `verified` stamp.
+- Two routing eval cases for the new skill, plus `trap_for` entries added to
+  neighbouring MCP and supply-chain cases.
+
+### Changed
+
+- **`maintaining-engagement-state`** — scope record now names four egress modes
+  (`offline`, `lab_only`, `authorized_target_only`, `unrestricted_lab`) as a
+  checkable vocabulary, and a new "Across Engagements" section adds the
+  tool-inventory and local-journal disciplines (present vs. ready; de-identify
+  at write time; local by default).
+- **`reporting-security-findings`** — four checkable invariants a finding must
+  pass before leaving draft, with failures routed to the candidate worklist.
+- **`authoring-security-skills`** — step-ordering discipline (`NOW`/`NEXT`/`ACT`)
+  and a note that a skill is carried out, not acknowledged.
+
 ## [4.4.1] - 2026-08-04
 
 Fixes antivirus false positives that were silently quarantining five skill

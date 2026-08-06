@@ -164,6 +164,40 @@ immediate next action, and anything time-sensitive (a running crack, an
 expiring token, a scheduled task that fires at 02:00). If the receiving
 analyst has to ask "what were you doing?", the handoff failed.
 
+## Across Engagements
+
+The six records reset each engagement. Two things are worth carrying between
+them, and both fail the same way — reconstructed from memory, they are wrong.
+
+**What the machine can actually do.** Before a skill runs a tool, the tool has
+to exist, at a known path, at a version whose flags match what the skill
+assumes. Guessing `/usr/bin/ghidra` or `jadx` and debugging the failure as if
+it were the target's fault is a standard way to lose an hour. Keep a local,
+machine-specific inventory — tool, real path, version, and for anything that
+speaks over a socket (an MCP server, a helper daemon) whether it is not just
+installed but *registered and answering*. Present and ready are different
+states: an MCP binary on disk with no running server is not a capability. This
+inventory is per-machine and does not belong in a shared repo; treat it the way
+you treat `~/.ssh/config` — yours, gitignored, assumed by nothing you publish.
+
+**What past cases taught.** A short, de-identified journal entry per finished
+case — the scenario, the technique that worked, the dead ends and the hours
+they cost, the tooling surprise — turns the next similar case from a cold start
+into a lookup. Keep an index over the entries by scenario, by technique, and by
+target trait, and read *that* before starting new work, not the entries
+themselves; the index is the cheap part. Seed it with a handful of worked
+reference cases so it is useful on day one rather than after the tenth
+engagement.
+
+Two disciplines make the journal safe to keep. **De-identify at write time**,
+not before sharing — real domains, IPs, tokens, and PII become placeholders the
+moment the entry is written, so an entry that is never meant to leave still
+cannot leak if it does. And **keep it local by default**: contributing lessons
+to a shared or public location ships engagement detail to a third party, and
+"the model anonymised it" is not a control you would defend to a client. If a
+journal is ever shared, that is a deliberate, reviewed decision per entry — not
+a default step in the workflow.
+
 ## Rationalizations to Reject
 
 - *"I'll remember where that came from."* You will not, and neither will the
