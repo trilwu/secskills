@@ -76,7 +76,7 @@ started yet.
   existing `analyzing-ios-binaries`.
 - [x] **B7 Custom protocol reversing** — recovering undocumented binary
   protocols from captures and clients.
-- [ ] **B8 Devirtualization** — custom opcode VMs and virtualized obfuscation,
+- [x] **B8 Devirtualization** — custom opcode VMs and virtualized obfuscation,
   handed off from `unpacking-protected-binaries`.
 - [ ] **B9 Hardware interfaces and SDR** — UART/JTAG discovery, secure-boot
   triage, RF replay feasibility in shielded lab conditions.

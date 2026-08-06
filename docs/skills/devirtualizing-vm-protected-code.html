@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>devirtualizing-vm-protected-code — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="../index.html">secskills</a>
+<nav><a href="../index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="../index.html">secskills</a> / core / devirtualizing-vm-protected-code</div>
+  <h1 class="sk">devirtualizing-vm-protected-code</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+  </div>
+  <p class="sdesc">Recover the original logic from code protected by a virtualization obfuscator — VMProtect, Themida/WinLicense, Code Virtualizer, or a custom opcode VM — by locating the VM dispatcher, reverse-engineering the handlers into semantics, extracting the virtual bytecode, and lifting it to a simplified IR with Triton, miasm, or VTIL-based tools. Use when a function became a giant fetch-decode-dispatch loop, when analysis shows a handler table instead of normal code, or after unpacking reveals a virtualized core.</p>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<div class="wrap slayout"><article><p>Virtualization obfuscation replaces native instructions with bytecode for a custom virtual machine embedded in the binary, then runs that bytecode through an interpreter. The original logic is not gone — it is expressed in an instruction set you have to recover first. Devirtualization is a fixed pipeline: find the VM, understand its handlers, extract the bytecode, and lift it back to something readable. The obfuscator changes every build, so the pipeline, not any one tool, is the durable skill.</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul>
+<li>A function turned into a large <code>fetch-decode-dispatch</code> loop with a handler</li>
+</ul>
+<p>table instead of ordinary control flow</p>
+<ul>
+<li>Binaries protected by VMProtect, Themida/WinLicense, Oreans Code Virtualizer,</li>
+</ul>
+<p>or a bespoke opcode VM</p>
+<ul>
+<li>Recovering the algorithm inside a virtualized function (a licence check, a</li>
+</ul>
+<p>crypto routine, anti-cheat logic)</p>
+<ul>
+<li>After unpacking, when the real code is virtualized rather than merely packed</li>
+</ul>
+<h2 id="when-not-to-use">When NOT to Use</h2>
+<ul>
+<li><strong>Unpacking, dumping, and fixing imports</strong> of a packed/protected binary — that</li>
+</ul>
+<p>is <a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a>, and it comes <em>first</em>: unpack the outer protection, then devirtualize the virtualized core it reveals.</p>
+<ul>
+<li><strong>Ordinary (non-virtualized) obfuscation</strong> — junk code, opaque predicates,</li>
+</ul>
+<p>string encryption — is normal work for <a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a>.</p>
+<ul>
+<li><strong>Virtualized/obfuscated JavaScript</strong> — <a class="xref" href="reversing-obfuscated-javascript.html"><code>reversing-obfuscated-javascript</code></a>.</li>
+<li><strong>Exploiting a bug</strong> in the recovered logic — <a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a>.</li>
+</ul>
+<h2 id="the-pipeline">The Pipeline</h2>
+<p><strong>1. Locate the VM.</strong> Find the transition from native to virtual: the <code>vm_enter</code> stub that saves native context and sets up the virtual machine, the dispatcher loop that fetches the next virtual opcode and jumps through a handler table, and the <code>vm_exit</code> that restores native context. The dispatcher is the anchor for everything else.</p>
+<p><strong>2. Recover the VM architecture.</strong> Identify the <strong>virtual context</strong> — the structure holding the VM's registers and virtual instruction pointer — and how the dispatcher decodes an opcode into a handler index. Note the VM's shape: stack-based vs register-based, opcode encoding, and any key/rolling obfuscation on the bytecode pointer.</p>
+<p><strong>3. Understand the handlers.</strong> Each handler implements one virtual instruction — a micro-operation like add, load, store, xor, push, or a native call. Analyze handlers individually; <strong>symbolic execution of a single handler</strong> (Triton, miasm) yields its semantics far faster than reading it by hand, because a handler is small and side-effect-focused even when the surrounding VM is huge. Build a table mapping opcode → semantics.</p>
+<p><strong>4. Extract the bytecode.</strong> With the handlers understood, read the virtual instruction stream the dispatcher walks — the actual program, in the VM's instruction set.</p>
+<p><strong>5. Lift and simplify.</strong> Translate the virtual instructions into an IR and run optimization passes — constant folding, dead-code elimination, peephole — to collapse the VM's verbosity back toward the original logic. This is where <strong>VTIL</strong>-based tooling (and, for VMProtect x64, NoVmp) shines: it lifts to an optimizable IR and simplifies, turning thousands of virtual ops into a handful of real ones. Triton and miasm support the same lift-and-simplify approach when no ready tool fits the target VM.</p>
+<h2 id="static-vs-dynamic">Static vs Dynamic</h2>
+<p>Handlers can be studied statically, but a <strong>dynamic execution trace</strong> — capturing the sequence of handlers actually run for a given input — is often the faster route into a specific virtualized function: it tells you which handlers matter and in what order, so you devirtualize the path that runs rather than the whole VM. Combine them: trace to find the relevant handlers, symbolic-execute them to get semantics, lift the traced bytecode.</p>
+<h2 id="expectations">Expectations</h2>
+<ul>
+<li><strong>No universal button.</strong> VMProtect and Themida differ, versions differ, and</li>
+</ul>
+<p>custom VMs share nothing. Off-the-shelf devirtualizers target specific protector versions and break on others; treat them as accelerators for the pipeline, not replacements for it.</p>
+<ul>
+<li><strong>The core is recoverable even when the whole is not.</strong> You rarely need to</li>
+</ul>
+<p>devirtualize an entire binary — you need the one function with the algorithm. Scope to it.</p>
+<ul>
+<li><strong>Nested and mutating VMs exist.</strong> Some protectors virtualize inside a virtual</li>
+</ul>
+<p>machine, or mutate handlers per build. Recover one layer at a time.</p>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
+<ul>
+<li><strong>"A tool devirtualized it, so I'm done."</strong> Automated devirtualizers match</li>
+</ul>
+<p>specific protector versions and silently produce partial or wrong output on others. Validate the recovered logic against the binary's observed behaviour.</p>
+<ul>
+<li><strong>"I have to devirtualize the whole binary."</strong> You need the target function.</li>
+</ul>
+<p>Trace to it and lift only what runs; whole-binary devirtualization is usually wasted effort.</p>
+<ul>
+<li><strong>"The handlers are too big to read."</strong> A handler is one micro-op with a lot</li>
+</ul>
+<p>of obfuscation around it. Symbolic-execute it for the semantics instead of reading the noise.</p>
+<ul>
+<li><strong>"It's still packed, I'll devirtualize first."</strong> Unpack first</li>
+</ul>
+<p>(<a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a>); devirtualization operates on the revealed code, and anti-debug/anti-dump defenses will fight you until the outer layer is off.</p>
+<ul>
+<li><strong>"The virtual instruction stream is the answer."</strong> The raw bytecode is not</li>
+</ul>
+<p>readable logic — you must lift and <em>simplify</em> it. The optimization passes are what turn recovered opcodes back into the algorithm.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a> — remove packing/anti-debug before devirtualizing</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — general RE of the recovered, devirtualized code</li>
+<li><a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a> — when the virtualized routine is a crypto/licence check</li>
+<li><a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a> — exploiting a bug in the recovered logic</li>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#the-pipeline">The Pipeline</a><a href="#static-vs-dynamic">Static vs Dynamic</a><a href="#expectations">Expectations</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified </div>
+<a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>
