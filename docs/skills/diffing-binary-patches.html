@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>diffing-binary-patches — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="../index.html">secskills</a>
+<nav><a href="../index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="../index.html">secskills</a> / core / diffing-binary-patches</div>
+  <h1 class="sk">diffing-binary-patches</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+  </div>
+  <p class="sdesc">Locate the vulnerability a security patch fixes by diffing the pre- and post-patch binaries — using BinDiff, Diaphora, or ghidriff to find the changed functions, reading the added checks to recover the bug class, and reasoning back to a reachable pre-patch trigger for 1-day analysis. Use when comparing two versions of a DLL/ELF, extracting a Microsoft patch from an MSU/MSP for delta comparison, or turning a vague advisory into the exact code that changed.</p>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<div class="wrap slayout"><article><p>A security patch is a description of a vulnerability written in the vendor's own code. Diffing the binary before and after the fix turns a one-line advisory into the exact function, the exact check that was added, and — reasoning backward — the input that reached the bug before the patch. This is the core of 1-day analysis: the fix tells you where to look, the diff tells you what, and the pre-patch reachability tells you how.</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul>
+<li>Comparing two versions of the same binary (DLL, ELF, driver) to find what a</li>
+</ul>
+<p>security update changed</p>
+<ul>
+<li>Turning a CVE advisory or Patch-Tuesday bulletin into the specific vulnerable</li>
+</ul>
+<p>code</p>
+<ul>
+<li>Extracting a Microsoft patch (MSU/MSP/cab, delta-compressed) into a full</li>
+</ul>
+<p>binary you can diff</p>
+<ul>
+<li>Assessing whether a "silent" fix in a new release closed a security bug</li>
+</ul>
+<h2 id="when-not-to-use">When NOT to Use</h2>
+<ul>
+<li><strong>Understanding a single binary</strong> with no patched counterpart — that is</li>
+</ul>
+<p><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a>.</p>
+<ul>
+<li><strong>Building the working exploit</strong> once the bug and trigger are understood —</li>
+</ul>
+<p>that is <a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a> (native) or the relevant web skill.</p>
+<ul>
+<li><strong>Source-level diffs</strong> (a GitHub commit, a changelog) — read the source with</li>
+</ul>
+<p><a class="xref" href="reviewing-code-changes.html"><code>reviewing-code-changes</code></a>; binary diffing is for when you only have compiled artifacts.</p>
+<ul>
+<li><strong>Unpacking a protected binary</strong> before it can be diffed — use</li>
+</ul>
+<p><a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a> first.</p>
+<h2 id="get-two-comparable-binaries">Get Two Comparable Binaries</h2>
+<p>The diff is only as clean as the inputs. You need the same binary at two versions, same architecture and ideally the same compiler, so the noise is small enough that the security change stands out.</p>
+<p>For Microsoft patches this is a step in itself. Since Windows 10, updates ship as <strong>forward/reverse delta patches</strong>, not whole files — the MSU contains compressed deltas, not the finished DLL. Extract the update (expand the MSU/cab) and apply the delta to your baseline binary to reconstruct the full patched file (the <code>PatchExtract</code> / <code>delta_patch.py</code> approach, driving the <code>msdelta</code> API). Diffing the raw delta or a mismatched baseline produces garbage. For most other software, two release builds or two package versions are directly comparable.</p>
+<h2 id="find-the-changed-functions">Find the Changed Functions</h2>
+<p>Run a binary differ and read its results by similarity, not top to bottom:</p>
+<ul>
+<li><strong>BinDiff</strong> (open-source, via BinExport from IDA or Ghidra) matches functions</li>
+</ul>
+<p>across the two binaries and scores similarity; the interesting functions are the ones that changed <em>slightly</em> — a similarity just below 1.0 — not the ones that are entirely new or gone.</p>
+<ul>
+<li><strong>Diaphora</strong> (IDA) does the same with strong heuristics and a good pseudocode</li>
+</ul>
+<p>diff view, which matters because you will read decompiler output to understand the change.</p>
+<ul>
+<li><strong>ghidriff</strong> gives a scriptable, Ghidra-based diff when you want headless or</li>
+</ul>
+<p>CI-style runs.</p>
+<p>Expect noise. A compiler change, function reordering, or an unrelated feature inflates the diff; ASLR and address shifts are not real changes. Filter to functions whose <em>logic</em> changed and ignore pure address churn.</p>
+<h2 id="read-the-fix-recover-the-bug">Read the Fix, Recover the Bug</h2>
+<p>The added code is the tell. Most security fixes look like one of a small set of shapes, and each names the bug class:</p>
+<ul>
+<li><strong>A new bounds or length check</strong> before a copy or index → the pre-patch code</li>
+</ul>
+<p>had an overflow or OOB access on that path.</p>
+<ul>
+<li><strong>A signedness or integer change</strong> (<code>size_t</code> for <code>int</code>, an added overflow</li>
+</ul>
+<p>check) → an integer bug feeding an allocation or copy.</p>
+<ul>
+<li><strong>A new null / state check</strong> → a use-after-free, a race, or an uninitialized</li>
+</ul>
+<p>use the check now prevents.</p>
+<ul>
+<li><strong>A validation of a field, type tag, or length from parsed input</strong> → the</li>
+</ul>
+<p>parser trusted attacker-controlled data.</p>
+<ul>
+<li><strong>A reordered free / set-to-null after free</strong> → a UAF or double-free.</li>
+</ul>
+<p>Read the <em>post</em>-patch function to see what is now enforced, then the <em>pre</em>-patch function to confirm the enforcement was absent. That pair is the vulnerability.</p>
+<h2 id="reason-back-to-a-trigger">Reason Back to a Trigger</h2>
+<p>A changed function is a lead, not a finding, until you can reach it. Trace how attacker-controlled input arrives at the pre-patch code: which API, message, file field, or packet reaches the unguarded path, and under what state. If you cannot construct a path from an untrusted input to the changed code, the change may be hardening rather than a reachable bug — say so rather than overclaiming. When the path is real, that reachable trigger is the handoff to exploit development.</p>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
+<ul>
+<li><strong>"There are 200 changed functions, this patch is undiffable."</strong> Most are</li>
+</ul>
+<p>compiler and layout noise. Sort by similarity and filter to logic changes; the security fix is usually one to a handful of functions.</p>
+<ul>
+<li><strong>"I diffed the MSU directly and got nonsense."</strong> Windows ships deltas, not</li>
+</ul>
+<p>whole files. Reconstruct the full patched binary from the delta and your baseline before diffing.</p>
+<ul>
+<li><strong>"The function changed, so it's the vulnerability."</strong> A change is a lead.</li>
+</ul>
+<p>Without a reachable path from untrusted input to the pre-patch code, you may be looking at hardening. Prove reachability before you claim a bug.</p>
+<ul>
+<li><strong>"The advisory says RCE, so this is the RCE."</strong> Advisories are vague on</li>
+</ul>
+<p>purpose. Confirm the bug class from the added check, not from the marketing words in the bulletin.</p>
+<ul>
+<li><strong>"Same bug, so the old exploit works."</strong> A fix can change adjacent code,</li>
+</ul>
+<p>offsets, and object layout. Re-confirm the primitive against the pre-patch build you actually have.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — understanding either binary on its own</li>
+<li><a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a> — building the exploit from the recovered bug</li>
+<li><a class="xref" href="reviewing-code-changes.html"><code>reviewing-code-changes</code></a> — when you have source diffs rather than binaries</li>
+<li><a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a> — when a binary must be unpacked before diffing</li>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#get-two-comparable-binaries">Get Two Comparable Binaries</a><a href="#find-the-changed-functions">Find the Changed Functions</a><a href="#read-the-fix-recover-the-bug">Read the Fix, Recover the Bug</a><a href="#reason-back-to-a-trigger">Reason Back to a Trigger</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified </div>
+<a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

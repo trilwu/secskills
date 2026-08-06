@@ -65,7 +65,7 @@ started yet.
 - [x] **B2 Memory-corruption exploit development** — ROP, heap grooming,
   mitigation bypass. `analyzing-binaries` reverses; nothing turns a crash into
   a working exploit.
-- [ ] **B3 Patch diffing for 1-day exploitation** — BinDiff/Diaphora workflow
+- [x] **B3 Patch diffing for 1-day exploitation** — BinDiff/Diaphora workflow
   from patch to reachable primitive.
 - [ ] **B4 Thick-client desktop testing** — local storage, update channel
   integrity, IPC, client-side trust boundaries.
