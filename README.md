@@ -49,7 +49,7 @@ grab-bag.
 
 Full attack-chain methodology with the tradecraft judgment that separates a
 finding from a footgun: recon and enumeration, Active Directory and Entra ID
-(Kerberos delegation, AD CS ESC1–16, DCSync), cloud and managed Kubernetes,
+(Kerberos delegation, AD CS ESC1-16, DCSync), cloud and managed Kubernetes,
 container escapes, mobile, wireless, and web/API/auth exploitation. Plus the
 engagement discipline most collections skip: **`recognizing-deception`**
 (spot the honeypot/canary before you trip it), **`maintaining-engagement-state`**
@@ -158,7 +158,7 @@ Two honest caveats:
 | `reviewing-cryptography` | Crypto misuse: AEAD, nonces, key management, timing, TLS, JWT |
 | `auditing-supply-chain` | Dependencies, malicious packages, GitHub Actions, SBOM, provenance |
 | `auditing-mcp-servers` | Reviewing an MCP server: tool-definition injection, token passthrough, per-tool authorization |
-| `vetting-agent-extensions` | Deciding whether a third-party skill, plugin, or MCP server is safe to install — context-loaded content as injection surface, config that runs on startup, trust verdict |
+| `vetting-agent-extensions` | Deciding whether a third-party skill, plugin, or MCP server is safe to install: context-loaded content as injection surface, config that runs on startup, trust verdict |
 | `securing-ai-systems` | LLM and agentic security: prompt injection, tool authority, RAG isolation, the lethal trifecta |
 | `exploiting-web3-smart-contracts` | Solidity and smart contract auditing |
 
@@ -251,7 +251,7 @@ identifies the situation, and hands back to the domain skill when done.
 
 | Skill | Triggers on |
 | --- | --- |
-| `abusing-adcs` | A CA in the domain, `certipy find` flagging a template, ESC1–ESC16 |
+| `abusing-adcs` | A CA in the domain, `certipy find` flagging a template, ESC1-ESC16 |
 | `attacking-kerberos-delegation` | Unconstrained/constrained/RBCD delegation, `GenericWrite` over a computer |
 | `attacking-entra-id` | Entra ID / Azure AD as the target: tokens, PRTs, consent grants, hybrid sync |
 
@@ -329,7 +329,7 @@ to detection engineering instead.
 **Drive a domain (Red team)**
 
 ```
-"BloodHound flags svc_backup_admin — DA, SPN set, but no logon history. Roast it?"
+"BloodHound flags svc_backup_admin: DA, SPN set, but no logon history. Roast it?"
 ```
 
 Flags the profile as a probable honeyuser whose Kerberoast raises a
@@ -357,7 +357,7 @@ control.
 **Run a discovery campaign (AppSec / Red team)**
 
 ```
-"Find previously-unknown bugs in this service — fan out agents, and don't count anything you can't prove."
+"Find previously-unknown bugs in this service. Fan out agents, and don't count anything you can't prove."
 ```
 
 Splits the attack surface into independent slices and hunts each with its own
@@ -392,7 +392,7 @@ supplies knowledge and method, not binaries.
 
 ## Antivirus false positives
 
-Some skills document attacker artefacts verbatim — webshell one-liners,
+Some skills document attacker artefacts verbatim: webshell one-liners,
 download cradles, persistence snippets. Antivirus engines match on file
 *content*, not extension, so a Markdown file quoting China Chopper looks the
 same to a signature scanner as a live `.php` webshell. Microsoft Defender has
@@ -418,7 +418,7 @@ Add-MpPreference -ExclusionPath "$env:USERPROFILE\.claude\plugins"
 ```
 
 Please open an issue with the detection name and file path if you hit a new
-one — that's what pins down which string is responsible.
+one. That's what pins down which string is responsible.
 
 ## Contributing
 
@@ -433,7 +433,7 @@ python3 scripts/build_site.py --check    # the docs/ site is in sync
 ```
 
 CI runs the same checks. Every new skill ships with at least one
-trigger-accuracy case in [`evals/cases.jsonl`](evals/README.md) — a realistic
+trigger-accuracy case in [`evals/cases.jsonl`](evals/README.md): a realistic
 request labelled with the skill that should activate, plus a `trap_for` case
 where it sits near an existing skill, so routing stays correct as the collection
 grows. Two repo-local skills, `authoring-security-skills` and

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the static docs site into docs/ — landing page plus one page per skill.
+"""Generate the static docs site into docs/: landing page plus one page per skill.
 
 Reads the source of truth (SKILL.md frontmatter + body, ttp-index.json,
 marketplace.json) and renders drift-proof HTML. Stdlib only, so it runs in any
@@ -30,7 +30,7 @@ PLUGIN_LABEL = {"offense": "offense", "defense": "defense", "core": "core"}
 USE_CASES = [
     ("Builders", [
         ("Micro-SaaS founder · pre-launch",
-         "Before I launch, audit this codebase for anything that could leak a customer's data — focus on authentication, access control, and the billing flow.",
+         "Before I launch, audit this codebase for anything that could leak a customer's data. Focus on authentication, access control, and the billing flow.",
          "auditing-code-for-vulnerabilities"),
         ("Indie hacker · cloud check",
          "Review my AWS setup for anything public that shouldn't be, and flag any over-broad IAM roles.",
@@ -39,7 +39,7 @@ USE_CASES = [
          "Review this LLM agent for prompt injection and tool misuse before I ship it.",
          "securing-ai-systems"),
         ("AI / agent builder · MCP",
-         "Audit this MCP server I built — tool definitions, authorization, and what a caller can reach.",
+         "Audit this MCP server I built: tool definitions, authorization, and what a caller can reach.",
          "auditing-mcp-servers"),
     ]),
     ("Security professionals", [
@@ -47,13 +47,13 @@ USE_CASES = [
          "Audit the authentication and billing code in this repo for vulnerabilities.",
          "auditing-code-for-vulnerabilities"),
         ("Red team · internal engagement",
-         "I'm on an internal pentest with a low-priv AD user — where do I look for escalation?",
+         "I'm on an internal pentest with a low-priv AD user. Where do I look for escalation?",
          "attacking-active-directory"),
         ("DFIR · incident responder",
          "A host is beaconing to an unfamiliar domain. What do I preserve, and where do I start?",
          "responding-to-incidents"),
         ("SOC · analyst",
-         "Triage this EDR alert for me — is it worth escalating, and why?",
+         "Triage this EDR alert for me. Is it worth escalating, and why?",
          "triaging-security-alerts"),
     ]),
 ]
@@ -362,7 +362,7 @@ def render_skill_page(s: dict, names: set[str]) -> str:
 <a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
 {spy}
 """
-    return page(f"{s['name']} — SecSkills", "../style.css", body,
+    return page(f"{s['name']} · SecSkills", "../style.css", body,
                 extra_head=f"<style>{css}</style>")
 
 
@@ -436,7 +436,7 @@ def render_index(skills: list[dict], names: set[str]) -> str:
         return f'<div class="role"><div class="r">{r}</div><h3>{h}</h3><div class="inst2">{inst}</div><p>{p}</p></div>'
     roles = (
         role("red team · pentest", "Offensive operations", "offense + core",
-             "AD &amp; Entra, AD CS ESC1–16, cloud, managed k8s, mobile, wireless, web/auth — plus <code>recognizing-deception</code> and <code>maintaining-engagement-state</code>.")
+             "AD &amp; Entra, AD CS ESC1-16, cloud, managed k8s, mobile, wireless, web/auth, plus <code>recognizing-deception</code> and <code>maintaining-engagement-state</code>.")
         + role("appsec · code review", "Find &amp; fix in code", "core (+ offense to prove impact)",
                "Source audit with a verification gate, PR review that reads deleted lines, crypto &amp; supply-chain, AI/MCP, PHP depth, backdoor hunting.")
         + role("dfir · incident response", "Investigate &amp; respond", "defense + core",
@@ -462,11 +462,11 @@ def render_index(skills: list[dict], names: set[str]) -> str:
 <button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
 
 <header class="hero"><div class="wrap">
-  <div class="eyebrow">{len(skills)} skills · 3 plugins · Claude Code</div>
+  <div class="eyebrow">For Claude Code · offense · defense · core</div>
   <h1 class="big" style="margin-top:18px">Security skills with the judgment built in.</h1>
-  <p class="lede">Claude knows the commands. What these encode is the discipline — <b>trace impact before you report it, preserve before you remediate, spot the honeypot before you touch it</b>. Every skill fact-checked against primary sources.</p>
-  <div class="meta"><span class="ok">✓ {len(skills)} / {len(skills)} verified</span><span class="sep">·</span>
-  <span>offense {counts['offense']}</span><span>defense {counts['defense']}</span><span>core {counts['core']}</span></div>
+  <p class="lede">Claude knows the commands. What these encode is the discipline: <b>trace impact before you report it, preserve before you remediate, spot the honeypot before you touch it</b>. Every skill is fact-checked against primary sources.</p>
+  <div class="meta"><span class="ok">✓ every skill source-verified</span><span class="sep">·</span>
+  <span>offense</span><span>defense</span><span>core</span></div>
   <div class="code cx"><button class="copy" data-copy="/plugin marketplace add trilwu/secskills
 /plugin install secskills-offense
 /plugin install secskills-defense
@@ -481,18 +481,18 @@ def render_index(skills: list[dict], names: set[str]) -> str:
 </div></header>
 
 <section id="how"><div class="wrap"><div class="lbl">how it works</div>
-<h2 class="title">You describe the task — the skill does the rest</h2>
+<h2 class="title">You describe the task, the skill does the rest</h2>
 <p class="sub">No commands to memorize, no manual invocation. This is what a skill changes versus asking Claude cold.</p>
 <div class="steps">
-<div class="step"><span class="i">01</span><div><b>You describe the task in plain language.</b><p>Say <code>audit this repo for auth bugs</code> or <code>a host is beaconing — where do I start?</code>. Claude Code matches the right skill from its description; you never type a skill name.</p></div></div>
-<div class="step"><span class="i">02</span><div><b>It loads only when it applies.</b><p>Only each skill's one-line description sits in context. The full methodology loads when your task triggers it — {len(skills)} skills cost nothing until one is relevant. Procedure skills wait for their evidence (a <code>libflutter.so</code>, a <code>SAMLResponse</code>, an <code>.E01</code> image).</p></div></div>
-<div class="step"><span class="i">03</span><div><b>It shapes the approach, then hands off.</b><p>The skill enforces a methodology — sequence, scope, the verification gate — and names the sibling skill to switch to as the task moves. That is how the collection composes instead of dumping commands.</p></div></div>
-<div class="step"><span class="i">04</span><div><b>It refuses the shortcut.</b><p>Each skill's <i>Rationalizations to Reject</i> blocks the plausible-but-wrong call — <q>grep was clean, so the tree is clean</q>, <q>the tool rated it critical, so escalate</q>.</p></div></div>
+<div class="step"><span class="i">01</span><div><b>You describe the task in plain language.</b><p>Say <code>audit this repo for auth bugs</code> or <code>a host is beaconing, where do I start?</code>. Claude Code matches the right skill from its description; you never type a skill name.</p></div></div>
+<div class="step"><span class="i">02</span><div><b>It loads only when it applies.</b><p>Only each skill's one-line description sits in context. The full methodology loads when your task triggers it, so a skill you don't need costs nothing. Procedure skills wait for their evidence (a <code>libflutter.so</code>, a <code>SAMLResponse</code>, an <code>.E01</code> image).</p></div></div>
+<div class="step"><span class="i">03</span><div><b>It shapes the approach, then hands off.</b><p>The skill enforces a methodology (sequence, scope, the verification gate) and names the sibling skill to switch to as the task moves. That is how the collection composes instead of dumping commands.</p></div></div>
+<div class="step"><span class="i">04</span><div><b>It refuses the shortcut.</b><p>Each skill's <i>Rationalizations to Reject</i> blocks the plausible-but-wrong call: <q>grep was clean, so the tree is clean</q>, <q>the tool rated it critical, so escalate</q>.</p></div></div>
 </div></div></section>
 
 <section id="use"><div class="wrap"><div class="lbl">prompt by use case</div>
 <h2 class="title">What to actually type</h2>
-<p class="sub">You don't need the jargon. Describe the situation — here are good starting prompts, and where each lands.</p>
+<p class="sub">You don't need the jargon. Describe the situation, and here are good starting prompts and where each lands.</p>
 <div class="uc">{uc_html}</div></div></section>
 
 <section id="roles"><div class="wrap"><div class="lbl">who it's for</div>
@@ -501,7 +501,7 @@ def render_index(skills: list[dict], names: set[str]) -> str:
 <div class="roles">{roles}</div></div></section>
 
 <section id="catalog"><div class="wrap"><div class="lbl">the catalog</div>
-<h2 class="title">All {len(skills)} skills</h2>
+<h2 class="title">The full catalog</h2>
 <p class="sub">Search by name or technique; filter by plugin. Click any skill for the full methodology.</p>
 <div class="bar"><label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
 <input id="q" type="search" placeholder="nxc, kerberoast, phar, sigma, IMDS…" autocomplete="off" aria-label="Search skills"></label>
@@ -513,13 +513,13 @@ def render_index(skills: list[dict], names: set[str]) -> str:
 
 <section id="verify"><div class="wrap"><div class="lbl">verification</div>
 <h2 class="title">Every skill checked against primary sources</h2>
-<p class="sub">The differentiator, and the honest version of it — not confidently-wrong output.</p>
+<p class="sub">The honest version of a security library: methodology you can trust, not confidently-wrong output.</p>
 <div class="stats">
-<div class="stat"><div class="n ok">{len(skills)}/{len(skills)}</div><div class="l">source-verified</div></div>
+<div class="stat"><div class="n ok">100%</div><div class="l">source-verified</div></div>
 <div class="stat"><div class="n">2.6</div><div class="l">errors / skill found</div></div>
 <div class="stat"><div class="n">143</div><div class="l">ATT&amp;CK techniques</div></div>
 </div>
-<p class="sub" style="margin-top:22px"><b style="color:var(--text)">verified:</b> is dated, not eternal — trust the methodology and re-confirm any specific before it lands in a deliverable. CI checks form, not truth; the dates are the accuracy signal.</p>
+<p class="sub" style="margin-top:22px"><b style="color:var(--text)">verified:</b> is dated, not eternal. Trust the methodology and re-confirm any specific before it lands in a deliverable. CI checks form, not truth; the dates are the accuracy signal.</p>
 </div></section>
 
 <footer><div class="wrap"><div><div class="mono">MIT · for authorized security work only</div></div>
@@ -547,7 +547,7 @@ document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','fal
 c.setAttribute('aria-pressed','true');filter=c.dataset.f;render();}}));render();
 </script>
 """
-    return page("SecSkills — verified security skills for Claude Code", "style.css", body,
+    return page("SecSkills: verified security skills for Claude Code", "style.css", body,
                 extra_head=f"<style>{css}</style>")
 
 
