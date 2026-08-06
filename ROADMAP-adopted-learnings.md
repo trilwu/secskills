@@ -69,7 +69,7 @@ started yet.
   from patch to reachable primitive.
 - [x] **B4 Thick-client desktop testing** — local storage, update channel
   integrity, IPC, client-side trust boundaries.
-- [ ] **B5 Browser extension reversing** — manifest, background workers,
+- [x] **B5 Browser extension reversing** — manifest, background workers,
   content-script boundary, extension-to-page privilege.
 - [ ] **B6 macOS / Mach-O reversing** — codesign, Objective-C and Swift
   recovery, TCC, notarization, Endpoint Security surfaces. Distinct from the

@@ -1,0 +1,178 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>reversing-browser-extensions — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="../index.html">secskills</a>
+<nav><a href="../index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="../index.html">secskills</a> / core / reversing-browser-extensions</div>
+  <h1 class="sk">reversing-browser-extensions</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+  </div>
+  <p class="sdesc">Reverse engineer and security-review Chrome/Firefox browser extensions — unpacking the CRX/XPI, reading the manifest for over-broad permissions, and tracing the trust boundary between page, content script, background service worker, and native messaging host. Use when analyzing a suspicious or over-permissioned extension, auditing your own extension&#x27;s privilege model, or investigating how a content script exposes privileged APIs to a web page.</p>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<div class="wrap slayout"><article><p>A browser extension is a small privileged program wedged next to every page the user visits. Its security is almost entirely about a boundary: the content script runs beside untrusted web content but can talk to a background context that holds real permissions — cookies, tabs, the network, sometimes a native process. Reversing an extension is reading that boundary and finding where the privileged side trusts the unprivileged one.</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul>
+<li>Analyzing a suspicious, over-permissioned, or unknown extension's behaviour</li>
+<li>Auditing an extension's manifest and message-passing for privilege leaks</li>
+<li>Investigating how a content script exposes background/native capabilities to a</li>
+</ul>
+<p>page</p>
+<ul>
+<li>Recovering what an extension actually does versus what its store listing claims</li>
+</ul>
+<h2 id="when-not-to-use">When NOT to Use</h2>
+<ul>
+<li><strong>Deobfuscating the extension's bundled JavaScript</strong> as a code-reading problem</li>
+</ul>
+<p>— use <a class="xref" href="reversing-obfuscated-javascript.html"><code>reversing-obfuscated-javascript</code></a> for the bundle, then return here for the privilege model.</p>
+<ul>
+<li><strong>Detonating and extracting IOCs from a malicious extension</strong> as part of an</li>
+</ul>
+<p>incident — use <a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a>.</p>
+<ul>
+<li><strong>Testing the web application</strong> the extension interacts with —</li>
+</ul>
+<p><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a>.</p>
+<ul>
+<li><strong>A desktop app that happens to embed a browser</strong> — <a class="xref" href="testing-thick-clients.html"><code>testing-thick-clients</code></a>.</li>
+</ul>
+<h2 id="get-the-code-and-read-the-manifest">Get the Code and Read the Manifest</h2>
+<p>An extension ships as a <strong>CRX</strong> (Chrome) or <strong>XPI</strong> (Firefox) — both are ZIP archives; unzip and read. You can pull a published extension from the store's CRX endpoint, or straight from the browser profile's <code>Extensions</code> directory.</p>
+<p>The <strong>manifest</strong> is the map. Read it before any code:</p>
+<ul>
+<li><strong><code>manifest_version</code></strong> — MV2 (background page, <code>webRequest</code> blocking) vs MV3</li>
+</ul>
+<p>(background <strong>service worker</strong>, <code>declarativeNetRequest</code>, remote code forbidden). The version changes where the privileged logic lives and how it persists.</p>
+<ul>
+<li><strong><code>permissions</code> and <code>host_permissions</code></strong> — <code>&amp;lt;all_urls&amp;gt;</code>, <code>tabs</code>, <code>cookies</code>,</li>
+</ul>
+<p><code>webRequest</code>, <code>debugger</code>, <code>nativeMessaging</code>, <code>scripting</code>. Judge each against what the extension claims to do; <code>&amp;lt;all_urls&amp;gt;</code> + <code>cookies</code> on a "dark theme" extension is the tell.</p>
+<ul>
+<li><strong><code>content_scripts</code></strong> — which pages the extension injects into, and therefore</li>
+</ul>
+<p>which pages' content it is exposed to.</p>
+<ul>
+<li><strong><code>externally_connectable</code></strong> — which web origins may send it messages</li>
+</ul>
+<p>directly; a permissive value is an attack surface.</p>
+<ul>
+<li><strong><code>web_accessible_resources</code></strong> — extension files a page can load, which can</li>
+</ul>
+<p>leak the extension's presence or expose an injectable resource.</p>
+<ul>
+<li><strong><code>content_security_policy</code></strong> — a loosened CSP (<code>unsafe-eval</code>, remote script)</li>
+</ul>
+<p>is a code-injection surface.</p>
+<h2 id="the-trust-boundary">The Trust Boundary</h2>
+<p>Extensions are isolated by design; the bugs are in the seams between contexts:</p>
+<ul>
+<li><strong>Page ↔ content script.</strong> The content script runs in an <em>isolated world</em> —</li>
+</ul>
+<p>it shares the DOM with the page but not JS variables. The leak is through the DOM and <code>window.postMessage</code>: a content script that acts on <code>postMessage</code> data without checking <code>event.origin</code>/<code>event.source</code> lets any page in its injection scope drive it.</p>
+<ul>
+<li><strong>Content script → background/service worker.</strong> The content script relays</li>
+</ul>
+<p>messages to the background context to do privileged work (<code>chrome.runtime</code> messaging). If the background handler does not validate the <strong>sender</strong> and the message shape, a compromised or malicious page (via the content script) reaches privileged APIs. This is the central extension bug: <em>privileged operations gated only by a message the page can influence.</em></p>
+<ul>
+<li><strong><code>onMessageExternal</code> / <code>externally_connectable</code>.</strong> A web page listed here</li>
+</ul>
+<p>talks to the background directly — same validation question, one hop shorter.</p>
+<ul>
+<li><strong>Native messaging.</strong> <code>nativeMessaging</code> connects the extension to a local</li>
+</ul>
+<p>native host binary. A weakly validated message path here is browser-to-native code execution; trace what the native host does with what it receives.</p>
+<p>For each privileged capability, answer: what input reaches it, and from how far out (background only, content script, or an arbitrary page)?</p>
+<h2 id="what-to-flag">What to Flag</h2>
+<ul>
+<li><strong>Over-broad permissions</strong> disproportionate to function.</li>
+<li><strong>Unvalidated message senders</strong> on <code>runtime.onMessage</code> /</li>
+</ul>
+<p><code>onMessageExternal</code> — the privilege-escalation path from page to extension.</p>
+<ul>
+<li><strong><code>postMessage</code> handling without origin checks</strong> in content scripts.</li>
+<li><strong>Remote code / <code>eval</code></strong> or a CSP that permits it (also an MV3 policy</li>
+</ul>
+<p>violation).</p>
+<ul>
+<li><strong>Data exfiltration</strong> — traffic to endpoints unrelated to the stated purpose;</li>
+</ul>
+<p>reading page content, form fields, or cookies and sending them out.</p>
+<ul>
+<li><strong>Native messaging</strong> to a host that acts on unvalidated input.</li>
+<li><strong>Update/supply-chain risk</strong> — an extension that loads remote config or code,</li>
+</ul>
+<p>or one whose ownership recently changed.</p>
+<h2 id="deobfuscate-when-needed">Deobfuscate When Needed</h2>
+<p>Store extensions are frequently minified or bundled, and malicious ones obfuscated. When the code is unreadable, hand the bundle to <a class="xref" href="reversing-obfuscated-javascript.html"><code>reversing-obfuscated-javascript</code></a> — unbundle and deobfuscate there, then read the recovered logic against the trust boundary above. Debug the live extension in the browser's extension DevTools to watch the message passing at runtime.</p>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
+<ul>
+<li><strong>"The store reviewed it, so it's fine."</strong> Store review is shallow and</li>
+</ul>
+<p>bypassed regularly; an ownership change can turn a clean extension malicious in one update. Read the code it actually ships.</p>
+<ul>
+<li>**"Content scripts are sandboxed, so page compromise can't reach the</li>
+</ul>
+<p>extension."** The isolated world separates JS, not the DOM or <code>postMessage</code>. An unchecked message handler is the bridge.</p>
+<ul>
+<li><strong>"The background just relays a message."</strong> If it relays a <em>page-influenced</em></li>
+</ul>
+<p>message into a privileged API without validating the sender, that relay is the vulnerability.</p>
+<ul>
+<li><strong>"It only asks for the permissions it needs."</strong> Verify against behaviour.</li>
+</ul>
+<p><code>&amp;lt;all_urls&amp;gt;</code>, <code>cookies</code>, <code>debugger</code>, and <code>nativeMessaging</code> are the ones that turn a small bug into a large one.</p>
+<ul>
+<li><strong>"It's minified, so I can't review it."</strong> Minification is reversible; unbundle</li>
+</ul>
+<p>and deobfuscate first, then review.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a class="xref" href="reversing-obfuscated-javascript.html"><code>reversing-obfuscated-javascript</code></a> — unbundling and deobfuscating the extension's JS</li>
+<li><a class="xref" href="analyzing-malware.html"><code>analyzing-malware</code></a> — detonation and IOCs for a confirmed-malicious extension</li>
+<li><a class="xref" href="testing-web-applications.html"><code>testing-web-applications</code></a> — the sites and APIs the extension talks to</li>
+<li><a class="xref" href="auditing-supply-chain.html"><code>auditing-supply-chain</code></a> — ownership-change and remote-code update risk</li>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#get-the-code-and-read-the-manifest">Get the Code and Read the Manifest</a><a href="#the-trust-boundary">The Trust Boundary</a><a href="#what-to-flag">What to Flag</a><a href="#deobfuscate-when-needed">Deobfuscate When Needed</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified </div>
+<a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>
