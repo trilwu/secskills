@@ -112,19 +112,13 @@ sheet does not give you:
 
 ## Every skill is fact-checked — and dated
 
-**82 of the 92 skills have been verified line-by-line against primary sources** —
+**All 92 skills have been verified line-by-line against primary sources** —
 vendor docs, RFCs, tool source — and carry a `verified:` date in frontmatter.
 This is the differentiator: it is the opposite of confidently-wrong AI output.
 
-The 10 most recently added skills (the reverse-engineering and agent-vetting
-additions) are **unverified drafts** — well-formed and passing CI, but not yet
-driven through the line-by-line accuracy pass. They carry no `verified:` date,
-which is exactly how to tell them apart. Treat their specific tool flags and
-version claims as provisional until that pass lands.
-
 ```bash
-python3 scripts/validate.py --strict                 # "Fact-checked ...: 82/92"
-grep -L "^verified:" secskills-*/skills/*/SKILL.md   # the 10 unverified drafts
+python3 scripts/validate.py --strict                 # "Fact-checked ...: 92/92"
+grep -L "^verified:" secskills-*/skills/*/SKILL.md   # unverified skills (none)
 ```
 
 What that pass caught is why it exists. The first sampled dozen skills held

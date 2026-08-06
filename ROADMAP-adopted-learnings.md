@@ -97,3 +97,18 @@ research is out of scope for this repo.
 - **Raw payload dumps.** Undefanged download cradles and credential-theft
   one-liners; quarantined on sight by Defender (verified locally — the clone's
   `payloader/raw/tools.json` was deleted mid-scan).
+
+## Verification pass (2026-08-07)
+
+All 10 new skills driven through `verifying-skill-accuracy` and stamped
+`verified: 2026-08-07`. Tier-1 checks on every non-obvious tool and every
+version-gated ("silent") claim: webcrack / synchrony / restringer / ghidriff,
+glibc tcache 2.26 / safe-linking 2.32 / hooks + __libc_csu_init removed 2.34,
+Windows 1809 forward/reverse delta patching, Chrome MV3 (service worker /
+declarativeNetRequest / remote-code ban), NoVmp+VTIL (VMProtect x64 3.x),
+JTAGulator, KeeLoq, dsdump, and the OWASP framework name.
+
+One real error found and fixed, class swept (single occurrence): the OWASP
+agentic framework is **"Top 10 for Agentic Applications" (ASI01-ASI10)**, not
+"Agentic Skills" — corrected in ttp-index. Plus one precision fix to the
+glibc safe-linking mangling description. Repo is now 92/92 verified.

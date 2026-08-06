@@ -44,7 +44,7 @@
   <h1 class="sk">devirtualizing-vm-protected-code</h1>
   <div class="stags">
     <span><span class="dot dot-core"></span> core</span>
-    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-08-07</span>
   </div>
   <p class="sdesc">Recover the original logic from code protected by a virtualization obfuscator — VMProtect, Themida/WinLicense, Code Virtualizer, or a custom opcode VM — by locating the VM dispatcher, reverse-engineering the handlers into semantics, extracting the virtual bytecode, and lifting it to a simplified IR with Triton, miasm, or VTIL-based tools. Use when a function became a giant fetch-decode-dispatch loop, when analysis shows a handler table instead of normal code, or after unpacking reveals a virtualized core.</p>
   <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
@@ -128,7 +128,7 @@
 <li><a class="xref" href="reviewing-cryptography.html"><code>reviewing-cryptography</code></a> — when the virtualized routine is a crypto/licence check</li>
 <li><a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a> — exploiting a bug in the recovered logic</li>
 </ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#the-pipeline">The Pipeline</a><a href="#static-vs-dynamic">Static vs Dynamic</a><a href="#expectations">Expectations</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
-<footer><div class="wrap"><div class="mono">secskills · core · verified </div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-08-07</div>
 <a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
 <script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
 <script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

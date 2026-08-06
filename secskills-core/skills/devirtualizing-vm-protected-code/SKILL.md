@@ -1,6 +1,7 @@
 ---
 name: devirtualizing-vm-protected-code
 description: Recover the original logic from code protected by a virtualization obfuscator — VMProtect, Themida/WinLicense, Code Virtualizer, or a custom opcode VM — by locating the VM dispatcher, reverse-engineering the handlers into semantics, extracting the virtual bytecode, and lifting it to a simplified IR with Triton, miasm, or VTIL-based tools. Use when a function became a giant fetch-decode-dispatch loop, when analysis shows a handler table instead of normal code, or after unpacking reveals a virtualized core.
+verified: 2026-08-07
 ---
 
 # Devirtualizing VM-Protected Code

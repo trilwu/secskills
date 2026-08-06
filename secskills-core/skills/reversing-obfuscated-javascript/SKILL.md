@@ -1,6 +1,7 @@
 ---
 name: reversing-obfuscated-javascript
 description: Reverse engineer minified, bundled, and obfuscated browser/Node JavaScript — unpacking webpack chunks, recovering source from sourcemaps, undoing obfuscator.io string-array and control-flow obfuscation with webcrack/synchrony/restringer, and locating a signing or crypto routine in a live bundle via Chrome DevTools. Use when a page ships a huge minified bundle, when code is full of _0x hex identifiers and a rotated string array, when a .js.map is reachable, or when you must find where a request signature or token is computed.
+verified: 2026-08-07
 ---
 
 # Reversing Obfuscated JavaScript

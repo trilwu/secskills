@@ -1,6 +1,7 @@
 ---
 name: diffing-binary-patches
 description: Locate the vulnerability a security patch fixes by diffing the pre- and post-patch binaries — using BinDiff, Diaphora, or ghidriff to find the changed functions, reading the added checks to recover the bug class, and reasoning back to a reachable pre-patch trigger for 1-day analysis. Use when comparing two versions of a DLL/ELF, extracting a Microsoft patch from an MSU/MSP for delta comparison, or turning a vague advisory into the exact code that changed.
+verified: 2026-08-07
 ---
 
 # Diffing Binary Patches

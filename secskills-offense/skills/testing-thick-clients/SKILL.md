@@ -1,6 +1,7 @@
 ---
 name: testing-thick-clients
 description: Security-test desktop thick-client applications (.NET/WPF, Java, Electron, native Win32) against their local and network attack surface — proxying non-HTTP traffic, extracting secrets and DB connection strings from config/registry/memory, bypassing client-side trust controls, and reviewing update channels and DLL search order. Use when assessing an installed desktop app that talks to a backend, when Burp sees no traffic from a fat client, or when a two-tier app connects straight to a database.
+verified: 2026-08-07
 ---
 
 # Testing Thick Clients

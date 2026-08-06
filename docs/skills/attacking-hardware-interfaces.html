@@ -44,7 +44,7 @@
   <h1 class="sk">attacking-hardware-interfaces</h1>
   <div class="stags">
     <span><span class="dot dot-offense"></span> offense</span>
-    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-08-07</span>
   </div>
   <p class="sdesc">Assess the physical attack surface of embedded devices — finding and using UART consoles, JTAG/SWD debug, and SPI/I2C flash; dumping firmware off-chip; triaging secure boot; and studying sub-GHz RF replay feasibility with an SDR. Use when you have physical access to a device or board, need to identify test pads and get a serial/root shell, want to read a flash chip with flashrom, or are evaluating a fixed- vs rolling-code radio in a shielded lab.</p>
   <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-offense
@@ -174,7 +174,7 @@
 <li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — reversing a specific binary recovered from the device</li>
 <li><a class="xref" href="maintaining-engagement-state.html"><code>maintaining-engagement-state</code></a> — recording physical access and irreversible changes</li>
 </ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#find-the-interfaces">Find the Interfaces</a><a href="#turn-an-interface-into-access">Turn an Interface Into Access</a><a href="#secure-boot-and-fault-injection">Secure Boot and Fault Injection</a><a href="#rf-replay-feasibility-sdr">RF Replay Feasibility (SDR)</a><a href="#scope-and-authorization">Scope and Authorization</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
-<footer><div class="wrap"><div class="mono">secskills · offense · verified </div>
+<footer><div class="wrap"><div class="mono">secskills · offense · verified 2026-08-07</div>
 <a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
 <script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
 <script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>

@@ -1,6 +1,7 @@
 ---
 name: vetting-agent-extensions
 description: Decide whether an agent skill, plugin, or MCP server is safe to install into an AI coding agent, where its content is loaded into a model's context and its config can run on startup. Use when reviewing a skill pack, Claude Code / Cursor / Cline plugin, or MCP server before adoption; when a repo ships a SKILL.md, .mcp.json, or plugin.json you are about to trust; or when judging whether third-party agent content can steer the model or exfiltrate an engagement.
+verified: 2026-08-07
 ---
 
 # Vetting Agent Extensions

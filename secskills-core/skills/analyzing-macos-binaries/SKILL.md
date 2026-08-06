@@ -1,6 +1,7 @@
 ---
 name: analyzing-macos-binaries
 description: Reverse engineer and security-review macOS applications and Mach-O binaries — thinning universal binaries, recovering Objective-C/Swift structure, reading code-signing entitlements and the hardened runtime, and auditing XPC services, dylib load paths, and TCC privacy exposure. Use when analyzing a .app bundle or Mach-O on macOS, checking entitlements and notarization, hunting a dylib-hijack or XPC privilege bug, or reasoning about Gatekeeper and quarantine.
+verified: 2026-08-07
 ---
 
 # Analyzing macOS Binaries

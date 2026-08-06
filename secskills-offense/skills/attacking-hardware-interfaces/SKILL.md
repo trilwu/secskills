@@ -1,6 +1,7 @@
 ---
 name: attacking-hardware-interfaces
 description: Assess the physical attack surface of embedded devices — finding and using UART consoles, JTAG/SWD debug, and SPI/I2C flash; dumping firmware off-chip; triaging secure boot; and studying sub-GHz RF replay feasibility with an SDR. Use when you have physical access to a device or board, need to identify test pads and get a serial/root shell, want to read a flash chip with flashrom, or are evaluating a fixed- vs rolling-code radio in a shielded lab.
+verified: 2026-08-07
 ---
 
 # Attacking Hardware Interfaces

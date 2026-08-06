@@ -1,6 +1,7 @@
 ---
 name: reversing-browser-extensions
 description: Reverse engineer and security-review Chrome/Firefox browser extensions — unpacking the CRX/XPI, reading the manifest for over-broad permissions, and tracing the trust boundary between page, content script, background service worker, and native messaging host. Use when analyzing a suspicious or over-permissioned extension, auditing your own extension's privilege model, or investigating how a content script exposes privileged APIs to a web page.
+verified: 2026-08-07
 ---
 
 # Reversing Browser Extensions

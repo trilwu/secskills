@@ -1,6 +1,7 @@
 ---
 name: reversing-network-protocols
 description: Reverse engineer undocumented binary network protocols from packet captures and the client that speaks them — recovering framing and field structure, identifying length prefixes, opcodes, checksums and encryption, and building a Wireshark/Kaitai/scapy parser to replay or fuzz. Use when analyzing a proprietary TCP/UDP protocol, a game or IoT or C2 protocol with no spec, or traffic that Wireshark shows only as raw bytes.
+verified: 2026-08-07
 ---
 
 # Reversing Network Protocols

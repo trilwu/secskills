@@ -44,7 +44,7 @@
   <h1 class="sk">diffing-binary-patches</h1>
   <div class="stags">
     <span><span class="dot dot-core"></span> core</span>
-    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified 2026-08-07</span>
   </div>
   <p class="sdesc">Locate the vulnerability a security patch fixes by diffing the pre- and post-patch binaries — using BinDiff, Diaphora, or ghidriff to find the changed functions, reading the added checks to recover the bug class, and reasoning back to a reachable pre-patch trigger for 1-day analysis. Use when comparing two versions of a DLL/ELF, extracting a Microsoft patch from an MSU/MSP for delta comparison, or turning a vague advisory into the exact code that changed.</p>
   <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
@@ -153,7 +153,7 @@
 <li><a class="xref" href="reviewing-code-changes.html"><code>reviewing-code-changes</code></a> — when you have source diffs rather than binaries</li>
 <li><a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a> — when a binary must be unpacked before diffing</li>
 </ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#get-two-comparable-binaries">Get Two Comparable Binaries</a><a href="#find-the-changed-functions">Find the Changed Functions</a><a href="#read-the-fix-recover-the-bug">Read the Fix, Recover the Bug</a><a href="#reason-back-to-a-trigger">Reason Back to a Trigger</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
-<footer><div class="wrap"><div class="mono">secskills · core · verified </div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified 2026-08-07</div>
 <a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
 <script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
 <script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>
