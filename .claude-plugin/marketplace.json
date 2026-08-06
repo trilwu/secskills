@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Marketplace for SecSkills - offensive and defensive security skills for Claude Code, split into offense, defense, and a shared core plugin",
-    "version": "4.8.0"
+    "version": "4.9.0"
   },
   "plugins": [
     {
@@ -61,8 +61,8 @@
     {
       "name": "secskills-core",
       "source": "./secskills-core",
-      "description": "The reverse-engineering and code-audit foundation both sides share. 27 dual-use security skills: native and Go/Rust/.NET/iOS/firmware reverse engineering, packers, and Flutter/React Native/Unity/Xamarin runtimes; source-code auditing with PHP-specific depth; webshell and backdoor hunting; multi-agent vulnerability-research orchestration; supply-chain, cryptography, MCP, and pull-request review; vetting third-party agent skills and MCP servers; AI/LLM security; ATT&CK technique mapping; engagement-state discipline; and findings reporting. Ships the ttp-index.json ATT&CK map. Every skill fact-checked against primary sources.",
-      "version": "4.8.0",
+      "description": "The reverse-engineering and code-audit foundation both sides share. 28 dual-use security skills: native and Go/Rust/.NET/iOS/firmware reverse engineering, packers, and Flutter/React Native/Unity/Xamarin runtimes; source-code auditing with PHP-specific depth; webshell and backdoor hunting; multi-agent vulnerability-research orchestration; supply-chain, cryptography, MCP, and pull-request review; vetting third-party agent skills and MCP servers; AI/LLM security; ATT&CK technique mapping; engagement-state discipline; and findings reporting. Ships the ttp-index.json ATT&CK map. Every skill fact-checked against primary sources.",
+      "version": "4.9.0",
       "category": "security",
       "keywords": [
         "security",

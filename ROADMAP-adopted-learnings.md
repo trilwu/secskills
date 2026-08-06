@@ -71,7 +71,7 @@ started yet.
   integrity, IPC, client-side trust boundaries.
 - [x] **B5 Browser extension reversing** — manifest, background workers,
   content-script boundary, extension-to-page privilege.
-- [ ] **B6 macOS / Mach-O reversing** — codesign, Objective-C and Swift
+- [x] **B6 macOS / Mach-O reversing** — codesign, Objective-C and Swift
   recovery, TCC, notarization, Endpoint Security surfaces. Distinct from the
   existing `analyzing-ios-binaries`.
 - [ ] **B7 Custom protocol reversing** — recovering undocumented binary

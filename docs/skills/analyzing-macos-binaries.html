@@ -1,0 +1,171 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>analyzing-macos-binaries — SecSkills</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="../style.css"><style>
+    .shead{padding:56px 0 34px}
+    .crumb{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+    .crumb a{color:var(--muted)}
+    h1.sk{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:600;letter-spacing:-.02em}
+    .stags{display:flex;gap:16px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+    .sdesc{margin-top:22px;font-size:17px;color:var(--muted);max-width:70ch;line-height:1.55}
+    .inst{position:relative;margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:13px 16px;font-family:var(--mono);font-size:13px;overflow-x:auto}
+    .inst .p{color:var(--faint);user-select:none}
+    .slayout{display:grid;grid-template-columns:minmax(0,1fr) 214px;gap:52px;align-items:start;
+    padding:40px 0 40px;border-top:1px solid var(--border)}
+    .toc{position:sticky;top:76px}
+    .toc .tl{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:11px}
+    .toc a{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;padding:5px 0 5px 14px;
+    border-left:1px solid var(--border);margin-left:-1px}
+    .toc a:hover{color:var(--text);text-decoration:none;border-color:var(--border2)}
+    .toc a.on{color:var(--text);border-color:var(--accent)}
+    article{min-width:0}
+    article h2{font-size:20px;font-weight:640;margin:38px 0 12px;padding-top:6px;scroll-margin-top:76px}
+    article h2:first-child{margin-top:0}
+    article h3{font-size:16px;font-weight:640;margin:26px 0 8px}
+    article h4{font-size:14px;font-weight:640;margin:20px 0 6px;color:var(--muted)}
+    article p{margin:0 0 15px;max-width:74ch}
+    article ul,article ol{margin:0 0 16px;padding-left:22px;max-width:74ch}
+    article li{margin:5px 0}article li>ul{margin:5px 0}
+    article code{font-family:var(--mono);font-size:.86em;background:var(--surface);padding:1px 5px;border-radius:4px}
+    article a.xref code{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+    .codeblk{position:relative;margin:0 0 18px}
+    article pre{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:15px 16px;overflow-x:auto;margin:0;max-width:100%}
+    article pre code{background:none;padding:0;font-size:12.5px;line-height:1.7}
+    article blockquote{margin:0 0 18px;padding:2px 0 2px 18px;border-left:2px solid var(--border2);color:var(--muted)}
+    .tw{overflow-x:auto;margin:0 0 18px}article table{border-collapse:collapse;width:100%;font-size:14px}
+    article th,article td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+    article th{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+    @media (max-width:820px){.slayout{grid-template-columns:1fr;gap:0}.toc{display:none}}
+    </style></head><body>
+<div class="top"><div class="wrap"><a class="brand" href="../index.html">secskills</a>
+<nav><a href="../index.html#catalog">← all skills</a><a href="https://github.com/trilwu/secskills">github</a></nav>
+<button class="tbtn" id="tbtn" aria-label="Toggle theme">theme</button></div></div>
+<header class="shead"><div class="wrap">
+  <div class="crumb"><a href="../index.html">secskills</a> / core / analyzing-macos-binaries</div>
+  <h1 class="sk">analyzing-macos-binaries</h1>
+  <div class="stags">
+    <span><span class="dot dot-core"></span> core</span>
+    <span class="v"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> verified </span>
+  </div>
+  <p class="sdesc">Reverse engineer and security-review macOS applications and Mach-O binaries — thinning universal binaries, recovering Objective-C/Swift structure, reading code-signing entitlements and the hardened runtime, and auditing XPC services, dylib load paths, and TCC privacy exposure. Use when analyzing a .app bundle or Mach-O on macOS, checking entitlements and notarization, hunting a dylib-hijack or XPC privilege bug, or reasoning about Gatekeeper and quarantine.</p>
+  <div class="inst cx"><button class="copy" data-copy="/plugin install secskills-core">copy</button><span class="p">$ </span>/plugin install secskills-core</div>
+</div></header>
+<div class="wrap slayout"><article><p>macOS reverse engineering is Mach-O plus a specific security model: code signing, entitlements, the sandbox, TCC privacy, and XPC between processes. The binary tells you what the code does; the entitlements and load paths tell you what it is <em>allowed</em> to do and where an attacker could get in. Read both — most macOS findings live in the gap between the two.</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul>
+<li>Analyzing a <code>.app</code> bundle or a Mach-O executable/dylib/framework on macOS</li>
+<li>Reading entitlements, hardened-runtime flags, notarization, and Gatekeeper</li>
+</ul>
+<p>quarantine state</p>
+<ul>
+<li>Auditing an XPC service or privileged helper for an authorization bug</li>
+<li>Hunting dylib hijacking / proxying via <code>@rpath</code> and weak dylibs</li>
+<li>Reasoning about TCC privacy exposure and sandbox escape surface</li>
+</ul>
+<h2 id="when-not-to-use">When NOT to Use</h2>
+<ul>
+<li><strong>iOS apps</strong> — IPA decryption, FairPlay (<code>cryptid=1</code>), App Store binaries —</li>
+</ul>
+<p>are <a class="xref" href="analyzing-ios-binaries.html"><code>analyzing-ios-binaries</code></a>. Same Mach-O format, different toolchain and DRM.</p>
+<ul>
+<li><strong>Non-Mach-O or cross-platform triage</strong> with no macOS specifics —</li>
+</ul>
+<p><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a>.</p>
+<ul>
+<li><strong>Turning a memory-corruption crash into an exploit</strong> —</li>
+</ul>
+<p><a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a>.</p>
+<ul>
+<li><strong>A Mach-O that is packed/encrypted before you can read it</strong> —</li>
+</ul>
+<p><a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a>.</p>
+<h2 id="triage-the-binary-and-bundle">Triage the Binary and Bundle</h2>
+<ul>
+<li><strong>Thin the universal binary.</strong> macOS ships fat binaries (x86_64 + arm64); use</li>
+</ul>
+<p><code>lipo -thin</code> (or <code>lipo -archs</code> to list) so your tools work on one slice.</p>
+<ul>
+<li><strong>Read the Mach-O.</strong> <code>otool -l</code> for load commands, <code>otool -L</code> for linked</li>
+</ul>
+<p>dylibs and their paths, <code>nm</code> for symbols. Note the load commands that matter later: <code>LC_RPATH</code>, <code>LC_LOAD_DYLIB</code> / <code>LC_LOAD_WEAK_DYLIB</code>, and the code signature.</p>
+<ul>
+<li><strong>Walk the bundle.</strong> <code>Contents/MacOS</code> (the binary), <code>Info.plist</code> (identifiers,</li>
+</ul>
+<p>URL schemes), <code>_CodeSignature</code>, embedded <code>Frameworks/</code>, and any bundled <code>XPCServices/</code>. The bundle layout is the map of what to analyze.</p>
+<h2 id="recover-objective-c-and-swift">Recover Objective-C and Swift</h2>
+<ul>
+<li><strong>Objective-C</strong> keeps rich runtime metadata: <code>class-dump</code> (or <code>dsdump</code>)</li>
+</ul>
+<p>reconstructs class, method, and property declarations straight from the binary. This is the fastest way to see the app's structure.</p>
+<ul>
+<li><strong>Swift</strong> is harder — names are mangled and metadata is less forthcoming. Run</li>
+</ul>
+<p><code>swift-demangle</code> over symbols to get readable names, and expect to lean on the decompiler (Hopper, Ghidra, IDA) more than with Objective-C.</p>
+<ul>
+<li>Note which language dominates before choosing the approach; a Swift binary</li>
+</ul>
+<p>where <code>class-dump</code> returns little is normal, not a failure.</p>
+<h2 id="code-signing-entitlements-and-gatekeeper">Code Signing, Entitlements, and Gatekeeper</h2>
+<p>This is where macOS-specific authority lives:</p>
+<ul>
+<li><strong><code>codesign -dvvv --entitlements :- &amp;lt;binary&amp;gt;</code></strong> dumps the signature and the</li>
+</ul>
+<p><strong>entitlements</strong> — the capabilities the OS grants. Entitlements like <code>com.apple.security.get-task-allow</code> (debuggable), disabled library validation, or private TCC entitlements are the high-value reads.</p>
+<ul>
+<li><strong>Hardened runtime</strong> flags restrict code injection and debugging; note whether</li>
+</ul>
+<p>they are on, and whether library validation is disabled (which allows loading unsigned dylibs — directly relevant to hijacking).</p>
+<ul>
+<li><strong>Notarization and Gatekeeper.</strong> Downloaded files carry the</li>
+</ul>
+<p><code>com.apple.quarantine</code> extended attribute; Gatekeeper checks notarization on first run. Understand the quarantine/notarization state when reasoning about what will execute and what a user was warned about.</p>
+<h2 id="the-macos-specific-bug-surface">The macOS-Specific Bug Surface</h2>
+<ul>
+<li><strong>Dylib hijacking / proxying.</strong> A binary that loads a dylib from an <code>@rpath</code></li>
+</ul>
+<p>that resolves to a writable location, or a <code>LC_LOAD_WEAK_DYLIB</code> that is absent, lets an attacker drop a malicious dylib and get code execution in the app's context — inheriting its entitlements. Enumerate the load paths and check which are attacker-writable and unprotected by library validation.</p>
+<ul>
+<li><strong>XPC services and privileged helpers.</strong> XPC is the mach-based IPC between an</li>
+</ul>
+<p>app and its helpers (often a <code>SMJobBless</code> root helper). The classic bug is a helper that authorizes a client by <strong>PID</strong> — which races and is spoofable — instead of by <strong><code>audit_token</code></strong>. Trace how the service validates its caller and what privileged action it will perform; weak validation is local privilege escalation.</p>
+<ul>
+<li><strong>TCC privacy.</strong> TCC gates access to camera, mic, files, and automation. Look</li>
+</ul>
+<p>at what the app is entitled to and whether it can be coerced into acting as a confused deputy for a less-privileged process, or whether an injectable dylib inherits its TCC grants.</p>
+<ul>
+<li><strong>URL schemes and <code>Info.plist</code> handlers</strong> register the app to handle input</li>
+</ul>
+<p>from other apps and the web — an untrusted-input entry point.</p>
+<h2 id="dynamic-analysis">Dynamic Analysis</h2>
+<p>Frida attaches to macOS processes for runtime hooking; <code>lldb</code> debugs (subject to <code>get-task-allow</code>/SIP); <code>dtrace</code> traces syscalls and library calls where SIP permits. Use these to watch XPC messages and dylib loads live rather than inferring them from the binary alone.</p>
+<h2 id="rationalizations-to-reject">Rationalizations to Reject</h2>
+<ul>
+<li><strong>"It's signed and notarized, so it's safe."</strong> Signing proves origin, not</li>
+</ul>
+<p>safety, and says nothing about a dylib-hijack path or an XPC helper that trusts its caller's PID. Read the entitlements and load paths.</p>
+<ul>
+<li><strong>"class-dump returned almost nothing, the binary is stripped."</strong> That is the</li>
+</ul>
+<p>normal signature of a Swift binary. Switch to <code>swift-demangle</code> and the decompiler rather than concluding there is nothing to see.</p>
+<ul>
+<li><strong>"The helper checks the client PID, that's authentication."</strong> PID checks race</li>
+</ul>
+<p>and are spoofable. Only <code>audit_token</code>-based validation is sound; a PID check is the finding.</p>
+<ul>
+<li><strong>"Library validation will stop a malicious dylib."</strong> Only if it is enabled.</li>
+</ul>
+<p>Check for the disable-library-validation entitlement and hardened-runtime state before assuming the load is protected.</p>
+<ul>
+<li><strong>"This is just the iOS process on a Mac."</strong> The DRM, toolchain, and security</li>
+</ul>
+<p>model differ. Use <a class="xref" href="analyzing-ios-binaries.html"><code>analyzing-ios-binaries</code></a> for FairPlay IPAs; this skill for the macOS app and its XPC/TCC/dylib surface.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a class="xref" href="analyzing-ios-binaries.html"><code>analyzing-ios-binaries</code></a> — iOS IPAs, FairPlay, and mobile toolchain</li>
+<li><a class="xref" href="analyzing-binaries.html"><code>analyzing-binaries</code></a> — general Mach-O triage and decompilation technique</li>
+<li><a class="xref" href="exploiting-memory-corruption.html"><code>exploiting-memory-corruption</code></a> — exploiting a native bug found here</li>
+<li><a class="xref" href="unpacking-protected-binaries.html"><code>unpacking-protected-binaries</code></a> — when the Mach-O is packed/encrypted first</li>
+</ul></article><aside class="toc"><div class="tl">On this page</div><nav><a href="#when-to-use">When to Use</a><a href="#when-not-to-use">When NOT to Use</a><a href="#triage-the-binary-and-bundle">Triage the Binary and Bundle</a><a href="#recover-objective-c-and-swift">Recover Objective-C and Swift</a><a href="#code-signing-entitlements-and-gatekeeper">Code Signing, Entitlements, and Gatekeeper</a><a href="#the-macos-specific-bug-surface">The macOS-Specific Bug Surface</a><a href="#dynamic-analysis">Dynamic Analysis</a><a href="#rationalizations-to-reject">Rationalizations to Reject</a><a href="#references">References</a></nav></aside></div>
+<footer><div class="wrap"><div class="mono">secskills · core · verified </div>
+<a class="mono" href="../index.html#catalog">← all skills</a></div></footer>
+<script>(function(){var ls=[].slice.call(document.querySelectorAll('.toc a'));if(!ls.length)return;var hs=ls.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});function on(){var y=scrollY+90,c=0;for(var i=0;i<hs.length;i++){if(hs[i]&&hs[i].offsetTop<=y)c=i;}ls.forEach(function(a,i){a.classList.toggle('on',i===c);});}addEventListener('scroll',on,{passive:true});on();})();</script>
+<script>var r=document.documentElement,b=document.getElementById('tbtn');b&&b.addEventListener('click',function(){var c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')});</script><script>(function(){var t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);var tm;function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1500);}document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var x=b.getAttribute('data-copy');navigator.clipboard.writeText(x).then(function(){toast('Copied to clipboard');if(b.classList.contains('copy')||b.classList.contains('copy2')){var o=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok')},1400);}},function(){toast('Copy failed');});});})();</script></body></html>
