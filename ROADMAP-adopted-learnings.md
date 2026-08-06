@@ -56,8 +56,8 @@ Status legend: `[ ]` planned · `[~]` partial/rescoped · `[x]` done
 
 Ranked by value. Each goes through `authoring-security-skills` end to end:
 plugin and tier choice, description, required sections, `ttp-index.json`
-registration, eval cases including negative traps, then all validators. None
-started yet.
+registration, eval cases including negative traps, then all validators.
+**All nine complete.**
 
 - [x] **B1 JavaScript / frontend reversing** — signature-chain location in
   obfuscated bundles, webpack and sourcemap recovery, runtime sampling via
@@ -78,7 +78,7 @@ started yet.
   protocols from captures and clients.
 - [x] **B8 Devirtualization** — custom opcode VMs and virtualized obfuscation,
   handed off from `unpacking-protected-binaries`.
-- [ ] **B9 Hardware interfaces and SDR** — UART/JTAG discovery, secure-boot
+- [x] **B9 Hardware interfaces and SDR** — UART/JTAG discovery, secure-boot
   triage, RF replay feasibility in shielded lab conditions.
 
 Deliberately skipped: one-skill-per-tool splits (`ida-reverse`,

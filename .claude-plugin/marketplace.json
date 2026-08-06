@@ -12,8 +12,8 @@
     {
       "name": "secskills-offense",
       "source": "./secskills-offense",
-      "description": "Attacker tradecraft with the judgment, not just the commands. 39 offensive security skills for red teams and pentesters: web/API/auth exploitation (JWT, OAuth/OIDC, SAML, XXE, SSRF, deserialization, GraphQL, gRPC), Active Directory and Entra ID, AD CS ESC1-16, Kerberos delegation, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, Web3, reconnaissance, social engineering, persistence, and password cracking — plus deception-spotting and multi-day engagement discipline. Every skill fact-checked against primary sources. Pairs with secskills-core.",
-      "version": "4.5.0",
+      "description": "Attacker tradecraft with the judgment, not just the commands. 40 offensive security skills for red teams and pentesters: web/API/auth exploitation (JWT, OAuth/OIDC, SAML, XXE, SSRF, deserialization, GraphQL, gRPC), Active Directory and Entra ID, AD CS ESC1-16, Kerberos delegation, Linux/Windows privilege escalation, cloud, managed Kubernetes, serverless, CI/CD, containers, mobile, wireless, Bluetooth/NFC, ICS/OT, Web3, reconnaissance, social engineering, persistence, and password cracking — plus deception-spotting and multi-day engagement discipline. Every skill fact-checked against primary sources. Pairs with secskills-core.",
+      "version": "4.6.0",
       "category": "security",
       "keywords": [
         "security",

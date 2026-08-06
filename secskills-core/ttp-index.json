@@ -61,7 +61,8 @@
     "reversing-browser-extensions": "RE and security-review craft for extensions; the adversary technique it analyzes is T1176.001/002 (Browser Extensions), but this is defensive analysis of the code, kept unmapped like the other reversing skills",
     "analyzing-macos-binaries": "Procedure skill (macOS Mach-O RE + otool/class-dump/codesign, XPC/TCC/dylib review). Tool-and-artifact scoped, not a technique",
     "reversing-network-protocols": "Reverse-engineering craft (undocumented binary protocol recovery from captures + client). Not an Enterprise technique",
-    "devirtualizing-vm-protected-code": "Procedure skill (VM-obfuscation lifting + Triton/miasm/VTIL). Tool-and-artifact scoped, not a technique"
+    "devirtualizing-vm-protected-code": "Procedure skill (VM-obfuscation lifting + Triton/miasm/VTIL). Tool-and-artifact scoped, not a technique",
+    "attacking-hardware-interfaces": "Radio-and-hardware scoped (UART/JTAG/SPI + SDR feasibility). Physical/RF surface, not an Enterprise technique -- like attacking-bluetooth-nfc"
   },
   "tactics": {
     "TA0043": "Reconnaissance",
