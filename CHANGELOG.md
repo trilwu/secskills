@@ -3,6 +3,39 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [core 4.11.0 / offense 4.6.0] - 2026-08-07
+
+Phase B of the reverse-skill adoption programme: nine reverse-engineering and
+security-testing skills covering the collection's real gaps. All ship as
+**unverified drafts** (well-formed, CI-green, no `verified:` date) pending a
+`verifying-skill-accuracy` pass. Full plan in `ROADMAP-adopted-learnings.md`.
+
+### Added
+
+- **`reversing-obfuscated-javascript`** (core) — web/Node JS: layer
+  identification, sourcemap recovery, webcrack/synchrony/restringer + Babel AST
+  passes, Chrome DevTools runtime location of signing routines.
+- **`exploiting-memory-corruption`** (offense) — crash to exploit: mitigation
+  enumeration, bug-class to primitive, ROP, glibc heap (tcache/safe-linking),
+  the incremental pwntools loop.
+- **`diffing-binary-patches`** (core) — 1-day analysis: Microsoft delta-patch
+  reconstruction, BinDiff/Diaphora/ghidriff, added-check to bug-class, reachable
+  trigger.
+- **`testing-thick-clients`** (offense) — desktop fat clients: two- vs
+  three-tier, local secrets, non-HTTP proxying, client-side trust bypass.
+- **`reversing-browser-extensions`** (core) — CRX/XPI manifest and the
+  page↔content-script↔background↔native trust boundary.
+- **`analyzing-macos-binaries`** (core) — Mach-O RE distinct from iOS:
+  entitlements, XPC PID-vs-audit_token, dylib hijacking, TCC.
+- **`reversing-network-protocols`** (core) — undocumented binary protocols from
+  capture + client; Wireshark/Kaitai/scapy parsers.
+- **`devirtualizing-vm-protected-code`** (core) — VMProtect/Themida/custom VM
+  lifting with Triton/miasm/VTIL.
+- **`attacking-hardware-interfaces`** (offense) — UART/JTAG/SPI, secure-boot
+  triage, sub-GHz SDR replay feasibility.
+
+core 4.5.0 → 4.11.0 (25 → 30 skills); offense 4.3.1 → 4.6.0 (37 → 40 skills).
+
 ## [4.5.0] - 2026-08-07
 
 Adopts a set of design ideas from evaluating

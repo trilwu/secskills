@@ -16,9 +16,9 @@ Three plugins in one marketplace — install only the side you work:
 
 | Plugin | Skills | For |
 | --- | --- | --- |
-| **`secskills-offense`** | 37 | Red team, pentest, offensive AppSec |
+| **`secskills-offense`** | 40 | Red team, pentest, offensive AppSec |
 | **`secskills-defense`** | 22 | DFIR, SOC, detection engineering, threat intel |
-| **`secskills-core`** | 23 | Reverse engineering, code/crypto audit, AI/MCP security, reporting — shared by both |
+| **`secskills-core`** | 30 | Reverse engineering, code/crypto audit, AI/MCP security, reporting — shared by both |
 
 ```bash
 /plugin marketplace add trilwu/secskills
@@ -99,7 +99,7 @@ Each skill is a methodology, not a command dump, with three things a cheat
 sheet does not give you:
 
 - **An explicit scope and hand-off.** Every skill says when to use a *different*
-  one, named in backticks. That is how 82 skills compose instead of colliding.
+  one, named in backticks. That is how 92 skills compose instead of colliding.
 - **A `Rationalizations to Reject` section** — the plausible-sounding shortcuts
   that cause missed findings and bad calls, each with why it is wrong. This is
   the highest-value part of most skills; it is the judgment a command list
@@ -112,13 +112,19 @@ sheet does not give you:
 
 ## Every skill is fact-checked — and dated
 
-**All 82 skills have been verified line-by-line against primary sources** —
+**82 of the 92 skills have been verified line-by-line against primary sources** —
 vendor docs, RFCs, tool source — and carry a `verified:` date in frontmatter.
 This is the differentiator: it is the opposite of confidently-wrong AI output.
 
+The 10 most recently added skills (the reverse-engineering and agent-vetting
+additions) are **unverified drafts** — well-formed and passing CI, but not yet
+driven through the line-by-line accuracy pass. They carry no `verified:` date,
+which is exactly how to tell them apart. Treat their specific tool flags and
+version claims as provisional until that pass lands.
+
 ```bash
-python3 scripts/validate.py --strict                 # "Fact-checked ...: 82/82"
-grep -L "^verified:" secskills-*/skills/*/SKILL.md   # unverified skills (none)
+python3 scripts/validate.py --strict                 # "Fact-checked ...: 82/92"
+grep -L "^verified:" secskills-*/skills/*/SKILL.md   # the 10 unverified drafts
 ```
 
 What that pass caught is why it exists. The first sampled dozen skills held
@@ -158,6 +164,7 @@ Two honest caveats:
 | `reviewing-cryptography` | Crypto misuse: AEAD, nonces, key management, timing, TLS, JWT |
 | `auditing-supply-chain` | Dependencies, malicious packages, GitHub Actions, SBOM, provenance |
 | `auditing-mcp-servers` | Reviewing an MCP server: tool-definition injection, token passthrough, per-tool authorization |
+| `vetting-agent-extensions` | Deciding whether a third-party skill, plugin, or MCP server is safe to install — context-loaded content as injection surface, config that runs on startup, trust verdict |
 | `securing-ai-systems` | LLM and agentic security: prompt injection, tool authority, RAG isolation, the lethal trifecta |
 | `exploiting-web3-smart-contracts` | Solidity and smart contract auditing |
 
@@ -193,6 +200,9 @@ Two honest caveats:
 | `establishing-persistence` | Post-exploitation persistence |
 | `transferring-files` | File transfer and exfiltration channels |
 | `performing-social-engineering` | Authorized phishing and pretexting |
+| `exploiting-memory-corruption` | Turn a crash into a working exploit: ROP, heap grooming, defeating ASLR/NX/canary/RELRO |
+| `testing-thick-clients` | Desktop fat-client testing: non-HTTP proxying, config/memory secrets, client-side trust bypass, two-tier DB access |
+| `attacking-hardware-interfaces` | Physical device surface: UART/JTAG, SPI flash-off, secure-boot triage, sub-GHz SDR replay feasibility |
 
 ### Web and API procedure skills
 
@@ -219,7 +229,13 @@ language- and framework-specific procedures below hand back to.
 | `analyzing-go-binaries` | `runtime.main`, `go:buildid`, a huge "stripped" binary |
 | `analyzing-rust-binaries` | `rustc version`, `core::panicking`, `_R`/`_ZN` symbols |
 | `analyzing-dotnet-assemblies` | Managed PE, mangled names, `Assembly.Load` loaders |
+| `analyzing-macos-binaries` | A `.app`/Mach-O on macOS: entitlements, XPC auth, dylib hijack, TCC |
 | `unpacking-protected-binaries` | High entropy, three imports, `UPX0`/`.vmp0` sections |
+| `devirtualizing-vm-protected-code` | A giant fetch-decode-dispatch loop: VMProtect/Themida/custom VM lifting |
+| `reversing-obfuscated-javascript` | A minified/obfuscated web bundle, `_0x` names, a reachable `.js.map` |
+| `reversing-browser-extensions` | A CRX/XPI: manifest permissions and the page↔content↔background trust boundary |
+| `reversing-network-protocols` | A proprietary binary protocol Wireshark shows as raw bytes |
+| `diffing-binary-patches` | Two versions of a DLL/ELF: find the fixed bug for 1-day analysis |
 
 ### Mobile procedure skills
 
