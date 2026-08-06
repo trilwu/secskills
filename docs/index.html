@@ -140,10 +140,10 @@ const rows=SKILLS.filter(s=>(filter==='all'||s.p===filter)&&(!t||s.n.includes(t)
 if(!rows.length){grid.innerHTML=`<div class="grid"><div class="empty">no skills match "${t}"</div></div>`;}
 else if(filter==='all'&&!t){grid.innerHTML=['offense','defense','core'].map(p=>{
 const g=rows.filter(s=>s.p===p);if(!g.length)return '';
-return `<div class="ghead"><span class="dot dot-${p}"></span>${p} <span class="n">· ${g.length}</span></div>
+return `<div class="ghead"><span class="dot dot-${p}"></span>${p}</div>
 <div class="grid">${g.map(card).join('')}</div>`;}).join('');}
 else{grid.innerHTML=`<div class="grid">${rows.map(card).join('')}</div>`;}
-cnt.textContent=`${rows.length} skill${rows.length===1?'':'s'}`+(filter!=='all'?` · ${filter}`:'')+(t?` · "${t}"`:'');}
+cnt.textContent=t?`${rows.length} match${rows.length===1?'':'es'} for "${t}"`+(filter!=='all'?` in ${filter}`:''):'';}
 q.addEventListener('input',render);
 document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
 document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
