@@ -1,7 +1,8 @@
 # SecSkills
 
-**Security skills for [Claude Code](https://claude.com/claude-code) that encode
-the *judgment* professionals bring, not another wrapper around a scanner.**
+**Security skills for [Claude Code](https://claude.com/claude-code) and
+[Cursor](https://cursor.com/docs/plugins) that encode the *judgment*
+professionals bring, not another wrapper around a scanner.**
 Offense, defense, and the reverse-engineering and code-audit core both sides
 share. Every skill is fact-checked against primary sources.
 
@@ -20,6 +21,8 @@ Three plugins in one marketplace. Install only the side you work:
 | **`secskills-defense`** | DFIR, SOC, detection engineering, threat intel |
 | **`secskills-core`** | Reverse engineering, code/crypto audit, AI/MCP security, reporting; shared by both |
 
+### Claude Code
+
 ```bash
 /plugin marketplace add trilwu/secskills
 
@@ -33,6 +36,23 @@ Three plugins in one marketplace. Install only the side you work:
 
 /reload-plugins
 ```
+
+### Cursor
+
+In Agent chat:
+
+```text
+/add-plugin trilwu/secskills
+```
+
+Install `secskills-offense` or `secskills-defense`, and install `secskills-core`
+with either. Reload the window after installing. Cursor reads
+[`.cursor-plugin/marketplace.json`](.cursor-plugin/marketplace.json) and loads
+each plugin's existing `skills/` directory.
+
+On a Team or Enterprise plan, import the repository as a marketplace:
+Dashboard → Plugins → Add Marketplace → Import from Repo →
+`https://github.com/trilwu/secskills`.
 
 Skills reference their siblings by name across plugins. A hand-off to a skill
 you did not install is an inert mention, so nothing breaks. You get the skills
@@ -386,7 +406,7 @@ around them.
 
 ## Requirements
 
-Claude Code, and the tools a given technique calls for (`nmap`, `semgrep`,
+Claude Code or Cursor, and the tools a given technique calls for (`nmap`, `semgrep`,
 `vol` (Volatility 3), `capa`, `ghidra`, …) installed separately. The plugin
 supplies knowledge and method, not binaries.
 
@@ -415,6 +435,7 @@ disabling protection:
 
 ```powershell
 Add-MpPreference -ExclusionPath "$env:USERPROFILE\.claude\plugins"
+Add-MpPreference -ExclusionPath "$env:USERPROFILE\.cursor\plugins"
 ```
 
 Please open an issue with the detection name and file path if you hit a new

@@ -1,0 +1,24 @@
+{
+  "name": "secskills-defense",
+  "displayName": "SecSkills Defense",
+  "version": "4.3.0",
+  "description": "DFIR and detection built on preserve-first, base-rate discipline. 22 defensive security skills for SOC analysts, incident responders, and detection engineers: alert triage, malware and shellcode analysis, memory/disk/network forensics, phishing-email analysis, Windows endpoint DFIR, Linux persistence hunting, AWS/Azure/GCP/M365-Entra incident investigation, Kubernetes defense, cloud posture hardening, threat hunting, detection-as-code (Sigma/YARA/Suricata) with real false-positive analysis, risk-based vulnerability management, and threat intelligence. Every skill fact-checked against primary sources. Pairs with secskills-core. Use when investigating a compromise, running DFIR, triaging alerts, or building detections.",
+  "author": {
+    "name": "trilwu"
+  },
+  "homepage": "https://github.com/trilwu/secskills",
+  "repository": "https://github.com/trilwu/secskills",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "blue-team",
+    "dfir",
+    "incident-response",
+    "threat-hunting",
+    "detection-engineering",
+    "malware-analysis",
+    "forensics",
+    "threat-intelligence"
+  ],
+  "category": "security"
+}

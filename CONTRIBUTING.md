@@ -188,8 +188,10 @@ This is how the collection composes instead of overlapping.
 
 `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` must carry
 the same version, and it must be bumped for users to receive updates. The
-validator enforces agreement. Add a `CHANGELOG.md` entry for anything
-user-visible.
+Cursor manifests (`.cursor-plugin/plugin.json` in each plugin directory, and
+`.cursor-plugin/marketplace.json` at the repo root) must keep the same name,
+version, and description as the Claude plugin manifest. The validator enforces
+both. Add a `CHANGELOG.md` entry for anything user-visible.
 
 ## Pull requests
 

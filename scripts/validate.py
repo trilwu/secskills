@@ -179,6 +179,98 @@ def check_shared_blocks() -> None:
             )
 
 
+def check_cursor_manifests(claude_plugins: dict[str, dict]) -> None:
+    """Cursor manifests must stay in lockstep with the Claude ones.
+
+    Cursor's marketplace schema only accepts name, source, and description on
+    each plugin entry, and author objects only accept name and email. Versions
+    live on the per-plugin manifest and must match .claude-plugin/plugin.json.
+    """
+    market_json = REPO / ".cursor-plugin" / "marketplace.json"
+    try:
+        market = json.loads(market_json.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        error(f".cursor-plugin/marketplace.json: {exc}")
+        return
+
+    if market.get("name") != "secskills":
+        error(".cursor-plugin/marketplace.json: name must be 'secskills'")
+
+    claude_market_path = REPO / ".claude-plugin" / "marketplace.json"
+    try:
+        claude_market = json.loads(claude_market_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        claude_market = {}
+    expected_meta = (claude_market.get("metadata") or {}).get("version")
+    got_meta = (market.get("metadata") or {}).get("version")
+    if expected_meta and got_meta != expected_meta:
+        error(
+            ".cursor-plugin/marketplace.json metadata.version "
+            f"({got_meta}) disagrees with .claude-plugin/marketplace.json "
+            f"({expected_meta}); bump both together"
+        )
+
+    listed = {p.get("name"): p for p in market.get("plugins", [])}
+
+    for entry in market.get("plugins", []):
+        source = entry.get("source", "")
+        if not isinstance(source, str) or source.startswith(("./", "../", "/")):
+            error(
+                f".cursor-plugin/marketplace.json: source '{source}' must be a "
+                "bare plugin directory name"
+            )
+            continue
+        if not (REPO / source).is_dir():
+            error(f".cursor-plugin/marketplace.json: source '{source}' is not a directory")
+
+    for pd in PLUGIN_DIRS:
+        plugin_json = pd / ".cursor-plugin" / "plugin.json"
+        if not plugin_json.is_file():
+            error(f"{pd.name}: missing .cursor-plugin/plugin.json")
+            continue
+        try:
+            plugin = json.loads(plugin_json.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            error(f"{pd.name}/.cursor-plugin/plugin.json: {exc}")
+            continue
+
+        claude = claude_plugins.get(pd.name)
+        if claude is None:
+            error(f"{pd.name}: Cursor manifest has no Claude counterpart")
+            continue
+        for field in ("name", "version", "description"):
+            if plugin.get(field) != claude.get(field):
+                error(
+                    f"{pd.name}: .cursor-plugin/plugin.json {field} disagrees with "
+                    ".claude-plugin/plugin.json; keep the Cursor manifest in lockstep"
+                )
+
+        author = plugin.get("author") or {}
+        if not isinstance(author, dict) or not author.get("name"):
+            error(f"{pd.name}/.cursor-plugin/plugin.json: author.name is required")
+        extra_author = set(author) - {"name", "email"}
+        if extra_author:
+            error(
+                f"{pd.name}/.cursor-plugin/plugin.json: author has fields Cursor "
+                f"rejects: {', '.join(sorted(extra_author))}"
+            )
+
+        name = plugin.get("name")
+        entry = listed.get(name)
+        if entry is None:
+            error(f"{pd.name}: '{name}' is not listed in .cursor-plugin/marketplace.json")
+        elif entry.get("source") != pd.name:
+            error(
+                f".cursor-plugin/marketplace.json: '{name}' source is "
+                f"'{entry.get('source')}', expected '{pd.name}'"
+            )
+        elif entry.get("description") != plugin.get("description"):
+            error(
+                f".cursor-plugin/marketplace.json: '{name}' description disagrees "
+                "with .cursor-plugin/plugin.json"
+            )
+
+
 def check_manifests() -> None:
     market_json = REPO / ".claude-plugin" / "marketplace.json"
     try:
@@ -188,6 +280,7 @@ def check_manifests() -> None:
         return
 
     listed = {p.get("name"): p for p in market.get("plugins", [])}
+    claude_plugins: dict[str, dict] = {}
 
     for entry in market.get("plugins", []):
         source = (REPO / entry.get("source", "").lstrip("./")).resolve()
@@ -228,6 +321,10 @@ def check_manifests() -> None:
         desc = plugin.get("description", "")
         if f"{count} " not in desc and str(count) not in desc:
             warn(f"{pd.name}/plugin.json description does not mention its skill count ({count})")
+
+        claude_plugins[pd.name] = plugin
+
+    check_cursor_manifests(claude_plugins)
 
 
 def main() -> int:
