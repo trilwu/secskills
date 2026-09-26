@@ -3,6 +3,15 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Cursor installation. `.cursor-plugin/marketplace.json` lists the three
+  plugins, and each plugin directory has a `.cursor-plugin/plugin.json` that
+  stays in lockstep with the Claude manifest. Install with
+  `/add-plugin trilwu/secskills`.
+
 ## [core 4.11.0 / offense 4.6.0] - 2026-08-07
 
 Phase B of the reverse-skill adoption programme: nine reverse-engineering and
