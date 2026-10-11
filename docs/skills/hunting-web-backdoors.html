@@ -172,7 +172,7 @@ wp core verify-checksums; wp plugin verify-checksums --all
 
 # git/composer/npm: what changed vs the committed/locked state
 git status --porcelain; git diff</code></pre></div>
-<p>If you have no known-good baseline, the tells are: code <em>after</em> the closing <code>?&amp;gt;</code> of an otherwise-normal file, a lone <code>eval</code>/<code>base64_decode</code> line wedged at the top of a config file, or a <code>&amp;lt;?php ... ?&amp;gt;</code> block whose style clashes with the surrounding file.</p>
+<p>If you have no known-good baseline, the tells are: code <em>after</em> the closing <code>?&gt;</code> of an otherwise-normal file, a lone <code>eval</code>/<code>base64_decode</code> line wedged at the top of a config file, or a <code>&lt;?php ... ?&gt;</code> block whose style clashes with the surrounding file.</p>
 <h2 id="version-gated-tells-date-the-code">Version-Gated Tells Date the Code</h2>
 <p>The presence of a removed language feature tells you something:</p>
 <ul>
@@ -187,7 +187,7 @@ git status --porcelain; git diff</code></pre></div>
 <p>Fingerprints speed triage but do not replace reading the code:</p>
 <blockquote>IOC strings in this section are bracket-broken — <code>ev[a]l</code> is <code>eval</code>, <code>ass[e]rt</code> is <code>assert</code>. Written literally they match <code>Backdoor:PHP/Chopper</code> and this file, a <em>defensive</em> hunting skill, gets quarantined on download. The grep patterns above are intact and safe to copy. See "Antivirus false positives" in the repo README.</blockquote>
 <ul>
-<li><strong>China Chopper</strong> — a <em>one-liner</em>: <code>&amp;lt;?php @ev[a]l($_POST['pass']);?&amp;gt;</code> (or</li>
+<li><strong>China Chopper</strong> — a <em>one-liner</em>: <code>&lt;?php @ev[a]l($_POST['pass']);?&gt;</code> (or</li>
 </ul>
 <p><code>assert</code>), often under 30 bytes. Tiny, so easy to miss and easy to append.</p>
 <ul>

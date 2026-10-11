@@ -83,7 +83,7 @@
 </ul>
 <p><code>code=</code>) — use <a class="xref" href="attacking-oauth-oidc.html"><code>attacking-oauth-oidc</code></a></p>
 <ul>
-<li><strong>SAML SSO</strong> (<code>SAMLResponse</code>, <code>&amp;lt;saml:Assertion&amp;gt;</code>, <code>/saml/acs</code>) — use</li>
+<li><strong>SAML SSO</strong> (<code>SAMLResponse</code>, <code>&lt;saml:Assertion&gt;</code>, <code>/saml/acs</code>) — use</li>
 </ul>
 <p><a class="xref" href="attacking-saml.html"><code>attacking-saml</code></a></p>
 <ul>
@@ -427,7 +427,7 @@ paramspider -d target.com</code></pre></div>
 <ol>
 <li>Run directory enumeration (ffuf/gobuster)</li>
 <li>Check for SQLi in parameters (<code>'</code>, <code>"</code>, <code>OR 1=1</code>)</li>
-<li>Test XSS in inputs (<code>&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;</code>)</li>
+<li>Test XSS in inputs (<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>)</li>
 <li>Analyze JWT tokens if present (jwt_tool)</li>
 <li>Check file uploads (bypass filters, upload shell)</li>
 <li>Test API endpoints (IDOR, mass assignment)</li>

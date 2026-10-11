@@ -152,7 +152,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <ul>
 <li><strong>DKIM</strong> is a cryptographic signature over selected headers and the body.</li>
 </ul>
-<p><code>dkim=pass</code> proves the message was signed by the key at <code>d=</code>'s selector and not modified. The load-bearing question is <strong>alignment</strong>: does <code>header.d=</code> match the <code>From</code> domain? A valid signature from <code>d=mailer-xyz.com</code> on a message claiming <code>From: contoso.com</code> is not contoso. Re-verify with <code>dkimverify &amp;lt; sample.eml</code> (dkimpy) and fetch the key via <code>dig txt selector1._domainkey.contoso.com</code>.</p>
+<p><code>dkim=pass</code> proves the message was signed by the key at <code>d=</code>'s selector and not modified. The load-bearing question is <strong>alignment</strong>: does <code>header.d=</code> match the <code>From</code> domain? A valid signature from <code>d=mailer-xyz.com</code> on a message claiming <code>From: contoso.com</code> is not contoso. Re-verify with <code>dkimverify &lt; sample.eml</code> (dkimpy) and fetch the key via <code>dig txt selector1._domainkey.contoso.com</code>.</p>
 <ul>
 <li><strong>DMARC</strong> ties SPF/DKIM to the visible <code>From</code> via <em>alignment</em> and applies the</li>
 </ul>
@@ -168,7 +168,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <h2 id="display-name-and-lookalike-spoofing">Display-Name and Lookalike Spoofing</h2>
 <p>Much phishing passes authentication because it comes from a <em>real</em> mailbox on a <em>lookalike</em> domain. The auth checks pass for that domain; the deception is visual.</p>
 <ul>
-<li><strong>Display-name spoofing</strong>: <code>From: "IT Helpdesk" &amp;lt;random@gmail.com&amp;gt;</code>. The name</li>
+<li><strong>Display-name spoofing</strong>: <code>From: "IT Helpdesk" &lt;random@gmail.com&gt;</code>. The name</li>
 </ul>
 <p>is a free-text label; read the actual address.</p>
 <ul>
@@ -189,7 +189,7 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <p>W-2 data. No link, no attachment, nothing to sandbox. The signal is entirely in the headers (Reply-To, origin, auth) and the pretext.</p>
 <h2 id="header-forensics">Header Forensics</h2>
 <ul>
-<li><strong><code>Message-ID</code> sanity</strong>: format is <code>&amp;lt;unique@sending-domain&amp;gt;</code>. The domain</li>
+<li><strong><code>Message-ID</code> sanity</strong>: format is <code>&lt;unique@sending-domain&gt;</code>. The domain</li>
 </ul>
 <p>should match the sending infrastructure. A <code>Message-ID</code> domain that disagrees with the origin, or a malformed/duplicated ID, suggests a spoofing tool.</p>
 <ul>
@@ -213,13 +213,13 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <ul>
 <li><strong>Decode wrapper rewrites</strong> — the real URL is inside the wrapper:</li>
 <ul>
-<li>Microsoft <strong>SafeLinks</strong>: <code>https://*.safelinks.protection.outlook.com/?url=&amp;lt;encoded&amp;gt;&amp;amp;...</code></li>
+<li>Microsoft <strong>SafeLinks</strong>: <code>https://*.safelinks.protection.outlook.com/?url=&lt;encoded&gt;&amp;...</code></li>
 </ul>
 </ul>
 <p>— URL-decode the <code>url=</code> parameter.</p>
 <ul>
 <ul>
-<li>Proofpoint <strong>URLDefense</strong>: <code>https://urldefense.com/v3/__&amp;lt;encoded&amp;gt;__;...</code> —</li>
+<li>Proofpoint <strong>URLDefense</strong>: <code>https://urldefense.com/v3/__&lt;encoded&gt;__;...</code> —</li>
 </ul>
 </ul>
 <p>decode with the published <code>urldefense</code> decoder (v2/v3 schemes differ). These wrappers hide the destination; always extract the original.</p>
@@ -238,9 +238,9 @@ Received: from smtp.sketchy-vps.ru ([185.220.101.5])
 <h2 id="attachment-analysis">Attachment Analysis</h2>
 <p>Identify and defang before anything executes.</p>
 <ul>
-<li><strong>Hash and identify</strong>: <code>sha256sum att.ext &amp;amp;&amp;amp; file att.ext</code>. Extract with</li>
+<li><strong>Hash and identify</strong>: <code>sha256sum att.ext &amp;&amp; file att.ext</code>. Extract with</li>
 </ul>
-<p><code>emldump.py -s N -d sample.eml &amp;gt; att.ext</code> — never by double-clicking.</p>
+<p><code>emldump.py -s N -d sample.eml &gt; att.ext</code> — never by double-clicking.</p>
 <ul>
 <li><strong>Common delivery wrappers</strong>: HTML smuggling (a <code>.html</code> that assembles a</li>
 </ul>

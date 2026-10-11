@@ -105,7 +105,7 @@ import json;d=json.load(open('secskills-core/ttp-index.json'))
 
 # Search by name when you have words, not an ID
 rg -i 'kerberoast|pass the hash' secskills-core/ttp-index.json</code></pre></div>
-<p>Each skill also carries a generated <code>## ATT&amp;amp;CK Coverage</code> section listing its techniques. That section and the index are kept in sync by <code>scripts/sync_attack.py</code>; the index is the source of truth.</p>
+<p>Each skill also carries a generated <code>## ATT&amp;CK Coverage</code> section listing its techniques. That section and the index are kept in sync by <code>scripts/sync_attack.py</code>; the index is the source of truth.</p>
 <p><strong>Three things the index deliberately does not do.</strong> It does not claim coverage of every technique — the <code>_unmapped</code> block names the skills that use a different framework and says which. It does not repeat detection and hunting on every row, because those apply to all of them. And it is hand-curated, so technique IDs drift as ATT&amp;CK releases new versions: re-verify against <a href="https://attack.mitre.org">attack.mitre.org</a> before citing an ID in a report.</p>
 <h2 id="resolving-a-request">Resolving a Request</h2>
 <div class="codeblk cx"><button class="copy" data-copy="Technique ID or name  → look up in the index → load the named skill

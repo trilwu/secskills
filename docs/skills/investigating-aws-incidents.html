@@ -329,12 +329,12 @@ aws cloudtrail lookup-events \
 <li><strong>Deactivate, do not delete, keys</strong> -- deletion destroys the artifact; a</li>
 </ul>
 <p>deactivated key still shows in the timeline.</p>
-<p>``<code>bash aws iam update-access-key --user-name &amp;lt;user&amp;gt; \ --access-key-id AKIA... --status Inactive </code>``</p>
+<p>``<code>bash aws iam update-access-key --user-name &lt;user&gt; \ --access-key-id AKIA... --status Inactive </code>``</p>
 <ul>
 <li><strong>Revoke active sessions</strong> -- deactivating a key does not kill in-flight</li>
 </ul>
 <p>temporary sessions minted from it. Attach an inline deny policy that invalidates any session/token issued before now (the <code>AWSRevokeOlderSessions</code> pattern):</p>
-<p>``<code>bash aws iam put-user-policy --user-name &amp;lt;user&amp;gt; \ --policy-name AWSRevokeOlderSessions \ --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Deny", "Action":"*","Resource":"*","Condition":{"DateLessThan": {"aws:TokenIssueTime":"2026-07-20T00:00:00Z"}}}]}' </code>``</p>
+<p>``<code>bash aws iam put-user-policy --user-name &lt;user&gt; \ --policy-name AWSRevokeOlderSessions \ --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Deny", "Action":"*","Resource":"*","Condition":{"DateLessThan": {"aws:TokenIssueTime":"2026-07-20T00:00:00Z"}}}]}' </code>``</p>
 <p>For a role, put an equivalent deny in the role's inline policy or a boundary.</p>
 <ul>
 <li><strong>Rotate</strong> every credential the principal could reach: other keys, secrets in</li>

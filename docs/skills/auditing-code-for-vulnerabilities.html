@@ -160,7 +160,7 @@ rg -n 'find_by_id|findOne\(\{ *_id|get_object_or_404' -A3 | rg -v 'tenant|owner|
 <li><strong>Is it already fixed?</strong> The tree you are reading may lag the fix, or the fix</li>
 </ul>
 <p>may sit on a branch you have not pulled. Confirm the vulnerable code is what actually ships before you file it.</p>
-<p>``<code>bash git log -S'&amp;lt;dangerous token&amp;gt;' --oneline -- &amp;lt;file&amp;gt;   # when this line changed, and toward what git log --oneline &amp;lt;checkout&amp;gt;..origin/main -- &amp;lt;file&amp;gt; # a fix on main you are not reading git blame -L &amp;lt;line&amp;gt;,&amp;lt;line&amp;gt; &amp;lt;file&amp;gt;                    # the commit that introduced it, for context </code>``</p>
+<p>``<code>bash git log -S'&lt;dangerous token&gt;' --oneline -- &lt;file&gt;   # when this line changed, and toward what git log --oneline &lt;checkout&gt;..origin/main -- &lt;file&gt; # a fix on main you are not reading git blame -L &lt;line&gt;,&lt;line&gt; &lt;file&gt;                    # the commit that introduced it, for context </code>``</p>
 <ul>
 <li><strong>Re-derive it adversarially.</strong> Argue the opposite case: assume the code is</li>
 </ul>

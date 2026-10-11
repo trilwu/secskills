@@ -164,7 +164,7 @@ objection -g com.target.app explore
 <ol>
 <li><strong>The app never used your proxy.</strong> Some stacks ignore system proxy settings</li>
 </ol>
-<p>entirely. Force traffic: transparent redirect with <code>iptables</code>, or a VPN/tun-based proxy. ``<code>bash adb shell su -c 'iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to &amp;lt;proxy&amp;gt;:8080' </code>``</p>
+<p>entirely. Force traffic: transparent redirect with <code>iptables</code>, or a VPN/tun-based proxy. ``<code>bash adb shell su -c 'iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to &lt;proxy&gt;:8080' </code>``</p>
 <ol>
 <li><strong>Certificate Transparency enforcement.</strong> Some SDKs require SCTs; your CA</li>
 </ol>

@@ -116,7 +116,7 @@
 <h3>SQL injection</h3>
 <ul>
 <li>Legacy <code>mysql_query</code>/<code>mysqli_query</code> with string-concatenated input.</li>
-<li><code>$wpdb-&amp;gt;query("... $var ...")</code> <strong>without</strong> <code>$wpdb-&amp;gt;prepare()</code> — a <code>-&amp;gt;prepare</code></li>
+<li><code>$wpdb-&gt;query("... $var ...")</code> <strong>without</strong> <code>$wpdb-&gt;prepare()</code> — a <code>-&gt;prepare</code></li>
 </ul>
 <p>that is present but interpolates outside its placeholders is still injectable.</p>
 <ul>
@@ -158,7 +158,7 @@
 <ul>
 <li><strong>WordPress:</strong> nonces are <strong>CSRF</strong> protection, not authorization — a valid</li>
 </ul>
-<p>nonce does not mean the user is allowed to act; look for the missing <code>current_user_can()</code> check. <code>$wpdb-&amp;gt;prepare</code> is mandatory for interpolation. <code>unfiltered_html</code>, <code>edit_*</code> capabilities, and unauthenticated AJAX/REST (<code>wp_ajax_nopriv_*</code>, <code>permission_callback =&amp;gt; '__return_true'</code>) are the usual holes.</p>
+<p>nonce does not mean the user is allowed to act; look for the missing <code>current_user_can()</code> check. <code>$wpdb-&gt;prepare</code> is mandatory for interpolation. <code>unfiltered_html</code>, <code>edit_*</code> capabilities, and unauthenticated AJAX/REST (<code>wp_ajax_nopriv_*</code>, <code>permission_callback =&gt; '__return_true'</code>) are the usual holes.</p>
 <ul>
 <li><strong>Magento:</strong> heavy <code>unserialize</code> history, layout-XML injection, and the admin</li>
 </ul>

@@ -52,8 +52,8 @@
 <div class="wrap slayout"><article><p>Rust binaries are large, statically linked, and full of inlined generic code — but they leak more than most people expect. Panic sites embed the source file path and line, symbols carry crate and module structure, and the standard library's formatting machinery is instantly recognizable. The job is knowing which parts are yours and which are the 90% that is <code>core</code>, <code>alloc</code>, and vendored crates.</p>
 <h2 id="when-to-use">When to Use</h2>
 <ul>
-<li><code>strings</code> shows <code>rustc version</code>, <code>core::panicking</code>, <code>/rustc/&amp;lt;hash&amp;gt;/library/</code></li>
-<li>Symbols begin with <code>_ZN...17h&amp;lt;hex&amp;gt;E</code> (legacy) or <code>_R</code> (v0 mangling)</li>
+<li><code>strings</code> shows <code>rustc version</code>, <code>core::panicking</code>, <code>/rustc/&lt;hash&gt;/library/</code></li>
+<li>Symbols begin with <code>_ZN...17h&lt;hex&gt;E</code> (legacy) or <code>_R</code> (v0 mangling)</li>
 <li>A stripped binary is 3–30 MB with minimal dynamic imports</li>
 <li>Analyzing Rust malware, a Rust CLI, or a compiled Rust service</li>
 </ul>
@@ -72,7 +72,7 @@
 <div class="codeblk cx"><button class="copy" data-copy="strings -n 10 target | rg &#x27;src/[a-z_/]+\.rs&#x27; | sort -u | head -40
 # → src/main.rs, src/crypto/aes.rs, /home/dev/projects/implant/src/c2.rs">copy</button><pre><code>strings -n 10 target | rg 'src/[a-z_/]+\.rs' | sort -u | head -40
 # → src/main.rs, src/crypto/aes.rs, /home/dev/projects/implant/src/c2.rs</code></pre></div>
-<p><strong>Registry paths name the dependencies.</strong> Vendored crates compiled in leave their <code>~/.cargo/registry/src/.../&amp;lt;crate&amp;gt;-&amp;lt;version&amp;gt;/</code> paths in panic sites, which is effectively a dependency list.</p>
+<p><strong>Registry paths name the dependencies.</strong> Vendored crates compiled in leave their <code>~/.cargo/registry/src/.../&lt;crate&gt;-&lt;version&gt;/</code> paths in panic sites, which is effectively a dependency list.</p>
 <div class="codeblk cx"><button class="copy" data-copy="strings target | rg -o &#x27;cargo/registry/src/[^/]+/([a-z0-9_-]+-[0-9.]+)&#x27; -r &#x27;$1&#x27; | sort -u">copy</button><pre><code>strings target | rg -o 'cargo/registry/src/[^/]+/([a-z0-9_-]+-[0-9.]+)' -r '$1' | sort -u</code></pre></div>
 <p>That combination — module layout plus dependency list — usually tells you what the binary does before a single instruction is read.</p>
 <h2 id="demangle">Demangle</h2>
@@ -100,11 +100,11 @@ nm -C target 2&gt;/dev/null | rg -v '^.* (core|alloc|std|hashbrown|serde|tokio):
 <p>When symbols are fully stripped, fall back to the panic strings: each one is adjacent to the function that contains it, so cross-referencing a panic message with a known source path names the surrounding function.</p>
 <h2 id="reading-rust-in-a-disassembler">Reading Rust in a Disassembler</h2>
 <p>Five patterns account for most of the confusion:</p>
-<p><strong>Monomorphization.</strong> A generic function is compiled once per concrete type, so <code>Vec&amp;lt;u8&amp;gt;::push</code> and <code>Vec&amp;lt;String&amp;gt;::push</code> are separate functions with similar bodies. Expect duplicates, and do not assume two near-identical functions are copy-paste.</p>
-<p><strong><code>Result</code> and <code>Option</code> returns.</strong> These are enums returned by value, often in two registers — a discriminant and a payload. A function returning <code>Result&amp;lt;T, E&amp;gt;</code> looks like it returns a struct; the branch immediately after the call testing the first register is the error check. Recognizing this makes error paths readable, and error paths are where the bugs are.</p>
+<p><strong>Monomorphization.</strong> A generic function is compiled once per concrete type, so <code>Vec&lt;u8&gt;::push</code> and <code>Vec&lt;String&gt;::push</code> are separate functions with similar bodies. Expect duplicates, and do not assume two near-identical functions are copy-paste.</p>
+<p><strong><code>Result</code> and <code>Option</code> returns.</strong> These are enums returned by value, often in two registers — a discriminant and a payload. A function returning <code>Result&lt;T, E&gt;</code> looks like it returns a struct; the branch immediately after the call testing the first register is the error check. Recognizing this makes error paths readable, and error paths are where the bugs are.</p>
 <p><strong>Bounds checks everywhere.</strong> Every slice index emits a comparison and a conditional branch to a panic site. These clutter the listing; learn to skip them. Their <em>absence</em> is informative — it means <code>unsafe</code> or <code>get_unchecked</code>.</p>
 <p><strong>Trait object dispatch.</strong> <code>dyn Trait</code> calls go through a vtable: a pointer pair (data, vtable), then an indirect call at a fixed vtable offset. Recover the vtable to recover the concrete type, the same way you would for C++.</p>
-<p><strong>String handling.</strong> Rust <code>String</code> and <code>&amp;amp;str</code> are pointer+length with no terminator, exactly like Go. Adjacent literals run together in <code>strings</code> output; find the length constant next to the pointer load.</p>
+<p><strong>String handling.</strong> Rust <code>String</code> and <code>&amp;str</code> are pointer+length with no terminator, exactly like Go. Adjacent literals run together in <code>strings</code> output; find the length constant next to the pointer load.</p>
 <h2 id="finding-the-interesting-code">Finding the Interesting Code</h2>
 <div class="codeblk cx"><button class="copy" data-copy="# Panic paths point at your code; use them as anchors
 strings -t x target | rg &#x27;src/&#x27; | head -30      # offsets included

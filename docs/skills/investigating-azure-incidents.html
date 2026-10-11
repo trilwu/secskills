@@ -74,7 +74,7 @@
 <p>Establish what you have before you query. Missing logs are a finding, not a reason to skip the question.</p>
 <div class="tw"><table><thead><tr><th>Source</th><th>Scope</th><th>Retention (default)</th><th>What it holds</th></tr></thead><tbody><tr><td>Azure Activity Log</td><td>Subscription control plane</td><td>90 days unless exported</td><td>Every ARM write/action/delete: <code>roleAssignments</code>, <code>runCommand</code>, <code>listKeys</code>, deployments</td></tr><tr><td>Resource / diagnostic logs</td><td>Per-resource data plane</td><td>None until enabled</td><td>Blob reads, Key Vault <code>SecretGet</code>, NSG flow -- only if a diagnostic setting ships them to a workspace</td></tr><tr><td>Log Analytics workspace</td><td>Wherever logs are shipped</td><td>Workspace-configured</td><td><code>AzureActivity</code>, <code>AzureDiagnostics</code>, <code>StorageBlobLogs</code>, <code>AZKVAuditLogs</code> tables</td></tr><tr><td>Entra sign-in / audit logs</td><td>Tenant identity plane</td><td>30 days (export for more)</td><td>Who authenticated the SP/MI, from where, CA/MFA context, credential adds</td></tr><tr><td>Microsoft Sentinel</td><td>Whatever it ingests</td><td>Per-table</td><td>Correlated hunting across all of the above, incidents, watchlists</td></tr></tbody></table></div>
 <p><strong>The trap:</strong> the Activity Log is a <em>control-plane</em> record. Data-plane operations -- reading a blob, fetching a Key Vault secret, querying a Cosmos DB -- are <strong>not</strong> in the Activity Log at all. They exist only if a diagnostic setting was configured on that resource <em>before</em> the incident. Absence in the Activity Log is never evidence that data was untouched (see Rationalizations).</p>
-<p>Confirm what is actually being logged before you trust a gap: <code>az monitor diagnostic-settings subscription list</code> (is the Activity Log exported beyond 90 days?) and <code>az monitor diagnostic-settings list --resource &amp;lt;id&amp;gt;</code> (does this storage account / vault ship data-plane logs anywhere?).</p>
+<p>Confirm what is actually being logged before you trust a gap: <code>az monitor diagnostic-settings subscription list</code> (is the Activity Log exported beyond 90 days?) and <code>az monitor diagnostic-settings list --resource &lt;id&gt;</code> (does this storage account / vault ship data-plane logs anywhere?).</p>
 <h2 id="first-hour-triage">First-Hour Triage</h2>
 <p>Three moves, in order: scope the caller identity, pull its recent activity, preserve before you contain.</p>
 <p><strong>Scope the caller identity.</strong> Resolve the report -- a Defender alert, a billing spike, a suspicious deployment -- to the identity in the <code>caller</code> / <code>identity</code> fields of the Activity Log. That principal (a UPN, or a service principal / managed identity object ID) is the anchor for everything else.</p>
@@ -189,7 +189,7 @@ AzureActivity
     "runCommand/action", "virtualMachines/extensions/write")
 | project TimeGenerated, Caller, CallerIpAddress, OperationNameValue, ResourceId
 | order by TimeGenerated asc</code></pre></div>
-<p>The CLI equivalent filters the same operations: <code>az monitor activity-log list --start-time &amp;lt;t&amp;gt; --query "[?contains(operationName.value,'roleAssignments/write')]"</code>.</p>
+<p>The CLI equivalent filters the same operations: <code>az monitor activity-log list --start-time &lt;t&gt; --query "[?contains(operationName.value,'roleAssignments/write')]"</code>.</p>
 <h2 id="identity-plane-correlation">Identity-Plane Correlation</h2>
 <p>The Activity Log names the principal but not the human behind it. Map the service principal or managed identity <strong>object ID</strong> back to Entra to see the authentication context -- this is the cross-plane step, and it usually means opening <a class="xref" href="investigating-m365-entra.html"><code>investigating-m365-entra</code></a>.</p>
 <div class="codeblk cx"><button class="copy" data-copy="// Where did this service principal / managed identity actually sign in from?
@@ -320,7 +320,7 @@ AzureDiagnostics
 <li><strong>Snapshot the involved VMs' disks</strong> before touching them, and lock the</li>
 </ul>
 <p>snapshots so they cannot be deleted.</p>
-<p>``<code>bash az snapshot create -g &amp;lt;rg&amp;gt; -n IR-2026-042-osdisk \ --source &amp;lt;os-disk-id&amp;gt; --tags case=IR-2026-042 legal-hold=true az lock create --name IR-2026-042-hold --lock-type CanNotDelete \ --resource-group &amp;lt;rg&amp;gt; --resource-name IR-2026-042-osdisk \ --resource-type Microsoft.Compute/snapshots </code>``</p>
+<p>``<code>bash az snapshot create -g &lt;rg&gt; -n IR-2026-042-osdisk \ --source &lt;os-disk-id&gt; --tags case=IR-2026-042 legal-hold=true az lock create --name IR-2026-042-hold --lock-type CanNotDelete \ --resource-group &lt;rg&gt; --resource-name IR-2026-042-osdisk \ --resource-type Microsoft.Compute/snapshots </code>``</p>
 <ul>
 <li><strong>Export the relevant Activity Log window</strong> before it ages out of 90-day</li>
 </ul>
@@ -335,12 +335,12 @@ AzureDiagnostics
 <li><strong>Disable or rotate the compromised principal.</strong> For a service principal /</li>
 </ul>
 <p>app, disable it and roll its credentials:</p>
-<p>``<code>bash az ad sp update --id &amp;lt;app-id&amp;gt; --set accountEnabled=false # remove attacker-added secrets/certs az ad app credential reset --id &amp;lt;app-id&amp;gt; </code>``</p>
+<p>``<code>bash az ad sp update --id &lt;app-id&gt; --set accountEnabled=false # remove attacker-added secrets/certs az ad app credential reset --id &lt;app-id&gt; </code>``</p>
 <p>For a user, disable the account and force a reset in Entra, then revoke sessions (below).</p>
 <ul>
 <li><strong>Revoke role assignments</strong> the attacker granted:</li>
 </ul>
-<p>``<code>bash az role assignment delete --assignee &amp;lt;object-id&amp;gt; \ --role Owner --scope /subscriptions/&amp;lt;sub-id&amp;gt; </code>``</p>
+<p>``<code>bash az role assignment delete --assignee &lt;object-id&gt; \ --role Owner --scope /subscriptions/&lt;sub-id&gt; </code>``</p>
 <ul>
 <li><strong>Revoke sessions / refresh tokens</strong> so existing tokens die (an Entra action</li>
 </ul>
@@ -353,7 +353,7 @@ AzureDiagnostics
 <li><strong>Rotate storage keys and regenerate SAS</strong> -- renewing both keys invalidates</li>
 </ul>
 <p>every outstanding SAS and access key at once:</p>
-<p>``<code>bash az storage account keys renew --account-name &amp;lt;acct&amp;gt; -g &amp;lt;rg&amp;gt; --key primary az storage account keys renew --account-name &amp;lt;acct&amp;gt; -g &amp;lt;rg&amp;gt; --key secondary </code>``</p>
+<p>``<code>bash az storage account keys renew --account-name &lt;acct&gt; -g &lt;rg&gt; --key primary az storage account keys renew --account-name &lt;acct&gt; -g &lt;rg&gt; --key secondary </code>``</p>
 <ul>
 <li><strong>Remove attacker persistence</strong> -- delete backdoor Functions/App Service,</li>
 </ul>

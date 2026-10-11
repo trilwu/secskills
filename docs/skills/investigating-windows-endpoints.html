@@ -243,7 +243,7 @@ RECmd.exe -d C:\Users --bn BatchExamples\UserActivity.reb --csv E:\out\parsed</c
 </ul>
 <p><code>...\Winlogon</code>; anything appended after <code>explorer.exe</code> / <code>userinit.exe</code>.</p>
 <ul>
-<li><strong>IFEO</strong> -- <code>Image File Execution Options\&amp;lt;exe&amp;gt;\Debugger</code> (and</li>
+<li><strong>IFEO</strong> -- <code>Image File Execution Options\&lt;exe&gt;\Debugger</code> (and</li>
 </ul>
 <p><code>GlobalFlag</code> + Silent Process Exit) hijacking a legit binary.</p>
 <ul>
@@ -274,7 +274,7 @@ RECmd.exe -d E:\out\host01 --bn BatchExamples\RegistryASEPs.reb --csv E:\out\par
 <ul>
 <li><strong>PsExec / service-based exec</strong> -- <strong>7045</strong> service install (random or</li>
 </ul>
-<p><code>PSEXESVC</code>-style name) plus <strong>7036</strong> start on the destination; <strong>5145</strong> if detailed file-share auditing logged the <code>\ADMIN$\&amp;lt;svc&amp;gt;.exe</code> write. RemCom and similar clones follow the same 7045+7036 pattern.</p>
+<p><code>PSEXESVC</code>-style name) plus <strong>7036</strong> start on the destination; <strong>5145</strong> if detailed file-share auditing logged the <code>\ADMIN$\&lt;svc&gt;.exe</code> write. RemCom and similar clones follow the same 7045+7036 pattern.</p>
 <ul>
 <li><strong>WMI / WinRM exec</strong> -- WMI-Activity <strong>5857-5861</strong>, <code>wmiprvse.exe</code> spawning a</li>
 </ul>
@@ -307,7 +307,7 @@ MFTECmd.exe -f "E:\out\host01\$Extend\$J" --csv E:\out\parsed
 </ul>
 <p>(FileCreate, RenameNew, FileDelete), and USN for changes -- reconstructs drop, rename, and cleanup of tooling even after deletion.</p>
 <ul>
-<li><strong>Recycle Bin</strong> -- <code>$I</code> files in <code>C:\$Recycle.Bin\&amp;lt;SID&amp;gt;\</code> hold the original</li>
+<li><strong>Recycle Bin</strong> -- <code>$I</code> files in <code>C:\$Recycle.Bin\&lt;SID&gt;\</code> hold the original</li>
 </ul>
 <p>path, size, and deletion time of each <code>$R</code> file (<code>RBCmd.exe</code>).</p>
 <ul>

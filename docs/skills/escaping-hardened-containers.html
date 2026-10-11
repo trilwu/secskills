@@ -273,7 +273,7 @@ runc --version 2&gt;/dev/null
 <p><strong>CVE-2019-5736</strong> -- Overwrite the host runc binary by exploiting <code>/proc/self/exe</code> when runc joins the container namespace. Requires exec into the container (e.g., <code>docker exec</code>).</p>
 <h3>containerd / CRI-O</h3>
 <p><strong>CVE-2022-23648 (containerd)</strong> -- Read arbitrary host files via image config <code>VOLUME</code> directives referencing host paths.</p>
-<p><strong>CVE-2022-0811 (CRI-O, cr8escape)</strong> -- Kernel parameter injection via <code>--infra-ctr-cpuset</code> leading to host code execution. Check runtime version: <code>crictl version 2&amp;gt;/dev/null</code>.</p>
+<p><strong>CVE-2022-0811 (CRI-O, cr8escape)</strong> -- Kernel parameter injection via <code>--infra-ctr-cpuset</code> leading to host code execution. Check runtime version: <code>crictl version 2&gt;/dev/null</code>.</p>
 <h2 id="sandbox-bypass">Sandbox Bypass</h2>
 <h3>gVisor (runsc)</h3>
 <p>gVisor interposes a user-space kernel (the Sentry) between the container and the host kernel. The attack surface is different:</p>
@@ -331,7 +331,7 @@ curl -s -H &quot;Metadata: true&quot; &quot;http://169.254.169.254/metadata/inst
 curl -s -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadata/v1/    # GCP
 curl -s -H "Metadata: true" "http://169.254.169.254/metadata/instance?api-version=2021-02-01"  # Azure</code></pre></div>
 <h3>ARP Spoofing from CAP_NET_RAW</h3>
-<p>With CAP_NET_RAW, ARP spoof to intercept pod-to-pod or pod-to-gateway traffic: <code>arpspoof -i eth0 -t &amp;lt;target_ip&amp;gt; &amp;lt;gateway_ip&amp;gt;</code>.</p>
+<p>With CAP_NET_RAW, ARP spoof to intercept pod-to-pod or pod-to-gateway traffic: <code>arpspoof -i eth0 -t &lt;target_ip&gt; &lt;gateway_ip&gt;</code>.</p>
 <h2 id="defensive-review-checklist">Defensive Review Checklist</h2>
 <p>When reviewing a hardened container deployment, verify:</p>
 <ol>

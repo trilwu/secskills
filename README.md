@@ -114,7 +114,10 @@ sheet does not give you:
 
 **Every skill has been verified line-by-line against primary sources** (vendor
 docs, RFCs, tool source) and carries a `verified:` date in frontmatter. That is
-the whole point: the opposite of confidently-wrong AI output.
+the whole point: the opposite of confidently-wrong AI output. The date records
+when a person last checked the skill; `validate.py` and CI confirm only that the
+date is present and well-formed, not that the content is still current, so
+re-confirm any specific before it goes into a deliverable.
 
 ```bash
 python3 scripts/validate.py --strict                 # "Fact-checked ...: 92/92"

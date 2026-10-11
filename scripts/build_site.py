@@ -95,6 +95,23 @@ def slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-") or "section"
 
 
+SAFE_HREF = re.compile(r"^(https?://[^\s\"'<>`]+|#[\w-]+|[\w][\w./-]*(#[\w-]+)?)$")
+
+
+def safe_link(m: re.Match) -> str:
+    """Render a markdown link whose label is already escaped.
+
+    The href is unescaped, checked against an allowlist (http/https, an
+    in-page anchor, or a plain relative path), and re-escaped with quotes,
+    so neither an attribute breakout nor a javascript:/data: URL survives.
+    A rejected link renders as its label alone.
+    """
+    label, href = m.group(1), html.unescape(m.group(2)).strip()
+    if not SAFE_HREF.match(href) or href.startswith("//") or ".." in href.split("/"):
+        return label
+    return f'<a href="{html.escape(href, quote=True)}">{label}</a>'
+
+
 def inline(text: str, names: set[str], current: str) -> str:
     text = html.escape(text, quote=False)
     codes: list[str] = []
@@ -102,15 +119,15 @@ def inline(text: str, names: set[str], current: str) -> str:
         codes.append(m.group(1))
         return f"\x00{len(codes)-1}\x00"
     text = re.sub(r"`([^`]+)`", stash, text)
-    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", safe_link, text)
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"<em>\1</em>", text)
     text = re.sub(r"(?<![\w_])_([^_\n]+)_(?![\w_])", r"<em>\1</em>", text)
     def restore(m):
-        c = html.escape(codes[int(m.group(1))], quote=False)
-        inner = codes[int(m.group(1))]
+        c = codes[int(m.group(1))]  # escaped once already, with the rest of the line
+        inner = html.unescape(c)
         if inner in names and inner != current:
-            return f'<a class="xref" href="{inner}.html"><code>{c}</code></a>'
+            return f'<a class="xref" href="{html.escape(inner, quote=True)}.html"><code>{c}</code></a>'
         return f"<code>{c}</code>"
     return re.sub(r"\x00(\d+)\x00", restore, text)
 
@@ -369,6 +386,9 @@ def render_skill_page(s: dict, names: set[str]) -> str:
 def render_index(skills: list[dict], names: set[str]) -> str:
     data = json.dumps([{"n": s["name"], "p": s["plugin"], "t": _tagline(s["desc"])} for s in skills],
                       ensure_ascii=False, separators=(",", ":"))
+    # Inside <script>, "</script>" or "<!--" in a description would end or
+    # corrupt the block. < is the same string to JSON and JavaScript.
+    data = data.replace("<", "\\u003c")
     css = """
     header.hero{padding:88px 0 64px}
     h1.big{font-size:clamp(32px,5vw,52px);font-weight:640;line-height:1.04;max-width:16ch}
@@ -528,12 +548,13 @@ def render_index(skills: list[dict], names: set[str]) -> str:
 const SKILLS={data};
 const grid=document.getElementById('grid'),q=document.getElementById('q'),cnt=document.getElementById('cnt');
 let filter='all';
-function card(s){{return `<a class="card" href="skills/${{s.n}}.html">
-<div class="h"><span class="dot dot-${{s.p}}"></span><span class="name">${{s.n}}</span><span class="arw">→</span></div>
-<div class="desc">${{s.t}}</div></a>`;}}
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}})[c]);
+function card(s){{return `<a class="card" href="skills/${{encodeURIComponent(s.n)}}.html">
+<div class="h"><span class="dot dot-${{esc(s.p)}}"></span><span class="name">${{esc(s.n)}}</span><span class="arw">→</span></div>
+<div class="desc">${{esc(s.t)}}</div></a>`;}}
 function render(){{const t=q.value.trim().toLowerCase();
 const rows=SKILLS.filter(s=>(filter==='all'||s.p===filter)&&(!t||s.n.includes(t)||s.t.toLowerCase().includes(t)));
-if(!rows.length){{grid.innerHTML=`<div class="grid"><div class="empty">no skills match "${{t}}"</div></div>`;}}
+if(!rows.length){{grid.innerHTML=`<div class="grid"><div class="empty">no skills match "${{esc(t)}}"</div></div>`;}}
 else if(filter==='all'&&!t){{grid.innerHTML=['offense','defense','core'].map(p=>{{
 const g=rows.filter(s=>s.p===p);if(!g.length)return '';
 return `<div class="ghead"><span class="dot dot-${{p}}"></span>${{p}}</div>

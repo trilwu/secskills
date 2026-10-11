@@ -181,7 +181,7 @@ scdbg -f sc.bin -d                       # dump self-modified/decoded memory</co
 <ul>
 <li><strong>PEB walk.</strong> <code>fs:[0x30]</code> (x86) or <code>gs:[0x60]</code> (x64) loads the PEB, then</li>
 </ul>
-<p><code>PEB-&amp;gt;Ldr-&amp;gt;InMemoryOrderModuleList</code> is traversed to find <code>kernel32.dll</code> (or <code>ntdll.dll</code>) without a hardcoded address.</p>
+<p><code>PEB-&gt;Ldr-&gt;InMemoryOrderModuleList</code> is traversed to find <code>kernel32.dll</code> (or <code>ntdll.dll</code>) without a hardcoded address.</p>
 <ul>
 <li><strong>Export hashing.</strong> For each export name the stub computes a hash — commonly</li>
 </ul>

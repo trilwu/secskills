@@ -84,9 +84,9 @@
 </ul>
 <p>(background <strong>service worker</strong>, <code>declarativeNetRequest</code>, remote code forbidden). The version changes where the privileged logic lives and how it persists.</p>
 <ul>
-<li><strong><code>permissions</code> and <code>host_permissions</code></strong> — <code>&amp;lt;all_urls&amp;gt;</code>, <code>tabs</code>, <code>cookies</code>,</li>
+<li><strong><code>permissions</code> and <code>host_permissions</code></strong> — <code>&lt;all_urls&gt;</code>, <code>tabs</code>, <code>cookies</code>,</li>
 </ul>
-<p><code>webRequest</code>, <code>debugger</code>, <code>nativeMessaging</code>, <code>scripting</code>. Judge each against what the extension claims to do; <code>&amp;lt;all_urls&amp;gt;</code> + <code>cookies</code> on a "dark theme" extension is the tell.</p>
+<p><code>webRequest</code>, <code>debugger</code>, <code>nativeMessaging</code>, <code>scripting</code>. Judge each against what the extension claims to do; <code>&lt;all_urls&gt;</code> + <code>cookies</code> on a "dark theme" extension is the tell.</p>
 <ul>
 <li><strong><code>content_scripts</code></strong> — which pages the extension injects into, and therefore</li>
 </ul>
@@ -160,7 +160,7 @@
 <ul>
 <li><strong>"It only asks for the permissions it needs."</strong> Verify against behaviour.</li>
 </ul>
-<p><code>&amp;lt;all_urls&amp;gt;</code>, <code>cookies</code>, <code>debugger</code>, and <code>nativeMessaging</code> are the ones that turn a small bug into a large one.</p>
+<p><code>&lt;all_urls&gt;</code>, <code>cookies</code>, <code>debugger</code>, and <code>nativeMessaging</code> are the ones that turn a small bug into a large one.</p>
 <ul>
 <li><strong>"It's minified, so I can't review it."</strong> Minification is reversible; unbundle</li>
 </ul>
