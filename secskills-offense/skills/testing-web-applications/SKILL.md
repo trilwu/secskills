@@ -6,6 +6,8 @@ verified: 2026-07-27
 
 # Testing Web Applications
 
+Only against systems you are authorized to test.
+
 ## When to Use
 
 - Pentesting web applications

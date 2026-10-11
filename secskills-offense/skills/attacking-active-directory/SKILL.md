@@ -6,6 +6,8 @@ verified: 2026-07-27
 
 # Attacking Active Directory
 
+Only against domains you are authorized to test.
+
 ## When to Use
 
 - AD reconnaissance and enumeration

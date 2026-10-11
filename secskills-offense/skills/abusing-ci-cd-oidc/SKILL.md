@@ -12,6 +12,8 @@ a repository write into cloud credential issuance when the trust policy is too
 broad. A single misconfigured workflow or a wildcard subject claim can bridge
 the gap from "can open a pull request" to "has production cloud access."
 
+Only against pipelines and cloud accounts you are authorized to test.
+
 ## When to Use
 
 - Assessing GitHub Actions, GitLab CI, or Jenkins for exploitable misconfigurations

@@ -52,6 +52,7 @@
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
 <div class="wrap slayout"><article><p>GraphQL moves authorization from routes to resolvers, and most teams do not move their access control with it. The REST habit of protecting <code>/admin/*</code> has no equivalent when every operation arrives at one endpoint — so the recurring finding is not an exotic GraphQL bug, it is an ordinary authorization failure on a field nobody thought to guard.</p>
+<p>Only against systems you are authorized to test.</p>
 <h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>The target exposes <code>/graphql</code>, <code>/graphiql</code>, <code>/v1/graphql</code>, <code>/api/graphql</code></li>

@@ -6,6 +6,8 @@ verified: 2026-07-27
 
 # Testing Mobile Applications
 
+Only against apps you are authorized to test.
+
 ## When to Use
 
 - Android APK analysis and exploitation

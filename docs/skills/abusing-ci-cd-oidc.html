@@ -52,6 +52,7 @@
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
 <div class="wrap slayout"><article><p>CI/CD pipelines are high-privilege execution environments, often with direct cloud IAM access, deploy credentials, and signing keys. OIDC federation turns a repository write into cloud credential issuance when the trust policy is too broad. A single misconfigured workflow or a wildcard subject claim can bridge the gap from "can open a pull request" to "has production cloud access."</p>
+<p>Only against pipelines and cloud accounts you are authorized to test.</p>
 <h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Assessing GitHub Actions, GitLab CI, or Jenkins for exploitable misconfigurations</li>

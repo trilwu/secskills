@@ -6,6 +6,8 @@ verified: 2026-07-27
 
 # Attacking Wireless Networks
 
+Only against networks you are authorized to test.
+
 ## When to Use
 
 - WiFi penetration testing

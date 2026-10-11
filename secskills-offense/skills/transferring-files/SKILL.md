@@ -16,6 +16,8 @@ You are a file transfer and exfiltration expert. Use this skill when the user re
 - Bypassing egress filtering
 - Establishing file servers
 
+Only against hosts you are authorized to test.
+
 ## When to Use
 
 Activate this skill when the user asks to:

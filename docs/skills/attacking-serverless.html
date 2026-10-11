@@ -52,6 +52,7 @@
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
 <div class="wrap slayout"><article><p>Serverless changes the attack surface from hosts to events. There is no SSH, no persistent shell, no OS to enumerate in the traditional sense. The execution environment is ephemeral, but the IAM role attached to it is not, and that role is almost always the real target. A compromised Lambda function does not give you a server — it gives you a set of AWS credentials that refresh automatically, have no MFA, and were scoped by a developer who optimized for "make it work" rather than least privilege. The same pattern holds across Azure Functions, GCP Cloud Functions, and edge runtimes, with minor variation in where the credentials live and how the isolation boundary is drawn.</p>
+<p>Only against cloud accounts you are authorized to test.</p>
 <h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>The target runs AWS Lambda, Azure Functions, GCP Cloud Functions, or</li>

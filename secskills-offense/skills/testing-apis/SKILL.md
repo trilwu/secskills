@@ -17,6 +17,8 @@ You are an API security expert specializing in REST, GraphQL, and API pentesting
 - Mass assignment vulnerabilities
 - API documentation discovery
 
+Only against systems you are authorized to test.
+
 ## When to Use
 
 Activate this skill when the user asks to:

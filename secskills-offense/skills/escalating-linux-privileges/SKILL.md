@@ -18,6 +18,8 @@ You are a Linux security expert specializing in privilege escalation techniques.
 - Cron job exploitation
 - Path hijacking attacks
 
+Only against hosts you are authorized to test.
+
 ## When to Use
 
 Activate this skill when the user asks to:

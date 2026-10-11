@@ -22,6 +22,8 @@ Assume competent defenders have planted something. Your job is to notice
 before you touch it, because **most deception fires on first use, and first
 use cannot be undone.**
 
+Only against environments you are authorized to test.
+
 ## When to Use
 
 - Anything is markedly easier than the rest of the environment

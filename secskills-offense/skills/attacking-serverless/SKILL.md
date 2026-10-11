@@ -16,6 +16,8 @@ rather than least privilege. The same pattern holds across Azure Functions, GCP
 Cloud Functions, and edge runtimes, with minor variation in where the credentials
 live and how the isolation boundary is drawn.
 
+Only against cloud accounts you are authorized to test.
+
 ## When to Use
 
 - The target runs AWS Lambda, Azure Functions, GCP Cloud Functions, or

@@ -13,6 +13,8 @@ ordinary API test — with the twist that gRPC services are frequently internal
 services newly exposed, which means their authorization is often weaker than
 the REST API in front of them.
 
+Only against systems you are authorized to test.
+
 ## When to Use
 
 - Traffic uses HTTP/2 with `content-type: application/grpc`

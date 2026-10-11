@@ -52,6 +52,7 @@
 <span class="p">$ </span>/plugin install secskills-core</div>
 </div></header>
 <div class="wrap slayout"><article><p>gRPC breaks the tooling assumption that a request is readable text over HTTP/1.1. Burp shows a binary blob or nothing at all, and without the schema you cannot even name the methods. Recover the schema and it becomes an ordinary API test — with the twist that gRPC services are frequently internal services newly exposed, which means their authorization is often weaker than the REST API in front of them.</p>
+<p>Only against systems you are authorized to test.</p>
 <h2 id="when-to-use">When to Use</h2>
 <ul>
 <li>Traffic uses HTTP/2 with <code>content-type: application/grpc</code></li>

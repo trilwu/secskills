@@ -11,6 +11,8 @@ does not need the network. A malicious app on the same device — or a web page
 the user visits — can invoke them directly, and they are frequently written as
 if only the app itself would ever call them.
 
+Only against apps you are authorized to test.
+
 ## When to Use
 
 - Reviewing `AndroidManifest.xml` for exported components

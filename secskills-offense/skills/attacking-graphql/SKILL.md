@@ -12,6 +12,8 @@ no equivalent when every operation arrives at one endpoint — so the recurring
 finding is not an exotic GraphQL bug, it is an ordinary authorization failure
 on a field nobody thought to guard.
 
+Only against systems you are authorized to test.
+
 ## When to Use
 
 - The target exposes `/graphql`, `/graphiql`, `/v1/graphql`, `/api/graphql`

@@ -27,6 +27,16 @@ MAX_SKILL_LINES = 600
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
+# Every offense skill must say it applies only to authorized targets. The
+# alternatives are the phrasings the skills already use; the house form is
+# "Only against <targets> you are authorized to test." before ## When to Use.
+OFFENSE_PLUGIN = "secskills-offense"
+AUTH_RE = re.compile(
+    r"authori[sz]ed to (?:test|open|assess)|scope and authori[sz]ation"
+    r"|written authori[sz]ation|rules of engagement",
+    re.IGNORECASE,
+)
+
 errors: list[str] = []
 warnings: list[str] = []
 verified: list[str] = []  # skills fact-checked against primary sources
@@ -136,6 +146,10 @@ def check_skill(skill_dir: Path) -> None:
         warn(f"{rel}/SKILL.md: no '## When to Use' section")
     if "## When NOT to Use" not in body:
         warn(f"{rel}/SKILL.md: no '## When NOT to Use' section")
+
+    if skill_dir.parent.parent.name == OFFENSE_PLUGIN and not AUTH_RE.search(body):
+        error(f"{rel}/SKILL.md: offense skill has no authorization statement; add "
+              "'Only against <targets> you are authorized to test.' before '## When to Use'")
 
     # Referenced local files must exist.
     for ref in re.findall(r"`(references/[A-Za-z0-9._/-]+)`", body):

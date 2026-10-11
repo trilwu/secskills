@@ -15,6 +15,8 @@ You are a network penetration testing expert specializing in service enumeration
 - Banner grabbing and version detection
 - Network protocol analysis
 
+Only against networks you are authorized to test.
+
 ## When to Use
 
 Activate this skill when the user asks to:

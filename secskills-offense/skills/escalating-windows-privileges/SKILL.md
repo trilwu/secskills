@@ -17,6 +17,8 @@ You are a Windows security expert specializing in privilege escalation technique
 - Scheduled task abuse
 - Windows credential dumping
 
+Only against hosts you are authorized to test.
+
 ## When to Use
 
 Activate this skill when the user asks to:

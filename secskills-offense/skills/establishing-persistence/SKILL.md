@@ -6,6 +6,8 @@ verified: 2026-07-27
 
 # Establishing Persistence
 
+Only against hosts you are authorized to test.
+
 ## When to Use
 
 - Maintaining access to compromised systems

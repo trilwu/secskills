@@ -3,6 +3,16 @@
 All notable changes to SecSkills are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [offense 4.6.1] - 2026-10-11
+
+### Changed
+
+- **Authorization statement in every offense skill.** 18 offense skills,
+  including `attacking-active-directory` and `exploiting-cloud-platforms`, had
+  no line limiting them to authorized targets. Each now carries the house line
+  ("Only against <targets> you are authorized to test.") before
+  `## When to Use`, and `scripts/validate.py` fails an offense skill without one.
+
 ## [core 4.11.0 / offense 4.6.0] - 2026-08-07
 
 Phase B of the reverse-skill adoption programme: nine reverse-engineering and
